@@ -1,0 +1,8 @@
+{
+    "sketch": "./openhaptics-firmware/openhaptics-firmware.ino",
+    "configuration": "cpu=atmega2560",
+    "board": "arduino:avr:mega",
+    "port": "COM3",
+    "output": "./build",
+    "programmer": "arduino:avrispmkii"
+}
