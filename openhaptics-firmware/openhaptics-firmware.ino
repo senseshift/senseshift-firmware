@@ -1,0 +1,9 @@
+#define CONNECTION CONNECTION_BLE_SERIAL
+
+#define CONNECTION_SERIAL 1
+    #define SERIAL_BAUD_RATE 9600
+    #define SERIAL_USE &Serial
+
+#define CONNECTION_BLE_SERIAL 2
+    #define BLE_SERIAL_BAUD_RATE 9600
+    #define BLE_SERIAL_USE &Serial1
