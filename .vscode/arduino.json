@@ -1,7 +1,7 @@
 {
     "sketch": "./openhaptics-firmware/openhaptics-firmware.ino",
-    "configuration": "cpu=atmega2560",
-    "board": "arduino:avr:mega",
+    "configuration": "FlashFreq=80,UploadSpeed=921600,DebugLevel=none",
+    "board": "esp32:esp32:esp32doit-devkit-v1",
     "port": "COM3",
     "output": "./build",
     "programmer": "arduino:avrispmkii"
