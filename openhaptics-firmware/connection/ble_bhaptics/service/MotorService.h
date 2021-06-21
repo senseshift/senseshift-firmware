@@ -9,6 +9,7 @@ class MotorService : public BHService
 {
     private:
         BLECharacteristic* charMotor;
+        BLECharacteristic* charMotorStable;
 
     public:
         MotorService(BLEServer*, BLEUUID); // todo: add output
