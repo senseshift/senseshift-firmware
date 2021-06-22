@@ -65,5 +65,5 @@
 // Bluetooth Common Settings
 
 #ifndef BLUETOOTH_NAME
-    #define BLUETOOTH_NAME "TactSuit X16" // Fallback
+    #define BLUETOOTH_NAME "Tactot DK3" // Fallback
 #endif
