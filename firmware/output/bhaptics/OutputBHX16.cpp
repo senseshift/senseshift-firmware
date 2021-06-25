@@ -1,4 +1,6 @@
-#include "OutputBHX16.h"
+#include "output/bhaptics/OutputBHX16.h"
+
+#include <Arduino.h>
 
 void OutputBHX16::setup()
 {

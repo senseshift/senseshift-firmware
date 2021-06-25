@@ -1,5 +1,4 @@
-#ifndef OUTPUT_H
-#define OUTPUT_H
+#pragma once
 
 class Output
 {
@@ -7,5 +6,3 @@ class Output
     virtual void writeMotors(uint8_t[]) = 0;
     virtual void writeMotor(uint8_t, float) = 0;
 };
-
-#endif /* OUTPUT_H */

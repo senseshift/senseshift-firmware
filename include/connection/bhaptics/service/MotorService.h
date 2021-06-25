@@ -1,9 +1,8 @@
-#ifndef MOTOR_SERVICE_H
-#define MOTOR_SERVICE_H
+#pragma once
 
-#include "BHService.h"
+#include "./BHService.h"
 
-#include "../../../output/Output.h"
+#include "output/Output.h"
 
 class MotorService : public BHService
 {
@@ -17,4 +16,3 @@ class MotorService : public BHService
         void init(void);
 };
 
-#endif /* MOTOR_SERVICE_H */

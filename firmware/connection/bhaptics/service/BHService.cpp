@@ -1,4 +1,4 @@
-#include "BHService.h"
+#include "connection/bhaptics/service/BHService.h"
 
 BHService::BHService(BLEServer* server, BLEUUID uuid)
 {

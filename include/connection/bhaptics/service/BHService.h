@@ -1,9 +1,7 @@
-#ifndef BH_SERVICE_H
-#define BH_SERVICE_H
+#pragma once
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
 #include <BLEServer.h>
+#include <BLEUtils.h>
 
 class BHService
 {
@@ -18,5 +16,3 @@ class BHService
         virtual void init(void) = 0;
         void start(void);
 };
-
-#endif /* BH_SERVICE_H */

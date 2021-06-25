@@ -1,8 +1,8 @@
-#include "MotorService.h"
+#include <BLEUtils.h>
+#include <BLE2902.h>
 
-#include <BLE2902.h> 
-
-#include "BHService.cpp"
+#include "connection/bhaptics/service/MotorService.h"
+#include "config.h"
 
 MotorService::MotorService(BLEServer* server, BLEUUID uuid) : BHService(server, uuid) 
 {

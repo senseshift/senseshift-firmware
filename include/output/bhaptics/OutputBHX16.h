@@ -1,7 +1,9 @@
-#ifndef OUTPUT_BH_X16_H
-#define OUTPUT_BH_X16_H
+#pragma once
 
-#include "Output.h"
+#include <stdint.h>
+
+#include "config/bhaptics.h"
+#include "output/Output.h"
 
 class OutputBHX16 : public Output
 {
@@ -12,11 +14,10 @@ class OutputBHX16 : public Output
             O_V_X16_M2, O_V_X16_M6, O_V_X16_M10, O_V_X16_M14,
             O_V_X16_M3, O_V_X16_M7, O_V_X16_M11, O_V_X16_M15
         };
-    
+
     public:
         void setup();
         void writeMotors(uint8_t[]);
         void writeMotor(uint8_t index, float intensity);
 };
 
-#endif /* OUTPUT_BH_X16_H */

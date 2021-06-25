@@ -1,5 +1,4 @@
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#pragma once
 
 class Connection
 {
@@ -9,5 +8,3 @@ class Connection
       virtual void start(void) = 0;
       virtual void loop(void) = 0;
 };
-
-#endif /* CONNECTION_H */
