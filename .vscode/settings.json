@@ -1,7 +1,4 @@
 {
-    "arduino.additionalUrls": [
-        "https://dl.espressif.com/dl/package_esp32_index.json"
-    ],
     "files.associations": {
         "array": "cpp",
         "*.tcc": "cpp",
@@ -9,9 +6,11 @@
         "clocale": "cpp",
         "cmath": "cpp",
         "cstdarg": "cpp",
+        "cstddef": "cpp",
         "cstdint": "cpp",
         "cstdio": "cpp",
         "cstdlib": "cpp",
+        "cstring": "cpp",
         "ctime": "cpp",
         "cwchar": "cpp",
         "cwctype": "cpp",
@@ -41,6 +40,7 @@
         "cinttypes": "cpp",
         "utility": "cpp",
         "typeinfo": "cpp",
+        "string": "cpp",
         "random": "cpp"
     }
 }
