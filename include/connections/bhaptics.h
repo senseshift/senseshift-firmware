@@ -9,5 +9,5 @@ class BHapticsBLEConnection final : public BLEConnection
         BLEService* motorService = nullptr;
     public:
         BHapticsBLEConnection(std::string deviceName) : BLEConnection(deviceName) {};
-        void setup(void) override;
+        void setup(void);
 };
