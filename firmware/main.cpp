@@ -1,16 +1,11 @@
 #include "firmware.h"
 #include "main.h"
 
-#ifdef CONNECTION_BHAPTICS_BLE
-#include "connections/bhaptics.h"
-#endif
+extern void setupMode(void);
 
 void setup()
 {
-    #ifdef CONNECTION_BHAPTICS_BLE
-    BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME);
-    App.registerComponent(bhBleConnection);
-    #endif
+    setupMode();
 
     App.setup();
 }
