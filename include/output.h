@@ -25,18 +25,15 @@ struct Point2D {
 };
 typedef Point2D outputPoint_t;
 
-typedef uint16_t outputDuration_t;
 typedef uint16_t outputIntensity_t;
 
 struct OutputData {
     outputPoint_t point;
-    outputDuration_t duration;
     outputIntensity_t intensity;
 };
 typedef OutputData outputData_t;
 
 struct OutputState {
-    unsigned long long endMillis;
     outputIntensity_t intensity;
 };
 typedef OutputState outputState_t;
@@ -52,7 +49,7 @@ class OutputComponent : public Component
     private:
         std::list<outputPoint_t*> points{};
         std::map<outputPoint_t*, OutputWriter*> writers{};
-        std::map<outputPoint_t*, std::list<outputState_t>> states{};
+        std::map<outputPoint_t*, outputState_t> states{};
 
     public:
         void setOutputs(std::map<outputPoint_t*, OutputWriter*> &);
