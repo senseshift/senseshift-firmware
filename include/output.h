@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <map>
+#include <list>
 #include <vector>
 #include <utility>
 
@@ -15,7 +16,7 @@ struct Point2D {
     uint16_t x, y;
 
     bool const operator==(const Point2D &o) const {
-        return std::tie(x, y) == std::tie(o.x, o.y);
+        return x == o.x && y == o.y;
     }
 
     bool const operator<(const Point2D &o) const {
@@ -42,16 +43,22 @@ typedef OutputState outputState_t;
 
 class OutputWriter
 {
-    void writeOutput(outputIntensity_t intensity);
+    public:
+        virtual void writeOutput(outputIntensity_t intensity) = 0;
 };
 
 class OutputComponent : public Component
 {
     private:
-        std::map<outputPoint_t, std::vector<outputState_t>> points;
+        std::list<outputPoint_t*> points{};
+        std::map<outputPoint_t*, OutputWriter*> writers{};
+        std::map<outputPoint_t*, std::list<outputState_t>> states{};
 
     public:
+        void setOutputs(std::map<outputPoint_t*, OutputWriter*> &);
         void writeOutput(outputData_t&);
+
+        void loop();
 };
 
 class Output

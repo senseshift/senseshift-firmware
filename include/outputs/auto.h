@@ -14,5 +14,5 @@ class OutputAutoComponent : public OutputComponent
         outputPoint_t getCoordinate(size_t x, size_t y, size_t x_max, size_t y_max);
 
     public:
-        OutputAutoComponent(autoOutputVector_t);
+        OutputAutoComponent(autoOutputVector_t&);
 };
