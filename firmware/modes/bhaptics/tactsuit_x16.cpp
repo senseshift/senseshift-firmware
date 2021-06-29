@@ -29,10 +29,10 @@ void setupMode()
     pwm->setPWMFreq(60);
 
     autoOutputVector_t frontOutputs {
-        { new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 8) },
-        { new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 9) },
-        { new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 10) },
-        { new PCA9685OutputWriter(pwm, 3), new PCA9685OutputWriter(pwm, 11) },
+        { new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 8), },
+        { new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 9), },
+        { new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 10), },
+        { new PCA9685OutputWriter(pwm, 3), new PCA9685OutputWriter(pwm, 11), },
     };
     autoOutputVector_t backOutputs {
         { new PCA9685OutputWriter(pwm, 4), new PCA9685OutputWriter(pwm, 12) },
@@ -41,8 +41,8 @@ void setupMode()
         { new PCA9685OutputWriter(pwm, 7), new PCA9685OutputWriter(pwm, 15) },
     };
 
-    OutputAutoComponent* chestFront = new OutputAutoComponent(frontOutputs);
-    OutputAutoComponent* chestBack = new OutputAutoComponent(backOutputs);
+    OutputAutoComponent_Margin* chestFront = new OutputAutoComponent_Margin(frontOutputs);
+    OutputAutoComponent_Margin* chestBack = new OutputAutoComponent_Margin(backOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);

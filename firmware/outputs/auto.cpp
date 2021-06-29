@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "outputs/auto.h"
 
 OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
@@ -27,20 +25,20 @@ OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
 
 uint16_t OutputAutoComponent::getCoordinateX(size_t x, size_t x_max)
 {
-    return map(x, 0, x_max, 0, UINT16_MAX);
+    return UINT16_MAX * (1 / (x_max - 1)) * x;
 }
 
 uint16_t OutputAutoComponent::getCoordinateY(size_t y, size_t y_max)
 {
-    return map(y, 0, y_max, 0, UINT16_MAX);
+    return UINT16_MAX * (1 / (y_max - 1)) * y;
 }
 
 outputPoint_t OutputAutoComponent::getCoordinate(size_t x, size_t y, size_t x_max, size_t y_max)
 {
     outputPoint_t point;
 
-    point.x = this->getCoordinateX(x, x_max);
-    point.y = this->getCoordinateY(y, y_max);
+    point.x = OutputAutoComponent::getCoordinateX(x, x_max);
+    point.y = OutputAutoComponent::getCoordinateY(y, y_max);
 
     return point;
 }
