@@ -54,9 +54,8 @@ class OutputComponent : public Component
     public:
         void setOutputs(std::map<outputPoint_t*, OutputWriter*> &);
         std::list<outputPoint_t*>* getOutputPoints(void) { return &this->points; };
+        std::map<outputPoint_t*, outputState_t>* getOutputStates(void) { return &this->states; };
         void writeOutput(outputData_t&);
-
-        void loop();
 };
 
 class Output
