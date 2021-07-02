@@ -13,6 +13,6 @@ class BLEConnection : public Connection
         BLEServer* bleServer = nullptr;
     public:
         BLEConnection(const std::string &deviceName) : deviceName(deviceName) {};
-        void setup(void);
-        void loop(void);
+        void setup(void) override;
+        void loop(void) override;
 };

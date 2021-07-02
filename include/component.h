@@ -3,6 +3,6 @@
 class Component
 {
     public:
-        void setup(void);
-        void loop(void);
+        virtual void setup(void);
+        virtual void loop(void);
 };

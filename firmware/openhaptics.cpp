@@ -1,3 +1,5 @@
+#include <HardwareSerial.h>
+
 #include "openhaptics.h"
 
 OpenHaptics::OpenHaptics()
@@ -28,8 +30,8 @@ void OpenHaptics::addOutputComponent(outputPath_t path, OutputComponent* c)
 
 void OpenHaptics::setup()
 {
-    for (auto *c : this->components) {
-        c->setup();
+    for (auto &component : this->components) {
+        component->setup();
     }
 }
 
