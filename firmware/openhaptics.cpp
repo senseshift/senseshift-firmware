@@ -1,5 +1,3 @@
-#include <HardwareSerial.h>
-
 #include "openhaptics.h"
 
 OpenHaptics::OpenHaptics()

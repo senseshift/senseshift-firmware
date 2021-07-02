@@ -4,7 +4,7 @@
 
 #include <BLEServer.h>
 
-#include "config/bluetooth.h";
+#include "config/bluetooth.h"
 #include "connection.h"
 
 class BLEConnection : public Connection
