@@ -7,20 +7,7 @@
 #include "connections/bhaptics.h"
 
 #include "outputs/auto_margins.h"
-
-class PCA9685OutputWriter : public OutputWriter
-{
-    private:
-        Adafruit_PWMServoDriver* driver;
-        uint8_t num;
-    public:
-        PCA9685OutputWriter(Adafruit_PWMServoDriver* driver, const uint8_t num): driver(driver), num(num) { };
-
-        void writeOutput(outputIntensity_t intensity) override
-        {
-            this->driver->setPin(this->num, (uint16_t)map(intensity, 0, UINT16_MAX, 0, 4095));
-        };
-};
+#include "output_writers/pca9685.h"
 
 void setupMode()
 {
