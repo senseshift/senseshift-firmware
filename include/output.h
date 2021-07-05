@@ -6,6 +6,8 @@
 #include <vector>
 #include <utility>
 
+#include <string>
+
 #include "config/output.h"
 
 #include "component.h"
@@ -14,6 +16,8 @@ typedef uint8_t outputPath_t;
 
 struct Point2D {
     uint16_t x, y;
+
+    Point2D(uint16_t x = 0, uint16_t y = 0) : x(x), y(y) {}
 
     bool const operator==(const Point2D &o) const {
         return x == o.x && y == o.y;

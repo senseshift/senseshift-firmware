@@ -1,10 +1,15 @@
+#include <HardwareSerial.h>
+
 #include "outputs/auto.h"
 
 OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
 {
     std::map<outputPoint_t*, OutputWriter*> points{};
 
-    size_t y_max = outputs.size();
+    size_t y_max = outputs.size(),
+           index = 0;
+
+    Serial.println(">> OutputAutoComponent()");
 
     for (size_t y = 0; y < y_max; ++y)
     {
@@ -16,6 +21,8 @@ OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
             OutputWriter* wr = row.at(x);
             Point2D coord = this->getCoordinate(x, y, x_max, y_max);
 
+            Serial.printf("\tIndex: %u,\tCoordinate: (%5u, %5u) \n", ++index, coord.x, coord.y);
+
             points[&coord] = wr;
         }
     }
@@ -25,20 +32,20 @@ OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
 
 uint16_t OutputAutoComponent::getCoordinateX(size_t x, size_t x_max)
 {
-    return UINT16_MAX * (1 / (x_max - 1)) * x;
+    return UINT16_MAX * (1 / ((float) x_max - 1)) * (float) x;
 }
 
 uint16_t OutputAutoComponent::getCoordinateY(size_t y, size_t y_max)
 {
-    return UINT16_MAX * (1 / (y_max - 1)) * y;
+    return UINT16_MAX * (1 / ((float) y_max - 1)) * (float) y;
 }
 
 outputPoint_t OutputAutoComponent::getCoordinate(size_t x, size_t y, size_t x_max, size_t y_max)
 {
     outputPoint_t point;
 
-    point.x = OutputAutoComponent::getCoordinateX(x, x_max);
-    point.y = OutputAutoComponent::getCoordinateY(y, y_max);
+    point.x = this->getCoordinateX(x, x_max);
+    point.y = this->getCoordinateY(y, y_max);
 
     return point;
 }

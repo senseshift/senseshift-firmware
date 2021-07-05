@@ -47,14 +47,14 @@ void OutputComponent::writeOutput(outputData_t& data)
 {
     auto closestPoints = __findClosestPoints(this->points, data.point);
 
-    for (auto &_p : closestPoints)
-    {
-        auto state = &this->states[_p.second];
+    // for (auto &_p : closestPoints)
+    // {
+    //     auto state = &this->states[_p.second];
 
-        state->intensity = data.intensity * _p.first;
+    //     state->intensity = data.intensity * _p.first;
 
-        this->writers.at(_p.second)->writeOutput(state->intensity);
-    }
+    //     this->writers.at(_p.second)->writeOutput(state->intensity);
+    // }
 }
 
 Output::Output() {}

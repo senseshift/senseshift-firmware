@@ -7,7 +7,9 @@ class BHapticsBLEConnection final : public BLEConnection
 {
     private:
         BLEService* motorService = nullptr;
+    protected:
+        void (*motorTransformer)(std::string&);
     public:
-        BHapticsBLEConnection(std::string deviceName) : BLEConnection(deviceName) {};
+        BHapticsBLEConnection(std::string deviceName, void (*motorTransformer)(std::string&)) : BLEConnection(deviceName), motorTransformer(motorTransformer) {};
         void setup(void);
 };
