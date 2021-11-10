@@ -5,8 +5,14 @@ This project intended to let people build their own DIY haptic-feedback devices
 ## Supported Boards
 
 | Board                | Status       |
-| -------------------- | ------------ |
+| :------------------- | ------------ |
 | ESP-WROOM-32         | Not Tested   |
+
+## Supported Protocols
+
+| Protocol           | Supported |
+| :----------------- | :-------: |
+| bHaptics Bluetooth | 🚧 |
 
 ## Plans
 - X16 Haptic Vest
