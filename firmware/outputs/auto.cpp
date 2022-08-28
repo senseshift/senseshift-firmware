@@ -4,13 +4,12 @@
 
 OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
 {
-    std::map<outputPoint_t*, OutputWriter*> points{};
+    std::map<outputPoint_t, OutputWriter*> points{};
 
     size_t y_max = outputs.size(),
            index = 0;
 
     Serial.println(">> OutputAutoComponent()");
-
     for (size_t y = 0; y < y_max; ++y)
     {
         auto row = outputs.at(y);
@@ -22,21 +21,21 @@ OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
             Point2D coord = this->getCoordinate(x, y, x_max, y_max);
 
             Serial.printf("\tIndex: %u,\tCoordinate: (%5u, %5u) \n", ++index, coord.x, coord.y);
-
-            points[&coord] = wr;
+            points[coord] = wr;
         }
     }
-
     OutputComponent::setOutputs(points);
 }
 
 uint16_t OutputAutoComponent::getCoordinateX(size_t x, size_t x_max)
 {
+    if (x_max == 1) return 0;
     return UINT16_MAX * (1 / ((float) x_max - 1)) * (float) x;
 }
 
 uint16_t OutputAutoComponent::getCoordinateY(size_t y, size_t y_max)
 {
+    if (y_max == 1) return 0;
     return UINT16_MAX * (1 / ((float) y_max - 1)) * (float) y;
 }
 

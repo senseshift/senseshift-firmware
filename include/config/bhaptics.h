@@ -16,6 +16,9 @@
 #define BH_FIRMWARE_VERSION (uint16_t) 258
 #endif
 
+#define NO_AUDIO_CABLE 0
+#define AUDIO_CABLE 1
+
 // All below are weird choices of bHaptics engineers...
 // Why to use unconventional UUIDs, that are reserved for other purposes?
 // You have  an unlimited amount of other UUIDs

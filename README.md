@@ -6,21 +6,21 @@ This project intended to let people build their own DIY haptic-feedback devices
 
 | Board                | Status       |
 | :------------------- | ------------ |
-| ESP-WROOM-32         | Not Tested   |
+| ESP-WROOM-32         | Tested       |
 
 ## Supported Protocols
 
 | Protocol           | Supported |
 | :----------------- | :-------: |
-| bHaptics Bluetooth | 🚧 |
+| bHaptics Bluetooth | Yes (Android/Windows/Quest) |
 
-## Plans
-- X16 Haptic Vest
-    ```
-    Using external I2C PWM expansion board (PCA9685-based) or embeded outputs
-    ```
-
-- X40 Haptic Vest
-    ```
-    Using x3 external I2C PWM expansion boards (PCA9685-based), since there is not enough PWMs on Arduino itself
-    ```
+## Supported devices
+| Device           | Required Pins |
+| :----------------- | :-------: |
+| Tactal | PWM on pins 32,33,25,26,27,14 |
+| TactGlove (L and R) | PWM on pins 32,33,25,26,27,14 |
+| Tactosy for arms | PWM on pins 32,33,25,26,27,14 |
+| Tactosy for hands | PWM on pins 32,33,25 |
+| Tactosy for feet | PWM on pins 32,33,25 |
+| X16 Haptic Vest | PWM on pins 32,33,25,26,27,14,12,13,19,18,5,17,16,4,2,15 |
+| X40 Haptic Vest | 2x PCA9685 (on address 0x40 and 0x41) + PWM on pins 32,33,25,26,27,14,12,13 |

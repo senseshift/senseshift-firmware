@@ -1,11 +1,28 @@
+#include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 #include <Wire.h>
 
 #include "connections/bhaptics.h"
 #include "firmware.h"
 #include "main.h"
+#include "output_writers/pca9685.h"
 #include "output_writers/direct.h"
 #include "outputs/auto_margins.h"
+
+// Front
+// 0 1 30 31
+// 2 3 32 33
+// 4 5 34 35
+// 6 7 36 37
+// 8 9 38 39
+
+// Back
+// 10 11 20 21
+// 12 13 22 23
+// 14 15 24 25
+// 16 17 26 27
+// 18 19 28 29
+
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 5;
 
@@ -21,7 +38,7 @@ Point2D* indexesToPoints[40] = {
     make_point(0, 2),
     make_point(1, 2),
     make_point(0, 3),
-    make_point(1, 4),
+    make_point(1, 3),
     make_point(0, 4),
     make_point(1, 4),
 
@@ -43,7 +60,7 @@ Point2D* indexesToPoints[40] = {
     make_point(2, 2),
     make_point(3, 2),
     make_point(2, 3),
-    make_point(3, 4),
+    make_point(3, 3),
     make_point(2, 4),
     make_point(3, 4),
 
@@ -66,7 +83,6 @@ void vestMotorTransformer(std::string& value) {
         outputData_t output_0;
         output_0.point = *indexesToPoints[actIndex];
         output_0.intensity = map(((byte >> 4) & 0xf), 0, 15, 0, UINT16_MAX);
-
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
             output_0);
@@ -82,6 +98,13 @@ void vestMotorTransformer(std::string& value) {
 }
 
 void setupMode() {
+    Adafruit_PWMServoDriver* pwm1 = new Adafruit_PWMServoDriver(0x40);
+    Adafruit_PWMServoDriver* pwm2 = new Adafruit_PWMServoDriver(0x41);
+    pwm1->begin();
+    pwm1->setPWMFreq(60);
+    pwm2->begin();
+    pwm2->setPWMFreq(60);
+
     ledcSetup(0, 60, 12);
     ledcAttachPin(32, 0);
 
@@ -106,64 +129,68 @@ void setupMode() {
     ledcSetup(7, 60, 12);
     ledcAttachPin(13, 7);
 
-    ledcSetup(8, 60, 12);
-    ledcAttachPin(19, 8);
-
-    ledcSetup(9, 60, 12);
-    ledcAttachPin(18, 9);
-
-    ledcSetup(10, 60, 12);
-    ledcAttachPin(5, 10);
-
-    ledcSetup(11, 60, 12);
-    ledcAttachPin(17, 11);
-
-    ledcSetup(12, 60, 12);
-    ledcAttachPin(16, 12);
-
-    ledcSetup(13, 60, 12);
-    ledcAttachPin(4, 13);
-
-    ledcSetup(14, 60, 12);
-    ledcAttachPin(2, 14);
-
-    ledcSetup(15, 60, 12);
-    ledcAttachPin(15, 15);
-
     autoOutputVector_t frontOutputs{
+        {
+            new PCA9685OutputWriter(pwm1, 0),
+            new PCA9685OutputWriter(pwm1, 1),
+            new PCA9685OutputWriter(pwm1, 2),
+            new PCA9685OutputWriter(pwm1, 3),
+        },
+        {
+            new PCA9685OutputWriter(pwm1, 4),
+            new PCA9685OutputWriter(pwm1, 5),
+            new PCA9685OutputWriter(pwm1, 6),
+            new PCA9685OutputWriter(pwm1, 7),
+        },
+        {
+            new PCA9685OutputWriter(pwm1, 8),
+            new PCA9685OutputWriter(pwm1, 9),
+            new PCA9685OutputWriter(pwm1, 10),
+            new PCA9685OutputWriter(pwm1, 11),
+        },
+        {
+            new PCA9685OutputWriter(pwm1, 12),
+            new PCA9685OutputWriter(pwm1, 13),
+            new PCA9685OutputWriter(pwm1, 14),
+            new PCA9685OutputWriter(pwm1, 15),
+        },
         {
             new DirectOutputWriter(0),
             new DirectOutputWriter(1),
-        },
-        {
             new DirectOutputWriter(2),
             new DirectOutputWriter(3),
-        },
-        {
-            new DirectOutputWriter(4),
-            new DirectOutputWriter(5),
-        },
-        {
-            new DirectOutputWriter(6),
-            new DirectOutputWriter(7),
         },
     };
     autoOutputVector_t backOutputs{
         {
-            new DirectOutputWriter(8),
-            new DirectOutputWriter(9),
+            new PCA9685OutputWriter(pwm2, 0),
+            new PCA9685OutputWriter(pwm2, 1),
+            new PCA9685OutputWriter(pwm2, 2),
+            new PCA9685OutputWriter(pwm2, 3),
         },
         {
-            new DirectOutputWriter(10),
-            new DirectOutputWriter(11),
+            new PCA9685OutputWriter(pwm2, 4),
+            new PCA9685OutputWriter(pwm2, 5),
+            new PCA9685OutputWriter(pwm2, 6),
+            new PCA9685OutputWriter(pwm2, 7),
         },
         {
-            new DirectOutputWriter(12),
-            new DirectOutputWriter(13),
+            new PCA9685OutputWriter(pwm2, 8),
+            new PCA9685OutputWriter(pwm2, 9),
+            new PCA9685OutputWriter(pwm2, 10),
+            new PCA9685OutputWriter(pwm2, 11),
         },
         {
-            new DirectOutputWriter(14),
-            new DirectOutputWriter(15),
+            new PCA9685OutputWriter(pwm2, 12),
+            new PCA9685OutputWriter(pwm2, 13),
+            new PCA9685OutputWriter(pwm2, 14),
+            new PCA9685OutputWriter(pwm2, 15),
+        },
+        {
+            new DirectOutputWriter(4),
+            new DirectOutputWriter(5),
+            new DirectOutputWriter(6),
+            new DirectOutputWriter(7),
         },
     };
 
