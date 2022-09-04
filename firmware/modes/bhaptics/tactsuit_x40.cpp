@@ -9,20 +9,6 @@
 #include "output_writers/direct.h"
 #include "outputs/auto_margins.h"
 
-// Front
-// 0 1 30 31
-// 2 3 32 33
-// 4 5 34 35
-// 6 7 36 37
-// 8 9 38 39
-
-// Back
-// 10 11 20 21
-// 12 13 22 23
-// 14 15 24 25
-// 16 17 26 27
-// 18 19 28 29
-
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 5;
 
