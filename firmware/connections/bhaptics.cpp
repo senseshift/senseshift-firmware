@@ -162,6 +162,9 @@ void BHapticsBLEConnection::setup()
             BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_BROADCAST| BLECharacteristic::PROPERTY_INDICATE| BLECharacteristic::PROPERTY_WRITE_NR
         );
         monitorChar->setCallbacks(new SerialOutputCharCallbacks());
+        monitorChar->addDescriptor(new BLE2902());
+        uint16_t audioCableState = NO_AUDIO_CABLE;
+        monitorChar->setValue(audioCableState);
     }
     
     // auto* athGlobalChar = this->motorService->createCharacteristic(

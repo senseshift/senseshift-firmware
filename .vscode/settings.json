@@ -41,6 +41,14 @@
         "utility": "cpp",
         "typeinfo": "cpp",
         "string": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "valarray": "cpp",
+        "optional": "cpp",
+        "atomic": "cpp",
+        "list": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "memory_resource": "cpp",
+        "string_view": "cpp"
     }
 }

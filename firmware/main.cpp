@@ -10,7 +10,6 @@ extern void setupMode(void);
 void setup()
 {
     Serial.begin(115200);
-
     setupMode();
 
     #ifdef SERIAL_PLOTTER

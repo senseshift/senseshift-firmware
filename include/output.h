@@ -51,14 +51,14 @@ class OutputWriter
 class OutputComponent : public Component
 {
     private:
-        std::list<outputPoint_t*> points{};
-        std::map<outputPoint_t*, OutputWriter*> writers{};
-        std::map<outputPoint_t*, outputState_t> states{};
+        std::list<outputPoint_t> points{};
+        std::map<outputPoint_t, OutputWriter*> writers{};
+        std::map<outputPoint_t, outputState_t> states{};
 
     public:
-        void setOutputs(std::map<outputPoint_t*, OutputWriter*> &);
-        std::list<outputPoint_t*>* getOutputPoints(void) { return &this->points; };
-        std::map<outputPoint_t*, outputState_t>* getOutputStates(void) { return &this->states; };
+        void setOutputs(std::map<outputPoint_t, OutputWriter*> &);
+        std::list<outputPoint_t>* getOutputPoints(void) { return &this->points; };
+        std::map<outputPoint_t, outputState_t>* getOutputStates(void) { return &this->states; };
         void writeOutput(outputData_t&);
 };
 
