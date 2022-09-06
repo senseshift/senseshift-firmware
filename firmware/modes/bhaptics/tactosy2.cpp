@@ -15,14 +15,15 @@ const uint16_t _bh_max_y = 2;
 inline Point2D* make_point(uint16_t x, uint16_t y) {
     return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
 }
-Point2D* indexesToPoints[_bh_max_x * _bh_max_y] = {
 
+Point2D* indexesToPoints[_bh_max_x * _bh_max_y] = {
     make_point(0, 0),
     make_point(1, 0),
     make_point(2, 0),
     make_point(0, 1),
     make_point(1, 1),
-    make_point(2, 1)};
+    make_point(2, 1)
+};
 
 void vestMotorTransformer(std::string& value) {
     for (size_t i = 0; i < (_bh_max_x * _bh_max_y); i++) {

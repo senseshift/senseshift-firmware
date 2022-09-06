@@ -14,11 +14,12 @@ const uint16_t _bh_max_x = 3;
 inline Point2D* make_point(uint16_t x) {
     return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), 0);
 }
-Point2D* indexesToPoints[_bh_max_x] = {
 
+Point2D* indexesToPoints[_bh_max_x] = {
     make_point(0),
     make_point(1),
-    make_point(2)};
+    make_point(2)
+};
 
 void vestMotorTransformer(std::string& value) {
     for (size_t i = 0; i < _bh_max_x; i++) {

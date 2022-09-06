@@ -14,8 +14,8 @@ const uint16_t _bh_max_y = 3;
 inline Point2D* make_point(uint16_t y) {
     return new Point2D(0, UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
 }
-Point2D* indexesToPoints[_bh_max_y] = {
 
+Point2D* indexesToPoints[_bh_max_y] = {
     make_point(0),
     make_point(1),
     make_point(2),
