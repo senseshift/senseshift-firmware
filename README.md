@@ -2,6 +2,8 @@
 
 This project intended to let people build their own DIY haptic-feedback devices
 
+[![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
+
 ## Supported Boards
 
 | Board                | Status       |
