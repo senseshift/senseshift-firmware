@@ -28,7 +28,7 @@ Open project directory (extract archive if needed) in VSCode with PlatformIO exe
   
   1. PlatformIO IDE homepage
   2. Select desired firmware mode and run command (Build, Upload or Monitor)
-  3. Use quick actions (✔️ - Build, ➡️ - Upload, 🔌 - Monitor). Choose your default mode by clicking `Default (openhaptics-firmware) and switching your default` 
+  3. Use quick actions (`✔️ - Build`, `➡️ - Upload`, `🔌 - Monitor`). Choose your default mode by clicking `Default (openhaptics-firmware)` and switching your default 
 </details>
 
 ### Editing source code
