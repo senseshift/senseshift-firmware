@@ -4,14 +4,9 @@ Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Flashing firmware](#flashing-firmware)
   - [Method 1: PlatformIO IDE](#method-1-platformio-ide)
-    - [Prerequisites:](#prerequisites)
-    - [Download](#download)
-    - [Flashing firmware to ESP32](#flashing-firmware-to-esp32)
-    - [Editing source code](#editing-source-code)
   - [Method 2: Arduino IDE](#method-2-arduino-ide)
 - [Connecting to PCVR/Quest/etc.](#connecting-to-pcvrquestetc)
   - [bHaptics Player](#bhaptics-player)
-    - [Tested versions](#tested-versions)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
 
