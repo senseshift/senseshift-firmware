@@ -1,6 +1,6 @@
 # OpenHaptics Firmware
 
-This project intended to let people build their own DIY haptic-feedback devices
+This project intended to let people build their own DIY haptic-feedback devices. Integrates to all existing games, that work with bHaptics
 
 [![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
 [![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter&style=plastic)](https://twitter.com/leon0399)
@@ -8,9 +8,9 @@ This project intended to let people build their own DIY haptic-feedback devices
 <a href="/LICENSE"><img alt="GPL-V3.0 License" src="https://img.shields.io/github/license/openhaptics/openhaptics-firmware.svg"></a>
 <a href="https://github.com/MarlinFirmware/Marlin/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/openhaptics/openhaptics-firmware.svg"></a>
 
-## Building and flashing
+## Configuration, flashing and connecting
 
-See [`/docs`](/docs/README.md)
+See [`/docs`](/docs/)
 
 Please note, that documentation is still work-in-progress
 
