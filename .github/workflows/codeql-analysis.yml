@@ -102,6 +102,10 @@ jobs:
         pip install --upgrade platformio
         pio upgrade --dev
         pio pkg update --global
+        
+    - name: Build
+      run: |
+        pio run --environment bhaptics_tactsuit_x40
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
