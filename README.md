@@ -10,7 +10,8 @@ This project intended to let people build their own DIY haptic-feedback devices.
 
 ## Configuration, flashing and connecting
 
-See [`/docs`](/docs)
+* [Firmware Documentation](/docs)
+* [Hardware Documentation](https://github.com/openhaptics/openhaptics-hardware)
 
 Please note, that documentation is still work-in-progress
 
