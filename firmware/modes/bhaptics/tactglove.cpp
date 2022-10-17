@@ -30,9 +30,7 @@ void vestMotorTransformer(std::string& value) {
         outputData_t output_0;
         output_0.point = *indexesToPoints[i];
         output_0.intensity = map(byte, 0, 100, 0, UINT16_MAX);
-        App.getOutput()->writeOutput(
-            OUTPUT_PATH_ACCESSORY,
-            output_0);
+        App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
     }
 }
 
@@ -55,7 +53,7 @@ ledcSetup(0, 60, 12);
     ledcSetup(5, 60, 12);
     ledcAttachPin(14, 5);
 
-    autoOutputVector_t frontOutputs{
+    autoOutputVector_t gloveOutputs{
         {
             new LEDCOutputWriter(0),
             new LEDCOutputWriter(1),
@@ -66,9 +64,9 @@ ledcSetup(0, 60, 12);
         },
     };
 
-    OutputAutoComponent_Margin* face = new OutputAutoComponent_Margin(frontOutputs);
+    OutputAutoComponent_Margin* glove = new OutputAutoComponent_Margin(gloveOutputs);
 
-    App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, face);
+    App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
     App.registerComponent(bhBleConnection);

@@ -27,9 +27,7 @@ void vestMotorTransformer(std::string& value) {
         outputData_t output_0;
         output_0.point = *indexesToPoints[i];
         output_0.intensity = map(byte, 0, 100, 0, UINT16_MAX);
-        App.getOutput()->writeOutput(
-            OUTPUT_PATH_ACCESSORY,
-            output_0);
+        App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
     }
 }
 
@@ -43,14 +41,15 @@ void setupMode() {
     ledcSetup(2, 60, 12);
     ledcAttachPin(25, 2);
 
-    autoOutputVector_t frontOutputs{
+    autoOutputVector_t footOutputs{
         {
             new LEDCOutputWriter(0),
             new LEDCOutputWriter(1),
             new LEDCOutputWriter(2),
-        }};
+        }
+    };
 
-    OutputAutoComponent_Margin* foot = new OutputAutoComponent_Margin(frontOutputs);
+    OutputAutoComponent_Margin* foot = new OutputAutoComponent_Margin(footOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, foot);
 

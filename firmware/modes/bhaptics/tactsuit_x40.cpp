@@ -72,7 +72,8 @@ void vestMotorTransformer(std::string& value) {
         output_0.intensity = map(((byte >> 4) & 0xf), 0, 15, 0, UINT16_MAX);
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_0);
+            output_0
+        );
 
         outputData_t output_1;
         output_1.point = *indexesToPoints[actIndex + 1];
@@ -80,7 +81,8 @@ void vestMotorTransformer(std::string& value) {
 
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_1);
+            output_1
+        );
     }
 }
 
