@@ -5,7 +5,7 @@
 #include "connections/bhaptics.h"
 #include "firmware.h"
 #include "main.h"
-#include "output_writers/direct.h"
+#include "output_writers/ledc.h"
 #include "output_writers/pca9685.h"
 #include "outputs/auto_margins.h"
 
@@ -57,14 +57,14 @@ void setupMode() {ledcSetup(0, 60, 12);
 
     autoOutputVector_t frontOutputs{
         {
-            new DirectOutputWriter(0),
-            new DirectOutputWriter(1),
-            new DirectOutputWriter(2),
+            new LEDCOutputWriter(0),
+            new LEDCOutputWriter(1),
+            new LEDCOutputWriter(2),
         },
         {
-            new DirectOutputWriter(3),
-            new DirectOutputWriter(4),
-            new DirectOutputWriter(5),
+            new LEDCOutputWriter(3),
+            new LEDCOutputWriter(4),
+            new LEDCOutputWriter(5),
         }};
 
     OutputAutoComponent_Margin* forearm = new OutputAutoComponent_Margin(frontOutputs);

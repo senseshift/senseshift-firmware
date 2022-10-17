@@ -5,7 +5,7 @@
 #include "connections/bhaptics.h"
 #include "firmware.h"
 #include "main.h"
-#include "output_writers/direct.h"
+#include "output_writers/ledc.h"
 #include "output_writers/pca9685.h"
 #include "outputs/auto_margins.h"
 
@@ -45,13 +45,13 @@ void setupMode() {
 
     autoOutputVector_t frontOutputs{
         {
-            new DirectOutputWriter(0),
+            new LEDCOutputWriter(0),
         },
         {
-            new DirectOutputWriter(1),
+            new LEDCOutputWriter(1),
         },
         {
-            new DirectOutputWriter(2),
+            new LEDCOutputWriter(2),
         }};
     OutputAutoComponent_Margin* hand = new OutputAutoComponent_Margin(frontOutputs);
 
