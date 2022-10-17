@@ -6,7 +6,7 @@
 #include "firmware.h"
 #include "main.h"
 #include "output_writers/pca9685.h"
-#include "output_writers/direct.h"
+#include "output_writers/ledc.h"
 #include "outputs/auto_margins.h"
 
 const uint16_t _bh_max_x = 4;
@@ -72,7 +72,8 @@ void vestMotorTransformer(std::string& value) {
         output_0.intensity = map(((byte >> 4) & 0xf), 0, 15, 0, UINT16_MAX);
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_0);
+            output_0
+        );
 
         outputData_t output_1;
         output_1.point = *indexesToPoints[actIndex + 1];
@@ -80,7 +81,8 @@ void vestMotorTransformer(std::string& value) {
 
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_1);
+            output_1
+        );
     }
 }
 
@@ -143,10 +145,10 @@ void setupMode() {
             new PCA9685OutputWriter(pwm1, 15),
         },
         {
-            new DirectOutputWriter(0),
-            new DirectOutputWriter(1),
-            new DirectOutputWriter(2),
-            new DirectOutputWriter(3),
+            new LEDCOutputWriter(0),
+            new LEDCOutputWriter(1),
+            new LEDCOutputWriter(2),
+            new LEDCOutputWriter(3),
         },
     };
     autoOutputVector_t backOutputs{
@@ -175,10 +177,10 @@ void setupMode() {
             new PCA9685OutputWriter(pwm2, 15),
         },
         {
-            new DirectOutputWriter(4),
-            new DirectOutputWriter(5),
-            new DirectOutputWriter(6),
-            new DirectOutputWriter(7),
+            new LEDCOutputWriter(4),
+            new LEDCOutputWriter(5),
+            new LEDCOutputWriter(6),
+            new LEDCOutputWriter(7),
         },
     };
 

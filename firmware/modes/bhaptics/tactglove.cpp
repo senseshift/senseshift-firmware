@@ -6,7 +6,7 @@
 #include "firmware.h"
 #include "main.h"
 #include "output_writers/pca9685.h"
-#include "output_writers/direct.h"
+#include "output_writers/ledc.h"
 #include "outputs/auto_margins.h"
 
 const uint16_t _bh_max_x = 6;
@@ -30,9 +30,7 @@ void vestMotorTransformer(std::string& value) {
         outputData_t output_0;
         output_0.point = *indexesToPoints[i];
         output_0.intensity = map(byte, 0, 100, 0, UINT16_MAX);
-        App.getOutput()->writeOutput(
-            OUTPUT_PATH_ACCESSORY,
-            output_0);
+        App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
     }
 }
 
@@ -55,20 +53,20 @@ ledcSetup(0, 60, 12);
     ledcSetup(5, 60, 12);
     ledcAttachPin(14, 5);
 
-    autoOutputVector_t frontOutputs{
+    autoOutputVector_t gloveOutputs{
         {
-            new DirectOutputWriter(0),
-            new DirectOutputWriter(1),
-            new DirectOutputWriter(2),
-            new DirectOutputWriter(3),
-            new DirectOutputWriter(4),
-            new DirectOutputWriter(5),
+            new LEDCOutputWriter(0),
+            new LEDCOutputWriter(1),
+            new LEDCOutputWriter(2),
+            new LEDCOutputWriter(3),
+            new LEDCOutputWriter(4),
+            new LEDCOutputWriter(5),
         },
     };
 
-    OutputAutoComponent_Margin* face = new OutputAutoComponent_Margin(frontOutputs);
+    OutputAutoComponent_Margin* glove = new OutputAutoComponent_Margin(gloveOutputs);
 
-    App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, face);
+    App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
     App.registerComponent(bhBleConnection);

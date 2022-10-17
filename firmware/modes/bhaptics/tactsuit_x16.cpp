@@ -4,7 +4,7 @@
 #include "connections/bhaptics.h"
 #include "firmware.h"
 #include "main.h"
-#include "output_writers/direct.h"
+#include "output_writers/ledc.h"
 #include "outputs/auto_margins.h"
 
 const uint16_t _bh_max_x = 4;
@@ -71,7 +71,8 @@ void vestMotorTransformer(std::string& value) {
 
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_0);
+            output_0
+        );
 
         outputData_t output_1;
         output_1.point = *indexesToPoints[actIndex + 1];
@@ -79,7 +80,8 @@ void vestMotorTransformer(std::string& value) {
 
         App.getOutput()->writeOutput(
             (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_1);
+            output_1
+        );
     }
 }
 
@@ -134,38 +136,38 @@ void setupMode() {
 
     autoOutputVector_t frontOutputs{
         {
-            new DirectOutputWriter(0),
-            new DirectOutputWriter(1),
+            new LEDCOutputWriter(0),
+            new LEDCOutputWriter(1),
         },
         {
-            new DirectOutputWriter(2),
-            new DirectOutputWriter(3),
+            new LEDCOutputWriter(2),
+            new LEDCOutputWriter(3),
         },
         {
-            new DirectOutputWriter(4),
-            new DirectOutputWriter(5),
+            new LEDCOutputWriter(4),
+            new LEDCOutputWriter(5),
         },
         {
-            new DirectOutputWriter(6),
-            new DirectOutputWriter(7),
+            new LEDCOutputWriter(6),
+            new LEDCOutputWriter(7),
         },
     };
     autoOutputVector_t backOutputs{
         {
-            new DirectOutputWriter(8),
-            new DirectOutputWriter(9),
+            new LEDCOutputWriter(8),
+            new LEDCOutputWriter(9),
         },
         {
-            new DirectOutputWriter(10),
-            new DirectOutputWriter(11),
+            new LEDCOutputWriter(10),
+            new LEDCOutputWriter(11),
         },
         {
-            new DirectOutputWriter(12),
-            new DirectOutputWriter(13),
+            new LEDCOutputWriter(12),
+            new LEDCOutputWriter(13),
         },
         {
-            new DirectOutputWriter(14),
-            new DirectOutputWriter(15),
+            new LEDCOutputWriter(14),
+            new LEDCOutputWriter(15),
         },
     };
 

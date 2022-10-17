@@ -5,7 +5,7 @@
 #include "connections/bhaptics.h"
 #include "firmware.h"
 #include "main.h"
-#include "output_writers/direct.h"
+#include "output_writers/ledc.h"
 #include "output_writers/pca9685.h"
 #include "outputs/auto_margins.h"
 
@@ -27,9 +27,7 @@ void vestMotorTransformer(std::string& value) {
         outputData_t output_0;
         output_0.point = *indexesToPoints[i];
         output_0.intensity = map(byte, 0, 100, 0, UINT16_MAX);
-        App.getOutput()->writeOutput(
-            OUTPUT_PATH_ACCESSORY,
-            output_0);
+        App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
     }
 }
 
@@ -43,17 +41,19 @@ void setupMode() {
     ledcSetup(2, 60, 12);
     ledcAttachPin(25, 2);
 
-    autoOutputVector_t frontOutputs{
+    autoOutputVector_t handOutputs{
         {
-            new DirectOutputWriter(0),
+            new LEDCOutputWriter(0),
         },
         {
-            new DirectOutputWriter(1),
+            new LEDCOutputWriter(1),
         },
         {
-            new DirectOutputWriter(2),
-        }};
-    OutputAutoComponent_Margin* hand = new OutputAutoComponent_Margin(frontOutputs);
+            new LEDCOutputWriter(2),
+        }
+    };
+
+    OutputAutoComponent_Margin* hand = new OutputAutoComponent_Margin(handOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, hand);
 
