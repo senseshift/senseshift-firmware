@@ -3,7 +3,7 @@
 This project intended to let people build their own DIY haptic-feedback devices. Integrates to all existing games, that work with bHaptics
 
 [![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
-[![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter&style=plastic)](https://twitter.com/leon0399)
+[![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter)](https://twitter.com/leon0399)
 
 [![GPL-3.0](https://img.shields.io/github/license/openhaptics/openhaptics-firmware)](/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/openhaptics/openhaptics-firmware)](https://github.com/openhaptics/openhaptics-firmware/graphs/contributors)
@@ -15,17 +15,36 @@ This project intended to let people build their own DIY haptic-feedback devices.
 
 Please note, that documentation is still work-in-progress
 
-## Supported Boards
+## Supported Hardwaree
+
+### MCU
 
 | Board                | Status       |
-| :------------------- | :----------- |
-| ESP-WROOM-32         | Tested       |
+| :------------------- | :----------: |
+| ESP32-WROOM          | ✅            |
+| ESP32 WROVER         | ✅            |
+
+### PWM Drivers
+
+| Board                | Status       |
+| :------------------- | :----------: |
+| PCA9685              | ✅            |
+| Internal PWM         | ✅            |
+
+### Battery controllers
+
+| Board                | Status       |
+| :------------------- | :----------: |
+| MAX1704x             | 🚧            |
+| MCP3021              | 🚧            |
+| Internal ADC         | 🚧            |
 
 ## Supported Protocols
 
-| Protocol           | Supported                   |
-| :----------------- | :-------------------------: |
-| bHaptics Bluetooth | Yes (Android/Windows/Quest) |
+| Protocol             | Status                                                              |
+| :------------------- | :-----------------------------------------------------------------: |
+| bHaptics Bluetooth   | ✅ (Android/Windows/Quest)                                           |
+| OpenHaptics          | [RFC](https://github.com/openhaptics/openhaptics-firmware/issues/9) |
 
 ## Supported devices
 
