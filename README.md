@@ -21,8 +21,10 @@ Please note, that documentation is still work-in-progress
 
 | Board                | Status       |
 | :------------------- | :----------: |
-| ESP32-WROOM          | ✅            |
-| ESP32 WROVER         | ✅            |
+| ESP32-WROOM-32       | ✅            |
+| ESP32-WROVER         | ✅            |
+| ESP32-C3             | ❌            |
+| ESP32-S3             | ❌            |
 
 ### PWM Drivers
 
