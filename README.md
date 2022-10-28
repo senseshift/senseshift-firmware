@@ -30,19 +30,20 @@ Please note, that documentation is still work-in-progress
 
 | Board                | Status       |
 | :------------------- | :----------: |
+| Internal PWM         | ✅            |
 | PCA9685              | ✅            |
 | PCA9531              | 🚧            |
 | PCA9635              | 🚧            |
 | SN3218               | 🚧            |
-| Internal PWM         | ✅            |
+| MP3326               | 🚧            |
 
 ### Battery controllers
 
 | Board                | Status       |
 | :------------------- | :----------: |
+| Internal ADC         | 🚧            |
 | MAX1704x             | 🚧            |
 | MCP3021              | 🚧            |
-| Internal ADC         | 🚧            |
 
 ## Supported Protocols
 
@@ -53,12 +54,12 @@ Please note, that documentation is still work-in-progress
 
 ## Supported devices
 
-| Device              | Retail price | Required Pins                                                                                                                           |
-| :------------------ | -----------: | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| Tactal              |  US $149     | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                                                          |
-| TactGlove (L and R) | (?) US $299  | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                                                          |
-| Tactosy for arms    | US $249      | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                                                          |
-| Tactosy for hands   | US $249      | PWM on pins `32`, `33`, `25`                                                                                                            |
-| Tactosy for feet    | US $249      | PWM on pins `32`, `33`, `25`                                                                                                            |
-| X16 Haptic Vest     | US $299      | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`, `12`, `13`, `19`, `18`, `5`, `17`, `16`, `4`, `2`, `15` *OR* PCA9685 on address `0x40`  |
-| X40 Haptic Vest     | US $499      | 2x PCA9685 (on address `0x40` and `0x41`) + PWM on pins `32`, `33`, `25`, `26`, `27`, `14`, `12`, `13`                                  |
+| Device              | Retail price | Required Pins                                                                                          |
+| :------------------ | -----------: | :------------------------------------------------------------------------------------------------------|
+| Tactal              |  US $149     | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                         |
+| TactGlove (L and R) | (?) US $299  | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                         |
+| Tactosy for arms    | US $249      | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                         |
+| Tactosy for hands   | US $249      | PWM on pins `32`, `33`, `25`                                                                           |
+| Tactosy for feet    | US $249      | PWM on pins `32`, `33`, `25`                                                                           |
+| X16 Haptic Vest     | US $299      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)          |
+| X40 Haptic Vest     | US $499      | 2x PCA9685 (on address `0x40` and `0x41`) + PWM on pins `32`, `33`, `25`, `26`, `27`, `14`, `12`, `13` |
