@@ -46,7 +46,9 @@ Please note, that documentation is still work-in-progress
 | :------------------- | :----------: |
 | Internal ADC         | 🚧            |
 | MAX1704x             | 🚧            |
+| INA219               | 🚧            |
 | MCP3021              | 🚧            |
+| STUSB4500            | 🚧            |
 
 ## Supported Protocols
 
