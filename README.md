@@ -28,14 +28,17 @@ Please note, that documentation is still work-in-progress
 
 ### PWM Drivers
 
-| Board                | Status       |
-| :------------------- | :----------: |
-| Internal PWM         | ✅            |
-| PCA9685              | ✅            |
-| PCA9531              | 🚧            |
-| PCA9635              | 🚧            |
-| SN3218               | 🚧            |
-| MP3326               | 🚧            |
+| Board                | Status       | Max outputs per board |
+| :------------------- | :----------: | ---------------------: |
+| Internal PWM         | ✅            |                    16 |
+| PCA9685              | ✅            |                    16 |
+| PCA9634              | 🚧            |                     8 |
+| PCA9531              | 🚧            |                     8 |
+| PCA9635              | 🚧            |                    16 |
+| SN3218               | 🚧            |                    18 |
+| MP3326               | 🚧            |                    16 |
+| TLC59108F            | 🚧            |                     8 |
+| LP50xx               | 🚧            |             9 _or_ 12 |
 
 ### Battery controllers
 
