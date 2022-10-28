@@ -15,7 +15,7 @@ This project intended to let people build their own DIY haptic-feedback devices.
 
 Please note, that documentation is still work-in-progress
 
-## Supported Hardwaree
+## Supported Hardware
 
 ### MCU
 
@@ -31,6 +31,9 @@ Please note, that documentation is still work-in-progress
 | Board                | Status       |
 | :------------------- | :----------: |
 | PCA9685              | ✅            |
+| PCA9531              | 🚧            |
+| PCA9635              | 🚧            |
+| SN3218               | 🚧            |
 | Internal PWM         | ✅            |
 
 ### Battery controllers
