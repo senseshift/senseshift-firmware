@@ -2,10 +2,10 @@ name: Release Binaries
 
 on:
   workflow_dispatch:
-  pull_request: {}
   release:
     types:
       - created
+      - prereleased
 
 jobs:
   build_binaries:
@@ -65,6 +65,14 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{matrix.target}}.bin
+          name: ${{matrix.target}}
           path: ./.pio/build/${{matrix.target}}/firmware.bin
           retention-days: 5
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          asset_name: ${{matrix.target}}.bin
+          file: ./.pio/build/${{matrix.target}}/firmware.bin
+          tag: ${{github.ref}}
