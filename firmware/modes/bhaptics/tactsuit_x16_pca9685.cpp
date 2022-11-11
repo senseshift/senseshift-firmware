@@ -8,56 +8,63 @@
 #include "outputs/auto_margins.h"
 
 const uint16_t _bh_max_x = 4;
-const uint16_t _bh_max_y = 5;
+const uint16_t _bh_max_y = 2;
 
 inline Point2D* make_point(uint16_t x, uint16_t y) {
     return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
 }
 
 Point2D* indexesToPoints[40] = {
-    make_point(0, 0),
-    make_point(1, 0),
-    make_point(0, 1),
-    make_point(1, 1),
-    make_point(0, 2),
-    make_point(1, 2),
-    make_point(0, 3),
-    make_point(1, 4),
-    make_point(0, 4),
-    make_point(1, 4),
+    // Front
+    make_point(0, 0), // 0
+    make_point(1, 0), // 1
+    make_point(0, 0), // 4
+    make_point(1, 0), // 5
 
-    make_point(0, 0),
-    make_point(1, 0),
-    make_point(0, 1),
-    make_point(1, 1),
-    make_point(0, 2),
-    make_point(1, 2),
-    make_point(0, 3),
-    make_point(1, 3),
-    make_point(0, 4),
-    make_point(1, 4),
+    make_point(0, 1), // 8
+    make_point(1, 1), // 9
+    make_point(0, 1), // 12
+    make_point(1, 1), // 13
+    make_point(0, 1), // 16
+    make_point(1, 1), // 17
 
-    make_point(2, 0),
-    make_point(3, 0),
-    make_point(2, 1),
-    make_point(3, 1),
-    make_point(2, 2),
-    make_point(3, 2),
-    make_point(2, 3),
-    make_point(3, 4),
-    make_point(2, 4),
-    make_point(3, 4),
+    // Back
+    make_point(0, 0), // 0
+    make_point(1, 0), // 1
+    make_point(0, 0), // 4
+    make_point(1, 0), // 5
 
-    make_point(2, 0),
-    make_point(3, 0),
-    make_point(2, 1),
-    make_point(3, 1),
-    make_point(2, 2),
-    make_point(3, 2),
-    make_point(2, 3),
-    make_point(3, 3),
-    make_point(2, 4),
-    make_point(3, 4)
+    make_point(0, 1), // 8
+    make_point(1, 1), // 9
+    make_point(0, 1), // 12
+    make_point(1, 1), // 13
+    make_point(0, 1), // 16
+    make_point(1, 1), // 17
+
+    make_point(2, 0), // 2
+    make_point(3, 0), // 3
+    make_point(2, 0), // 4
+    make_point(3, 0), // 7
+
+    make_point(2, 1), // 10
+    make_point(3, 1), // 11
+    make_point(2, 1), // 14
+    make_point(3, 1), // 15
+    make_point(2, 1), // 18
+    make_point(3, 1), // 19
+
+    // Front
+    make_point(2, 0), // 2
+    make_point(3, 0), // 3
+    make_point(2, 0), // 4
+    make_point(3, 0), // 7
+
+    make_point(2, 1), // 10
+    make_point(3, 1), // 11
+    make_point(2, 1), // 14
+    make_point(3, 1), // 15
+    make_point(2, 1), // 18
+    make_point(3, 1), // 19
 };
 
 void vestMotorTransformer(std::string& value) {
