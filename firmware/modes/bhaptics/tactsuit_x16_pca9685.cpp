@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "connections/bhaptics.h"
 #include "firmware.h"
 #include "main.h"
+#include "output.h"
+
+#include "connections/bhaptics.h"
+#include "outputs/auto.h"
 #include "output_writers/pca9685.h"
-#include "outputs/auto_margins.h"
 
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 2;
@@ -134,8 +136,8 @@ void setupMode() {
         },
     };
 
-    OutputAutoComponent_Margin* chestFront = new OutputAutoComponent_Margin(frontOutputs);
-    OutputAutoComponent_Margin* chestBack = new OutputAutoComponent_Margin(backOutputs);
+    OutputComponent* chestFront = new OutputAutoComponent(frontOutputs);
+    OutputComponent* chestBack = new OutputAutoComponent(backOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
