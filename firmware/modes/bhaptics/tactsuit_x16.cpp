@@ -70,6 +70,8 @@ Point2D* indexesToPoints[40] = {
 };
 
 void vestMotorTransformer(std::string& value) {
+    Serial.println(value.c_str());
+
     for (size_t i = 0; i < 20; i++) {
         uint8_t byte = value[i];
         uint actIndex = i * 2;
