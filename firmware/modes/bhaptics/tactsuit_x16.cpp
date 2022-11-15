@@ -70,28 +70,46 @@ Point2D* indexesToPoints[40] = {
 };
 
 void vestMotorTransformer(std::string& value) {
-    Serial.println(value.c_str());
+    uint8_t result[40];
 
-    for (size_t i = 0; i < 20; i++) {
+    for (auto i = 0; i < 20; i++) {
         uint8_t byte = value[i];
         uint actIndex = i * 2;
 
+        result[actIndex] = (byte >> 4) & 0xf;
+        result[actIndex + 1] = (byte & 0xf);
+    }
+
+    // TODO: Debug, remove
+    Serial.print("{ ");
+    for (auto i = 0; i < 40; i++) {
+        Serial.printf("%u, ", result[i]);
+    }
+    Serial.println(" }");
+
+    // Test 1
+    // for (auto i = 0; i < 40; i++) {
+    //     outputData_t output_0;
+    //     output_0.point = *indexesToPoints[i];
+    //     output_0.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
+    //     App.getOutput()->writeOutput(
+    //         (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
+    //         output_0
+    //     );
+    // }
+
+    // Test 2
+    for (auto i = 0; i < 40; i++) {
+        if (i != 0 && i != 3 && i != 8 && i != 11 && i != 20 && i != 23 && i != 28 && i != 31) {
+            continue;
+        }
+
         outputData_t output_0;
-        output_0.point = *indexesToPoints[actIndex];
-        output_0.intensity = map(((byte >> 4) & 0xf), 0, 15, 0, UINT16_MAX);
-
+        output_0.point = *indexesToPoints[i];
+        output_0.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
         App.getOutput()->writeOutput(
-            (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
+            (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
             output_0
-        );
-
-        outputData_t output_1;
-        output_1.point = *indexesToPoints[actIndex + 1];
-        output_1.intensity = map((byte & 0xf), 0, 15, 0, UINT16_MAX);
-
-        App.getOutput()->writeOutput(
-            (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_1
         );
     }
 }
