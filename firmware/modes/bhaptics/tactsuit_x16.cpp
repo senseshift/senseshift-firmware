@@ -18,55 +18,55 @@ inline Point2D* make_point(uint16_t x, uint16_t y) {
 
 Point2D* indexesToPoints[40] = {
     // Front
-    make_point(0, 0), // 0
-    make_point(1, 0), // 1
-    make_point(0, 0), // 4
-    make_point(1, 0), // 5
+    /*  0 */ make_point(0, 0), // 0
+    /*  1 */ make_point(1, 0), // 1
+    /*  2 */ make_point(0, 0), // 4
+    /*  3 */ make_point(1, 0), // 5
 
-    make_point(0, 1), // 8
-    make_point(1, 1), // 9
-    make_point(0, 1), // 12
-    make_point(1, 1), // 13
-    make_point(0, 1), // 16
-    make_point(1, 1), // 17
+    /*  4 */ make_point(0, 1), // 8
+    /*  5 */ make_point(1, 1), // 9
+    /*  6 */ make_point(0, 1), // 12
+    /*  7 */ make_point(1, 1), // 13
+    /*  8 */ make_point(0, 1), // 16
+    /*  9 */ make_point(1, 1), // 17
 
     // Back
-    make_point(0, 0), // 0
-    make_point(1, 0), // 1
-    make_point(0, 0), // 4
-    make_point(1, 0), // 5
+    /* 10 */ make_point(0, 0), // 0
+    /* 11 */ make_point(1, 0), // 1
+    /* 12 */ make_point(0, 0), // 4
+    /* 13 */ make_point(1, 0), // 5
 
-    make_point(0, 1), // 8
-    make_point(1, 1), // 9
-    make_point(0, 1), // 12
-    make_point(1, 1), // 13
-    make_point(0, 1), // 16
-    make_point(1, 1), // 17
+    /* 14 */ make_point(0, 1), // 8
+    /* 15 */ make_point(1, 1), // 9
+    /* 16 */ make_point(0, 1), // 12
+    /* 17 */ make_point(1, 1), // 13
+    /* 18 */ make_point(0, 1), // 16
+    /* 19 */ make_point(1, 1), // 17
 
-    make_point(2, 0), // 2
-    make_point(3, 0), // 3
-    make_point(2, 0), // 4
-    make_point(3, 0), // 7
+    /* 20 */ make_point(2, 0), // 2
+    /* 21 */ make_point(3, 0), // 3
+    /* 22 */ make_point(2, 0), // 4
+    /* 23 */ make_point(3, 0), // 7
 
-    make_point(2, 1), // 10
-    make_point(3, 1), // 11
-    make_point(2, 1), // 14
-    make_point(3, 1), // 15
-    make_point(2, 1), // 18
-    make_point(3, 1), // 19
+    /* 24 */ make_point(2, 1), // 10
+    /* 25 */ make_point(3, 1), // 11
+    /* 26 */ make_point(2, 1), // 14
+    /* 27 */ make_point(3, 1), // 15
+    /* 28 */ make_point(2, 1), // 18
+    /* 29 */ make_point(3, 1), // 19
 
     // Front
-    make_point(2, 0), // 2
-    make_point(3, 0), // 3
-    make_point(2, 0), // 4
-    make_point(3, 0), // 7
+    /* 30 */ make_point(2, 0), // 2
+    /* 31 */ make_point(3, 0), // 3
+    /* 32 */ make_point(2, 0), // 4
+    /* 33 */ make_point(3, 0), // 7
 
-    make_point(2, 1), // 10
-    make_point(3, 1), // 11
-    make_point(2, 1), // 14
-    make_point(3, 1), // 15
-    make_point(2, 1), // 18
-    make_point(3, 1), // 19
+    /* 34 */ make_point(2, 1), // 10
+    /* 35 */ make_point(3, 1), // 11
+    /* 36 */ make_point(2, 1), // 14
+    /* 37 */ make_point(3, 1), // 15
+    /* 38 */ make_point(2, 1), // 18
+    /* 39 */ make_point(3, 1), // 19
 };
 
 void vestMotorTransformer(std::string& value) {
