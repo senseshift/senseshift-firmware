@@ -9,6 +9,26 @@
 #include "outputs/auto_margins.h"
 #include "output_writers/pca9685.h"
 
+// Front ouputs, responsible for x40 => x16 mappings
+
+#define BH_X16_O_F00 0
+#define BH_X16_O_F10 1
+#define BH_X16_O_F20 30
+#define BH_X16_O_F30 31
+#define BH_X16_O_F01 8
+#define BH_X16_O_F11 9
+#define BH_X16_O_F21 38
+#define BH_X16_O_F31 39
+
+#define BH_X16_O_B00 10
+#define BH_X16_O_B10 11
+#define BH_X16_O_B20 20
+#define BH_X16_O_B30 21
+#define BH_X16_O_B01 18
+#define BH_X16_O_B11 19
+#define BH_X16_O_B21 28
+#define BH_X16_O_B31 29
+
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 2;
 
@@ -100,7 +120,9 @@ void vestMotorTransformer(std::string& value) {
 
     // Test 2
     for (auto i = 0; i < 40; i++) {
-        if (i != 0 && i != 3 && i != 8 && i != 11 && i != 20 && i != 23 && i != 28 && i != 31) {
+        if (i != BH_X16_O_F00 || i != BH_X16_O_F01 || i != BH_X16_O_F10 || i != BH_X16_O_F11 || i != BH_X16_O_F20 || i != BH_X16_O_F21 || i != BH_X16_O_F30 || i != BH_X16_O_F31
+            || i != BH_X16_O_B00 || i != BH_X16_O_B01 || i != BH_X16_O_B10 || i != BH_X16_O_B11 || i != BH_X16_O_B20 || i != BH_X16_O_B21 || i != BH_X16_O_B30 || i != BH_X16_O_B31
+        ) {
             continue;
         }
 
