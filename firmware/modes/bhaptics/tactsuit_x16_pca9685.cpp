@@ -89,9 +89,12 @@ Point2D* indexesToPoints[40] = {
     /* 39 */ make_point(3, 1), // 19
 };
 
+uint8_t groups[16] = { 0, 1, 4, 5, 10, 11, 14, 15, 20, 21, 24, 25, 30, 31, 34, 35, };
+
 void vestMotorTransformer(std::string& value) {
     uint8_t result[40];
 
+    // Unpack values
     for (auto i = 0; i < 20; i++) {
         uint8_t byte = value[i];
         uint actIndex = i * 2;
@@ -101,7 +104,32 @@ void vestMotorTransformer(std::string& value) {
     }
 
     // TODO: Debug, remove
-    Serial.print("{ ");
+    Serial.print("Before: { ");
+    for (auto i = 0; i < 40; i++) {
+        Serial.printf("%u, ", result[i]);
+    }
+    Serial.println(" }");
+
+    // Assign max value into each group
+    for (auto i = 0; i < 16; i++) {
+        auto groupIndex = groups[i];
+
+        if (groupIndex % 10 >= 4) {
+            auto maxValue = max(result[groupIndex], max(result[groupIndex+2], result[groupIndex+4]));
+
+            result[groupIndex] = maxValue;
+            result[groupIndex+2] = maxValue;
+            result[groupIndex+4] = maxValue;
+        } else {
+            auto maxValue = max(result[groupIndex], result[groupIndex+2]);
+
+            result[groupIndex] = maxValue;
+            result[groupIndex+2] = maxValue;
+        }
+    }
+
+    // TODO: Debug, remove
+    Serial.print("After: { ");
     for (auto i = 0; i < 40; i++) {
         Serial.printf("%u, ", result[i]);
     }
@@ -120,6 +148,7 @@ void vestMotorTransformer(std::string& value) {
 
     // Test 2
     for (auto i = 0; i < 40; i++) {
+        // take only meaningful values
         if (i != BH_X16_O_F00 || i != BH_X16_O_F01 || i != BH_X16_O_F10 || i != BH_X16_O_F11 || i != BH_X16_O_F20 || i != BH_X16_O_F21 || i != BH_X16_O_F30 || i != BH_X16_O_F31
             || i != BH_X16_O_B00 || i != BH_X16_O_B01 || i != BH_X16_O_B10 || i != BH_X16_O_B11 || i != BH_X16_O_B20 || i != BH_X16_O_B21 || i != BH_X16_O_B30 || i != BH_X16_O_B31
         ) {
