@@ -174,16 +174,12 @@ void setupMode() {
         {
             new PCA9685OutputWriter(pwm, 0),
             new PCA9685OutputWriter(pwm, 1),
-        },
-        {
             new PCA9685OutputWriter(pwm, 2),
             new PCA9685OutputWriter(pwm, 3),
         },
         {
             new PCA9685OutputWriter(pwm, 4),
             new PCA9685OutputWriter(pwm, 5),
-        },
-        {
             new PCA9685OutputWriter(pwm, 6),
             new PCA9685OutputWriter(pwm, 7),
         },
@@ -192,16 +188,12 @@ void setupMode() {
         {
             new PCA9685OutputWriter(pwm, 8),
             new PCA9685OutputWriter(pwm, 9),
-        },
-        {
             new PCA9685OutputWriter(pwm, 10),
             new PCA9685OutputWriter(pwm, 11),
         },
         {
             new PCA9685OutputWriter(pwm, 12),
             new PCA9685OutputWriter(pwm, 13),
-        },
-        {
             new PCA9685OutputWriter(pwm, 14),
             new PCA9685OutputWriter(pwm, 15),
         },
