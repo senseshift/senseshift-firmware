@@ -80,7 +80,7 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks
              byte_1 = value[1],
              byte_2 = value[2]; // this is the only byte, that ever changes
 
-        Serial.printf(">>\tonWrite (Config Char): %3hhu %2hhu %2hhu \n", byte_0, byte_1, byte_2);
+        // Serial.printf(">>\tonWrite (Config Char): %3hhu %2hhu %2hhu \n", byte_0, byte_1, byte_2);
     };
 };
 

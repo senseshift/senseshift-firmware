@@ -103,13 +103,6 @@ void vestMotorTransformer(std::string& value) {
         result[actIndex + 1] = (byte & 0xf);
     }
 
-    // TODO: Debug, remove
-    Serial.print("Before: { ");
-    for (auto i = 0; i < 40; i++) {
-        Serial.printf("%u, ", result[i]);
-    }
-    Serial.println(" }");
-
     // Assign max value into each group
     for (auto i = 0; i < 16; i++) {
         auto groupIndex = groups[i];
@@ -128,13 +121,6 @@ void vestMotorTransformer(std::string& value) {
         }
     }
 
-    // TODO: Debug, remove
-    Serial.print("After: { ");
-    for (auto i = 0; i < 40; i++) {
-        Serial.printf("%u, ", result[i]);
-    }
-    Serial.println(" }");
-
     for (auto i = 0; i < 40; i++) {
         // take only meaningful values
         if (i != BH_X16_O_F00 && i != BH_X16_O_F01 && i != BH_X16_O_F10 && i != BH_X16_O_F11 && i != BH_X16_O_F20 && i != BH_X16_O_F21 && i != BH_X16_O_F30 && i != BH_X16_O_F31
@@ -143,12 +129,12 @@ void vestMotorTransformer(std::string& value) {
             continue;
         }
 
-        outputData_t output_0;
-        output_0.point = *indexesToPoints[i];
-        output_0.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
+        outputData_t output;
+        output.point = *indexesToPoints[i];
+        output.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
         App.getOutput()->writeOutput(
             (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-            output_0
+            output
         );
     }
 }
