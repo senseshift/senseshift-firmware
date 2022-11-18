@@ -61,12 +61,12 @@ Please note, that documentation is still work-in-progress
 
 ## Supported devices
 
-| Device                 | Supported Devices    | Retail price | Hardware                                                                                                    |
-| :--------------------  | :------------------- | -----------: | :---------------------------------------------------------------------------------------------------------- |
-| Haptics Face Interface | Tactal               | US $149      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-face-interface)         |
-| Haptic Gloves          | TactGlove            | US $299      | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                              |
-| Haptic Sleeves         | Tactosy for arms     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-forearm-sleeve)         |
-| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-gauntlet)               |
-| Haptic Feet Device     | Tactosy for feet     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-feet-device)            |
-| X16 Haptic Vest        | TactSuit X16         | US $299      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)               |
-| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | 2x PCA9685 (on address `0x40` and `0x41`) _or_ PWM on pins `32`, `33`, `25`, `26`, `27`, `14`, `12`, `13`   |
+| Device                 | Supported Devices    | Retail price | Hardware                                                                                            |
+| :--------------------  | :------------------- | -----------: | :-------------------------------------------------------------------------------------------------- |
+| Haptics Face Interface | Tactal               | US $149      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-face-interface) |
+| Haptic Gloves          | TactGlove            | US $299      | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                      |
+| Haptic Sleeves         | Tactosy for arms     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-forearm-sleeve) |
+| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-gauntlet)       |
+| Haptic Feet Device     | Tactosy for feet     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-feet-device)    |
+| X16 Haptic Vest        | TactSuit X16         | US $299      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)       |
+| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x40-haptic-vest)       |
