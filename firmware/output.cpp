@@ -3,15 +3,18 @@
 
 #include "output.h"
 
+
+
 std::multimap<float, outputPoint_t> __findClosestPoints(std::list<outputPoint_t> &pts, Point2D &target)
 {
     std::multimap<float, outputPoint_t> mp = {};
+
     for (auto &_p : pts)
     {
         if (target == _p) {
             return { {1, _p} }; // if coord == target, no other needed
         }
-        
+
         float dx = abs(((float) target.x / UINT16_MAX) - ((float) _p.x / UINT16_MAX)),
             dy = abs(((float) target.y / UINT16_MAX) - ((float) _p.y / UINT16_MAX));
 
@@ -19,11 +22,17 @@ std::multimap<float, outputPoint_t> __findClosestPoints(std::list<outputPoint_t>
 
         mp.insert({dist, _p});
     }
-    // We only ever should get here on a x16 vest, and for that case we interpolate points.
-    size_t num = std::ceil(20.0 / pts.size());
-    auto end = std::next(mp.begin(), std::min(num, mp.size()));
 
-    return std::multimap<float, outputPoint_t>(mp.begin(), end);
+    auto nearest = std::min_element(
+        mp.begin(), mp.end(),
+        [](const std::pair<float, outputPoint_t> &a, const std::pair<float, outputPoint_t> &b) {
+            return a.first < b.first;
+        }
+    );
+
+    return {
+        {1, nearest->second},
+    };
 }
 
 void OutputComponent::setOutputs(std::map<outputPoint_t, OutputWriter*> &outputs)
