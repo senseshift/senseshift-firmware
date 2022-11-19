@@ -35,6 +35,8 @@ void vestMotorTransformer(std::string& value) {
 }
 
 void setupMode() {
+    
+    // Configure PWM channels, and attach them to pins
     ledcSetup(0, 60, 12);
     ledcAttachPin(32, 0);
 
@@ -53,15 +55,9 @@ void setupMode() {
     ledcSetup(5, 60, 12);
     ledcAttachPin(14, 5);
 
+    // Map the above channels to their positions on the face
     autoOutputVector_t faceOutputs{
-        {
-            new LEDCOutputWriter(0),
-            new LEDCOutputWriter(1),
-            new LEDCOutputWriter(2),
-            new LEDCOutputWriter(3),
-            new LEDCOutputWriter(4),
-            new LEDCOutputWriter(5),
-        },
+        { new LEDCOutputWriter(0), new LEDCOutputWriter(1), new LEDCOutputWriter(2), new LEDCOutputWriter(3), new LEDCOutputWriter(4), new LEDCOutputWriter(5) },
     };
 
     OutputAutoComponent_Margin* face = new OutputAutoComponent_Margin(faceOutputs);

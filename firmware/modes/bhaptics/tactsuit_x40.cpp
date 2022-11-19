@@ -87,6 +87,8 @@ void vestMotorTransformer(std::string& value) {
 }
 
 void setupMode() {
+
+    // Configure the PCA9685s
     Adafruit_PWMServoDriver* pwm1 = new Adafruit_PWMServoDriver(0x40);
     pwm1->begin();
     pwm1->setPWMFreq(60);
@@ -95,6 +97,7 @@ void setupMode() {
     pwm2->begin();
     pwm2->setPWMFreq(60);
 
+    // Configure PWM channels, and attach them to pins
     ledcSetup(0, 60, 12);
     ledcAttachPin(32, 0);
 
@@ -119,69 +122,20 @@ void setupMode() {
     ledcSetup(7, 60, 12);
     ledcAttachPin(13, 7);
 
+    // Assign the pins on the configured PCA9685s and PWM channels to locations on the vest
     autoOutputVector_t frontOutputs{
-        {
-            new PCA9685OutputWriter(pwm1, 0),
-            new PCA9685OutputWriter(pwm1, 1),
-            new PCA9685OutputWriter(pwm1, 2),
-            new PCA9685OutputWriter(pwm1, 3),
-        },
-        {
-            new PCA9685OutputWriter(pwm1, 4),
-            new PCA9685OutputWriter(pwm1, 5),
-            new PCA9685OutputWriter(pwm1, 6),
-            new PCA9685OutputWriter(pwm1, 7),
-        },
-        {
-            new PCA9685OutputWriter(pwm1, 8),
-            new PCA9685OutputWriter(pwm1, 9),
-            new PCA9685OutputWriter(pwm1, 10),
-            new PCA9685OutputWriter(pwm1, 11),
-        },
-        {
-            new PCA9685OutputWriter(pwm1, 12),
-            new PCA9685OutputWriter(pwm1, 13),
-            new PCA9685OutputWriter(pwm1, 14),
-            new PCA9685OutputWriter(pwm1, 15),
-        },
-        {
-            new LEDCOutputWriter(0),
-            new LEDCOutputWriter(1),
-            new LEDCOutputWriter(2),
-            new LEDCOutputWriter(3),
-        },
+        { new PCA9685OutputWriter(pwm1, 0),  new PCA9685OutputWriter(pwm1, 1),  new PCA9685OutputWriter(pwm1, 2),  new PCA9685OutputWriter(pwm1, 3)  },
+        { new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)  },
+        { new PCA9685OutputWriter(pwm1, 8),  new PCA9685OutputWriter(pwm1, 9),  new PCA9685OutputWriter(pwm1, 10), new PCA9685OutputWriter(pwm1, 11) },
+        { new PCA9685OutputWriter(pwm1, 12), new PCA9685OutputWriter(pwm1, 13), new PCA9685OutputWriter(pwm1, 14), new PCA9685OutputWriter(pwm1, 15) },
+        { new LEDCOutputWriter(0),           new LEDCOutputWriter(1),           new LEDCOutputWriter(2),           new LEDCOutputWriter(3)           },
     };
     autoOutputVector_t backOutputs{
-        {
-            new PCA9685OutputWriter(pwm2, 0),
-            new PCA9685OutputWriter(pwm2, 1),
-            new PCA9685OutputWriter(pwm2, 2),
-            new PCA9685OutputWriter(pwm2, 3),
-        },
-        {
-            new PCA9685OutputWriter(pwm2, 4),
-            new PCA9685OutputWriter(pwm2, 5),
-            new PCA9685OutputWriter(pwm2, 6),
-            new PCA9685OutputWriter(pwm2, 7),
-        },
-        {
-            new PCA9685OutputWriter(pwm2, 8),
-            new PCA9685OutputWriter(pwm2, 9),
-            new PCA9685OutputWriter(pwm2, 10),
-            new PCA9685OutputWriter(pwm2, 11),
-        },
-        {
-            new PCA9685OutputWriter(pwm2, 12),
-            new PCA9685OutputWriter(pwm2, 13),
-            new PCA9685OutputWriter(pwm2, 14),
-            new PCA9685OutputWriter(pwm2, 15),
-        },
-        {
-            new LEDCOutputWriter(4),
-            new LEDCOutputWriter(5),
-            new LEDCOutputWriter(6),
-            new LEDCOutputWriter(7),
-        },
+        { new PCA9685OutputWriter(pwm2, 0),  new PCA9685OutputWriter(pwm2, 1),  new PCA9685OutputWriter(pwm2, 2),  new PCA9685OutputWriter(pwm2, 3)  },
+        { new PCA9685OutputWriter(pwm2, 4),  new PCA9685OutputWriter(pwm2, 5),  new PCA9685OutputWriter(pwm2, 6),  new PCA9685OutputWriter(pwm2, 7)  },
+        { new PCA9685OutputWriter(pwm2, 8),  new PCA9685OutputWriter(pwm2, 9),  new PCA9685OutputWriter(pwm2, 10), new PCA9685OutputWriter(pwm2, 11) },
+        { new PCA9685OutputWriter(pwm2, 12), new PCA9685OutputWriter(pwm2, 13), new PCA9685OutputWriter(pwm2, 14), new PCA9685OutputWriter(pwm2, 15) },
+        { new LEDCOutputWriter(4),           new LEDCOutputWriter(5),           new LEDCOutputWriter(6),           new LEDCOutputWriter(7)           },
     };
 
     OutputAutoComponent_Margin* chestFront = new OutputAutoComponent_Margin(frontOutputs);
