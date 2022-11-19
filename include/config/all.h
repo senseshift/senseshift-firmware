@@ -2,6 +2,7 @@
 
 #include "config/output.h"
 #include "config/pwm.h"
+#include "config/battery.h"
 
 #include "config/bluetooth.h"
 

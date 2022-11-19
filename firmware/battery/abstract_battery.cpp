@@ -8,6 +8,6 @@ void AbstractBattery::loop()
     if (now_ms - this->last_battery_sample >= BATTERY_SAMPLE_RATE) {
         this->last_battery_sample = now_ms;
 
-        this->level = this->getBatteryLevel();
+        this->level = this->updateLevel();
     }
 };
