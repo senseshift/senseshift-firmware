@@ -140,37 +140,20 @@ void vestMotorTransformer(std::string& value) {
 }
 
 void setupMode() {
+
+    // Configure the PCA9685
     Adafruit_PWMServoDriver* pwm = new Adafruit_PWMServoDriver(0x40);
     pwm->begin();
     pwm->setPWMFreq(60);
 
+    // Assign the pins on the configured PCA9685 to positions on the vest
     autoOutputVector_t frontOutputs{
-        {
-            new PCA9685OutputWriter(pwm, 0),
-            new PCA9685OutputWriter(pwm, 1),
-            new PCA9685OutputWriter(pwm, 2),
-            new PCA9685OutputWriter(pwm, 3),
-        },
-        {
-            new PCA9685OutputWriter(pwm, 4),
-            new PCA9685OutputWriter(pwm, 5),
-            new PCA9685OutputWriter(pwm, 6),
-            new PCA9685OutputWriter(pwm, 7),
-        },
+        { new PCA9685OutputWriter(pwm, 0),  new PCA9685OutputWriter(pwm, 1),   new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3)  },
+        { new PCA9685OutputWriter(pwm, 4),  new PCA9685OutputWriter(pwm, 5),   new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7)  },
     };
     autoOutputVector_t backOutputs{
-        {
-            new PCA9685OutputWriter(pwm, 8),
-            new PCA9685OutputWriter(pwm, 9),
-            new PCA9685OutputWriter(pwm, 10),
-            new PCA9685OutputWriter(pwm, 11),
-        },
-        {
-            new PCA9685OutputWriter(pwm, 12),
-            new PCA9685OutputWriter(pwm, 13),
-            new PCA9685OutputWriter(pwm, 14),
-            new PCA9685OutputWriter(pwm, 15),
-        },
+        { new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11) },
+        { new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15) },
     };
 
     OutputComponent* chestFront = new OutputAutoComponent_Margin(frontOutputs);

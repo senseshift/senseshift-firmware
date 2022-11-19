@@ -140,6 +140,8 @@ void vestMotorTransformer(std::string& value) {
 }
 
 void setupMode() {
+
+    // Configure PWM channels, and attach them to pins
     ledcSetup(0, 60, 12);
     ledcAttachPin(32, 0);
 
@@ -188,33 +190,14 @@ void setupMode() {
     ledcSetup(15, 60, 12);
     ledcAttachPin(15, 15);
 
+    // Map the above channels to their positions on the vest
     autoOutputVector_t frontOutputs{
-        {
-            new LEDCOutputWriter(0),
-            new LEDCOutputWriter(1),
-            new LEDCOutputWriter(2),
-            new LEDCOutputWriter(3),
-        },
-        {
-            new LEDCOutputWriter(4),
-            new LEDCOutputWriter(5),
-            new LEDCOutputWriter(6),
-            new LEDCOutputWriter(7),
-        },
+        { new LEDCOutputWriter(0),  new LEDCOutputWriter(1),  new LEDCOutputWriter(2),  new LEDCOutputWriter(3) },
+        { new LEDCOutputWriter(4),  new LEDCOutputWriter(5),  new LEDCOutputWriter(6),  new LEDCOutputWriter(7) },
     };
     autoOutputVector_t backOutputs{
-        {
-            new LEDCOutputWriter(8),
-            new LEDCOutputWriter(9),
-            new LEDCOutputWriter(10),
-            new LEDCOutputWriter(11),
-        },
-        {
-            new LEDCOutputWriter(12),
-            new LEDCOutputWriter(13),
-            new LEDCOutputWriter(14),
-            new LEDCOutputWriter(15),
-        },
+        { new LEDCOutputWriter(8),  new LEDCOutputWriter(9),  new LEDCOutputWriter(10), new LEDCOutputWriter(11) },
+        { new LEDCOutputWriter(12), new LEDCOutputWriter(13), new LEDCOutputWriter(14), new LEDCOutputWriter(15) },
     };
 
     OutputComponent* chestFront = new OutputAutoComponent_Margin(frontOutputs);
