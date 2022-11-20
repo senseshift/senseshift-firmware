@@ -15,7 +15,7 @@ class OpenHaptics final
         OpenHaptics();
         std::vector<Component*> getComponents() { return this->components; };
         void registerComponent(Component*);
-        
+
         Output* getOutput() { return this->output; };
         void addOutputComponent(outputPath_t, OutputComponent*);
 

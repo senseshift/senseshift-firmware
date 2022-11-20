@@ -4,5 +4,5 @@
 
 class Connection : public Component
 {
-    
+    //
 };
