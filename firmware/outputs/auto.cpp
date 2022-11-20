@@ -9,7 +9,6 @@ OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
     size_t y_max = outputs.size(),
            index = 0;
 
-    Serial.println(">> OutputAutoComponent()");
     for (size_t y = 0; y < y_max; ++y)
     {
         auto row = outputs.at(y);
@@ -20,7 +19,6 @@ OutputAutoComponent::OutputAutoComponent(autoOutputVector_t &outputs)
             OutputWriter* wr = row.at(x);
             Point2D coord = this->getCoordinate(x, y, x_max, y_max);
 
-            Serial.printf("\tIndex: %u,\tCoordinate: (%5u, %5u) \n", ++index, coord.x, coord.y);
             points[coord] = wr;
         }
     }
