@@ -34,6 +34,8 @@ struct OutputState {
 };
 typedef OutputState outputState_t;
 
+typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
+
 class OutputWriter
 {
     public:
@@ -44,11 +46,13 @@ class OutputComponent : public Component
 {
     protected:
         std::list<outputPoint_t> points{};
-        std::map<outputPoint_t, OutputWriter*> writers{};
+        outputMap_t writers{};
         std::map<outputPoint_t, outputState_t> states{};
 
+        virtual void setOutputs(outputMap_t &) = 0;
+
     public:
-        virtual void setOutputs(std::map<outputPoint_t, OutputWriter*> &) = 0;
+        OutputComponent(outputMap_t &outputs) { this->setOutputs(outputs); };
         std::list<outputPoint_t>* getOutputPoints(void) { return &this->points; };
         std::map<outputPoint_t, outputState_t>* getOutputStates(void) { return &this->states; };
         virtual void writeOutput(outputData_t&) = 0;
