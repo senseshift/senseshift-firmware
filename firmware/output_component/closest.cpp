@@ -2,14 +2,14 @@
 
 #include "output_components/closest.h"
 
-std::multimap<float, outputPoint_t> __findClosestPoints(std::list<outputPoint_t> &pts, Point2D &target)
+outputPoint_t ClosestOutputComponent::findClosestPoints(std::list<outputPoint_t> &pts, Point2D &target)
 {
     std::multimap<float, outputPoint_t> mp = {};
 
     for (auto &_p : pts)
     {
         if (target == _p) {
-            return { {1, _p} }; // if coord == target, no other needed
+            return _p; // if coord == target, no other needed
         }
 
         float dx = abs(((float) target.x / UINT16_MAX) - ((float) _p.x / UINT16_MAX)),
@@ -27,9 +27,7 @@ std::multimap<float, outputPoint_t> __findClosestPoints(std::list<outputPoint_t>
         }
     );
 
-    return {
-        {1, nearest->second},
-    };
+    return nearest->second;
 }
 
 void ClosestOutputComponent::setOutputs(outputMap_t &outputs)
@@ -50,14 +48,10 @@ void ClosestOutputComponent::setOutputs(outputMap_t &outputs)
 
 void ClosestOutputComponent::writeOutput(outputData_t& data)
 {
-    auto closestPoints = __findClosestPoints(this->points, data.point);
+    auto closestPoint = this->findClosestPoints(this->points, data.point);
 
-    for (auto &_p : closestPoints)
-    {
-        auto state = &this->states[_p.second];
+    auto state = &this->states[closestPoint];
+    state->intensity = data.intensity;
 
-        state->intensity = data.intensity * _p.first;
-
-        this->writers.at(_p.second)->writeOutput(state->intensity);
-    }
+    this->writers.at(closestPoint)->writeOutput(state->intensity);
 }
