@@ -1,5 +1,5 @@
-#include "firmware.h"
-#include "main.h"
+#include <HardwareSerial.h>
+#include "openhaptics.h"
 
 #ifdef SERIAL_PLOTTER
 #include "components/serial_plotter.h"

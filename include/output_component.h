@@ -1,3 +1,5 @@
+#pragma once
+
 #include <map>
 #include <list>
 #include <vector>
@@ -34,13 +36,13 @@ struct OutputState {
 };
 typedef OutputState outputState_t;
 
-typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
-
 class OutputWriter
 {
     public:
         virtual void writeOutput(outputIntensity_t intensity) = 0;
 };
+
+typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
 
 class OutputComponent : public Component
 {
@@ -49,7 +51,7 @@ class OutputComponent : public Component
         outputMap_t writers{};
         std::map<outputPoint_t, outputState_t> states{};
 
-        virtual void setOutputs(outputMap_t &) = 0;
+        void setOutputs(outputMap_t &);
 
     public:
         OutputComponent(outputMap_t &outputs) { this->setOutputs(outputs); };

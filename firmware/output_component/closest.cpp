@@ -30,22 +30,6 @@ outputPoint_t ClosestOutputComponent::findClosestPoints(std::list<outputPoint_t>
     return nearest->second;
 }
 
-void ClosestOutputComponent::setOutputs(outputMap_t &outputs)
-{
-    this->writers.clear();
-    this->writers = outputs;
-
-    this->points.clear();
-    for(auto &_p : outputs) {
-        this->points.push_back(_p.first);
-    }
-
-    this->states.clear();
-    for(auto &_p : outputs) {
-        this->states[_p.first] = {};
-    }
-}
-
 void ClosestOutputComponent::writeOutput(outputData_t& data)
 {
     auto closestPoint = this->findClosestPoints(this->points, data.point);

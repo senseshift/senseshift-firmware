@@ -14,12 +14,12 @@ class TestWriter : public OutputWriter
 
 void test_coordinates(void)
 {
-    outputMap_t frontOutputs{
+    outputMap_t testOutputs{
         { Point2D(10, 10), new TestWriter() },
         { Point2D(UINT16_MAX - 10, UINT16_MAX - 10), new TestWriter() },
     };
 
-    auto output = new ClosestOutputComponent(frontOutputs);
+    auto output = new ClosestOutputComponent(testOutputs);
 
     auto points = output->getOutputPoints();
 }
