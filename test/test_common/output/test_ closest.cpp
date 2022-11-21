@@ -1,6 +1,6 @@
 #include "unity.h"
 
-#include "outputs/auto.h"
+#include "output_components/closest.h"
 
 #define UNIT_TEST
 
@@ -14,12 +14,12 @@ class TestWriter : public OutputWriter
 
 void test_coordinates(void)
 {
-    autoOutputVector_t frontOutputs {
-        { new TestWriter(), new TestWriter(), },
-        { new TestWriter(), new TestWriter(), },
+    outputMap_t frontOutputs{
+        { Point2D(10, 10), new TestWriter() },
+        { Point2D(UINT16_MAX - 10, UINT16_MAX - 10), new TestWriter() },
     };
 
-    OutputAutoComponent* output = new OutputAutoComponent(frontOutputs);
+    auto output = new ClosestOutputComponent(frontOutputs);
 
     auto points = output->getOutputPoints();
 }
@@ -34,18 +34,18 @@ int process(void) {
 
 #ifdef ARDUINO
 
-#include <Arduino.h>
-void setup() {
-    process();
-}
+    #include <Arduino.h>
+    void setup() {
+        process();
+    }
 
-void loop() {}
+    void loop() {}
 
 #else
 
-int main(int argc, char **argv) {
-    return process();
-}
+    int main(int argc, char **argv) {
+        return process();
+    }
 
 #endif
 

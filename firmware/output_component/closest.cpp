@@ -32,7 +32,7 @@ std::multimap<float, outputPoint_t> __findClosestPoints(std::list<outputPoint_t>
     };
 }
 
-void ClosestOutputComponent::setOutputs(std::map<outputPoint_t, OutputWriter*> &outputs)
+void ClosestOutputComponent::setOutputs(outputMap_t &outputs)
 {
     this->writers.clear();
     this->writers = outputs;
