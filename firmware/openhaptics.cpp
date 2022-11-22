@@ -26,6 +26,12 @@ void OpenHaptics::addOutputComponent(outputPath_t path, OutputComponent* c)
     this->getOutput()->addComponent(path, c);
 }
 
+void OpenHaptics::setConnection(Connection* connection)
+{
+    this->registerComponent(connection);
+    this->connection = connection;
+}
+
 void OpenHaptics::setup()
 {
     for (auto &component : this->components) {
