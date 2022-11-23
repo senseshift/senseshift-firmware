@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <math.h>
 
 #include "output_components/closest.h"
 
