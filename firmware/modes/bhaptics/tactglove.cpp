@@ -1,27 +1,33 @@
-#include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "openhaptics.h"
+#include "utils.h"
+#include "auto_output.h"
+
 #include "connections/bhaptics.h"
-#include "firmware.h"
-#include "main.h"
-#include "output_writers/pca9685.h"
+#include "output_components/closest.h"
 #include "output_writers/ledc.h"
-#include "outputs/auto_margins.h"
+
+#define PWM_FREQUENCY 60
+#define PWM_RESOLUTION 12
+
+#pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 6;
+const uint16_t _bh_max_y = 1;
 
-inline Point2D* make_point(uint16_t x) {
-    return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), 0);
+inline Point2D* make_point(uint16_t x, uint16_t y) {
+    return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
-Point2D* indexesToPoints[_bh_max_x] = {
-    make_point(0),
-    make_point(1),
-    make_point(2),
-    make_point(3),
-    make_point(4),
-    make_point(5)
+Point2D* indexesToPoints[_bh_max_x * _bh_max_y] = {
+    make_point(0, 0),
+    make_point(1, 0),
+    make_point(2, 0),
+    make_point(3, 0),
+    make_point(4, 0),
+    make_point(5, 0)
 };
 
 void vestMotorTransformer(std::string& value) {
@@ -34,36 +40,38 @@ void vestMotorTransformer(std::string& value) {
     }
 }
 
+#pragma endregion bHaptics_trash
+
 void setupMode() {
-    
     // Configure PWM channels, and attach them to pins
-    ledcSetup(0, 60, 12);
+    // TODO: decide on better way to setup PWM pins
+    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(32, 0);
 
-    ledcSetup(1, 60, 12);
+    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(33, 1);
 
-    ledcSetup(2, 60, 12);
+    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(25, 2);
 
-    ledcSetup(3, 60, 12);
+    ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(26, 3);
 
-    ledcSetup(4, 60, 12);
+    ledcSetup(4, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(27, 4);
 
-    ledcSetup(5, 60, 12);
+    ledcSetup(5, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(14, 5);
 
     // Map the above channels to their positions on the glove
-    autoOutputVector_t gloveOutputs{
+    auto gloveOutputs = transformAutoOutput({
         { new LEDCOutputWriter(0), new LEDCOutputWriter(1), new LEDCOutputWriter(2), new LEDCOutputWriter(3), new LEDCOutputWriter(4), new LEDCOutputWriter(5) },
-    };
+    });
 
-    OutputAutoComponent_Margin* glove = new OutputAutoComponent_Margin(gloveOutputs);
+    auto glove = new ClosestOutputComponent(gloveOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
-    App.registerComponent(bhBleConnection);
+    App.setConnection(bhBleConnection);
 }

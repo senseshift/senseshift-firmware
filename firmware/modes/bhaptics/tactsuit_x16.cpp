@@ -1,43 +1,28 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "firmware.h"
-#include "main.h"
-#include "output.h"
+#include "openhaptics.h"
+#include "utils.h"
+#include "auto_output.h"
 
 #include "connections/bhaptics.h"
-#include "outputs/auto_margins.h"
+#include "output_components/closest.h"
 #include "output_writers/ledc.h"
 
-// Front ouputs, responsible for x40 => x16 mappings
+#define PWM_FREQUENCY 60
+#define PWM_RESOLUTION 12
 
-#define BH_X16_O_F00 0
-#define BH_X16_O_F10 1
-#define BH_X16_O_F20 30
-#define BH_X16_O_F30 31
-#define BH_X16_O_F01 8
-#define BH_X16_O_F11 9
-#define BH_X16_O_F21 38
-#define BH_X16_O_F31 39
-
-#define BH_X16_O_B00 10
-#define BH_X16_O_B10 11
-#define BH_X16_O_B20 20
-#define BH_X16_O_B30 21
-#define BH_X16_O_B01 18
-#define BH_X16_O_B11 19
-#define BH_X16_O_B21 28
-#define BH_X16_O_B31 29
+#pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 2;
 
 inline Point2D* make_point(uint16_t x, uint16_t y) {
-    return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
+    return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
 Point2D* indexesToPoints[40] = {
-    // Front
+    // Front, left part
     /*  0 */ make_point(0, 0), // 0
     /*  1 */ make_point(1, 0), // 1
     /*  2 */ make_point(0, 0), // 4
@@ -75,7 +60,7 @@ Point2D* indexesToPoints[40] = {
     /* 28 */ make_point(2, 1), // 18
     /* 29 */ make_point(3, 1), // 19
 
-    // Front
+    // Front, again... Now right part
     /* 30 */ make_point(2, 0), // 2
     /* 31 */ make_point(3, 0), // 3
     /* 32 */ make_point(2, 0), // 4
@@ -89,10 +74,11 @@ Point2D* indexesToPoints[40] = {
     /* 39 */ make_point(3, 1), // 19
 };
 
+// Ouput indices, responsible for x40 => x16 grouping
 uint8_t groups[16] = { 0, 1, 4, 5, 10, 11, 14, 15, 20, 21, 24, 25, 30, 31, 34, 35, };
 
 void vestMotorTransformer(std::string& value) {
-    uint8_t result[40];;
+    uint8_t result[40];
 
     // Unpack values
     for (auto i = 0; i < 20; i++) {
@@ -111,21 +97,19 @@ void vestMotorTransformer(std::string& value) {
             auto maxValue = max(result[groupIndex], max(result[groupIndex+2], result[groupIndex+4]));
 
             result[groupIndex] = maxValue;
-            result[groupIndex+2] = maxValue;
-            result[groupIndex+4] = maxValue;
+            result[groupIndex + 2] = maxValue;
+            result[groupIndex + 4] = maxValue;
         } else {
             auto maxValue = max(result[groupIndex], result[groupIndex+2]);
 
             result[groupIndex] = maxValue;
-            result[groupIndex+2] = maxValue;
+            result[groupIndex + 2] = maxValue;
         }
     }
 
-    for (auto i = 0; i < 40; i++) {
+    for (uint8_t i = 0; i < 40; i++) {
         // take only meaningful values
-        if (i != BH_X16_O_F00 && i != BH_X16_O_F01 && i != BH_X16_O_F10 && i != BH_X16_O_F11 && i != BH_X16_O_F20 && i != BH_X16_O_F21 && i != BH_X16_O_F30 && i != BH_X16_O_F31
-            && i != BH_X16_O_B00 && i != BH_X16_O_B01 && i != BH_X16_O_B10 && i != BH_X16_O_B11 && i != BH_X16_O_B20 && i != BH_X16_O_B21 && i != BH_X16_O_B30 && i != BH_X16_O_B31
-        ) {
+        if (!contains(groups, i)) {
             continue;
         }
 
@@ -139,73 +123,75 @@ void vestMotorTransformer(std::string& value) {
     }
 }
 
-void setupMode() {
+#pragma endregion bHaptics_trash
 
+void setupMode() {
     // Configure PWM channels, and attach them to pins
-    ledcSetup(0, 60, 12);
+    // TODO: decide on better way to setup PWM pins
+    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(32, 0);
 
-    ledcSetup(1, 60, 12);
+    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(33, 1);
 
-    ledcSetup(2, 60, 12);
+    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(25, 2);
 
-    ledcSetup(3, 60, 12);
+    ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(26, 3);
 
-    ledcSetup(4, 60, 12);
+    ledcSetup(4, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(27, 4);
 
-    ledcSetup(5, 60, 12);
+    ledcSetup(5, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(14, 5);
 
-    ledcSetup(6, 60, 12);
+    ledcSetup(6, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(12, 6);
 
-    ledcSetup(7, 60, 12);
+    ledcSetup(7, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(13, 7);
 
-    ledcSetup(8, 60, 12);
+    ledcSetup(8, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(19, 8);
 
-    ledcSetup(9, 60, 12);
+    ledcSetup(9, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(18, 9);
 
-    ledcSetup(10, 60, 12);
+    ledcSetup(10, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(5, 10);
 
-    ledcSetup(11, 60, 12);
+    ledcSetup(11, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(17, 11);
 
-    ledcSetup(12, 60, 12);
+    ledcSetup(12, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(16, 12);
 
-    ledcSetup(13, 60, 12);
+    ledcSetup(13, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(4, 13);
 
-    ledcSetup(14, 60, 12);
+    ledcSetup(14, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(2, 14);
 
-    ledcSetup(15, 60, 12);
+    ledcSetup(15, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(15, 15);
 
     // Map the above channels to their positions on the vest
-    autoOutputVector_t frontOutputs{
+    auto frontOutputs = transformAutoOutput({
         { new LEDCOutputWriter(0),  new LEDCOutputWriter(1),  new LEDCOutputWriter(2),  new LEDCOutputWriter(3) },
         { new LEDCOutputWriter(4),  new LEDCOutputWriter(5),  new LEDCOutputWriter(6),  new LEDCOutputWriter(7) },
-    };
-    autoOutputVector_t backOutputs{
+    });
+    auto backOutputs = transformAutoOutput({
         { new LEDCOutputWriter(8),  new LEDCOutputWriter(9),  new LEDCOutputWriter(10), new LEDCOutputWriter(11) },
         { new LEDCOutputWriter(12), new LEDCOutputWriter(13), new LEDCOutputWriter(14), new LEDCOutputWriter(15) },
-    };
+    });
 
-    OutputComponent* chestFront = new OutputAutoComponent_Margin(frontOutputs);
-    OutputComponent* chestBack = new OutputAutoComponent_Margin(backOutputs);
+    auto chestFront = new ClosestOutputComponent(frontOutputs);
+    auto chestBack = new ClosestOutputComponent(backOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
-    App.registerComponent(bhBleConnection);
+    App.setConnection(bhBleConnection);
 }

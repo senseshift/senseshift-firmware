@@ -1,22 +1,29 @@
-#include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "openhaptics.h"
+#include "utils.h"
+#include "auto_output.h"
+
 #include "connections/bhaptics.h"
-#include "firmware.h"
-#include "main.h"
+#include "output_components/closest.h"
 #include "output_writers/pca9685.h"
 #include "output_writers/ledc.h"
-#include "outputs/auto_margins.h"
+
+#define PWM_FREQUENCY 60
+#define PWM_RESOLUTION 12
+
+#pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 5;
 
 inline Point2D* make_point(uint16_t x, uint16_t y) {
-    return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
+    return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
 Point2D* indexesToPoints[40] = {
+    // Front, left part
     /*  0 */ make_point(0, 0),
     /*  1 */ make_point(1, 0),
     /*  2 */ make_point(0, 1),
@@ -28,6 +35,7 @@ Point2D* indexesToPoints[40] = {
     /*  8 */ make_point(0, 4),
     /*  9 */ make_point(1, 4),
 
+    // Back
     /* 11 */ make_point(0, 0),
     /* 11 */ make_point(1, 0),
     /* 12 */ make_point(0, 1),
@@ -50,6 +58,7 @@ Point2D* indexesToPoints[40] = {
     /* 28 */ make_point(2, 4),
     /* 29 */ make_point(3, 4),
 
+    // Front, again... Now right part
     /* 30 */ make_point(2, 0),
     /* 31 */ make_point(3, 0),
     /* 32 */ make_point(2, 1),
@@ -86,64 +95,66 @@ void vestMotorTransformer(std::string& value) {
     }
 }
 
-void setupMode() {
+#pragma endregion bHaptics_trash
 
+void setupMode() {
     // Configure the PCA9685s
     Adafruit_PWMServoDriver* pwm1 = new Adafruit_PWMServoDriver(0x40);
     pwm1->begin();
-    pwm1->setPWMFreq(60);
+    pwm1->setPWMFreq(PWM_FREQUENCY);
 
     Adafruit_PWMServoDriver* pwm2 = new Adafruit_PWMServoDriver(0x41);
     pwm2->begin();
-    pwm2->setPWMFreq(60);
+    pwm2->setPWMFreq(PWM_FREQUENCY);
 
-    // Configure PWM channels, and attach them to pins
-    ledcSetup(0, 60, 12);
+        // Configure PWM channels, and attach them to pins
+    // TODO: decide on better way to setup PWM pins
+    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(32, 0);
 
-    ledcSetup(1, 60, 12);
+    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(33, 1);
 
-    ledcSetup(2, 60, 12);
+    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(25, 2);
 
-    ledcSetup(3, 60, 12);
+    ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(26, 3);
 
-    ledcSetup(4, 60, 12);
+    ledcSetup(4, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(27, 4);
 
-    ledcSetup(5, 60, 12);
+    ledcSetup(5, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(14, 5);
 
-    ledcSetup(6, 60, 12);
+    ledcSetup(6, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(12, 6);
 
-    ledcSetup(7, 60, 12);
+    ledcSetup(7, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(13, 7);
 
     // Assign the pins on the configured PCA9685s and PWM channels to locations on the vest
-    autoOutputVector_t frontOutputs{
+    auto frontOutputs = transformAutoOutput({
         { new PCA9685OutputWriter(pwm1, 0),  new PCA9685OutputWriter(pwm1, 1),  new PCA9685OutputWriter(pwm1, 2),  new PCA9685OutputWriter(pwm1, 3)  },
         { new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)  },
         { new PCA9685OutputWriter(pwm1, 8),  new PCA9685OutputWriter(pwm1, 9),  new PCA9685OutputWriter(pwm1, 10), new PCA9685OutputWriter(pwm1, 11) },
         { new PCA9685OutputWriter(pwm1, 12), new PCA9685OutputWriter(pwm1, 13), new PCA9685OutputWriter(pwm1, 14), new PCA9685OutputWriter(pwm1, 15) },
         { new LEDCOutputWriter(0),           new LEDCOutputWriter(1),           new LEDCOutputWriter(2),           new LEDCOutputWriter(3)           },
-    };
-    autoOutputVector_t backOutputs{
+    });
+    auto backOutputs = transformAutoOutput({
         { new PCA9685OutputWriter(pwm2, 0),  new PCA9685OutputWriter(pwm2, 1),  new PCA9685OutputWriter(pwm2, 2),  new PCA9685OutputWriter(pwm2, 3)  },
         { new PCA9685OutputWriter(pwm2, 4),  new PCA9685OutputWriter(pwm2, 5),  new PCA9685OutputWriter(pwm2, 6),  new PCA9685OutputWriter(pwm2, 7)  },
         { new PCA9685OutputWriter(pwm2, 8),  new PCA9685OutputWriter(pwm2, 9),  new PCA9685OutputWriter(pwm2, 10), new PCA9685OutputWriter(pwm2, 11) },
         { new PCA9685OutputWriter(pwm2, 12), new PCA9685OutputWriter(pwm2, 13), new PCA9685OutputWriter(pwm2, 14), new PCA9685OutputWriter(pwm2, 15) },
         { new LEDCOutputWriter(4),           new LEDCOutputWriter(5),           new LEDCOutputWriter(6),           new LEDCOutputWriter(7)           },
-    };
+    });
 
-    OutputAutoComponent_Margin* chestFront = new OutputAutoComponent_Margin(frontOutputs);
-    OutputAutoComponent_Margin* chestBack = new OutputAutoComponent_Margin(backOutputs);
+    auto chestFront = new ClosestOutputComponent(frontOutputs);
+    auto chestBack = new ClosestOutputComponent(backOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
-    App.registerComponent(bhBleConnection);
+    App.setConnection(bhBleConnection);
 }
