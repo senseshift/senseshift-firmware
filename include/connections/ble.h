@@ -1,10 +1,15 @@
 #pragma once
 
+#include "config/bluetooth.h"
+
+#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+    #include <NimBLEDevice.h>
+#else
+    #include <BLEDevice.h>
+#endif
+
 #include <string>
 
-#include <BLEServer.h>
-
-#include "config/bluetooth.h"
 #include "connection.h"
 
 class BLEConnection : public Connection

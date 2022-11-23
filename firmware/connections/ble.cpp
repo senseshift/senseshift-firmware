@@ -1,5 +1,3 @@
-#include <BLEDevice.h>
-
 #include "connections/ble.h"
 
 void BLEConnection::setup()
@@ -11,5 +9,5 @@ void BLEConnection::setup()
 
 void BLEConnection::loop()
 {
-    
+    //
 }

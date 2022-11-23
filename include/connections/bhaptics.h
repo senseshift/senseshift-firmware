@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config/bhaptics.h"
+
 #include "connection.h"
 #include "connections/ble.h"
 
