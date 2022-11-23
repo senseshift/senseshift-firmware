@@ -1,7 +1,16 @@
-#include "firmware.h"
-#include "main.h"
+// WARNING: this code is not intended to use as of now
+#ifndef CI
+#error "Change your build target. (See https://openhaptics.github.io/docs/flashing/platformio#building-and-uploading-firmware)"
+#endif
 
-#include "outputs/auto_margins.h"
+#include <Arduino.h>
+#include <Wire.h>
+
+#include "openhaptics.h"
+#include "utils.h"
+#include "auto_output.h"
+
+#include "output_components/closest.h"
 #include "output_writers/pca9685.h"
 
 #if defined(OHA_CHEST_FRONT_ROWS) && defined(OHA_CHEST_FRONT_COLS)
@@ -22,9 +31,9 @@
 
 #define OHA_TOTAL_NUM (OHA_CHEST_FRONT_NUM + OHA_CHEST_BACK_NUM)
 
-autoOutputVector_t createAutoOutputs(uint rows_num, uint cols_num, std::vector<Adafruit_PWMServoDriver*> &pwms, uint offset)
+std::vector<std::vector<OutputWriter*>> createAutoOutputs(uint rows_num, uint cols_num, std::vector<Adafruit_PWMServoDriver*> &pwms, uint offset)
 {
-    autoOutputVector_t rows {};
+    std::vector<std::vector<OutputWriter*>> rows {};
 
     for (uint i = 0; i < rows_num; i++)
     {
@@ -56,13 +65,13 @@ void setupMode()
 
     #if OHA_CHEST_FRONT_NUM != 0
         auto frontOutputs = createAutoOutputs(OHA_CHEST_FRONT_ROWS, OHA_CHEST_FRONT_COLS, pwms, offset);
-        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, new OutputAutoComponent_Margin(frontOutputs));
+        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, new ClosestOutputComponent(frontOutputs));
         offset += OHA_CHEST_FRONT_NUM;
     #endif
 
     #if OHA_CHEST_BACK_NUM != 0
         auto backOutputs = createAutoOutputs(OHA_CHEST_BACK_ROWS, OHA_CHEST_BACK_COLS, pwms, offset);
-        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, new OutputAutoComponent_Margin(backOutputs));
+        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, new ClosestOutputComponent(backOutputs));
         offset += OHA_CHEST_BACK_NUM;
     #endif
 }
