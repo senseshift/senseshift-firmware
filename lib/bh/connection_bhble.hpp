@@ -6,12 +6,16 @@
 #include <bh_types.hpp>
 
 #include <Arduino.h>
-#include <BLEDevice.h>
 #include <esp_wifi.h>
+
+#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+  #include <NimBLEDevice.h>
+#else
+  #include <BLEDevice.h>
+#endif
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include "abstract_battery.hpp"
-#include <BLE2902.h>
 #endif
 
 // typedef void (*bh_motor_handler_t)(std::string&);
