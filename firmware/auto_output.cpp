@@ -1,6 +1,6 @@
 #include "auto_output.h"
 
-inline Point2D* getPoint(uint16_t x, uint16_t y, uint16_t x_max, uint16_t y_max)
+Point2D* getPoint(uint16_t x, uint16_t y, uint16_t x_max, uint16_t y_max)
 {
     return new Point2D(UINT16_MAX * (1 / ((float)x_max - 1)) * ((float)x), UINT16_MAX * (1 / ((float)y_max - 1)) * ((float)y));
 }
