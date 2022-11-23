@@ -65,13 +65,15 @@ void setupMode()
 
     #if OHA_CHEST_FRONT_NUM != 0
         auto frontOutputs = createAutoOutputs(OHA_CHEST_FRONT_ROWS, OHA_CHEST_FRONT_COLS, pwms, offset);
-        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, new ClosestOutputComponent(frontOutputs));
+        auto front = transformAutoOutput(frontOutputs);
+        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, new ClosestOutputComponent(front));
         offset += OHA_CHEST_FRONT_NUM;
     #endif
 
     #if OHA_CHEST_BACK_NUM != 0
         auto backOutputs = createAutoOutputs(OHA_CHEST_BACK_ROWS, OHA_CHEST_BACK_COLS, pwms, offset);
-        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, new ClosestOutputComponent(backOutputs));
+        auto back = transformAutoOutput(backOutputs);
+        App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, new ClosestOutputComponent(back));
         offset += OHA_CHEST_BACK_NUM;
     #endif
 }
