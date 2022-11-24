@@ -15,3 +15,10 @@ void OutputComponent::setOutputs(outputMap_t &outputs)
         this->states[_p.first] = {};
     }
 }
+
+void OutputComponent::setup()
+{
+    for(const auto &kv : this->writers) {
+        kv.second->setup();
+    }
+}

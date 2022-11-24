@@ -5,13 +5,12 @@
 #include "utils.h"
 #include "auto_output.h"
 
+#include "config/pwm.h"
+
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
 #include "output_writers/pca9685.h"
 #include "output_writers/ledc.h"
-
-#define PWM_FREQUENCY 60
-#define PWM_RESOLUTION 12
 
 #pragma region bHaptics_trash
 
@@ -107,46 +106,20 @@ void setupMode() {
     pwm2->begin();
     pwm2->setPWMFreq(PWM_FREQUENCY);
 
-        // Configure PWM channels, and attach them to pins
-    // TODO: decide on better way to setup PWM pins
-    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(32, 0);
-
-    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(33, 1);
-
-    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(25, 2);
-
-    ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(26, 3);
-
-    ledcSetup(4, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(27, 4);
-
-    ledcSetup(5, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(14, 5);
-
-    ledcSetup(6, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(12, 6);
-
-    ledcSetup(7, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(13, 7);
-
-    // Assign the pins on the configured PCA9685s and PWM channels to locations on the vest
+    // Assign the pins on the configured PCA9685s and PWM pins to locations on the vest
     auto frontOutputs = transformAutoOutput({
         { new PCA9685OutputWriter(pwm1, 0),  new PCA9685OutputWriter(pwm1, 1),  new PCA9685OutputWriter(pwm1, 2),  new PCA9685OutputWriter(pwm1, 3)  },
         { new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)  },
         { new PCA9685OutputWriter(pwm1, 8),  new PCA9685OutputWriter(pwm1, 9),  new PCA9685OutputWriter(pwm1, 10), new PCA9685OutputWriter(pwm1, 11) },
         { new PCA9685OutputWriter(pwm1, 12), new PCA9685OutputWriter(pwm1, 13), new PCA9685OutputWriter(pwm1, 14), new PCA9685OutputWriter(pwm1, 15) },
-        { new LEDCOutputWriter(0),           new LEDCOutputWriter(1),           new LEDCOutputWriter(2),           new LEDCOutputWriter(3)           },
+        { new LEDCOutputWriter(32),          new LEDCOutputWriter(33),          new LEDCOutputWriter(25),          new LEDCOutputWriter(26)          },
     });
     auto backOutputs = transformAutoOutput({
         { new PCA9685OutputWriter(pwm2, 0),  new PCA9685OutputWriter(pwm2, 1),  new PCA9685OutputWriter(pwm2, 2),  new PCA9685OutputWriter(pwm2, 3)  },
         { new PCA9685OutputWriter(pwm2, 4),  new PCA9685OutputWriter(pwm2, 5),  new PCA9685OutputWriter(pwm2, 6),  new PCA9685OutputWriter(pwm2, 7)  },
         { new PCA9685OutputWriter(pwm2, 8),  new PCA9685OutputWriter(pwm2, 9),  new PCA9685OutputWriter(pwm2, 10), new PCA9685OutputWriter(pwm2, 11) },
         { new PCA9685OutputWriter(pwm2, 12), new PCA9685OutputWriter(pwm2, 13), new PCA9685OutputWriter(pwm2, 14), new PCA9685OutputWriter(pwm2, 15) },
-        { new LEDCOutputWriter(4),           new LEDCOutputWriter(5),           new LEDCOutputWriter(6),           new LEDCOutputWriter(7)           },
+        { new LEDCOutputWriter(27),          new LEDCOutputWriter(14),          new LEDCOutputWriter(12),          new LEDCOutputWriter(13)          },
     });
 
     auto chestFront = new ClosestOutputComponent(frontOutputs);

@@ -9,9 +9,6 @@
 #include "output_components/closest.h"
 #include "output_writers/ledc.h"
 
-#define PWM_FREQUENCY 60
-#define PWM_RESOLUTION 12
-
 #pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 4;
@@ -126,64 +123,14 @@ void vestMotorTransformer(std::string& value) {
 #pragma endregion bHaptics_trash
 
 void setupMode() {
-    // Configure PWM channels, and attach them to pins
-    // TODO: decide on better way to setup PWM pins
-    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(32, 0);
-
-    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(33, 1);
-
-    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(25, 2);
-
-    ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(26, 3);
-
-    ledcSetup(4, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(27, 4);
-
-    ledcSetup(5, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(14, 5);
-
-    ledcSetup(6, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(12, 6);
-
-    ledcSetup(7, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(13, 7);
-
-    ledcSetup(8, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(19, 8);
-
-    ledcSetup(9, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(18, 9);
-
-    ledcSetup(10, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(5, 10);
-
-    ledcSetup(11, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(17, 11);
-
-    ledcSetup(12, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(16, 12);
-
-    ledcSetup(13, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(4, 13);
-
-    ledcSetup(14, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(2, 14);
-
-    ledcSetup(15, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(15, 15);
-
-    // Map the above channels to their positions on the vest
+    // Configure PWM pins to their positions on the vest
     auto frontOutputs = transformAutoOutput({
-        { new LEDCOutputWriter(0),  new LEDCOutputWriter(1),  new LEDCOutputWriter(2),  new LEDCOutputWriter(3) },
-        { new LEDCOutputWriter(4),  new LEDCOutputWriter(5),  new LEDCOutputWriter(6),  new LEDCOutputWriter(7) },
+        { new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25), new LEDCOutputWriter(26) },
+        { new LEDCOutputWriter(27), new LEDCOutputWriter(14), new LEDCOutputWriter(12), new LEDCOutputWriter(13) },
     });
     auto backOutputs = transformAutoOutput({
-        { new LEDCOutputWriter(8),  new LEDCOutputWriter(9),  new LEDCOutputWriter(10), new LEDCOutputWriter(11) },
-        { new LEDCOutputWriter(12), new LEDCOutputWriter(13), new LEDCOutputWriter(14), new LEDCOutputWriter(15) },
+        { new LEDCOutputWriter(19), new LEDCOutputWriter(18),  new LEDCOutputWriter(5), new LEDCOutputWriter(17) },
+        { new LEDCOutputWriter(16), new LEDCOutputWriter(4), new LEDCOutputWriter(2), new LEDCOutputWriter(15) },
     });
 
     auto chestFront = new ClosestOutputComponent(frontOutputs);
