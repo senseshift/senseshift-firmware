@@ -9,9 +9,6 @@
 #include "output_components/closest.h"
 #include "output_writers/ledc.h"
 
-#define PWM_FREQUENCY 60
-#define PWM_RESOLUTION 12
-
 #pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 6;
@@ -43,29 +40,9 @@ void vestMotorTransformer(std::string& value) {
 #pragma endregion bHaptics_trash
 
 void setupMode() {
-    // Configure PWM channels, and attach them to pins
-    // TODO: decide on better way to setup PWM pins
-    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(32, 0);
-
-    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(33, 1);
-
-    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(25, 2);
-
-    ledcSetup(3, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(26, 3);
-
-    ledcSetup(4, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(27, 4);
-
-    ledcSetup(5, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(14, 5);
-
-    // Map the above channels to their positions on the face
+    // Configure PWM pins to their positions on the face
     auto faceOutputs = transformAutoOutput({
-        { new LEDCOutputWriter(0), new LEDCOutputWriter(1), new LEDCOutputWriter(2), new LEDCOutputWriter(3), new LEDCOutputWriter(4), new LEDCOutputWriter(5) },
+        { new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25), new LEDCOutputWriter(26), new LEDCOutputWriter(27), new LEDCOutputWriter(14) },
     });
 
     auto face = new ClosestOutputComponent(faceOutputs);

@@ -9,9 +9,6 @@
 #include "output_components/closest.h"
 #include "output_writers/ledc.h"
 
-#define PWM_FREQUENCY 60
-#define PWM_RESOLUTION 12
-
 #pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 3;
@@ -40,22 +37,9 @@ void vestMotorTransformer(std::string& value) {
 #pragma endregion bHaptics_trash
 
 void setupMode() {
-    // Configure PWM channels, and attach them to pins
-    // TODO: decide on better way to setup PWM pins
-    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(32, 0);
-
-    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(33, 1);
-
-    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttachPin(25, 2);
-
-    // Map the above channels to their positions on the feet
+    // Configure PWM pins to their positions on the feet
     auto footOutputs = transformAutoOutput({
-        { new LEDCOutputWriter(0) },
-        { new LEDCOutputWriter(1) },
-        { new LEDCOutputWriter(2) }
+        { new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25) }
     });
 
     auto foot = new ClosestOutputComponent(footOutputs);
