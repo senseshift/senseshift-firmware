@@ -39,6 +39,7 @@ typedef OutputState outputState_t;
 class OutputWriter
 {
     public:
+        virtual void setup() {};
         virtual void writeOutput(outputIntensity_t intensity) = 0;
 };
 
@@ -58,4 +59,5 @@ class OutputComponent : public Component
         std::list<outputPoint_t>* getOutputPoints(void) { return &this->points; };
         std::map<outputPoint_t, outputState_t>* getOutputStates(void) { return &this->states; };
         virtual void writeOutput(outputData_t&) = 0;
+        void setup() override;
 };

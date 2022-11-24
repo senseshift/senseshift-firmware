@@ -1,3 +1,4 @@
+#include "openhaptics.h"
 #include "output.h"
 
 Output::Output() {}
@@ -5,6 +6,7 @@ Output::Output() {}
 void Output::addComponent(outputPath_t path, OutputComponent* c)
 {
     this->components[path] = c;
+    App.registerComponent(c);
 }
 
 std::map<outputPath_t, OutputComponent*>* Output::getComponents()
