@@ -1,43 +1,27 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "firmware.h"
-#include "main.h"
-#include "output.h"
+#include "openhaptics.h"
+#include "utils.h"
+#include "auto_output.h"
 
 #include "connections/bhaptics.h"
-#include "outputs/auto_margins.h"
+#include "output_components/closest.h"
 #include "output_writers/pca9685.h"
 
-// Front ouputs, responsible for x40 => x16 mappings
+#define PWM_FREQUENCY 60
 
-#define BH_X16_O_F00 0
-#define BH_X16_O_F10 1
-#define BH_X16_O_F20 30
-#define BH_X16_O_F30 31
-#define BH_X16_O_F01 8
-#define BH_X16_O_F11 9
-#define BH_X16_O_F21 38
-#define BH_X16_O_F31 39
-
-#define BH_X16_O_B00 10
-#define BH_X16_O_B10 11
-#define BH_X16_O_B20 20
-#define BH_X16_O_B30 21
-#define BH_X16_O_B01 18
-#define BH_X16_O_B11 19
-#define BH_X16_O_B21 28
-#define BH_X16_O_B31 29
+#pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 2;
 
 inline Point2D* make_point(uint16_t x, uint16_t y) {
-    return new Point2D(UINT16_MAX * (1 / ((float)_bh_max_x - 1)) * ((float)x), UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
+    return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
 Point2D* indexesToPoints[40] = {
-    // Front
+    // Front, left part
     /*  0 */ make_point(0, 0), // 0
     /*  1 */ make_point(1, 0), // 1
     /*  2 */ make_point(0, 0), // 4
@@ -75,7 +59,7 @@ Point2D* indexesToPoints[40] = {
     /* 28 */ make_point(2, 1), // 18
     /* 29 */ make_point(3, 1), // 19
 
-    // Front
+    // Front, again... Now right part
     /* 30 */ make_point(2, 0), // 2
     /* 31 */ make_point(3, 0), // 3
     /* 32 */ make_point(2, 0), // 4
@@ -89,10 +73,11 @@ Point2D* indexesToPoints[40] = {
     /* 39 */ make_point(3, 1), // 19
 };
 
+// Ouput indices, responsible for x40 => x16 grouping
 uint8_t groups[16] = { 0, 1, 4, 5, 10, 11, 14, 15, 20, 21, 24, 25, 30, 31, 34, 35, };
 
 void vestMotorTransformer(std::string& value) {
-    uint8_t result[40];;
+    uint8_t result[40];
 
     // Unpack values
     for (auto i = 0; i < 20; i++) {
@@ -111,21 +96,19 @@ void vestMotorTransformer(std::string& value) {
             auto maxValue = max(result[groupIndex], max(result[groupIndex+2], result[groupIndex+4]));
 
             result[groupIndex] = maxValue;
-            result[groupIndex+2] = maxValue;
-            result[groupIndex+4] = maxValue;
+            result[groupIndex + 2] = maxValue;
+            result[groupIndex + 4] = maxValue;
         } else {
             auto maxValue = max(result[groupIndex], result[groupIndex+2]);
 
             result[groupIndex] = maxValue;
-            result[groupIndex+2] = maxValue;
+            result[groupIndex + 2] = maxValue;
         }
     }
 
-    for (auto i = 0; i < 40; i++) {
+    for (uint8_t i = 0; i < 40; i++) {
         // take only meaningful values
-        if (i != BH_X16_O_F00 && i != BH_X16_O_F01 && i != BH_X16_O_F10 && i != BH_X16_O_F11 && i != BH_X16_O_F20 && i != BH_X16_O_F21 && i != BH_X16_O_F30 && i != BH_X16_O_F31
-            && i != BH_X16_O_B00 && i != BH_X16_O_B01 && i != BH_X16_O_B10 && i != BH_X16_O_B11 && i != BH_X16_O_B20 && i != BH_X16_O_B21 && i != BH_X16_O_B30 && i != BH_X16_O_B31
-        ) {
+        if (!contains(groups, i)) {
             continue;
         }
 
@@ -139,29 +122,30 @@ void vestMotorTransformer(std::string& value) {
     }
 }
 
-void setupMode() {
+#pragma endregion bHaptics_trash
 
+void setupMode() {
     // Configure the PCA9685
-    Adafruit_PWMServoDriver* pwm = new Adafruit_PWMServoDriver(0x40);
+    auto pwm = new Adafruit_PWMServoDriver(0x40);
     pwm->begin();
-    pwm->setPWMFreq(60);
+    pwm->setPWMFreq(PWM_FREQUENCY);
 
     // Assign the pins on the configured PCA9685 to positions on the vest
-    autoOutputVector_t frontOutputs{
-        { new PCA9685OutputWriter(pwm, 0),  new PCA9685OutputWriter(pwm, 1),   new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3)  },
-        { new PCA9685OutputWriter(pwm, 4),  new PCA9685OutputWriter(pwm, 5),   new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7)  },
-    };
-    autoOutputVector_t backOutputs{
+    auto frontOutputs = transformAutoOutput({
+        { new PCA9685OutputWriter(pwm, 0),  new PCA9685OutputWriter(pwm, 1),  new PCA9685OutputWriter(pwm, 2),  new PCA9685OutputWriter(pwm, 3)  },
+        { new PCA9685OutputWriter(pwm, 4),  new PCA9685OutputWriter(pwm, 5),  new PCA9685OutputWriter(pwm, 6),  new PCA9685OutputWriter(pwm, 7)  },
+    });
+    auto backOutputs = transformAutoOutput({
         { new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11) },
         { new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15) },
-    };
+    });
 
-    OutputComponent* chestFront = new OutputAutoComponent_Margin(frontOutputs);
-    OutputComponent* chestBack = new OutputAutoComponent_Margin(backOutputs);
+    auto chestFront = new ClosestOutputComponent(frontOutputs);
+    auto chestBack = new ClosestOutputComponent(backOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
     App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
-    App.registerComponent(bhBleConnection);
+    App.setConnection(bhBleConnection);
 }

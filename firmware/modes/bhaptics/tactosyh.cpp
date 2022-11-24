@@ -1,24 +1,30 @@
-#include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "openhaptics.h"
+#include "utils.h"
+#include "auto_output.h"
+
 #include "connections/bhaptics.h"
-#include "firmware.h"
-#include "main.h"
+#include "output_components/closest.h"
 #include "output_writers/ledc.h"
-#include "output_writers/pca9685.h"
-#include "outputs/auto_margins.h"
 
-const uint16_t _bh_max_y = 3;
+#define PWM_FREQUENCY 60
+#define PWM_RESOLUTION 12
 
-inline Point2D* make_point(uint16_t y) {
-    return new Point2D(0, UINT16_MAX * (1 / ((float)_bh_max_y - 1)) * ((float)y));
+#pragma region bHaptics_trash
+
+const uint16_t _bh_max_x = 3;
+const uint16_t _bh_max_y = 1;
+
+inline Point2D* make_point(uint16_t x, uint16_t y) {
+    return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
-Point2D* indexesToPoints[_bh_max_y] = {
-    make_point(0),
-    make_point(1),
-    make_point(2),
+Point2D* indexesToPoints[_bh_max_x * _bh_max_y] = {
+    make_point(0, 0),
+    make_point(1, 0),
+    make_point(2, 0)
 };
 
 void vestMotorTransformer(std::string& value) {
@@ -31,29 +37,31 @@ void vestMotorTransformer(std::string& value) {
     }
 }
 
-void setupMode() {
+#pragma endregion bHaptics_trash
 
+void setupMode() {
     // Configure PWM channels, and attach them to pins
-    ledcSetup(0, 60, 12);
+    // TODO: decide on better way to setup PWM pins
+    ledcSetup(0, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(32, 0);
 
-    ledcSetup(1, 60, 12);
+    ledcSetup(1, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(33, 1);
 
-    ledcSetup(2, 60, 12);
+    ledcSetup(2, PWM_FREQUENCY, PWM_RESOLUTION);
     ledcAttachPin(25, 2);
 
     // Map the above channels to their positions on the hands
-    autoOutputVector_t handOutputs{
+    auto handOutputs = transformAutoOutput({
         { new LEDCOutputWriter(0) },
         { new LEDCOutputWriter(1) },
         { new LEDCOutputWriter(2) }
-    };
+    });
 
-    OutputAutoComponent_Margin* hand = new OutputAutoComponent_Margin(handOutputs);
+    auto hand = new ClosestOutputComponent(handOutputs);
 
     App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, hand);
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
-    App.registerComponent(bhBleConnection);
+    App.setConnection(bhBleConnection);
 }

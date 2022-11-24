@@ -1,9 +1,11 @@
-#include "firmware.h"
-#include "main.h"
+#include <HardwareSerial.h>
+#include "openhaptics.h"
 
 #ifdef SERIAL_PLOTTER
 #include "components/serial_plotter.h"
 #endif
+
+#ifndef PIO_UNIT_TESTING
 
 extern void setupMode(void);
 
@@ -24,3 +26,5 @@ void loop()
 {
     App.loop();
 }
+
+#endif
