@@ -2,8 +2,6 @@
 
 #include "output_components/closest.h"
 
-#define UNIT_TEST
-
 #ifdef UNIT_TEST
 
 class TestWriter : public OutputWriter
