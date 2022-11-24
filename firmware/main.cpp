@@ -5,6 +5,8 @@
 #include "components/serial_plotter.h"
 #endif
 
+#ifndef PIO_UNIT_TESTING
+
 extern void setupMode(void);
 
 void setup()
@@ -24,3 +26,5 @@ void loop()
 {
     App.loop();
 }
+
+#endif
