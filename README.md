@@ -7,9 +7,13 @@ Build your own haptic vest, haptic gloves and more!
 [![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
 [![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter)](https://twitter.com/leon0399)
 
+[![PlatformIO CI](https://github.com/openhaptics/openhaptics-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/openhaptics/openhaptics-firmware/actions/workflows/ci.yml)
+
 [![GPL-3.0](https://img.shields.io/github/license/openhaptics/openhaptics-firmware)](/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/openhaptics/openhaptics-firmware)](https://github.com/openhaptics/openhaptics-firmware/graphs/contributors)
 [![GitHub](https://img.shields.io/github/stars/openhaptics/openhaptics-firmware.svg)](https://github.com/openhaptics/openhaptics-firmware)
+[![Contributor Covenant](https://img.shields.io/badge/code_of_conduct-contributor_covenant_v2.1-ff69b4)](/CODE_OF_CONDUCT.md)
+
 
 ## Configuration, flashing and connecting
 
@@ -28,6 +32,9 @@ Please note, that documentation is still work-in-progress
 | ESP32-WROVER         | ✅            |
 | ESP32-C3             | ❌            |
 | ESP32-S3             | ❌            |
+
+> **Note**  
+> Please, refer to [Documentation on MCUs](https://openhaptics.github.io/docs/hardware/mcu) for more detailed info
 
 ### PWM Drivers
 
