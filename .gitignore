@@ -13,3 +13,6 @@
 .clang_complete
 .gcc-flags.json
 /lib/
+
+# CI
+/build/
