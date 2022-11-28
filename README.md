@@ -8,6 +8,7 @@ Build your own DIY haptic vest, haptic gloves and more!
 [![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter)](https://twitter.com/leon0399)
 
 [![PlatformIO CI](https://github.com/openhaptics/openhaptics-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/openhaptics/openhaptics-firmware/actions/workflows/ci.yml)
+[![GitHub bug issues](https://img.shields.io/github/issues/openhaptics/openhaptics-firmware/bug?color=%23d73a4a)](https://github.com/openhaptics/openhaptics-firmware/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 
 [![GPL-3.0](https://img.shields.io/github/license/openhaptics/openhaptics-firmware)](/LICENSE)
 [![GitHub contributors](https://img.shields.io/github/contributors/openhaptics/openhaptics-firmware)](https://github.com/openhaptics/openhaptics-firmware/graphs/contributors)
