@@ -2,7 +2,7 @@
 
 This project intended to let people build their own DIY haptic-feedback devices. Integrates to all existing games, that work with bHaptics.
 
-Build your own haptic vest, haptic gloves and more!
+Build your own DIY haptic vest, haptic gloves and more!
 
 [![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
 [![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter)](https://twitter.com/leon0399)
@@ -17,8 +17,11 @@ Build your own haptic vest, haptic gloves and more!
 
 ## Configuration, flashing and connecting
 
-* [Firmware Documentation](https://openhaptics.github.io/)
-* [Hardware Documentation](https://github.com/openhaptics/openhaptics-hardware)
+The main documentation on this project is located on [openhaptics.github.io](https://openhaptics.github.io/)
+
+* [Getting Started](https://openhaptics.github.io/docs/getting-started)
+* [Hardware Schematics](https://github.com/openhaptics/openhaptics-hardware)
+* [Flashing Firmware](https://openhaptics.github.io/docs/category/flashing-firmware)
 
 Please note, that documentation is still work-in-progress
 
@@ -78,3 +81,16 @@ Please note, that documentation is still work-in-progress
 | Haptic Feet Device     | Tactosy for feet     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-feet-device)    |
 | X16 Haptic Vest        | TactSuit X16         | US $299      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)       |
 | X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x40-haptic-vest)       |
+
+## For Developers
+
+* [Code of Conduct](./CODE_OF_CONDUCT.md)
+* [Contributing Guidelines](./CONTRIBUTING.md)
+
+## Licensing
+
+[![GPL-3.0](https://www.gnu.org/graphics/gplv3-or-later-sm.png)](./LICENSE)
+
+This firmware is licensed under [GPL-3.0](./LICENSE). Please see the [LICENSE](./LICENSE) file for details.
+
+OpenHaptics are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. OpenHaptics is not a bHaptics-approved software, nor is it associated with bHaptics.
