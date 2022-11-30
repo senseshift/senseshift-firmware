@@ -11,5 +11,5 @@ class BHapticsBLEConnection final : public BLEConnection
         void (*motorTransformer)(std::string&);
     public:
         BHapticsBLEConnection(std::string deviceName, void (*motorTransformer)(std::string&)) : BLEConnection(deviceName), motorTransformer(motorTransformer) {};
-        void setup(void);
+        void setup(void) override;
 };
