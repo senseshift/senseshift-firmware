@@ -13,7 +13,7 @@
 #endif
 
 #ifndef BH_FIRMWARE_VERSION
-#define BH_FIRMWARE_VERSION (uint16_t) 258
+#define BH_FIRMWARE_VERSION (uint16_t) 512
 #endif
 
 #define NO_AUDIO_CABLE 0
