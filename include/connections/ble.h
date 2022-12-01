@@ -15,5 +15,4 @@ class BLEConnection : public Connection
     public:
         BLEConnection(const std::string &deviceName) : deviceName(deviceName) {};
         void setup(void) override;
-        void loop(void) override;
 };

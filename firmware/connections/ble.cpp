@@ -8,8 +8,3 @@ void BLEConnection::setup()
 
     this->bleServer = BLEDevice::createServer();
 }
-
-void BLEConnection::loop()
-{
-    
-}
