@@ -1,10 +1,22 @@
-name: Feature Request
-description: "💡 Create a new ticket for a new feature request"
+name: 💡 Feature Request
+description: Create a new ticket for a new feature request
 title: "[Request]: "
-labels: [
-  "question"
-]
+labels: [ "question" ]
 body:
+  - type: markdown
+    attributes:
+      value: >
+        Do you want to ask a question? Are you looking for support? Please use one of the [support links](https://github.com/openhaptics/openhaptics-firmware/issues/new/choose).
+
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for taking the time to fill out this feature request!**
+
+        ## Before Requesting a Feature
+
+        - Read and understand OpenHaptics [Code of Conduct](https://github.com/openhaptics/openhaptics-firmware/blob/master/CODE_OF_CONDUCT.md). You are expected to comply with it, including treating everyone with respect.
+
   - type: textarea
     id: implementation_pr
     attributes:

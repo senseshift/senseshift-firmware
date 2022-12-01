@@ -1,15 +1,28 @@
-name: Bug Report
-description: "🐛 File a bug report"
+name: 🐛 Bug Report
+description: File a bug report
 title: "[Bug]: "
 labels: ["bug", "needs-repro"]
-assignees:
-  - leon0399
 
 body:
   - type: markdown
     attributes:
+      value: >
+        Do you want to ask a question? Are you looking for support? Please use one of the [support links](https://github.com/openhaptics/openhaptics-firmware/issues/new/choose).
+
+  - type: markdown
+    attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        **Thanks for taking the time to fill out this bug report!**
+
+        ## Before Reporting a Bug
+
+        - Read and understand OpenHaptics [Code of Conduct](https://github.com/openhaptics/openhaptics-firmware/blob/master/CODE_OF_CONDUCT.md). You are expected to comply with it, including treating everyone with respect.
+
+        ## Instructions
+
+        1. Provide a good title starting with `[Bug]: `.
+        2. Fill out all sections of this bug report form.
+        3. Always attach configuration files so we can build and test your setup.
 
   - type: textarea
     id: what-happened

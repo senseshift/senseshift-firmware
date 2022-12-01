@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: 📖 OpenHaptics Documentation
+    url: https://openhaptics.github.io/
+    about: Documentation on installing and using OpenHaptics Firmware
+  - name: 🕹 OpenHaptics on Discord
+    url: https://discord.gg/YUtRKAqty2
+    about: Join the Discord server for support and discussion.
