@@ -3,7 +3,8 @@
 
 // Override you configs below
 
-#define BATTERY_ENABLED true
+// Experimental battery support
+#define BATTERY_ENABLED false
 
 // Stop overriding your configs
 
