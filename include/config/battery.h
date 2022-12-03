@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef BATTERY_ENABLED
-#define BATTERY_ENABLED true
+#define BATTERY_ENABLED false
 #endif
 
 #ifndef BATTERY_SAMPLE_RATE

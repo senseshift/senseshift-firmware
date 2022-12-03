@@ -1,4 +1,5 @@
 #include "openhaptics.h"
+#include "config/all.h"
 
 OpenHaptics::OpenHaptics()
 {

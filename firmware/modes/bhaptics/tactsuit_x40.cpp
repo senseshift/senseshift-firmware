@@ -14,8 +14,6 @@
 #include "utils.h"
 #include "auto_output.h"
 
-#include "config/pwm.h"
-
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
 #include "output_writers/pca9685.h"

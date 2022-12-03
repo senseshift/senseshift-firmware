@@ -2,7 +2,7 @@
 #include <HardwareSerial.h>
 #include <BLE2902.h>
 
-#include "config/bhaptics.h"
+#include "config/all.h"
 
 #include "openhaptics.h"
 #include "connections/bhaptics.h"
@@ -230,4 +230,21 @@ void BHapticsBLEConnection::setup()
     }
 
     this->bleServer->getAdvertising()->start();
+}
+
+void BHapticsBLEConnection::loop()
+{
+    BLEConnection::loop();
+
+    auto now_ms = millis();
+
+    #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+        if (now_ms - this->lastBatteryUpdate >= BATTERY_SAMPLE_RATE) {
+            this->lastBatteryUpdate = now_ms;
+            uint16_t level = map(App.getBattery()->getLevel(), 0, 255, 0, 100);
+
+            this->batteryChar->setValue(level);
+            this->batteryChar->notify();
+        }
+    #endif
 }

@@ -1,14 +1,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-// Override you configs below
-
-// Experimental battery support
-#define BATTERY_ENABLED false
-
-// Stop overriding your configs
-
-#include "config/all.h"
+// Override you configs in this file (Ctrl+Click)
+#include "config/override.h"
 
 #include "openhaptics.h"
 #include "utils.h"

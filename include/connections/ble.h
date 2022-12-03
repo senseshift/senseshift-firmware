@@ -4,8 +4,7 @@
 
 #include <BLEDevice.h>
 
-#include "config/bluetooth.h"
-#include "config/battery.h"
+#include "config/all.h"
 #include "connection.h"
 
 class BLEConnection : public Connection
