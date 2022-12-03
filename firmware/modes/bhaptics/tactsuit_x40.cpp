@@ -1,6 +1,14 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+// Override you configs below
+
+#define BATTERY_ENABLED true
+
+// Stop overriding your configs
+
+#include "config/all.h"
+
 #include "openhaptics.h"
 #include "utils.h"
 #include "auto_output.h"
@@ -11,6 +19,11 @@
 #include "output_components/closest.h"
 #include "output_writers/pca9685.h"
 #include "output_writers/ledc.h"
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+    #include "battery/abstract_battery.h"
+    #include "battery/adc_battery.h"
+#endif
 
 #pragma region bHaptics_trash
 
@@ -130,4 +143,9 @@ void setupMode() {
 
     BHapticsBLEConnection* bhBleConnection = new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
     App.setConnection(bhBleConnection);
+
+    #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+        AbstractBattery* battery = new ADCBattery(33);
+        App.setBattery(battery);
+    #endif
 }
