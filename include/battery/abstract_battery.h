@@ -11,7 +11,6 @@ class AbstractBattery : public Component
         uint8_t level = 0; // 0 = min, 255 = max
         virtual uint8_t updateLevel(void) = 0;
     public:
-        void setup(void) override;
         void loop(void) override;
         uint8_t getLevel() { return this->level; };
 };

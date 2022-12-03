@@ -7,6 +7,11 @@ class BHapticsBLEConnection final : public BLEConnection
 {
     private:
         BLEService* motorService = nullptr;
+
+        #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+            unsigned long lastBatteryUpdate = 0;
+            BLECharacteristic* batteryChar = nullptr;
+        #endif
     protected:
         void (*motorTransformer)(std::string&);
     public:

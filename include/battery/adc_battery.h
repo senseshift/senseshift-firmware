@@ -2,7 +2,7 @@
 
 #include "battery/abstract_battery.h"
 
-class ADCBattery : private AbstractBattery
+class ADCBattery : public AbstractBattery
 {
     private:
         uint8_t pin;

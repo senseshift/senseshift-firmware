@@ -9,5 +9,7 @@ void AbstractBattery::loop()
         this->last_battery_sample = now_ms;
 
         this->level = this->updateLevel();
+
+        Serial.printf(">>\t%s: %3u\n", __PRETTY_FUNCTION__, this->level);
     }
 };
