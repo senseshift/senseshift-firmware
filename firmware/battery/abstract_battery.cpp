@@ -10,6 +10,6 @@ void AbstractBattery::loop()
 
         this->level = this->updateLevel();
 
-        Serial.printf(">>\t%s: %3u\n", __PRETTY_FUNCTION__, this->level);
+        Serial.printf(">>\t%s: %3u (took %lu ms)\n", __PRETTY_FUNCTION__, this->level, now_ms - millis());
     }
 };
