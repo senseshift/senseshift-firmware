@@ -4,7 +4,7 @@
 #include "component.h"
 #include "../config/battery.h"
 
-class AbstractBattery : private Component
+class AbstractBattery : public Component
 {
     protected:
         unsigned long last_battery_sample = 0;

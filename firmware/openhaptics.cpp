@@ -32,6 +32,14 @@ void OpenHaptics::setConnection(Connection* connection)
     this->connection = connection;
 }
 
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+    void OpenHaptics::setBattery(AbstractBattery* battery)
+    {
+        this->registerComponent(battery);
+        this->battery = battery;
+    }
+#endif
+
 void OpenHaptics::setup()
 {
     for (auto &component : this->components) {

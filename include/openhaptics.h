@@ -2,13 +2,13 @@
 
 #include <vector>
 
-#include "config/battery.h"
+#include "config/all.h"
 #include "component.h"
 #include "connection.h"
 #include "output.h"
 
-#if defined(BATERY_ENABLED) && BATERY_ENABLED == 1
-#include "battery/abstract_battery.h"
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+    #include "battery/abstract_battery.h"
 #endif
 
 class OpenHaptics final
@@ -18,8 +18,8 @@ class OpenHaptics final
         Connection* connection;
         Output* output;
 
-        #if defined(BATERY_ENABLED) && BATERY_ENABLED == 1
-        AbstractBattery* battery;
+        #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+            AbstractBattery* battery;
         #endif
 
     public:
@@ -33,8 +33,9 @@ class OpenHaptics final
         void setConnection(Connection*);
         Connection* getConnection() { return this->connection; };
 
-        #if defined(BATERY_ENABLED) && BATERY_ENABLED == 1
-        AbstractBattery* getBattery() { return this->battery; };
+        #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+            void setBattery(AbstractBattery*);
+            AbstractBattery* getBattery() { return this->battery; };
         #endif
 
         void setup(void);
