@@ -2,7 +2,7 @@
 #include <Wire.h>
 
 // Override you configs in this file (Ctrl+Click)
-#include "config/override.h"
+#include "config/all.h"
 
 #include "openhaptics.h"
 #include "utils.h"
