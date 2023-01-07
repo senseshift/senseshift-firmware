@@ -1,4 +1,5 @@
 #include "openhaptics.h"
+#include "config/all.h"
 
 OpenHaptics::OpenHaptics()
 {
@@ -31,6 +32,14 @@ void OpenHaptics::setConnection(Connection* connection)
     this->registerComponent(connection);
     this->connection = connection;
 }
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+    void OpenHaptics::setBattery(AbstractBattery* battery)
+    {
+        this->registerComponent(battery);
+        this->battery = battery;
+    }
+#endif
 
 void OpenHaptics::setup()
 {

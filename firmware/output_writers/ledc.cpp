@@ -1,7 +1,7 @@
-#include "output_writers/ledc.h"
-
-#include "config/pwm.h"
 #include <Arduino.h>
+
+#include "config/all.h"
+#include "output_writers/ledc.h"
 
 uint8_t LEDCOutputWriter::CHANNELS = 0;
 

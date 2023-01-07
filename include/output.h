@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config/output.h"
+#include "config/all.h"
 
 #include "component.h"
 #include "output_component.h"

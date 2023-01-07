@@ -2,9 +2,14 @@
 
 #include <vector>
 
+#include "config/all.h"
 #include "component.h"
 #include "connection.h"
 #include "output.h"
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+    #include "battery/abstract_battery.h"
+#endif
 
 class OpenHaptics final
 {
@@ -12,6 +17,10 @@ class OpenHaptics final
         std::vector<Component*> components {};
         Connection* connection;
         Output* output;
+
+        #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+            AbstractBattery* battery;
+        #endif
 
     public:
         OpenHaptics();
@@ -23,6 +32,11 @@ class OpenHaptics final
 
         void setConnection(Connection*);
         Connection* getConnection() { return this->connection; };
+
+        #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+            void setBattery(AbstractBattery*);
+            AbstractBattery* getBattery() { return this->battery; };
+        #endif
 
         void setup(void);
         void loop(void);
