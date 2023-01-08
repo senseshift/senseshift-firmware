@@ -4,12 +4,12 @@
 
 #include "component.h"
 
-class SerialPlotter_OutputStates : public Component
-{
-    protected:
-        HardwareSerial* serial;
-    public:
-        SerialPlotter_OutputStates(HardwareSerial &serial) : serial(&serial) {};
-        void setup(void) override;
-        void loop(void) override;
+class SerialPlotter_OutputStates : public Component {
+ protected:
+  HardwareSerial* serial;
+
+ public:
+  SerialPlotter_OutputStates(HardwareSerial& serial) : serial(&serial){};
+  void setup(void) override;
+  void loop(void) override;
 };

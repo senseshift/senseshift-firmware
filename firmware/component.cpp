@@ -1,7 +1,5 @@
 #include "component.h"
 
-void Component::setup()
-{}
+void Component::setup() {}
 
-void Component::loop()
-{}
+void Component::loop() {}
