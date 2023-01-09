@@ -1,10 +1,10 @@
 #pragma once
 
+#include <abstract_battery.hpp>
+
 #include <Adafruit_INA219.h>
 
-#include "battery/abstract_battery.h"
-
-class INA219_BatteryLevel : public AbstractBattery
+class INA219_BatteryLevel : public OH::Core::AbstractBattery
 {
     private:
         bool active = false;

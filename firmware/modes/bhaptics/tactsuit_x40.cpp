@@ -143,7 +143,7 @@ void setupMode() {
   App.setConnection(bhBleConnection);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCBattery(33);
+  OH::Core::AbstractBattery* battery = new ADCBattery(33);
   App.setBattery(battery);
 #endif
 }

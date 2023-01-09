@@ -3,6 +3,7 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/*.db
+!.vscode/extensions.json
 *.bak
 *.code-workspace
 

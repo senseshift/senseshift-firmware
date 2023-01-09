@@ -18,7 +18,7 @@ class OpenHaptics final {
   Output* output;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery;
+  OH::Core::AbstractBattery* battery;
 #endif
 
  public:
@@ -33,8 +33,8 @@ class OpenHaptics final {
   Connection* getConnection() { return this->connection; };
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  void setBattery(AbstractBattery*);
-  AbstractBattery* getBattery() { return this->battery; };
+  void setBattery(OH::Core::AbstractBattery*);
+  OH::Core::AbstractBattery* getBattery() { return this->battery; };
 #endif
 
   void setup(void);
