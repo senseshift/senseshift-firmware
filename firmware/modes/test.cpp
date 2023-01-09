@@ -3,7 +3,7 @@
 
 #include "auto_output.h"
 #include "openhaptics.h"
-#include "utils.h"
+#include <utility.hpp>
 
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"

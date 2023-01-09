@@ -9,7 +9,7 @@
 
 #include "auto_output.h"
 #include "openhaptics.h"
-#include "utils.h"
+#include <utility.hpp>
 
 #include "output_components/closest.h"
 #include "output_writers/pca9685.h"
