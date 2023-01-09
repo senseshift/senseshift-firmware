@@ -21,5 +21,9 @@ void MAX1704_BatteryLevel::setup()
 
 uint8_t MAX1704_BatteryLevel::updateLevel()
 {
-    return this->gauge->getSOC();
+  if (!this->active) {
+    return 0;
+  }
+
+  return this->gauge->getSOC();
 }
