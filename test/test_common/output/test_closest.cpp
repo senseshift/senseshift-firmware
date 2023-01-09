@@ -6,7 +6,7 @@
 
 class TestWriter : public OutputWriter {
  public:
-  void writeOutput(outputIntensity_t intensity) override{};
+  void writeOutput(oh_outputIntensity_t intensity) override{};
 };
 
 void test_coordinates(void) {

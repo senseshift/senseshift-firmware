@@ -15,7 +15,7 @@ class TestOutput : public OutputWriter {
  public:
   TestOutput(uint8_t channel) : channel(channel){};
   uint8_t getChannel() { return channel; };
-  void writeOutput(outputIntensity_t intensity) {
+  void writeOutput(oh_outputIntensity_t intensity) {
     Serial.printf("\t> Channel %2u: %3u\n", channel, intensity);
   };
 };

@@ -5,32 +5,25 @@
 #include <vector>
 
 #include <abstract_component.hpp>
+#include <abstract_output_writer.hpp>
 #include <vec2.hpp>
 
 typedef uint8_t outputPath_t;
 
 typedef OH::Vec2b outputPoint_t;
 
-typedef uint16_t outputIntensity_t;
-
 struct OutputData {
   outputPoint_t point;
-  outputIntensity_t intensity;
+  oh_outputIntensity_t intensity;
 };
 typedef OutputData outputData_t;
 
 struct OutputState {
-  outputIntensity_t intensity;
+  oh_outputIntensity_t intensity;
 };
 typedef OutputState outputState_t;
 
-class OutputWriter {
- public:
-  virtual void setup(){};
-  virtual void writeOutput(outputIntensity_t intensity) = 0;
-};
-
-typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
+typedef std::map<outputPoint_t, OH::AbstractOutputWriter*> outputMap_t;
 
 class OutputComponent : public OH::AbstractComponent {
  protected:
