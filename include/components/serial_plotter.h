@@ -4,7 +4,7 @@
 
 #include <abstract_component.hpp>
 
-class SerialPlotter_OutputStates : public OH::Core::AbstractComponent {
+class SerialPlotter_OutputStates : public OH::AbstractComponent {
  protected:
   HardwareSerial* serial;
 

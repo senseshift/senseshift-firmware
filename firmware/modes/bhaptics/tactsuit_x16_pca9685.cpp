@@ -17,6 +17,8 @@
 #include "battery/adc_battery.h"
 #endif
 
+using namespace OH;
+
 #define PWM_FREQUENCY 60
 
 #pragma region bHaptics_trash
@@ -165,7 +167,7 @@ void setupMode() {
   App.setConnection(bhBleConnection);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  OH::Core::AbstractBattery* battery = new ADCBattery(33);
+  AbstractBattery* battery = new ADCBattery(33);
   App.setBattery(battery);
 #endif
 }

@@ -17,6 +17,8 @@
 #include "battery/adc_battery.h"
 #endif
 
+using namespace OH;
+
 #pragma region bHaptics_trash
 
 const uint16_t _bh_max_x = 6;
@@ -60,7 +62,7 @@ void setupMode() {
   App.setConnection(bhBleConnection);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  OH::Core::AbstractBattery* battery = new ADCBattery(33);
+  AbstractBattery* battery = new ADCBattery(33);
   App.setBattery(battery);
 #endif
 }

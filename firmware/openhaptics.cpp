@@ -5,7 +5,7 @@ OpenHaptics::OpenHaptics() {
   this->output = new Output();
 }
 
-void OpenHaptics::registerComponent(OH::Core::AbstractComponent* component) {
+void OpenHaptics::registerComponent(OH::AbstractComponent* component) {
   if (component == nullptr) {
     return;
   }
@@ -30,7 +30,7 @@ void OpenHaptics::setConnection(Connection* connection) {
 }
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-void OpenHaptics::setBattery(OH::Core::AbstractBattery* battery) {
+void OpenHaptics::setBattery(OH::AbstractBattery* battery) {
   this->registerComponent(battery);
   this->battery = battery;
 }

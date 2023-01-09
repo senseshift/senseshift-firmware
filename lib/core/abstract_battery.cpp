@@ -9,7 +9,7 @@
 #define BATTERY_SAMPLE_RATE 10000
 #endif
 
-void OH::Core::AbstractBattery::loop() {
+void OH::AbstractBattery::loop() {
   auto now_ms = millis();
 
   if (now_ms - this->last_battery_sample >= BATTERY_SAMPLE_RATE) {

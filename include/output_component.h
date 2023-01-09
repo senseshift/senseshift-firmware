@@ -9,7 +9,7 @@
 
 typedef uint8_t outputPath_t;
 
-typedef OH::Math::Vec2b outputPoint_t;
+typedef OH::Vec2b outputPoint_t;
 
 typedef uint16_t outputIntensity_t;
 
@@ -32,7 +32,7 @@ class OutputWriter {
 
 typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
 
-class OutputComponent : public OH::Core::AbstractComponent {
+class OutputComponent : public OH::AbstractComponent {
  protected:
   std::list<outputPoint_t> points{};
   outputMap_t writers{};

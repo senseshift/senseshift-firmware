@@ -4,7 +4,7 @@
 
 #include <Adafruit_INA219.h>
 
-class INA219_BatteryLevel : public OH::Core::AbstractBattery
+class INA219_BatteryLevel : public OH::AbstractBattery
 {
     private:
         bool active = false;

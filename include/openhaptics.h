@@ -13,18 +13,18 @@
 
 class OpenHaptics final {
  private:
-  std::vector<OH::Core::AbstractComponent*> components{};
+  std::vector<OH::AbstractComponent*> components{};
   Connection* connection;
   Output* output;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  OH::Core::AbstractBattery* battery;
+  OH::AbstractBattery* battery;
 #endif
 
  public:
   OpenHaptics();
-  std::vector<OH::Core::AbstractComponent*> getComponents() { return this->components; };
-  void registerComponent(OH::Core::AbstractComponent*);
+  std::vector<OH::AbstractComponent*> getComponents() { return this->components; };
+  void registerComponent(OH::AbstractComponent*);
 
   Output* getOutput() { return this->output; };
   void addOutputComponent(outputPath_t, OutputComponent*);
@@ -33,8 +33,8 @@ class OpenHaptics final {
   Connection* getConnection() { return this->connection; };
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  void setBattery(OH::Core::AbstractBattery*);
-  OH::Core::AbstractBattery* getBattery() { return this->battery; };
+  void setBattery(OH::AbstractBattery*);
+  OH::AbstractBattery* getBattery() { return this->battery; };
 #endif
 
   void setup(void);

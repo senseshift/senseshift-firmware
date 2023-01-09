@@ -2,7 +2,7 @@
 
 #include <abstract_battery.hpp>
 
-class ADCBattery : public OH::Core::AbstractBattery {
+class ADCBattery : public OH::AbstractBattery {
  private:
   uint8_t pin;
 

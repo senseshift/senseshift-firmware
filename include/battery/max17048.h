@@ -4,7 +4,7 @@
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h>
 
 
-class MAX1704_BatteryLevel : public OH::Core::AbstractBattery
+class MAX1704_BatteryLevel : public OH::AbstractBattery
 {
     private:
         bool active = false;
