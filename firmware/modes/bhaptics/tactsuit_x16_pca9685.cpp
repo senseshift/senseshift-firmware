@@ -26,11 +26,11 @@ using namespace OH;
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 2;
 
-inline outputPoint_t* make_point(uint16_t x, uint16_t y) {
+inline oh_output_point_t* make_point(uint16_t x, uint16_t y) {
   return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
-outputPoint_t* indexesToPoints[40] = {
+oh_output_point_t* indexesToPoints[40] = {
     // Front, left part
     /*  0 */ make_point(0, 0),  // 0
     /*  1 */ make_point(1, 0),  // 1
@@ -125,7 +125,7 @@ void vestMotorTransformer(std::string& value) {
       continue;
     }
 
-    outputData_t output;
+    oh_output_data_t output;
     output.point = *indexesToPoints[i];
     output.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
     App.getOutput()->writeOutput(

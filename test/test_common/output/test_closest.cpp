@@ -6,13 +6,13 @@
 
 class TestWriter : public OutputWriter {
  public:
-  void writeOutput(oh_outputIntensity_t intensity) override{};
+  void writeOutput(oh_output_intensity_t intensity) override{};
 };
 
 void test_coordinates(void) {
-  outputMap_t testOutputs{
-      {outputPoint_t(10, 10), new TestWriter()},
-      {outputPoint_t(UINT16_MAX - 10, UINT16_MAX - 10), new TestWriter()},
+  oh_output_map_t testOutputs{
+      {oh_output_point_t(10, 10), new TestWriter()},
+      {oh_output_point_t(UINT16_MAX - 10, UINT16_MAX - 10), new TestWriter()},
   };
 
   auto output = new ClosestOutputComponent(testOutputs);

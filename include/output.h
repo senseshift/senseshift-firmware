@@ -3,17 +3,18 @@
 #include "config/all.h"
 
 #include <abstract_component.hpp>
-#include "output_component.h"
+#include <output.hpp>
+#include <output_component.hpp>
 
 class Output {
  private:
-  std::map<outputPath_t, OutputComponent*> components;
+  std::map<oh_output_path_t, OH::OutputComponent*> components;
 
  public:
   Output();
 
-  void addComponent(outputPath_t, OutputComponent*);
-  std::map<outputPath_t, OutputComponent*>* getComponents();
+  void addComponent(oh_output_path_t, OH::OutputComponent*);
+  std::map<oh_output_path_t, OH::OutputComponent*>* getComponents();
 
-  void writeOutput(outputPath_t, outputData_t&);
+  void writeOutput(oh_output_path_t, oh_output_data_t&);
 };

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <abstract_component.hpp>
+#include <output_component.hpp>
 #include "config/all.h"
 #include "connection.h"
 #include "output.h"
@@ -27,7 +28,7 @@ class OpenHaptics final {
   void registerComponent(OH::AbstractComponent*);
 
   Output* getOutput() { return this->output; };
-  void addOutputComponent(outputPath_t, OutputComponent*);
+  void addOutputComponent(oh_output_path_t, OH::OutputComponent*);
 
   void setConnection(Connection*);
   Connection* getConnection() { return this->connection; };

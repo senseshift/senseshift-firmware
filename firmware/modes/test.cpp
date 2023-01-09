@@ -8,14 +8,14 @@
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
 
-class TestOutput : public OutputWriter {
+class TestOutput : public OH::AbstractOutputWriter {
  private:
   uint8_t channel;
 
  public:
   TestOutput(uint8_t channel) : channel(channel){};
   uint8_t getChannel() { return channel; };
-  void writeOutput(oh_outputIntensity_t intensity) {
+  void writeOutput(oh_output_intensity_t intensity) {
     Serial.printf("\t> Channel %2u: %3u\n", channel, intensity);
   };
 };
@@ -39,8 +39,8 @@ void setupMode() {
   App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, test);
 
   for (auto i = 0; i < testOutputs.size(); i++) {
-    outputData_t outData{
-        outputPoint_t(0, 0),
+    oh_output_data_t outData{
+        oh_output_point_t(0, 0),
         (uint8_t)map(i, 0, testOutputs.size() - 1, 0, 255),
     };
     App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, outData);

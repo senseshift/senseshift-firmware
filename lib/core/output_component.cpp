@@ -1,6 +1,6 @@
-#include "output_component.h"
+#include "output_component.hpp"
 
-void OutputComponent::setOutputs(outputMap_t& outputs) {
+void OH::OutputComponent::setOutputs(oh_output_writers_map_t& outputs) {
   this->writers.clear();
   this->writers = outputs;
 
@@ -15,7 +15,7 @@ void OutputComponent::setOutputs(outputMap_t& outputs) {
   }
 }
 
-void OutputComponent::setup() {
+void OH::OutputComponent::setup() {
   for (const auto& kv : this->writers) {
     kv.second->setup();
   }

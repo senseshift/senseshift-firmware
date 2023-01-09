@@ -25,11 +25,11 @@ using namespace OH;
 const uint16_t _bh_max_x = 4;
 const uint16_t _bh_max_y = 5;
 
-inline outputPoint_t* make_point(uint16_t x, uint16_t y) {
+inline oh_output_point_t* make_point(uint16_t x, uint16_t y) {
   return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
-outputPoint_t* indexesToPoints[40] = {
+oh_output_point_t* indexesToPoints[40] = {
     // Front, left part
     /*  0 */ make_point(0, 0),
     /*  1 */ make_point(1, 0),
@@ -82,7 +82,7 @@ void vestMotorTransformer(std::string& value) {
     uint8_t byte = value[i];
     uint actIndex = i * 2;
 
-    outputData_t output_0;
+    oh_output_data_t output_0;
     output_0.point = *indexesToPoints[actIndex];
     output_0.intensity = map(((byte >> 4) & 0xf), 0, 15, 0, UINT16_MAX);
     App.getOutput()->writeOutput((actIndex < 10 || actIndex >= 30)
@@ -90,7 +90,7 @@ void vestMotorTransformer(std::string& value) {
                                      : OUTPUT_PATH_CHEST_BACK,
                                  output_0);
 
-    outputData_t output_1;
+    oh_output_data_t output_1;
     output_1.point = *indexesToPoints[actIndex + 1];
     output_1.intensity = map((byte & 0xf), 0, 15, 0, UINT16_MAX);
 

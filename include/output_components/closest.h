@@ -1,12 +1,12 @@
-#include "output_component.h"
+#include <output_component.hpp>
 
-class ClosestOutputComponent : public OutputComponent {
+class ClosestOutputComponent : public OH::OutputComponent {
  protected:
-  outputPoint_t findClosestPoints(std::list<outputPoint_t>& pts,
-                                  outputPoint_t& target);
-  void setOutputs(outputMap_t&);
+  oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts,
+                                  oh_output_point_t& target);
+  void setOutputs(oh_output_writers_map_t&);
 
  public:
-  ClosestOutputComponent(outputMap_t& outputs) : OutputComponent(outputs){};
-  void writeOutput(outputData_t&);
+  ClosestOutputComponent(oh_output_writers_map_t& outputs) : OutputComponent(outputs){};
+  void writeOutput(oh_output_data_t&);
 };

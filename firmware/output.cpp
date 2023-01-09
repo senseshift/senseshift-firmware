@@ -3,16 +3,16 @@
 
 Output::Output() {}
 
-void Output::addComponent(outputPath_t path, OutputComponent* c) {
+void Output::addComponent(oh_output_path_t path, OH::OutputComponent* c) {
   this->components[path] = c;
   App.registerComponent(c);
 }
 
-std::map<outputPath_t, OutputComponent*>* Output::getComponents() {
+std::map<oh_output_path_t, OH::OutputComponent*>* Output::getComponents() {
   return &this->components;
 }
 
-void Output::writeOutput(outputPath_t path, outputData_t& data) {
+void Output::writeOutput(oh_output_path_t path, oh_output_data_t& data) {
   auto componentSearch = this->getComponents()->find(path);
 
   if (componentSearch == this->getComponents()->end()) {

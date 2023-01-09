@@ -12,5 +12,5 @@ class LEDCOutputWriter : public OH::AbstractOutputWriter {
   LEDCOutputWriter(const uint8_t pin) : pin(pin){};
 
   void setup() override;
-  void writeOutput(oh_outputIntensity_t intensity) override;
+  void writeOutput(oh_output_intensity_t intensity) override;
 };

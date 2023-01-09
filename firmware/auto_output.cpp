@@ -1,16 +1,7 @@
 #include "auto_output.h"
 
-outputPoint_t* getPoint(uint16_t x, uint16_t y, uint16_t x_max, uint16_t y_max) {
-  const uint16_t x_coord =
-      1 == x_max ? 1 : UINT16_MAX * (1 / ((float)x_max - 1)) * ((float)x);
-  const uint16_t y_coord =
-      1 == y_max ? 1 : UINT16_MAX * (1 / ((float)y_max - 1)) * ((float)y);
-
-  return new outputPoint_t(x_coord, y_coord);
-}
-
-outputMap_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter*>> map2d) {
-  outputMap_t points{};
+oh_output_writers_map_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter*>> map2d) {
+  oh_output_writers_map_t points{};
 
   size_t y_max = map2d.size();
 
@@ -20,7 +11,7 @@ outputMap_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter
 
     for (size_t x = 0; x < x_max; ++x) {
       OH::AbstractOutputWriter* wr = row.at(x);
-      outputPoint_t* coord = getPoint(x, y, x_max, y_max);
+      oh_output_point_t* coord = getPoint(x, y, x_max, y_max);
 
       points[*coord] = wr;
     }

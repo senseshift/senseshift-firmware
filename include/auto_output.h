@@ -3,6 +3,14 @@
 #include "output.h"
 #include <abstract_output_writer.hpp>
 
-outputPoint_t* getPoint(uint16_t x, uint16_t y, uint16_t x_max, uint16_t y_max);
+#include <Arduino.h>
 
-outputMap_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter*>> map2d);
+template <typename _Tp>
+oh_output_point_t* getPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max) {
+  const oh_output_coord_t x_coord = map(x, 0, x_max, 0, OH_OUTPUT_COORD_MAX);
+  const oh_output_coord_t y_coord = map(y, 0, y_max, 0, OH_OUTPUT_COORD_MAX);
+
+  return new oh_output_point_t(x_coord, y_coord);
+}
+
+oh_output_writers_map_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter*>> map2d);

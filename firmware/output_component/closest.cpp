@@ -3,10 +3,10 @@
 
 #include "output_components/closest.h"
 
-outputPoint_t ClosestOutputComponent::findClosestPoints(
-    std::list<outputPoint_t>& pts,
-    outputPoint_t& target) {
-  std::multimap<float, outputPoint_t> mp = {};
+oh_output_point_t ClosestOutputComponent::findClosestPoints(
+    std::list<oh_output_point_t>& pts,
+    oh_output_point_t& target) {
+  std::multimap<float, oh_output_point_t> mp = {};
 
   for (auto& _p : pts) {
     if (target == _p) {
@@ -22,15 +22,15 @@ outputPoint_t ClosestOutputComponent::findClosestPoints(
   }
 
   auto nearest = std::min_element(mp.begin(), mp.end(),
-                                  [](const std::pair<float, outputPoint_t>& a,
-                                     const std::pair<float, outputPoint_t>& b) {
+                                  [](const std::pair<float, oh_output_point_t>& a,
+                                     const std::pair<float, oh_output_point_t>& b) {
                                     return a.first < b.first;
                                   });
 
   return nearest->second;
 }
 
-void ClosestOutputComponent::writeOutput(outputData_t& data) {
+void ClosestOutputComponent::writeOutput(oh_output_data_t& data) {
   auto closestPoint = this->findClosestPoints(this->points, data.point);
 
   auto state = &this->states[closestPoint];
