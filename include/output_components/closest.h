@@ -3,7 +3,7 @@
 class ClosestOutputComponent : public OutputComponent {
  protected:
   outputPoint_t findClosestPoints(std::list<outputPoint_t>& pts,
-                                  Point2D& target);
+                                  outputPoint_t& target);
   void setOutputs(outputMap_t&);
 
  public:

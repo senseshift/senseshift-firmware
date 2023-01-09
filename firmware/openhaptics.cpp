@@ -5,7 +5,7 @@ OpenHaptics::OpenHaptics() {
   this->output = new Output();
 }
 
-void OpenHaptics::registerComponent(Component* component) {
+void OpenHaptics::registerComponent(OH::Core::AbstractComponent* component) {
   if (component == nullptr) {
     return;
   }

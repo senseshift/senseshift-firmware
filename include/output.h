@@ -2,7 +2,7 @@
 
 #include "config/all.h"
 
-#include "component.h"
+#include <abstract_component.hpp>
 #include "output_component.h"
 
 class Output {

@@ -4,22 +4,12 @@
 #include <map>
 #include <vector>
 
-#include "component.h"
+#include <abstract_component.hpp>
+#include <vec2.hpp>
 
 typedef uint8_t outputPath_t;
 
-struct Point2D {
-  uint16_t x, y;
-
-  Point2D(uint16_t x = 0, uint16_t y = 0) : x(x), y(y) {}
-
-  bool const operator==(const Point2D& o) const { return x == o.x && y == o.y; }
-
-  bool const operator<(const Point2D& o) const {
-    return std::tie(x, y) < std::tie(o.x, o.y);
-  }
-};
-typedef Point2D outputPoint_t;
+typedef OH::Math::Vec2b outputPoint_t;
 
 typedef uint16_t outputIntensity_t;
 
@@ -42,7 +32,7 @@ class OutputWriter {
 
 typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
 
-class OutputComponent : public Component {
+class OutputComponent : public OH::Core::AbstractComponent {
  protected:
   std::list<outputPoint_t> points{};
   outputMap_t writers{};

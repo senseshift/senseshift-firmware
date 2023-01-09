@@ -1,3 +1,5 @@
+#include "main.h"
+
 #include <HardwareSerial.h>
 #include "openhaptics.h"
 

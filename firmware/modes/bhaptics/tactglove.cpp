@@ -22,11 +22,11 @@
 const uint16_t _bh_max_x = 6;
 const uint16_t _bh_max_y = 1;
 
-inline Point2D* make_point(uint16_t x, uint16_t y) {
+inline outputPoint_t* make_point(uint16_t x, uint16_t y) {
   return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
-Point2D* indexesToPoints[_bh_max_x * _bh_max_y] = {
+outputPoint_t* indexesToPoints[_bh_max_x * _bh_max_y] = {
     make_point(0, 0), make_point(1, 0), make_point(2, 0),
     make_point(3, 0), make_point(4, 0), make_point(5, 0)};
 

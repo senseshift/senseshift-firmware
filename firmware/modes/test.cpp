@@ -40,7 +40,7 @@ void setupMode() {
 
   for (auto i = 0; i < testOutputs.size(); i++) {
     outputData_t outData{
-        Point2D(0, 0),
+        outputPoint_t(0, 0),
         (uint8_t)map(i, 0, testOutputs.size() - 1, 0, 255),
     };
     App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, outData);

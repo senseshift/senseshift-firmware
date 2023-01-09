@@ -2,9 +2,9 @@
 
 #include <HardwareSerial.h>
 
-#include "component.h"
+#include <abstract_component.hpp>
 
-class SerialPlotter_OutputStates : public Component {
+class SerialPlotter_OutputStates : public OH::Core::AbstractComponent {
  protected:
   HardwareSerial* serial;
 

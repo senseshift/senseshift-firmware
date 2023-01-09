@@ -1,8 +1,8 @@
 #pragma once
 
-#include "component.h"
+#include <abstract_component.hpp>
 
-class Connection : public Component {
+class Connection : public OH::Core::AbstractComponent {
  public:
   virtual void setup(void){};
   virtual void loop(void){};

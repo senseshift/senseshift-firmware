@@ -2,9 +2,9 @@
 
 #include <stdint.h>
 #include "../config/battery.h"
-#include "component.h"
+#include <abstract_component.hpp>
 
-class AbstractBattery : public Component {
+class AbstractBattery : public OH::Core::AbstractComponent {
  protected:
   unsigned long last_battery_sample = 0;
   uint8_t level = 0;  // 0 = min, 255 = max

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "component.h"
+#include <abstract_component.hpp>
 #include "config/all.h"
 #include "connection.h"
 #include "output.h"
@@ -13,7 +13,7 @@
 
 class OpenHaptics final {
  private:
-  std::vector<Component*> components{};
+  std::vector<OH::Core::AbstractComponent*> components{};
   Connection* connection;
   Output* output;
 
@@ -23,8 +23,8 @@ class OpenHaptics final {
 
  public:
   OpenHaptics();
-  std::vector<Component*> getComponents() { return this->components; };
-  void registerComponent(Component*);
+  std::vector<OH::Core::AbstractComponent*> getComponents() { return this->components; };
+  void registerComponent(OH::Core::AbstractComponent*);
 
   Output* getOutput() { return this->output; };
   void addOutputComponent(outputPath_t, OutputComponent*);

@@ -5,7 +5,7 @@
 
 outputPoint_t ClosestOutputComponent::findClosestPoints(
     std::list<outputPoint_t>& pts,
-    Point2D& target) {
+    outputPoint_t& target) {
   std::multimap<float, outputPoint_t> mp = {};
 
   for (auto& _p : pts) {
