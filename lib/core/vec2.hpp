@@ -10,9 +10,9 @@ namespace OH {
       Vec2(_Tp x, _Tp y) : x(x), y(y) {};
       Vec2(const Vec2<_Tp> &v) : x((_Tp) v.x), y((_Tp) v.y) {};
 
-      bool operator==(const Vec2<_Tp> &rhs) const;
-      bool operator!=(const Vec2<_Tp> &rhs) const;
-      bool operator<(const Vec2<_Tp> &rhs) const;
+      bool operator==(const Vec2 &rhs) const;
+      bool operator!=(const Vec2 &rhs) const;
+      bool operator<(const Vec2 &rhs) const;
     };
 
     typedef Vec2<unsigned char> Vec2b;
@@ -21,6 +21,5 @@ namespace OH {
     typedef Vec2<int> Vec2i;
     typedef Vec2<short> Vec2s;
     typedef Vec2<unsigned short> Vec2w;
-    typedef Vec2<unsigned char> Vec2b;
   }
 }

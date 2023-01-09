@@ -4,6 +4,11 @@
 #include <Arduino.h>
 #endif
 
+// TODO: remove
+#ifndef BATTERY_SAMPLE_RATE
+#define BATTERY_SAMPLE_RATE 10000
+#endif
+
 void OH::Core::AbstractBattery::loop() {
   auto now_ms = millis();
 
