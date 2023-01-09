@@ -9,22 +9,21 @@
 
 extern void setupMode(void);
 
-void setup()
-{
-    Serial.begin(115200);
-    setupMode();
+void setup() {
+  Serial.begin(115200);
+  setupMode();
 
-    #ifdef SERIAL_PLOTTER
-    SerialPlotter_OutputStates* serialOutputState = new SerialPlotter_OutputStates(Serial);
-    App.registerComponent(serialOutputState);
-    #endif
+#ifdef SERIAL_PLOTTER
+  SerialPlotter_OutputStates* serialOutputState =
+      new SerialPlotter_OutputStates(Serial);
+  App.registerComponent(serialOutputState);
+#endif
 
-    App.setup();
+  App.setup();
 }
 
-void loop()
-{
-    App.loop();
+void loop() {
+  App.loop();
 }
 
 #endif
