@@ -1,6 +1,6 @@
 #pragma once
 
-#include "connection.h"
+#include <abstract_connection.hpp>
 #include "connections/ble.h"
 
 class BHapticsBLEConnection final : public BLEConnection {

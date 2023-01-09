@@ -2,20 +2,22 @@
 
 #include <vector>
 
+#include "config/all.h"
+
 #include <abstract_component.hpp>
 #include <output_component.hpp>
-#include "config/all.h"
-#include "connection.h"
-#include "output.h"
+#include <abstract_connection.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <abstract_battery.hpp>
 #endif
 
+#include "output.h"
+
 class OpenHaptics final {
  private:
   std::vector<OH::AbstractComponent*> components{};
-  Connection* connection;
+  OH::AbstractConnection* connection;
   Output* output;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
@@ -30,8 +32,8 @@ class OpenHaptics final {
   Output* getOutput() { return this->output; };
   void addOutputComponent(oh_output_path_t, OH::OutputComponent*);
 
-  void setConnection(Connection*);
-  Connection* getConnection() { return this->connection; };
+  void setConnection(OH::AbstractConnection*);
+  OH::AbstractConnection* getConnection() { return this->connection; };
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   void setBattery(OH::AbstractBattery*);

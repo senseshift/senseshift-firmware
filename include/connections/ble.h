@@ -5,9 +5,9 @@
 #include <BLEDevice.h>
 
 #include "config/all.h"
-#include "connection.h"
+#include <abstract_connection.hpp>
 
-class BLEConnection : public Connection {
+class BLEConnection : public OH::AbstractConnection {
  private:
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   unsigned long lastBatteryUpdate = 0;
