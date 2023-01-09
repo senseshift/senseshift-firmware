@@ -12,6 +12,6 @@ class MAX1704_BatteryLevel : public OH::Core::AbstractBattery
     protected:
         uint8_t updateLevel() override;
     public:
-        MAX1704_BatteryLevel(SFE_MAX1704X &gauge) : gauge(&gauge) {};
+        MAX1704_BatteryLevel(SFE_MAX1704X* gauge) : gauge(gauge) {};
         void setup() override;
 };
