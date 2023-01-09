@@ -1,7 +1,10 @@
-#include "battery/abstract_battery.h"
-#include <Arduino.h>
+#include "abstract_battery.hpp"
 
-void AbstractBattery::loop() {
+#ifdef ARDUINO
+#include <Arduino.h>
+#endif
+
+void OH::Core::AbstractBattery::loop() {
   auto now_ms = millis();
 
   if (now_ms - this->last_battery_sample >= BATTERY_SAMPLE_RATE) {

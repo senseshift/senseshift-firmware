@@ -14,7 +14,7 @@
 #include "output_writers/pca9685.h"
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "battery/abstract_battery.h"
+#include <abstract_battery.hpp>
 #include "battery/adc_battery.h"
 #endif
 

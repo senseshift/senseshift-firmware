@@ -1,8 +1,8 @@
 #pragma once
 
-#include "battery/abstract_battery.h"
+#include <abstract_battery.hpp>
 
-class ADCBattery : public AbstractBattery {
+class ADCBattery : public OH::Core::AbstractBattery {
  private:
   uint8_t pin;
 

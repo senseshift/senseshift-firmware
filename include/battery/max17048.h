@@ -1,10 +1,10 @@
 #pragma once
 
+#include <abstract_battery.hpp>
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h>
 
-#include "battery/abstract_battery.h"
 
-class MAX1704_BatteryLevel : public AbstractBattery
+class MAX1704_BatteryLevel : public OH::Core::AbstractBattery
 {
     private:
         bool active = false;
