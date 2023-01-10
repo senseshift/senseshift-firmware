@@ -1,14 +1,13 @@
-#include "openhaptics.h"
-#include "battery/ina219.h"
 #include "config/battery.h"
 
-void INA219_BatteryLevel::setup()
-{
+#include "battery/ina219.h"
+#include "openhaptics.h"
+
+void INA219_BatteryLevel::setup() {
   this->active = this->sensor->begin();
 }
 
-uint8_t INA219_BatteryLevel::updateLevel()
-{
+uint8_t INA219_BatteryLevel::updateLevel() {
   if (!this->active) {
     return 0;
   }

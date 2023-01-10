@@ -18,6 +18,7 @@ void OH::AbstractBattery::loop() {
 
     this->level = this->updateLevel();
 
-    OH_LOGV("Battery", "\t%s: %3u (took %lu ms)\n", __PRETTY_FUNCTION__, this->level, now_ms - millis());
+    OH_LOGV("Battery", "\t%s: %3u (took %lu ms)\n", __PRETTY_FUNCTION__,
+            this->level, now_ms - millis());
   }
 };

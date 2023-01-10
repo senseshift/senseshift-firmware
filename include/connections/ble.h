@@ -1,11 +1,11 @@
 #pragma once
 
-#include <string>
+#include "config/all.h"
+
+#include <abstract_connection.hpp>
 
 #include <BLEDevice.h>
-
-#include "config/all.h"
-#include <abstract_connection.hpp>
+#include <string>
 
 class BLEConnection : public OH::AbstractConnection {
  private:

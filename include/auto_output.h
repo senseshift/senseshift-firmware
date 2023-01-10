@@ -1,7 +1,7 @@
 #pragma once
 
-#include <output.hpp>
 #include <abstract_output_writer.hpp>
+#include <output.hpp>
 
 #include <Arduino.h>
 
@@ -13,4 +13,5 @@ oh_output_point_t* getPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max) {
   return new oh_output_point_t(x_coord, y_coord);
 }
 
-oh_output_writers_map_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter*>> map2d);
+oh_output_writers_map_t transformAutoOutput(
+    std::vector<std::vector<OH::AbstractOutputWriter*>> map2d);

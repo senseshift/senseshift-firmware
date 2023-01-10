@@ -1,7 +1,7 @@
 #pragma once
 
-#include <output.hpp>
 #include <abstract_output_writer.hpp>
+#include <output.hpp>
 
 class LEDCOutputWriter : public OH::AbstractOutputWriter {
  private:

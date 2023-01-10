@@ -1,17 +1,17 @@
 #pragma once
 
-#include <vector>
-
 #include "config/all.h"
 
-#include <components_registry.hpp>
 #include <abstract_component.hpp>
-#include <output.hpp>
 #include <abstract_connection.hpp>
+#include <components_registry.hpp>
+#include <output.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <abstract_battery.hpp>
 #endif
+
+#include <vector>
 
 class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent> {
  private:
@@ -25,7 +25,9 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent> {
 
  public:
   OpenHaptics();
-  std::vector<OH::AbstractComponent*> getComponents() { return this->components; };
+  std::vector<OH::AbstractComponent*> getComponents() {
+    return this->components;
+  };
   void registerComponent(OH::AbstractComponent*);
 
   OH::Output* getOutput() { return this->output; };

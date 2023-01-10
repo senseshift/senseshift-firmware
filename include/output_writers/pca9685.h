@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <output.hpp>
 #include <abstract_output_writer.hpp>
+#include <output.hpp>
 
 class PCA9685OutputWriter : public OH::AbstractOutputWriter {
  private:

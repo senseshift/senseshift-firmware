@@ -2,13 +2,11 @@
 
 #include <vector>
 
-namespace OH
-{
+namespace OH {
   template <class _Tp>
-  class IComponentRegistry
-  {
+  class IComponentRegistry {
    public:
     virtual std::vector<_Tp*> getComponents() = 0;
     virtual void registerComponent(_Tp*) = 0;
   };
-} // namespace OH
+}  // namespace OH

@@ -1,12 +1,12 @@
+#include "config/all.h"
+
+#include <output.hpp>
+#include "connections/bhaptics.h"
+
 #include <Arduino.h>
 #include <BLE2902.h>
 #include <HardwareSerial.h>
-
-#include "config/all.h"
-
-#include "connections/bhaptics.h"
 #include "openhaptics.h"
-#include <output.hpp>
 
 class BHServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) { Serial.println(">>\tonConnect()"); }

@@ -4,12 +4,14 @@
     "Change your build target. (See https://openhaptics.github.io/docs/flashing/platformio#building-and-uploading-firmware)"
 #endif
 
+#include "config/all.h"
+
 #include <Arduino.h>
 #include <Wire.h>
 
+#include <utility.hpp>
 #include "auto_output.h"
 #include "openhaptics.h"
-#include <utility.hpp>
 
 #include "output_components/closest.h"
 #include "output_writers/pca9685.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <abstract_component.hpp>
+#include "abstract_component.hpp"
 
 namespace OH {
   class AbstractBattery : public AbstractComponent {
@@ -14,4 +14,4 @@ namespace OH {
     void loop(void) override;
     uint8_t getLevel() { return this->level; };
   };
-} // namespace OH
+}  // namespace OH

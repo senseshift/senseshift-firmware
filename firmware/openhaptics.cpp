@@ -1,5 +1,6 @@
-#include "openhaptics.h"
 #include "config/all.h"
+
+#include "openhaptics.h"
 
 OpenHaptics::OpenHaptics() {
   this->output = new OH::Output(this);
@@ -19,7 +20,8 @@ void OpenHaptics::registerComponent(OH::AbstractComponent* component) {
   this->components.push_back(component);
 }
 
-void OpenHaptics::addOutputComponent(oh_output_path_t path, OH::OutputComponent* c) {
+void OpenHaptics::addOutputComponent(oh_output_path_t path,
+                                     OH::OutputComponent* c) {
   this->registerComponent(c);
   this->getOutput()->addComponent(path, c);
 }

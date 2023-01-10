@@ -4,9 +4,9 @@
 // Override you configs in this file (Ctrl+Click)
 #include "config/all.h"
 
+#include <utility.hpp>
 #include "auto_output.h"
 #include "openhaptics.h"
-#include <utility.hpp>
 
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"

@@ -21,11 +21,12 @@ oh_output_point_t ClosestOutputComponent::findClosestPoints(
     mp.insert({dist, _p});
   }
 
-  auto nearest = std::min_element(mp.begin(), mp.end(),
-                                  [](const std::pair<float, oh_output_point_t>& a,
-                                     const std::pair<float, oh_output_point_t>& b) {
-                                    return a.first < b.first;
-                                  });
+  auto nearest =
+      std::min_element(mp.begin(), mp.end(),
+                       [](const std::pair<float, oh_output_point_t>& a,
+                          const std::pair<float, oh_output_point_t>& b) {
+                         return a.first < b.first;
+                       });
 
   return nearest->second;
 }
