@@ -6,7 +6,7 @@
 
 #include "connections/bhaptics.h"
 #include "openhaptics.h"
-#include "output.h"
+#include <output.hpp>
 
 class BHServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) { Serial.println(">>\tonConnect()"); }

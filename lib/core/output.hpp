@@ -1,29 +1,29 @@
 #pragma once
 
-#include <abstract_output_writer.hpp>
-#include <point2.hpp>
+#include "types.hpp"
+#include "components_registry.hpp"
+#include "abstract_component.hpp"
+#include "output.hpp"
+#include "output_component.hpp"
 
 #include <map>
 
-#define OH_OUTPUT_COORD_T uint8_t
-#define OH_OUTPUT_COORD_MAX UINT16_MAX
-
-typedef uint8_t oh_output_path_t;
-typedef OH_OUTPUT_COORD_T oh_output_coord_t;
-typedef OH::Point2b oh_output_point_t;
-
 namespace OH
 {
-  struct OutputData {
-    oh_output_point_t point;
-    oh_output_intensity_t intensity;
-  };
+  // TODO: `IComponentRegistry<OutputComponent>` not working, need to investigate
+  typedef IComponentRegistry<AbstractComponent> app_registry_t;
 
-  struct OutputState {
-    oh_output_intensity_t intensity;
+  class Output {
+   private:
+    app_registry_t* app;
+    std::map<oh_output_path_t, OutputComponent*> components;
+
+   public:
+    Output(app_registry_t* app) : app(app) {};
+
+    void addComponent(oh_output_path_t, OutputComponent*);
+    std::map<oh_output_path_t, OutputComponent*>* getComponents();
+
+    void writeOutput(oh_output_path_t, oh_output_data_t&);
   };
 } // namespace OH
-
-typedef OH::OutputData oh_output_data_t;
-typedef OH::OutputState oh_output_state_t;
-typedef std::map<oh_output_point_t, OH::AbstractOutputWriter*> oh_output_writers_map_t;

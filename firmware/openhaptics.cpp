@@ -2,7 +2,7 @@
 #include "config/all.h"
 
 OpenHaptics::OpenHaptics() {
-  this->output = new Output();
+  this->output = new OH::Output(this);
 }
 
 void OpenHaptics::registerComponent(OH::AbstractComponent* component) {

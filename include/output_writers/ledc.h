@@ -1,6 +1,6 @@
 #pragma once
 
-#include "output.h"
+#include <output.hpp>
 #include <abstract_output_writer.hpp>
 
 class LEDCOutputWriter : public OH::AbstractOutputWriter {

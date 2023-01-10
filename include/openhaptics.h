@@ -6,7 +6,7 @@
 
 #include <components_registry.hpp>
 #include <abstract_component.hpp>
-#include <output_component.hpp>
+#include <output.hpp>
 #include <abstract_connection.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
@@ -14,12 +14,10 @@
 #endif
 
 class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent> {
-
-class OpenHaptics final {
  private:
   std::vector<OH::AbstractComponent*> components{};
   OH::AbstractConnection* connection;
-  Output* output;
+  OH::Output* output;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   OH::AbstractBattery* battery;
@@ -33,12 +31,10 @@ class OpenHaptics final {
   OH::Output* getOutput() { return this->output; };
   void addOutputComponent(oh_output_path_t, OH::OutputComponent*);
 
-  void setConnection(OH::AbstractConnection*);
   OH::AbstractConnection* getConnection() { return this->connection; };
   void setConnection(OH::AbstractConnection*);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  void setBattery(OH::AbstractBattery*);
   OH::AbstractBattery* getBattery() { return this->battery; };
   void setBattery(OH::AbstractBattery*);
 #endif

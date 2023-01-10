@@ -2,7 +2,7 @@
 
 #include <abstract_component.hpp>
 #include <abstract_output_writer.hpp>
-#include <output.hpp>
+#include <types.hpp>
 
 #include <list>
 #include <map>
