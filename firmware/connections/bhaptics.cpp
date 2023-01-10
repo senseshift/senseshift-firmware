@@ -78,7 +78,7 @@ class BatteryCharCallbacks : public BLECharacteristicCallbacks {
     Serial.printf(">>\t%s\n", __PRETTY_FUNCTION__);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    uint16_t batteryLevel = map(App.getBattery()->getLevel(), 0, 255, 0, 100);
+    uint16_t batteryLevel = map(App.getBattery()->getValue(), 0, 255, 0, 100);
     pCharacteristic->setValue(batteryLevel);
     pCharacteristic->notify();
 #endif
@@ -166,7 +166,7 @@ void BHapticsBLEConnection::setup() {
     batteryChar->addDescriptor(new BLE2902());
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    uint16_t batteryLevel = map(App.getBattery()->getLevel(), 0, 255, 0, 100);
+    uint16_t batteryLevel = map(App.getBattery()->getValue(), 0, 255, 0, 100);
 #else
     uint16_t batteryLevel = 100;
 #endif
@@ -259,7 +259,7 @@ void BHapticsBLEConnection::loop() {
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   if (now_ms - this->lastBatteryUpdate >= BATTERY_SAMPLE_RATE) {
     this->lastBatteryUpdate = now_ms;
-    uint16_t level = map(App.getBattery()->getLevel(), 0, 255, 0, 100);
+    uint16_t level = map(App.getBattery()->getValue(), 0, 255, 0, 100);
 
     this->batteryChar->setValue(level);
     this->batteryChar->notify();

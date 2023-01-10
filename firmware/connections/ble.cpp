@@ -21,7 +21,7 @@ void BLEConnection::setup() {
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
   this->batteryLevelCharacteristic->addDescriptor(new BLE2902());
 
-  uint16_t level = map(App.getBattery()->getLevel(), 0, 255, 0, 100);
+  uint16_t level = map(App.getBattery()->getValue(), 0, 255, 0, 100);
   this->batteryLevelCharacteristic->setValue(level);
 
   this->batteryService->start();
@@ -36,7 +36,7 @@ void BLEConnection::loop() {
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   if (now_ms - this->lastBatteryUpdate >= BATTERY_SAMPLE_RATE) {
     this->lastBatteryUpdate = now_ms;
-    uint16_t level = map(App.getBattery()->getLevel(), 0, 255, 0, 100);
+    uint16_t level = map(App.getBattery()->getValue(), 0, 255, 0, 100);
 
     this->batteryLevelCharacteristic->setValue(level);
     this->batteryLevelCharacteristic->notify();
