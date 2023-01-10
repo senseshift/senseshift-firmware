@@ -3,7 +3,6 @@
 #include <abstract_component.hpp>
 #include <abstract_output_writer.hpp>
 #include <output.hpp>
-#include <vec2.hpp>
 
 #include <list>
 #include <map>

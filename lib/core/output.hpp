@@ -1,7 +1,7 @@
 #pragma once
 
 #include <abstract_output_writer.hpp>
-#include <vec2.hpp>
+#include <point2.hpp>
 
 #include <map>
 
@@ -10,7 +10,7 @@
 
 typedef uint8_t oh_output_path_t;
 typedef OH_OUTPUT_COORD_T oh_output_coord_t;
-typedef OH::Vec2b oh_output_point_t;
+typedef OH::Point2b oh_output_point_t;
 
 namespace OH
 {
