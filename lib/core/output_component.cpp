@@ -20,3 +20,7 @@ void OH::OutputComponent::setup() {
     kv.second->setup();
   }
 }
+
+void OH::OutputComponent::writeOutput(oh_output_data_t& data) {
+  this->writers[data.point]->writeOutput(data.intensity);
+}

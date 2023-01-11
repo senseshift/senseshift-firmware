@@ -4,6 +4,7 @@
 .vscode/launch.json
 .vscode/*.db
 !.vscode/extensions.json
+!.vscode/settings.json
 *.bak
 *.code-workspace
 

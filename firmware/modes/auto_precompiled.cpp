@@ -4,17 +4,24 @@
     "Change your build target. (See https://openhaptics.github.io/docs/flashing/platformio#building-and-uploading-firmware)"
 #endif
 
+// Override you configs in this file (Ctrl+Click)
 #include "config/all.h"
 
 #include <Arduino.h>
 #include <Wire.h>
 
 #include <utility.hpp>
-#include "auto_output.h"
-#include "openhaptics.h"
 
+#include "openhaptics.h"
+#include "auto_output.h"
+
+#include "connections/bhaptics.h"
 #include "output_components/closest.h"
 #include "output_writers/pca9685.h"
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+#include "battery/adc_battery.h"
+#endif
 
 #if defined(OHA_CHEST_FRONT_ROWS) && defined(OHA_CHEST_FRONT_COLS)
 #define OHA_CHEST_FRONT_NUM (OHA_CHEST_FRONT_ROWS * OHA_CHEST_FRONT_COLS)
@@ -34,15 +41,17 @@
 
 #define OHA_TOTAL_NUM (OHA_CHEST_FRONT_NUM + OHA_CHEST_BACK_NUM)
 
-std::vector<std::vector<OutputWriter*>> createAutoOutputs(
+using namespace OH;
+
+std::vector<std::vector<AbstractOutputWriter*>> createAutoOutputs(
     uint rows_num,
     uint cols_num,
     std::vector<Adafruit_PWMServoDriver*>& pwms,
     uint offset) {
-  std::vector<std::vector<OutputWriter*>> rows{};
+  std::vector<std::vector<AbstractOutputWriter*>> rows{};
 
   for (uint i = 0; i < rows_num; i++) {
-    std::vector<OutputWriter*> row{};
+    std::vector<AbstractOutputWriter*> row{};
     for (uint j = 0; j < cols_num; j++) {
       const uint index = offset + (i * j);
       row.push_back(new PCA9685OutputWriter(pwms.at(index % 16), index / 16));

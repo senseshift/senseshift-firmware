@@ -1,19 +1,19 @@
-#include <Arduino.h>
-#include <Wire.h>
-
 // Override you configs in this file (Ctrl+Click)
 #include "config/all.h"
 
+#include <Arduino.h>
+#include <Wire.h>
+
 #include <utility.hpp>
-#include "auto_output.h"
+
 #include "openhaptics.h"
+#include "auto_output.h"
 
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
 #include "output_writers/ledc.h"
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <abstract_battery.hpp>
 #include "battery/adc_battery.h"
 #endif
 
@@ -53,7 +53,7 @@ void setupMode() {
       // clang-format on
   });
 
-  auto face = new ClosestOutputComponent(faceOutputs);
+  OutputComponent* face = new ClosestOutputComponent(faceOutputs);
 
   App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, face);
 

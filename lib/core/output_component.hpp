@@ -28,7 +28,7 @@ namespace OH {
     std::map<oh_output_point_t, oh_output_state_t>* getOutputStates(void) {
       return &this->states;
     };
-    virtual void writeOutput(oh_output_data_t&) = 0;
+    virtual void writeOutput(oh_output_data_t&);
     void setup() override;
   };
 }  // namespace OH

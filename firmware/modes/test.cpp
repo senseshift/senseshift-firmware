@@ -1,14 +1,18 @@
+// Override you configs in this file (Ctrl+Click)
+#include "config/all.h"
+
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "config/all.h"
-
-#include <utility.hpp>
-#include "auto_output.h"
 #include "openhaptics.h"
+#include "auto_output.h"
 
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+#include "battery/adc_battery.h"
+#endif
 
 class TestOutput : public OH::AbstractOutputWriter {
  private:
