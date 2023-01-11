@@ -19,15 +19,15 @@
 
 #pragma region bHaptics_trash
 
-const uint16_t _bh_max_x = 3;
-const uint16_t _bh_max_y = 1;
+const uint16_t _bh_max_x = 1;
+const uint16_t _bh_max_y = 3;
 
 inline Point2D* make_point(uint16_t x, uint16_t y) {
   return getPoint(x, y, _bh_max_x, _bh_max_y);
 }
 
 Point2D* indexesToPoints[_bh_max_x * _bh_max_y] = {
-    make_point(0, 0), make_point(1, 0), make_point(2, 0)};
+    make_point(0, 0), make_point(0, 1), make_point(0, 2)};
 
 void vestMotorTransformer(std::string& value) {
   for (size_t i = 0; i < _bh_max_y; i++) {
@@ -45,7 +45,9 @@ void setupMode() {
   // Configure PWM pins to their positions on the hands
   auto handOutputs = transformAutoOutput({
       // clang-format off
-      {new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25)}
+      {new LEDCOutputWriter(32)},
+      {new LEDCOutputWriter(33)},
+      {new LEDCOutputWriter(25)}
       // clang-format on
   });
 
