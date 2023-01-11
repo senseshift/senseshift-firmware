@@ -9,7 +9,7 @@
 #include "openhaptics.h"
 #include "auto_output.h"
 
-#include "connections/bhaptics.h"
+#include <connection_bhble.hpp>
 #include "output_components/closest.h"
 #include "output_writers/ledc.h"
 
@@ -18,6 +18,7 @@
 #endif
 
 using namespace OH;
+using namespace BH;
 
 #pragma region bHaptics_trash
 
@@ -55,8 +56,8 @@ void setupMode() {
 
   App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, foot);
 
-  BHapticsBLEConnection* bhBleConnection =
-      new BHapticsBLEConnection({ .deviceName = BLUETOOTH_NAME }, vestMotorTransformer);
+  uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(BLUETOOTH_NAME, BH_BLE_APPEARANCE, serialNumber, vestMotorTransformer);
   App.setConnection(bhBleConnection);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true

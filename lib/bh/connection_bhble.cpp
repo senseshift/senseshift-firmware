@@ -1,7 +1,4 @@
-#include "config/all.h"
-
-#include "openhaptics.h"
-#include "connections/bhaptics.h"
+#include "connection_bhble.hpp"
 
 #include <output.hpp>
 
@@ -106,7 +103,7 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks {
   };
 };
 
-void BHapticsBLEConnection::setup() {
+void BH::ConnectionBHBLE::setup() {
   ConnectionBLE::setup();
 
   this->bleServer->getAdvertising()->stop();
@@ -114,10 +111,10 @@ void BHapticsBLEConnection::setup() {
   this->bleServer->setCallbacks(new BHServerCallbacks());
 
   auto scanResponseData = new BLEAdvertisementData();
-  scanResponseData->setAppearance(BH_BLE_APPEARANCE);
-  scanResponseData->setName(BLUETOOTH_NAME);
+  scanResponseData->setAppearance(this->appearance);
+  scanResponseData->setName(this->deviceName);
 
-  this->bleServer->getAdvertising()->setAppearance(BH_BLE_APPEARANCE);
+  this->bleServer->getAdvertising()->setAppearance(this->appearance);
   this->bleServer->getAdvertising()->setScanResponseData(*scanResponseData);
 
   // Each characteristic needs 2 handles and descriptor 1 handle.
@@ -150,8 +147,7 @@ void BHapticsBLEConnection::setup() {
     auto* serialNumberChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID,
         BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
-    uint8_t serialNumber[] = BH_SERIAL_NUMBER;
-    serialNumberChar->setValue(serialNumber, 10);
+    serialNumberChar->setValue(this->serialNumber, BH_SERIAL_NUMBER_LENGTH);
     serialNumberChar->setCallbacks(new SerialOutputCharCallbacks());
   }
 
@@ -252,12 +248,12 @@ void BHapticsBLEConnection::setup() {
   this->bleServer->getAdvertising()->start();
 }
 
-void BHapticsBLEConnection::loop() {
+void BH::ConnectionBHBLE::loop() {
   ConnectionBLE::loop();
 
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   auto now_ms = millis();
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   if (now_ms - this->lastBatteryUpdate >= BATTERY_SAMPLE_RATE) {
     this->lastBatteryUpdate = now_ms;
     uint16_t level = map(App.getBattery()->getValue(), 0, 255, 0, 100);
