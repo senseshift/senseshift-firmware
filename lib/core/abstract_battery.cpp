@@ -1,5 +1,4 @@
 #include "abstract_battery.hpp"
-#include "logging.hpp"
 
 #ifdef ARDUINO
 #include <Arduino.h>

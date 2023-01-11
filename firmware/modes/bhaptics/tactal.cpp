@@ -48,11 +48,13 @@ void vestMotorTransformer(std::string& value) {
 
 void setupMode() {
   // Configure PWM pins to their positions on the face
-  auto faceOutputs = transformAutoOutput({
+  std::vector<std::vector<AbstractOutputWriter*>> v = {
       // clang-format off
       {new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25), new LEDCOutputWriter(26), new LEDCOutputWriter(27), new LEDCOutputWriter(14)},
       // clang-format on
-  });
+  };
+  Serial.printf("Initially: y = %u, x = %u\n", v.size(), v.at(0).size());
+  auto faceOutputs = transformAutoOutput(v);
 
   OutputComponent* face = new ClosestOutputComponent(faceOutputs);
 
