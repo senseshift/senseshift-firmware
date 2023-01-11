@@ -1,7 +1,6 @@
 #pragma once
 
 #include "abstract_component.hpp"
-#include "components_registry.hpp"
 #include "output_component.hpp"
 #include "types.hpp"
 

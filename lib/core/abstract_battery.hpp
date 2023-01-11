@@ -22,4 +22,9 @@ namespace OH {
     void loop(void) override;
     uint8_t getValue() override { return this->level; };
   };
+
+  class IBatteryConnected {
+   public:
+    virtual AbstractBattery* getBattery() = 0;
+  };
 }  // namespace OH

@@ -24,17 +24,7 @@ jobs:
           - ubuntu-latest
           - macos-latest
         target:
-          - bhaptics_tactsuit_x16
-          - bhaptics_tactsuit_x16_pca9685
           - bhaptics_tactsuit_x40
-          - bhaptics_tactosy2_forearm_left
-          - bhaptics_tactosy2_forearm_right
-          - bhaptics_tactosyh_hand_left
-          - bhaptics_tactosyh_hand_right
-          - bhaptics_tactosyf_foot_left
-          - bhaptics_tactosyf_foot_right
-          - bhaptics_tactal
-          - bhaptics_tactot_dk3
 
     steps:
       - uses: actions/checkout@v3
