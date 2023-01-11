@@ -1,12 +1,13 @@
 #include "config/all.h"
 
-#include <output.hpp>
+#include "openhaptics.h"
 #include "connections/bhaptics.h"
+
+#include <output.hpp>
 
 #include <Arduino.h>
 #include <BLE2902.h>
 #include <HardwareSerial.h>
-#include "openhaptics.h"
 
 class BHServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) { Serial.println(">>\tonConnect()"); }
@@ -106,7 +107,7 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks {
 };
 
 void BHapticsBLEConnection::setup() {
-  BLEConnection::setup();
+  ConnectionBLE::setup();
 
   this->bleServer->getAdvertising()->stop();
 
@@ -252,7 +253,7 @@ void BHapticsBLEConnection::setup() {
 }
 
 void BHapticsBLEConnection::loop() {
-  BLEConnection::loop();
+  ConnectionBLE::loop();
 
   auto now_ms = millis();
 

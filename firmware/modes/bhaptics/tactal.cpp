@@ -58,7 +58,7 @@ void setupMode() {
   App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, face);
 
   BHapticsBLEConnection* bhBleConnection =
-      new BHapticsBLEConnection(BLUETOOTH_NAME, vestMotorTransformer);
+      new BHapticsBLEConnection({ .deviceName = BLUETOOTH_NAME }, vestMotorTransformer);
   App.setConnection(bhBleConnection);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true

@@ -1,14 +1,15 @@
+#include "connection_ble.hpp"
+
+#include "ble_constants.h"
+
 #include <Arduino.h>
 #include <BLEDevice.h>
-
-#include "connections/ble.h"
-#include "openhaptics.h"
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <BLE2902.h>
 #endif
 
-void BLEConnection::setup() {
+void OH::ConnectionBLE::setup() {
   BLEDevice::init(this->deviceName);
 
   this->bleServer = BLEDevice::createServer();
@@ -30,10 +31,10 @@ void BLEConnection::setup() {
   this->bleServer->getAdvertising()->start();
 }
 
-void BLEConnection::loop() {
+void OH::ConnectionBLE::loop() {
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   auto now_ms = millis();
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   if (now_ms - this->lastBatteryUpdate >= BATTERY_SAMPLE_RATE) {
     this->lastBatteryUpdate = now_ms;
     uint16_t level = map(App.getBattery()->getValue(), 0, 255, 0, 100);

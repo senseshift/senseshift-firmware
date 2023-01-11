@@ -1,9 +1,9 @@
 #pragma once
 
 #include <abstract_connection.hpp>
-#include "connections/ble.h"
+#include <connection_ble.hpp>
 
-class BHapticsBLEConnection final : public BLEConnection {
+class BHapticsBLEConnection final : public OH::ConnectionBLE {
  private:
   BLEService* motorService = nullptr;
 
@@ -14,9 +14,7 @@ class BHapticsBLEConnection final : public BLEConnection {
   void (*motorTransformer)(std::string&);
 
  public:
-  BHapticsBLEConnection(std::string deviceName,
-                        void (*motorTransformer)(std::string&))
-      : BLEConnection(deviceName), motorTransformer(motorTransformer){};
+  BHapticsBLEConnection(OH::ConnectionBLEConfig deviceConfig, void (*motorTransformer)(std::string&)) : ConnectionBLE(deviceConfig), motorTransformer(motorTransformer){};
   void setup(void) override;
   void loop(void) override;
 };
