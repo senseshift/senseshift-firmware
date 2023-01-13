@@ -17,7 +17,7 @@ void OpenHaptics::registerComponent(OH::AbstractComponent* component) {
     }
   }
 
-  this->components.push_back(component);
+  this->components.insert(component);
 }
 
 void OpenHaptics::addOutputComponent(oh_output_path_t path,
@@ -29,6 +29,10 @@ void OpenHaptics::addOutputComponent(oh_output_path_t path,
 void OpenHaptics::setConnection(OH::AbstractConnection* connection) {
   this->registerComponent(connection);
   this->connection = connection;
+}
+
+void OpenHaptics::postEvent(const OH::IEvent* event) {
+  delete event;
 }
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true

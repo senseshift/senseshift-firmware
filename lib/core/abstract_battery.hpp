@@ -2,10 +2,20 @@
 
 #include "abstract_component.hpp"
 #include "sensor.hpp"
+#include "events.hpp"
 
 #include <stdint.h>
 
 namespace OH {
+  class BatteryLevelEvent : public IEvent
+  {
+   public:
+    static const std::string event;
+
+    const uint8_t level;
+    BatteryLevelEvent(const uint8_t level): IEvent(event), level(level) {};
+  };
+
   struct BatteryConfig {
     int sampleRate;
   };

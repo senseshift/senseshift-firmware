@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #endif
 
+const std::string OH::BatteryLevelEvent::event = "battery_level";
+
 void OH::AbstractBattery::loop() {
   auto now_ms = millis();
 

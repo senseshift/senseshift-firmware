@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <set>
 #include <type_traits>
 
 namespace OH {
@@ -16,7 +16,7 @@ namespace OH {
                 nullptr>
   class IComponentRegistry {
    public:
-    virtual std::vector<_Tp*> getComponents() = 0;
+    virtual std::set<_Tp*> getComponents() = 0;
     virtual void registerComponent(_Tp*) = 0;
   };
 }  // namespace OH
