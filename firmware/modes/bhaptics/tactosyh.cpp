@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
+#include <Adafruit_DRV2605.h>
 
 // Override you configs in this file (Ctrl+Click)
 #include "config/all.h"
@@ -41,7 +42,12 @@ void vestMotorTransformer(std::string& value) {
 
 #pragma endregion bHaptics_trash
 
+Adafruit_DRV2605 drv2605;
+
 void setupMode() {
+  drv2605.begin();
+  drv2605.setMode(DRV2605_MODE_PWMANALOG);
+
   // Configure PWM pins to their positions on the hands
   auto handOutputs = transformAutoOutput({
       // clang-format off
