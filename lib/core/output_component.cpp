@@ -1,5 +1,7 @@
 #include "output_component.hpp"
 
+#include <logging.hpp>
+
 void OH::OutputComponent::setOutputs(oh_output_writers_map_t& outputs) {
   this->writers.clear();
   this->writers = outputs;
@@ -22,5 +24,10 @@ void OH::OutputComponent::setup() {
 }
 
 void OH::OutputComponent::writeOutput(oh_output_data_t& data) {
+  if (this->writers.count(data.point) == 0) {
+    log_e("No writer for point (%u, %u)", data.point.x, data.point.y);
+    return;
+  }
+
   this->writers[data.point]->writeOutput(data.intensity);
 }

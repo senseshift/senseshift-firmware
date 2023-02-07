@@ -22,19 +22,19 @@ using namespace BH;
 
 #pragma region bHaptics_trash
 
-const uint16_t _bh_max_x = 6;
-const uint16_t _bh_max_y = 1;
+const uint16_t _bh_size_x = 6;
+const uint16_t _bh_size_y = 1;
 
-inline oh_output_point_t* make_point(uint16_t x, uint16_t y) {
-  return getPoint(x, y, _bh_max_x, _bh_max_y);
+inline oh_output_point_t* make_point(oh_output_coord_t x, oh_output_coord_t y) {
+  return getPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
 }
 
-oh_output_point_t* indexesToPoints[_bh_max_x * _bh_max_y] = {
+oh_output_point_t* indexesToPoints[_bh_size_x * _bh_size_y] = {
     make_point(0, 0), make_point(1, 0), make_point(2, 0),
     make_point(3, 0), make_point(4, 0), make_point(5, 0)};
 
 void vestMotorTransformer(std::string& value) {
-  for (size_t i = 0; i < _bh_max_x; i++) {
+  for (size_t i = 0; i < _bh_size_x; i++) {
     uint8_t byte = value[i];
     oh_output_data_t output_0;
     output_0.point = *indexesToPoints[i];
