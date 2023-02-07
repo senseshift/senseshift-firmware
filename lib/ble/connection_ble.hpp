@@ -22,6 +22,5 @@ namespace OH
    public:
     ConnectionBLE(const std::string& deviceName) : deviceName(deviceName){};
     void setup(void) override;
-    void loop(void) override;
   };
 } // namespace OH

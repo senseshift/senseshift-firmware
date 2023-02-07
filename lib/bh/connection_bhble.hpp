@@ -29,6 +29,5 @@ namespace BH
         serialNumber(serialNumber),
         motorTransformer(motorTransformer) {};
     void setup(void) override;
-    void loop(void) override;
   };
 } // namespace OH
