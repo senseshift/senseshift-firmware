@@ -2,7 +2,10 @@
 
 #include <stdint.h>
 
-typedef uint16_t oh_output_intensity_t;
+#define OH_OUTPUT_INTENSITY_T uint8_t
+#define OH_OUTPUT_INTENSITY_MAX UINT8_MAX
+
+typedef OH_OUTPUT_INTENSITY_T oh_output_intensity_t;
 
 namespace OH {
   //! Singular output point (e.g. vibration motor)

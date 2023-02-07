@@ -2,6 +2,8 @@
 
 #include "openhaptics.h"
 
+#include <logging.hpp>
+
 OpenHaptics::OpenHaptics() {
   this->output = new OH::Output(this);
 }
@@ -32,6 +34,7 @@ void OpenHaptics::setConnection(OH::AbstractConnection* connection) {
 }
 
 void OpenHaptics::postEvent(const OH::IEvent* event) {
+  log_d("Even dispatched: %s (%p)", event->eventName.c_str(), event);
   delete event;
 }
 

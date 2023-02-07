@@ -13,6 +13,6 @@ class INA219_BatteryLevel : public OH::AbstractBattery {
   uint8_t updateLevel() override;
 
  public:
-  INA219_BatteryLevel(Adafruit_INA219* sensor) : AbstractBattery({ .sampleRate = BATTERY_SAMPLE_RATE }), sensor(sensor){};
+  INA219_BatteryLevel(Adafruit_INA219* sensor, OH::IEventDispatcher* eventDispatcher) : AbstractBattery({ .sampleRate = BATTERY_SAMPLE_RATE }, eventDispatcher), sensor(sensor){};
   void setup() override;
 };

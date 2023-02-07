@@ -11,13 +11,14 @@ namespace OH
 
   struct IEvent
   {
-    const std::string event;
+    const std::string eventName;
 
-    IEvent(const std::string event) : event(event) {};
+    IEvent(const std::string eventName) : eventName(eventName) {};
   };
 
   class IEventDispatcher
   {
+   public:
     virtual void postEvent(const IEvent* event) = 0;
   };
 } // namespace OH
