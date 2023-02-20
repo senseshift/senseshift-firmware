@@ -2,6 +2,10 @@
 
 #include "openhaptics.h"
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#endif
+
 #include <logging.hpp>
 
 OpenHaptics::OpenHaptics() {
@@ -34,8 +38,17 @@ void OpenHaptics::setConnection(OH::AbstractConnection* connection) {
 }
 
 void OpenHaptics::postEvent(const OH::IEvent* event) {
-  log_d("Even dispatched: %s (%p)", event->eventName.c_str(), event);
+  log_i("Even dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
+
+  for (auto* listener : this->eventListeners) {
+    listener->handleEvent(event);
+  }
+
   delete event;
+}
+
+void OpenHaptics::addEventListener(const OH::IEventListener* listener) {
+  this->eventListeners.push_back(listener);
 }
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true

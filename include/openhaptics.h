@@ -20,6 +20,7 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent>, 
 {
  private:
   std::set<OH::AbstractComponent*> components{};
+  std::vector<const OH::IEventListener*> eventListeners{};
   OH::AbstractConnection* connection;
   OH::Output* output;
 
@@ -41,6 +42,7 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent>, 
   void setConnection(OH::AbstractConnection*);
 
   void postEvent(const OH::IEvent* event) override;
+  void addEventListener(const OH::IEventListener* listener) override;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   OH::AbstractBattery* getBattery() { return this->battery; };

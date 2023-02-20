@@ -6,16 +6,12 @@
 
 #include <stdint.h>
 
-#ifndef EVENT_BATTERY_LEVEL
-#define EVENT_BATTERY_LEVEL "battery_level"
-#endif
-
 namespace OH {
   class BatteryLevelEvent : public IEvent
   {
    public:
     const uint8_t level;
-    BatteryLevelEvent(const uint8_t level): IEvent(EVENT_BATTERY_LEVEL), level(level) {};
+    BatteryLevelEvent(const uint8_t level): IEvent(OH_EVENT_BATTERY_LEVEL), level(level) {};
   };
 
   struct BatteryConfig {
