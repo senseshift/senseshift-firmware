@@ -10,6 +10,12 @@
 #include <BLE2902.h>
 #endif
 
+OH::ConnectionBLE::ConnectionBLE(const std::string& deviceName, OH::IEventDispatcher* dispatcher) : deviceName(deviceName), dispatcher(dispatcher) {
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+  dispatcher->addEventListener(this);
+#endif
+}
+
 void OH::ConnectionBLE::setup() {
   BLEDevice::init(this->deviceName);
 
@@ -28,3 +34,20 @@ void OH::ConnectionBLE::setup() {
 
   this->bleServer->getAdvertising()->start();
 }
+
+void OH::ConnectionBLE::handleEvent(const OH::IEvent* event) const {
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+  if (event->eventName == OH_EVENT_BATTERY_LEVEL) {
+    this->handleBatteryChange(static_cast<const OH::BatteryLevelEvent*>(event));
+  }
+#endif
+}
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+void OH::ConnectionBLE::handleBatteryChange(const OH::BatteryLevelEvent* event) const {
+  uint16_t level = map(event->level, 0, 255, 0, 100);
+
+  this->batteryLevelCharacteristic->setValue(level);
+  this->batteryLevelCharacteristic->notify();
+}
+#endif

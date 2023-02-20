@@ -1,20 +1,26 @@
 #include "connection_bhble.hpp"
 
 #include <output.hpp>
+#include <events.hpp>
 
 #include <Arduino.h>
 #include <BLE2902.h>
 #include <HardwareSerial.h>
 
-class BHServerCallbacks : public BLEServerCallbacks {
-  void onConnect(BLEServer* pServer) { Serial.println(">>\tonConnect()"); }
+class BHServerCallbacks final : public BLEServerCallbacks {
+ private:
+  OH::IEventDispatcher* dispatcher;
+
+ public:
+  BHServerCallbacks(OH::IEventDispatcher* dispatcher): dispatcher(dispatcher) {}
 
   void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) {
-    Serial.println(">>\tonConnect(*param)");
+    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_CONNECTED));
   }
 
   void onDisconnect(BLEServer* pServer) {
-    Serial.println(">>\tonDisconnect()");
+    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_DISCONNECTED));
+
     pServer->startAdvertising();
   }
 };
@@ -102,7 +108,7 @@ void BH::ConnectionBHBLE::setup() {
 
   this->bleServer->getAdvertising()->stop();
 
-  this->bleServer->setCallbacks(new BHServerCallbacks());
+  this->bleServer->setCallbacks(new BHServerCallbacks(this->dispatcher));
 
   auto scanResponseData = new BLEAdvertisementData();
   scanResponseData->setAppearance(this->appearance);
@@ -155,8 +161,6 @@ void BH::ConnectionBHBLE::setup() {
     );
     batteryChar->setCallbacks(new BatteryCharCallbacks());
     batteryChar->addDescriptor(new BLE2902());
-    uint16_t batteryLevel = 100;
-    batteryChar->setValue(batteryLevel);
   }
 
   {
@@ -235,3 +239,14 @@ void BH::ConnectionBHBLE::setup() {
 
   this->bleServer->getAdvertising()->start();
 }
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+void BH::ConnectionBHBLE::handleBatteryChange(const OH::BatteryLevelEvent* event) const {
+  OH::ConnectionBLE::handleBatteryChange(event);
+
+  uint16_t level = map(event->level, 0, 255, 0, 100);
+
+  this->batteryChar->setValue(level);
+  this->batteryChar->notify();
+}
+#endif
