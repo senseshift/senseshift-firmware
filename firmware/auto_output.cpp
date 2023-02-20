@@ -2,8 +2,7 @@
 
 #include <logging.hpp>
 
-oh_output_writers_map_t transformAutoOutput(
-    std::vector<std::vector<OH::AbstractOutputWriter*>> map2d) {
+oh_output_writers_map_t transformAutoOutput(std::vector<std::vector<OH::AbstractOutputWriter*>> map2d) {
   oh_output_writers_map_t points{};
 
   size_t y_size = map2d.size();

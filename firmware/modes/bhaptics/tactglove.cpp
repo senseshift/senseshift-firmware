@@ -54,15 +54,19 @@ void setupMode() {
   });
 
   OutputComponent* glove = new ClosestOutputComponent(gloveOutputs);
-
   App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
 
-  uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(BLUETOOTH_NAME, BH_BLE_APPEARANCE, serialNumber, vestMotorTransformer);
-  App.setConnection(bhBleConnection);
-
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCBattery(33);
+  AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
   App.setBattery(battery);
 #endif
+
+  uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
+  ConnectionBHBLE_Config config = {
+      .deviceName = BLUETOOTH_NAME,
+      .appearance = BH_BLE_APPEARANCE,
+      .serialNumber = serialNumber,
+  };
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
+  App.setConnection(bhBleConnection);
 }

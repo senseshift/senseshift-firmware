@@ -12,5 +12,5 @@ class ADCBattery : public OH::AbstractBattery {
   uint8_t updateLevel() override;
 
  public:
-  ADCBattery(const uint8_t pin, OH::IEventDispatcher* eventDispatcher) : AbstractBattery({ .sampleRate = BATTERY_SAMPLE_RATE }, eventDispatcher), pin(pin) {};
+  ADCBattery(const uint8_t pin, OH::BatteryConfig config, OH::IEventDispatcher* eventDispatcher) : AbstractBattery(config, eventDispatcher), pin(pin) {};
 };
