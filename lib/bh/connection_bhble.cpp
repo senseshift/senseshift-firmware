@@ -77,16 +77,6 @@ class MotorCharCallbacks : public BLECharacteristicCallbacks {
   };
 };
 
-class BatteryCharCallbacks : public BLECharacteristicCallbacks {
-  void onRead(BLECharacteristic* pCharacteristic) override {
-    Serial.printf(">>\t%s\n", __PRETTY_FUNCTION__);
-  };
-
-  void onNotify(BLECharacteristic* pChar) override {
-    Serial.printf(">>\t%s\n", __PRETTY_FUNCTION__);
-  }
-};
-
 class ConfigCharCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic* pCharacteristic) override {
     auto value = pCharacteristic->getValue();
@@ -159,8 +149,14 @@ void BH::ConnectionBHBLE::setup() {
                 PROPERTY_WRITE_NR  // for whatever reason, it have to be
                                    // writable, otherwise Desktop app crashes
     );
-    batteryChar->setCallbacks(new BatteryCharCallbacks());
     batteryChar->addDescriptor(new BLE2902());
+
+#if !defined(BATTERY_ENABLED) || BATTERY_ENABLED == fa
+  uint16_t level = 100;
+
+  this->batteryChar->setValue(level);
+  this->batteryChar->notify();
+#endif
   }
 
   {
