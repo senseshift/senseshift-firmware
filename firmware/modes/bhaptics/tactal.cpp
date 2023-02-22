@@ -57,8 +57,8 @@ void setupMode() {
   };
   auto faceOutputs = transformAutoOutput(v);
 
-  OutputComponent* face = new ClosestOutputComponent(faceOutputs);
-  App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, face);
+  OutputComponent* face = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, faceOutputs);
+  App.addOutputComponent(face);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
@@ -71,6 +71,6 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App, tskNO_AFFINITY);
   App.setConnection(bhBleConnection);
 }

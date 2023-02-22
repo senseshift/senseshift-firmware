@@ -14,7 +14,7 @@ namespace OH {
   class Output {
    private:
     app_registry_t* app;
-    std::map<oh_output_path_t, OutputComponent*> components;
+    std::map<oh_output_path_t, OutputComponent*> components{};
 
    public:
     Output(app_registry_t* app) : app(app){};

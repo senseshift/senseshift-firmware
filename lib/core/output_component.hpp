@@ -21,6 +21,9 @@ namespace OH {
     void setOutputs(oh_output_writers_map_t&);
 
    public:
+    OutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs) : OH::AbstractComponent({ "OutputComponent", 4096, 1, tskNO_AFFINITY }), path(path) {
+      this->setOutputs(outputs);
+    };
     OutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs, const BaseType_t coreId) : OH::AbstractComponent({ "OutputComponent", 4096, 1, coreId }), path(path) {
       this->setOutputs(outputs);
     };

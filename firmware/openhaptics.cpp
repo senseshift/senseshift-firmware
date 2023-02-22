@@ -26,10 +26,9 @@ void OpenHaptics::registerComponent(OH::AbstractComponent* component) {
   this->components.insert(component);
 }
 
-void OpenHaptics::addOutputComponent(oh_output_path_t path,
-                                     OH::OutputComponent* c) {
+void OpenHaptics::addOutputComponent(OH::OutputComponent* c) {
   this->registerComponent(c);
-  this->getOutput()->addComponent(path, c);
+  this->getOutput()->addComponent(c->getPath(), c);
 }
 
 void OpenHaptics::setConnection(OH::AbstractConnection* connection) {
@@ -58,15 +57,13 @@ void OpenHaptics::setBattery(OH::AbstractBattery* battery) {
 }
 #endif
 
-void OpenHaptics::setup() {
-  for (auto& component : this->components) {
-    component->setup();
+void OpenHaptics::begin(void) {
+  for (auto& c : this->components) {
+    c->setup();
   }
-}
 
-void OpenHaptics::loop() {
-  for (auto* c : this->components) {
-    c->loop();
+  for (auto& c : this->components) {
+    c->begin();
   }
 }
 

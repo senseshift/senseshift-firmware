@@ -36,7 +36,7 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent>, 
   void registerComponent(OH::AbstractComponent*);
 
   OH::Output* getOutput() { return this->output; };
-  void addOutputComponent(oh_output_path_t, OH::OutputComponent*);
+  void addOutputComponent(OH::OutputComponent*);
 
   OH::AbstractConnection* getConnection() { return this->connection; };
   void setConnection(OH::AbstractConnection*);
@@ -49,8 +49,7 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent>, 
   void setBattery(OH::AbstractBattery*);
 #endif
 
-  void setup(void);
-  void loop(void);
+  void begin(void);
 };
 
 extern OpenHaptics App;

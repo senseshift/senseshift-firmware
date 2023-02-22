@@ -22,7 +22,6 @@ namespace OH {
    protected:
     BatteryConfig config;
     IEventDispatcher* eventDispatcher;
-    unsigned long last_battery_sample = 0;
     uint8_t level = 0;  // 0 = min, 255 = max
     virtual uint8_t updateLevel(void) = 0;
 
@@ -32,6 +31,9 @@ namespace OH {
     uint8_t getValue() override { return this->level; };
   };
 
+  /**
+   * Interface for components, that are connected to a battery
+   */
   class IBatteryConnected {
    public:
     virtual AbstractBattery* getBattery() = 0;

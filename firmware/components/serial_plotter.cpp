@@ -1,15 +1,20 @@
 #include "components/serial_plotter.h"
 #include "openhaptics.h"
 
-void SerialPlotter_OutputStates::setup() {
-  this->serial->begin(115200);
-}
-
-void SerialPlotter_OutputStates::loop() {
+template<typename _Tp>
+void SerialPlotter_OutputStates<_Tp>::loop() {
   for (auto& _c : *App.getOutput()->getComponents()) {
-    for (auto& _s : *_c.second->getOutputStates()) {
-      this->serial->printf("Output[%u][%ux%u]:%u, ", _c.first, _s.first.x, _s.first.y, _s.second.intensity);
+    oh_output_path_t path = _c.first;
+    OH::OutputComponent* component = _c.second;
+
+    for (auto& _s : *component->getOutputStates()) {
+      oh_output_point_t point = _s.first;
+      oh_output_state_t state = _s.second;
+
+      this->serial->printf("Output[%u][%ux%u]:%u, ", path, point.x, point.y, state.intensity);
     }
   }
   this->serial->println();
+
+  delay(this->sampleRate);
 }

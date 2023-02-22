@@ -5,8 +5,9 @@
 
 #include "task.hpp"
 
-namespace OH {
+#include <Arduino.h>
 
+namespace OH {
   class AbstractComponent : public Task<AbstractComponent> {
    friend class Task<AbstractComponent>;
 
@@ -14,8 +15,6 @@ namespace OH {
     AbstractComponent(TaskConfig config) : Task<AbstractComponent>(config) {};
 
     void run() override {
-      setup();
-
       while(1) {
         loop();
       }
@@ -23,7 +22,9 @@ namespace OH {
 
     virtual void setup(void){};
     virtual void loop(void) {
-      vTaskDelete(NULL); // Do not loop if not implemented
+      if (this->getHandle() != nullptr) {
+        vTaskDelete(NULL); // Do not loop if not implemented
+      }
     };
   };
 

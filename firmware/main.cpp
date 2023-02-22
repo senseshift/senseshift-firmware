@@ -1,6 +1,6 @@
 #include "main.h"
 
-#include <HardwareSerial.h>
+#include <Arduino.h>
 #include "openhaptics.h"
 
 #ifdef SERIAL_PLOTTER
@@ -16,16 +16,16 @@ void setup() {
   setupMode();
 
 #ifdef SERIAL_PLOTTER
-  SerialPlotter_OutputStates* serialOutputState =
-      new SerialPlotter_OutputStates(Serial);
+  auto* serialOutputState = new SerialPlotter_OutputStates<HardwareSerial>(Serial);
   App.registerComponent(serialOutputState);
 #endif
 
-  App.setup();
+  App.begin();
+
+  // Free up the Arduino loop task
+  vTaskDelete(NULL);
 }
 
-void loop() {
-  App.loop();
-}
+void loop() {}
 
 #endif

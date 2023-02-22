@@ -15,7 +15,7 @@ namespace OH {
   class Task {
    private:
     TaskConfig taskConfig;
-    TaskHandle_t taskHandle;
+    TaskHandle_t taskHandle = nullptr;
 
     static void taskFunction(void *params) {
       _Tp* task = static_cast<_Tp*>(params);
@@ -30,18 +30,10 @@ namespace OH {
     };
     Task(TaskConfig config) : taskConfig(config) {};
 
-    TaskHandle_t getHandle() { return taskHandle; };
+    TaskHandle_t getHandle() const { return taskHandle; };
 
-    void begin() {
-      BaseType_t result = xTaskCreatePinnedToCore(
-        taskFunction,
-        this->taskConfig->name,
-        this->taskConfig->stackDepth,
-        this,
-        this->taskConfig->priority,
-        &taskHandle,
-        this->taskConfig->coreId
-      );
+    virtual void begin() {
+      BaseType_t result = xTaskCreatePinnedToCore(taskFunction, this->taskConfig.name, this->taskConfig.stackDepth, this, this->taskConfig.priority, &taskHandle, this->taskConfig.coreId);
       assert("Failed to create task" && result == pdPASS);
     };
 

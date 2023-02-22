@@ -26,7 +26,7 @@ namespace OH
     BLEServer* bleServer = nullptr;
 
    public:
-    ConnectionBLE(const std::string& deviceName, IEventDispatcher* dispatcher);
+    ConnectionBLE(const std::string& deviceName, IEventDispatcher* dispatcher, TaskConfig taskConfig);
     void setup(void) override;
     void handleEvent(const IEvent* event) const override;
 
