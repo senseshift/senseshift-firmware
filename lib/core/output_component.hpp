@@ -11,6 +11,8 @@
 namespace OH {
   //! Output "plane" (e.g. Chest, Palm, Finger, etc.)
   class OutputComponent : public OH::AbstractComponent {
+   private:
+    oh_output_path_t path;
    protected:
     std::list<oh_output_point_t> points{};
     oh_output_writers_map_t writers{};
@@ -19,8 +21,11 @@ namespace OH {
     void setOutputs(oh_output_writers_map_t&);
 
    public:
-    OutputComponent(oh_output_writers_map_t& outputs) {
+    OutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs, const BaseType_t coreId) : OH::AbstractComponent({ "OutputComponent", 4096, 1, coreId }), path(path) {
       this->setOutputs(outputs);
+    };
+    oh_output_path_t getPath(void) {
+      return this->path;
     };
     std::list<oh_output_point_t>* getOutputPoints(void) {
       return &this->points;

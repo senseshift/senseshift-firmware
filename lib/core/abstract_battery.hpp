@@ -27,7 +27,7 @@ namespace OH {
     virtual uint8_t updateLevel(void) = 0;
 
    public:
-    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher) : config(config), eventDispatcher(eventDispatcher) {};
+    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : AbstractComponent(taskConfig), config(config), eventDispatcher(eventDispatcher) {};
     void loop(void) override;
     uint8_t getValue() override { return this->level; };
   };

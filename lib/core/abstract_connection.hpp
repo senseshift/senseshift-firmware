@@ -5,8 +5,7 @@
 namespace OH {
   class AbstractConnection : public AbstractComponent, public IEventListener {
    public:
-    virtual void setup(void){};
-    virtual void loop(void){};
+    AbstractConnection(TaskConfig config) : AbstractComponent(config) {};
     virtual void handleEvent(const IEvent* event) const {};
   };
 }  // namespace OH
