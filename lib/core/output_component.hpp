@@ -9,7 +9,9 @@
 #include <vector>
 
 namespace OH {
-  //! Output "plane" (e.g. Chest, Palm, Finger, etc.)
+  /**
+   * Output "plane" (e.g. Chest, Palm, Finger, etc.)
+   */
   class OutputComponent : public OH::AbstractComponent {
    private:
     oh_output_path_t path;
@@ -35,5 +37,16 @@ namespace OH {
     };
     virtual void writeOutput(oh_output_data_t&);
     void setup() override;
+  };
+
+  class ClosestOutputComponent : public OutputComponent {
+   protected:
+    oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts, oh_output_point_t& target);
+    void setOutputs(oh_output_writers_map_t&);
+
+   public:
+    ClosestOutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs)
+        : OutputComponent(path, outputs) {};
+    void writeOutput(oh_output_data_t&) override;
   };
 }  // namespace OH

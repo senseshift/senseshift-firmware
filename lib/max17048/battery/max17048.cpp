@@ -1,11 +1,8 @@
-#include "config/battery.h"
-
-#include "battery/max17048.h"
-#include "openhaptics.h"
+#include "battery/max17048.hpp"
 
 // @see
 // https://github.com/sparkfun/SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library/blob/main/examples/Example1_Simple/Example1_Simple.ino
-void MAX1704_BatteryLevel::setup() {
+void OH::MAX1704_Battery::setup() {
   // Set up the MAX17043 LiPo fuel gauge:
   this->active = this->gauge->begin();
 
@@ -16,11 +13,11 @@ void MAX1704_BatteryLevel::setup() {
 
     // We can set an interrupt to alert when the battery SoC gets too low.
     // We can alert at anywhere between 1% - 32%:
-    this->gauge->setThreshold(BATTERY_THRESHOLD_PERCENTAGE);
+    // this->gauge->setThreshold(BATTERY_THRESHOLD_PERCENTAGE);
   }
 }
 
-uint8_t MAX1704_BatteryLevel::updateLevel() {
+uint8_t OH::MAX1704_Battery::updateLevel() {
   if (!this->active) {
     return 0;
   }

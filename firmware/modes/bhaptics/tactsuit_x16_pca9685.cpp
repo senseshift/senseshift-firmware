@@ -9,11 +9,10 @@
 #include "openhaptics.h"
 
 #include <connection_bhble.hpp>
-#include "output_components/closest.h"
-#include "output_writers/pca9685.h"
+#include <output_writers/pca9685.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "battery/adc_battery.h"
+#include <battery/adc_naive.hpp>
 #endif
 
 using namespace OH;
@@ -107,7 +106,7 @@ void setupMode() {
   App.getOutput()->addComponent(chestBack);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
+  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App, tskNO_AFFINITY);
   App.setBattery(battery);
 #endif
 

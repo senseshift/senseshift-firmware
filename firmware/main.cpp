@@ -3,8 +3,8 @@
 #include <Arduino.h>
 #include "openhaptics.h"
 
-#ifdef SERIAL_PLOTTER
-#include "components/serial_plotter.h"
+#if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
+#include <components/serial_plotter.hpp>
 #endif
 
 #ifndef PIO_UNIT_TESTING
@@ -15,8 +15,8 @@ void setup() {
   Serial.begin(115200);
   setupMode();
 
-#ifdef SERIAL_PLOTTER
-  auto* serialOutputState = new SerialPlotter_OutputStates<HardwareSerial>(Serial);
+#if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
+  auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(Serial, App.getOutput());
   App.registerComponent(serialOutputState);
 #endif
 

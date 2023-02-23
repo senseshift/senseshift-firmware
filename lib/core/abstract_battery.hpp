@@ -6,6 +6,10 @@
 
 #include <stdint.h>
 
+#ifndef BATTERY_TASK_PRIORITY
+#define BATTERY_TASK_PRIORITY 1
+#endif
+
 namespace OH {
   class BatteryLevelEvent : public IEvent
   {

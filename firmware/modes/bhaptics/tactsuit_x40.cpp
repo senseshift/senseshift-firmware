@@ -4,17 +4,14 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <utility.hpp>
-
 #include "openhaptics.h"
 
 #include <connection_bhble.hpp>
-#include "output_components/closest.h"
-#include "output_writers/ledc.h"
-#include "output_writers/pca9685.h"
+#include <output_writers/pwm.hpp>
+#include <output_writers/pca9685.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "battery/adc_battery.h"
+#include <battery/adc_naive.hpp>
 #endif
 
 using namespace OH;
@@ -71,7 +68,7 @@ void setupMode() {
       {new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)},
       {new PCA9685OutputWriter(pwm1, 8),  new PCA9685OutputWriter(pwm1, 9),  new PCA9685OutputWriter(pwm1, 10), new PCA9685OutputWriter(pwm1, 11)},
       {new PCA9685OutputWriter(pwm1, 12), new PCA9685OutputWriter(pwm1, 13), new PCA9685OutputWriter(pwm1, 14), new PCA9685OutputWriter(pwm1, 15)},
-      {new LEDCOutputWriter(32),          new LEDCOutputWriter(33),          new LEDCOutputWriter(25),          new LEDCOutputWriter(26)},
+      {new PWMOutputWriter(32),          new PWMOutputWriter(33),          new PWMOutputWriter(25),          new PWMOutputWriter(26)},
       // clang-format on
   });
   auto backOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
@@ -80,7 +77,7 @@ void setupMode() {
       {new PCA9685OutputWriter(pwm2, 4),  new PCA9685OutputWriter(pwm2, 5),  new PCA9685OutputWriter(pwm2, 6),  new PCA9685OutputWriter(pwm2, 7)},
       {new PCA9685OutputWriter(pwm2, 8),  new PCA9685OutputWriter(pwm2, 9),  new PCA9685OutputWriter(pwm2, 10), new PCA9685OutputWriter(pwm2, 11)},
       {new PCA9685OutputWriter(pwm2, 12), new PCA9685OutputWriter(pwm2, 13), new PCA9685OutputWriter(pwm2, 14), new PCA9685OutputWriter(pwm2, 15)},
-      {new LEDCOutputWriter(27),          new LEDCOutputWriter(14),          new LEDCOutputWriter(12),          new LEDCOutputWriter(13)},
+      {new PWMOutputWriter(27),          new PWMOutputWriter(14),          new PWMOutputWriter(12),          new PWMOutputWriter(13)},
       // clang-format on
   });
 
@@ -91,7 +88,7 @@ void setupMode() {
   App.getOutput()->addComponent(chestBack);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
+  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App, tskNO_AFFINITY);
   App.setBattery(battery);
 #endif
 

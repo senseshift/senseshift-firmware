@@ -1,7 +1,5 @@
 #include "unity.h"
 
-#include "output_components/closest.h"
-
 #ifdef UNIT_TEST
 
 class TestWriter : public OutputWriter {

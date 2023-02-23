@@ -78,7 +78,6 @@ jobs:
           - bhaptics_tactosyh_hand_right
           - bhaptics_tactosyf_foot_right
           - bhaptics_tactal
-          - bhaptics_tactot_dk3
         battery_flag:
           - BATTERY_ENABLED=true
           - BATTERY_ENABLED=false

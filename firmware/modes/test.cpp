@@ -7,7 +7,6 @@
 #include "openhaptics.h"
 
 #include "connections/bhaptics.h"
-#include "output_components/closest.h"
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include "battery/adc_battery.h"

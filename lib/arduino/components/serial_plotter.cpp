@@ -1,9 +1,8 @@
-#include "components/serial_plotter.h"
-#include "openhaptics.h"
+#include "components/serial_plotter.hpp"
 
 template<typename _Tp>
-void SerialPlotter_OutputStates<_Tp>::loop() {
-  for (auto& _c : *App.getOutput()->getComponents()) {
+void OH::SerialPlotter_OutputStates<_Tp>::loop() {
+  for (auto& _c : *output->getComponents()) {
     oh_output_path_t path = _c.first;
     OH::OutputComponent* component = _c.second;
 
