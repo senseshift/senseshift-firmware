@@ -22,18 +22,10 @@ using namespace BH;
 
 #pragma region bHaptics_trash
 
-const uint16_t _bh_size_x = 3;
-const uint16_t _bh_size_y = 1;
-
-inline oh_output_point_t* make_point(oh_output_coord_t x, oh_output_coord_t y) {
-  return getPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
-}
-
-oh_output_point_t* indexesToPoints[_bh_size_x * _bh_size_y] = {
-    make_point(0, 0), make_point(1, 0), make_point(2, 0)};
+oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTOSYF_SIZE] = BH_LAYOUT_TACTOSYF;
 
 void vestMotorTransformer(std::string& value) {
-  for (size_t i = 0; i < _bh_size_x; i++) {
+  for (size_t i = 0; i < BH_LAYOUT_TACTOSYF_SIZE; i++) {
     uint8_t byte = value[i];
     oh_output_data_t output_0;
     output_0.point = *indexesToPoints[i];
@@ -52,8 +44,8 @@ void setupMode() {
       // clang-format on
   });
 
-  OutputComponent* foot = new ClosestOutputComponent(footOutputs);
-  App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, foot);
+  OutputComponent* foot = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, footOutputs);
+  App.addOutputComponent(foot);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
@@ -66,6 +58,6 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App, tskNO_AFFINITY);
   App.setConnection(bhBleConnection);
 }

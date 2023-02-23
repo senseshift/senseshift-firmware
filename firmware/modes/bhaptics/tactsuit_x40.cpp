@@ -23,60 +23,7 @@ using namespace BH;
 
 #pragma region bHaptics_trash
 
-const uint16_t _bh_size_x = 4;
-const uint16_t _bh_size_y = 5;
-
-inline oh_output_point_t* make_point(oh_output_coord_t x, oh_output_coord_t y) {
-  return getPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
-}
-
-oh_output_point_t* indexesToPoints[40] = {
-    // Front, left part
-    /*  0 */ make_point(0, 0),
-    /*  1 */ make_point(1, 0),
-    /*  2 */ make_point(0, 1),
-    /*  3 */ make_point(1, 1),
-    /*  4 */ make_point(0, 2),
-    /*  5 */ make_point(1, 2),
-    /*  6 */ make_point(0, 3),
-    /*  7 */ make_point(1, 3),
-    /*  8 */ make_point(0, 4),
-    /*  9 */ make_point(1, 4),
-
-    // Back
-    /* 11 */ make_point(0, 0),
-    /* 11 */ make_point(1, 0),
-    /* 12 */ make_point(0, 1),
-    /* 13 */ make_point(1, 1),
-    /* 14 */ make_point(0, 2),
-    /* 15 */ make_point(1, 2),
-    /* 16 */ make_point(0, 3),
-    /* 17 */ make_point(1, 3),
-    /* 18 */ make_point(0, 4),
-    /* 19 */ make_point(1, 4),
-
-    /* 20 */ make_point(2, 0),
-    /* 21 */ make_point(3, 0),
-    /* 22 */ make_point(2, 1),
-    /* 23 */ make_point(3, 1),
-    /* 24 */ make_point(2, 2),
-    /* 25 */ make_point(3, 2),
-    /* 26 */ make_point(2, 3),
-    /* 27 */ make_point(3, 3),
-    /* 28 */ make_point(2, 4),
-    /* 29 */ make_point(3, 4),
-
-    // Front, again... Now right part
-    /* 30 */ make_point(2, 0),
-    /* 31 */ make_point(3, 0),
-    /* 32 */ make_point(2, 1),
-    /* 33 */ make_point(3, 1),
-    /* 34 */ make_point(2, 2),
-    /* 35 */ make_point(3, 2),
-    /* 36 */ make_point(2, 3),
-    /* 37 */ make_point(3, 3),
-    /* 38 */ make_point(2, 4),
-    /* 39 */ make_point(3, 4)};
+oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTSUITX40_SIZE] = BH_LAYOUT_TACTSUITX40;
 
 void vestMotorTransformer(std::string& value) {
   for (size_t i = 0; i < 20; i++) {
@@ -135,11 +82,11 @@ void setupMode() {
       // clang-format on
   });
 
-  OutputComponent* chestFront = new ClosestOutputComponent(frontOutputs);
-  OutputComponent* chestBack = new ClosestOutputComponent(backOutputs);
+  OutputComponent* chestFront = new ClosestOutputComponent(OUTPUT_PATH_CHEST_FRONT, frontOutputs);
+  OutputComponent* chestBack = new ClosestOutputComponent(OUTPUT_PATH_CHEST_BACK, backOutputs);
 
-  App.getOutput()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
-  App.getOutput()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
+  App.addOutputComponent(chestFront);
+  App.addOutputComponent(chestBack);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
@@ -152,6 +99,6 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App, tskNO_AFFINITY);
   App.setConnection(bhBleConnection);
 }
