@@ -10,14 +10,14 @@
  * @tparam _Tp the type of the serial port
  */
 template <class _Tp>
-class SerialPlotter_OutputStates : public OH::AbstractComponent {
+class SerialPlotter_OutputStates : public OH::TaskedComponent {
  private:
   _Tp* serial;
   uint32_t sampleRate;
 
  public:
   SerialPlotter_OutputStates(_Tp& serial, uint32_t sampleRate = 100)
-    : OH::AbstractComponent({ "Serial Plotter", 1024, 255, tskNO_AFFINITY }),
+    : OH::TaskedComponent({ "Serial Plotter", 1024, 255, tskNO_AFFINITY }),
       serial(&serial),
       sampleRate(sampleRate) {};
 

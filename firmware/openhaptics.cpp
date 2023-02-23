@@ -12,7 +12,7 @@ OpenHaptics::OpenHaptics() {
   this->output = new OH::Output(this);
 }
 
-void OpenHaptics::registerComponent(OH::AbstractComponent* component) {
+void OpenHaptics::registerComponent(OH::IComponent* component) {
   if (component == nullptr) {
     return;
   }
@@ -24,11 +24,6 @@ void OpenHaptics::registerComponent(OH::AbstractComponent* component) {
   }
 
   this->components.insert(component);
-}
-
-void OpenHaptics::addOutputComponent(OH::OutputComponent* c) {
-  this->registerComponent(c);
-  this->getOutput()->addComponent(c->getPath(), c);
 }
 
 void OpenHaptics::setConnection(OH::AbstractConnection* connection) {

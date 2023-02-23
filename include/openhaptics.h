@@ -13,13 +13,13 @@
 
 #include <vector>
 
-class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent>, public OH::IEventDispatcher
+class OpenHaptics final : public OH::IComponentRegistry<OH::IComponent>, public OH::IEventDispatcher
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 , public OH::IBatteryConnected
 #endif
 {
  private:
-  std::set<OH::AbstractComponent*> components{};
+  std::set<OH::IComponent*> components{};
   std::vector<const OH::IEventListener*> eventListeners{};
   OH::AbstractConnection* connection;
   OH::Output* output;
@@ -30,13 +30,12 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::AbstractComponent>, 
 
  public:
   OpenHaptics();
-  std::set<OH::AbstractComponent*> getComponents() {
+  std::set<OH::IComponent*> getComponents() {
     return this->components;
   };
-  void registerComponent(OH::AbstractComponent*);
+  void registerComponent(OH::IComponent*);
 
   OH::Output* getOutput() { return this->output; };
-  void addOutputComponent(OH::OutputComponent*);
 
   OH::AbstractConnection* getConnection() { return this->connection; };
   void setConnection(OH::AbstractConnection*);

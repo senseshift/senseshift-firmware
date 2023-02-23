@@ -18,7 +18,7 @@ namespace OH {
     int sampleRate;
   };
 
-  class AbstractBattery : public AbstractComponent, public ISensor<uint8_t> {
+  class AbstractBattery : public TaskedComponent, public ISensor<uint8_t> {
    protected:
     BatteryConfig config;
     IEventDispatcher* eventDispatcher;
@@ -26,7 +26,7 @@ namespace OH {
     virtual uint8_t updateLevel(void) = 0;
 
    public:
-    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : AbstractComponent(taskConfig), config(config), eventDispatcher(eventDispatcher) {};
+    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : TaskedComponent(taskConfig), config(config), eventDispatcher(eventDispatcher) {};
     void loop(void) override;
     uint8_t getValue() override { return this->level; };
   };

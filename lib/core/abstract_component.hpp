@@ -8,11 +8,17 @@
 #include <Arduino.h>
 
 namespace OH {
-  class AbstractComponent : public Task<AbstractComponent> {
-   friend class Task<AbstractComponent>;
+  class IComponent {
+   public:
+    virtual void setup(void) {};
+    virtual void begin(void) {};
+  };
+
+  class TaskedComponent : public IComponent, public Task<TaskedComponent> {
+    friend class Task<TaskedComponent>;
 
    public:
-    AbstractComponent(TaskConfig config) : Task<AbstractComponent>(config) {};
+    TaskedComponent(TaskConfig config) : Task<TaskedComponent>(config) {};
 
     void run() override {
       while(1) {
@@ -20,12 +26,14 @@ namespace OH {
       }
     };
 
-    virtual void setup(void){};
     virtual void loop(void) {
       if (this->getHandle() != nullptr) {
         vTaskDelete(NULL); // Do not loop if not implemented
       }
     };
+  };
+
+  class AbstractComponent : public IComponent {
   };
 
   template <class _Tp>

@@ -9,7 +9,7 @@
 namespace OH {
   // TODO: `IComponentRegistry<OutputComponent>` not working, need to
   // investigate
-  typedef IComponentRegistry<AbstractComponent> app_registry_t;
+  typedef IComponentRegistry<IComponent> app_registry_t;
 
   class Output {
    private:
@@ -19,7 +19,7 @@ namespace OH {
    public:
     Output(app_registry_t* app) : app(app){};
 
-    void addComponent(oh_output_path_t, OutputComponent*);
+    void addComponent(OutputComponent*);
     std::map<oh_output_path_t, OutputComponent*>* getComponents();
 
     void writeOutput(oh_output_path_t, oh_output_data_t&);

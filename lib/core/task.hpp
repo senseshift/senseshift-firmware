@@ -22,6 +22,8 @@ namespace OH {
       task->run();
     }
 
+    virtual void run() = 0;
+
    public:
     Task(const char *name, uint32_t stackDepth, UBaseType_t priority, const BaseType_t coreId = tskNO_AFFINITY) {
       TaskConfig config = {name, stackDepth, priority, coreId};
@@ -36,7 +38,5 @@ namespace OH {
       BaseType_t result = xTaskCreatePinnedToCore(taskFunction, this->taskConfig.name, this->taskConfig.stackDepth, this, this->taskConfig.priority, &taskHandle, this->taskConfig.coreId);
       assert("Failed to create task" && result == pdPASS);
     };
-
-    virtual void run() = 0;
   };
 }

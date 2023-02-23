@@ -9,7 +9,5 @@ class ClosestOutputComponent : public OH::OutputComponent {
  public:
   ClosestOutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs)
       : OutputComponent(path, outputs) {};
-  ClosestOutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs, BaseType_t coreId)
-      : OutputComponent(path, outputs, coreId) {};
   void writeOutput(oh_output_data_t&) override;
 };

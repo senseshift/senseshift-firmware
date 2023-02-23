@@ -25,8 +25,7 @@ oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTOSYF_SIZE] = BH_LAYOUT_TACTOSYF
 
 void vestMotorTransformer(std::string& value) {
   for (size_t i = 0; i < BH_LAYOUT_TACTOSYF_SIZE; i++) {
-    uint8_t byte = value[i];
-    oh_output_data_t output_0;
+  uint8_t byte = value[i];
 
     oh_output_data_t output_0{
       .point = *indexesToPoints[i],
@@ -48,7 +47,7 @@ void setupMode() {
   });
 
   OutputComponent* foot = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, footOutputs);
-  App.addOutputComponent(foot);
+  App.getOutput()->addComponent(foot);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   AbstractBattery* battery = new ADCBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
@@ -61,6 +60,6 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App, tskNO_AFFINITY);
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
   App.setConnection(bhBleConnection);
 }

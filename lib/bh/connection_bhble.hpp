@@ -28,8 +28,8 @@ namespace BH
     bh_motor_transformer_t motorTransformer;
 
    public:
-    ConnectionBHBLE(ConnectionBHBLE_Config* config, bh_motor_transformer_t motorTransformer, OH::IEventDispatcher* eventDispatcher, const BaseType_t coreId)
-      : ConnectionBLE(config->deviceName, eventDispatcher, { "ConnectionBHBLE", 4096, 1, coreId }),
+    ConnectionBHBLE(ConnectionBHBLE_Config* config, bh_motor_transformer_t motorTransformer, OH::IEventDispatcher* eventDispatcher)
+      : ConnectionBLE(config->deviceName, eventDispatcher),
         appearance(config->appearance),
         serialNumber(config->serialNumber),
         motorTransformer(motorTransformer) {};

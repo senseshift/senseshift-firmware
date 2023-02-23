@@ -2,7 +2,8 @@
 
 #include <logging.hpp>
 
-void OH::Output::addComponent(oh_output_path_t path, OH::OutputComponent* c) {
+void OH::Output::addComponent(OH::OutputComponent* c) {
+  auto path = c->getPath();
   this->components[path] = c;
   this->app->registerComponent(c);
 }

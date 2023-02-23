@@ -10,8 +10,8 @@
 #include <BLE2902.h>
 #endif
 
-OH::ConnectionBLE::ConnectionBLE(const std::string& deviceName, OH::IEventDispatcher* dispatcher, TaskConfig taskConfig)
-  : AbstractConnection(taskConfig), deviceName(deviceName), dispatcher(dispatcher) {
+OH::ConnectionBLE::ConnectionBLE(const std::string& deviceName, OH::IEventDispatcher* dispatcher)
+  : deviceName(deviceName), dispatcher(dispatcher) {
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   dispatcher->addEventListener(this);
 #endif
@@ -37,10 +37,6 @@ void OH::ConnectionBLE::setup() {
 }
 
 void OH::ConnectionBLE::handleEvent(const OH::IEvent* event) const {
-  if (this->getHandle() == nullptr) {
-    return;
-  }
-
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   if (event->eventName == OH_EVENT_BATTERY_LEVEL) {
     this->handleBatteryChange(static_cast<const OH::BatteryLevelEvent*>(event));
