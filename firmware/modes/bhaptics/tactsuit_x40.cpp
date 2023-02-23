@@ -7,7 +7,6 @@
 #include <utility.hpp>
 
 #include "openhaptics.h"
-#include "auto_output.h"
 
 #include <connection_bhble.hpp>
 #include "output_components/closest.h"
@@ -30,17 +29,20 @@ void vestMotorTransformer(std::string& value) {
     uint8_t byte = value[i];
     uint actIndex = i * 2;
 
-    oh_output_data_t output_0;
-    output_0.point = *indexesToPoints[actIndex];
-    output_0.intensity = map(((byte >> 4) & 0xf), 0, 15, 0, UINT16_MAX);
+    oh_output_data_t output_0{
+      .point = *indexesToPoints[actIndex],
+      .intensity = static_cast<oh_output_intensity_t>(map(((byte >> 4) & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+    };
+
     App.getOutput()->writeOutput((actIndex < 10 || actIndex >= 30)
                                      ? OUTPUT_PATH_CHEST_FRONT
                                      : OUTPUT_PATH_CHEST_BACK,
                                  output_0);
 
-    oh_output_data_t output_1;
-    output_1.point = *indexesToPoints[actIndex + 1];
-    output_1.intensity = map((byte & 0xf), 0, 15, 0, UINT16_MAX);
+    oh_output_data_t output_1{
+      .point = *indexesToPoints[actIndex + 1],
+      .intensity = static_cast<oh_output_intensity_t>(map((byte & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+    };
 
     App.getOutput()->writeOutput((actIndex < 10 || actIndex >= 30)
                                      ? OUTPUT_PATH_CHEST_FRONT
@@ -63,7 +65,7 @@ void setupMode() {
 
   // Assign the pins on the configured PCA9685s and PWM pins to locations on the
   // vest
-  auto frontOutputs = transformAutoOutput({
+  auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new PCA9685OutputWriter(pwm1, 0),  new PCA9685OutputWriter(pwm1, 1),  new PCA9685OutputWriter(pwm1, 2),  new PCA9685OutputWriter(pwm1, 3)},
       {new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)},
@@ -72,7 +74,7 @@ void setupMode() {
       {new LEDCOutputWriter(32),          new LEDCOutputWriter(33),          new LEDCOutputWriter(25),          new LEDCOutputWriter(26)},
       // clang-format on
   });
-  auto backOutputs = transformAutoOutput({
+  auto backOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new PCA9685OutputWriter(pwm2, 0),  new PCA9685OutputWriter(pwm2, 1),  new PCA9685OutputWriter(pwm2, 2),  new PCA9685OutputWriter(pwm2, 3)},
       {new PCA9685OutputWriter(pwm2, 4),  new PCA9685OutputWriter(pwm2, 5),  new PCA9685OutputWriter(pwm2, 6),  new PCA9685OutputWriter(pwm2, 7)},

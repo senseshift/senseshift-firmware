@@ -7,7 +7,6 @@
 #include <utility.hpp>
 
 #include "openhaptics.h"
-#include "auto_output.h"
 
 #include <connection_bhble.hpp>
 #include "output_components/closest.h"
@@ -65,12 +64,15 @@ void vestMotorTransformer(std::string& value) {
       continue;
     }
 
-    oh_output_data_t output;
-    output.point = *indexesToPoints[i];
-    output.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
+    oh_output_data_t output{
+      .point = *indexesToPoints[i],
+      .intensity = static_cast<oh_output_intensity_t>(map(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+    };
+
     App.getOutput()->writeOutput(
-        (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-        output);
+      (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
+      output
+    );
   }
 }
 
@@ -78,13 +80,13 @@ void vestMotorTransformer(std::string& value) {
 
 void setupMode() {
   // Configure PWM pins to their positions on the vest
-  auto frontOutputs = transformAutoOutput({
+  auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25), new LEDCOutputWriter(26)},
       {new LEDCOutputWriter(27), new LEDCOutputWriter(14), new LEDCOutputWriter(12), new LEDCOutputWriter(13)},
       // clang-format on
   });
-  auto backOutputs = transformAutoOutput({
+  auto backOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new LEDCOutputWriter(19), new LEDCOutputWriter(18), new LEDCOutputWriter(5), new LEDCOutputWriter(17)},
       {new LEDCOutputWriter(16), new LEDCOutputWriter(4), new LEDCOutputWriter(2), new LEDCOutputWriter(15)},

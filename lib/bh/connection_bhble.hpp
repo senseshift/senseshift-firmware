@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bh_constants.h>
+#include <bh_constants.hpp>
 #include <bh_types.hpp>
 
 #include <connection_ble.hpp>

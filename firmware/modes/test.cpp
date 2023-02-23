@@ -5,7 +5,6 @@
 #include <Wire.h>
 
 #include "openhaptics.h"
-#include "auto_output.h"
 
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
@@ -27,7 +26,7 @@ class TestOutput : public OH::AbstractOutputWriter {
 };
 
 void setupMode() {
-  auto testOutputs = transformAutoOutput({
+  auto testOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       {new TestOutput(0), new TestOutput(1)},
       {new TestOutput(2), new TestOutput(3)},
       {new TestOutput(4), new TestOutput(5)},

@@ -7,7 +7,6 @@
 #include <utility.hpp>
 
 #include "openhaptics.h"
-#include "auto_output.h"
 
 #include <connection_bhble.hpp>
 #include "output_components/closest.h"
@@ -30,7 +29,7 @@ void vestMotorTransformer(std::string& value) {
 
     oh_output_data_t output_0{
       .point = *indexesToPoints[i],
-      .intensity = map(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)
+      .intensity = static_cast<oh_output_intensity_t>(map(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
@@ -41,12 +40,11 @@ void vestMotorTransformer(std::string& value) {
 
 void setupMode() {
   // Configure PWM pins to their positions on the face
-  std::vector<std::vector<AbstractOutputWriter*>> v = {
+  auto faceOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25), new LEDCOutputWriter(26), new LEDCOutputWriter(27), new LEDCOutputWriter(14)},
       // clang-format on
-  };
-  auto faceOutputs = transformAutoOutput(v);
+  });
 
   OutputComponent* face = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, faceOutputs);
   App.addOutputComponent(face);

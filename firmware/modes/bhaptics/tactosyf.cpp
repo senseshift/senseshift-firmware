@@ -7,7 +7,6 @@
 #include <utility.hpp>
 
 #include "openhaptics.h"
-#include "auto_output.h"
 
 #include <connection_bhble.hpp>
 #include "output_components/closest.h"
@@ -28,8 +27,12 @@ void vestMotorTransformer(std::string& value) {
   for (size_t i = 0; i < BH_LAYOUT_TACTOSYF_SIZE; i++) {
     uint8_t byte = value[i];
     oh_output_data_t output_0;
-    output_0.point = *indexesToPoints[i];
-    output_0.intensity = map(byte, 0, 100, 0, UINT16_MAX);
+
+    oh_output_data_t output_0{
+      .point = *indexesToPoints[i],
+      .intensity = static_cast<oh_output_intensity_t>(map(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
+    };
+
     App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
   }
 }
@@ -38,7 +41,7 @@ void vestMotorTransformer(std::string& value) {
 
 void setupMode() {
   // Configure PWM pins to their positions on the feet
-  auto footOutputs = transformAutoOutput({
+  auto footOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25)}
       // clang-format on

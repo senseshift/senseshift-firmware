@@ -7,7 +7,6 @@
 #include <utility.hpp>
 
 #include "openhaptics.h"
-#include "auto_output.h"
 
 #include <connection_bhble.hpp>
 #include "output_components/closest.h"
@@ -67,12 +66,15 @@ void vestMotorTransformer(std::string& value) {
       continue;
     }
 
-    oh_output_data_t output;
-    output.point = *indexesToPoints[i];
-    output.intensity = map(result[i], 0, 15, 0, UINT16_MAX);
+    oh_output_data_t output{
+      .point = *indexesToPoints[i],
+      .intensity = static_cast<oh_output_intensity_t>(map(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+    };
+
     App.getOutput()->writeOutput(
-        (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-        output);
+      (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
+      output
+    );
   }
 }
 
@@ -85,13 +87,13 @@ void setupMode() {
   pwm->setPWMFreq(PWM_FREQUENCY);
 
   // Assign the pins on the configured PCA9685 to positions on the vest
-  auto frontOutputs = transformAutoOutput({
+  auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3)},
       {new PCA9685OutputWriter(pwm, 4), new PCA9685OutputWriter(pwm, 5), new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7)},
       // clang-format on
   });
-  auto backOutputs = transformAutoOutput({
+  auto backOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11)},
       {new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15)},
