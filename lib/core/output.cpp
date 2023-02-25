@@ -12,7 +12,7 @@ std::map<oh_output_path_t, OH::OutputComponent*>* OH::Output::getComponents() {
   return &this->components;
 }
 
-void OH::Output::writeOutput(oh_output_path_t path, oh_output_data_t& data) {
+void OH::Output::writeOutput(const oh_output_path_t path, const oh_output_data_t& data) {
   if (this->getComponents()->count(path) == 0) {
     // if no requested component exists, skip
     log_e("No component found for path %d", path);

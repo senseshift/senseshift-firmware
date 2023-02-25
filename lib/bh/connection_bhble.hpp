@@ -7,7 +7,8 @@
 
 #include <esp_wifi.h>
 
-typedef void (*bh_motor_transformer_t)(std::string&);
+// typedef void (*bh_motor_handler_t)(std::string&);
+typedef std::function<void(std::string&)> bh_motor_handler_t;
 
 namespace BH
 {
@@ -25,14 +26,15 @@ namespace BH
    protected:
     uint16_t appearance;
     uint8_t* serialNumber;
-    bh_motor_transformer_t motorTransformer;
+    bh_motor_handler_t motorHandler;
 
    public:
-    ConnectionBHBLE(ConnectionBHBLE_Config* config, bh_motor_transformer_t motorTransformer, OH::IEventDispatcher* eventDispatcher)
+    ConnectionBHBLE(ConnectionBHBLE_Config* config, bh_motor_handler_t motorHandler, OH::IEventDispatcher* eventDispatcher)
       : ConnectionBLE(config->deviceName, eventDispatcher),
         appearance(config->appearance),
         serialNumber(config->serialNumber),
-        motorTransformer(motorTransformer) {};
+        motorHandler(motorHandler) {};
+
     void setup(void) override;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true

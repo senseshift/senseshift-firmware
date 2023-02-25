@@ -64,10 +64,10 @@ class SerialOutputCharCallbacks : public BLECharacteristicCallbacks {
 
 class MotorCharCallbacks : public BLECharacteristicCallbacks {
  private:
-  void (*motorTransformer)(std::string&);
+  bh_motor_handler_t motorTransformer;
 
  public:
-  MotorCharCallbacks(void (*motorTransformer)(std::string&))
+  MotorCharCallbacks(bh_motor_handler_t motorTransformer)
       : motorTransformer(motorTransformer) {}
 
   void onWrite(BLECharacteristic* pCharacteristic) override {
@@ -113,7 +113,7 @@ void BH::ConnectionBHBLE::setup() {
 
   {
     MotorCharCallbacks* motorCallbacks =
-        new MotorCharCallbacks(this->motorTransformer);
+        new MotorCharCallbacks(this->motorHandler);
 
     auto* motorChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_UUID,

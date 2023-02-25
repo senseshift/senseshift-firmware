@@ -22,7 +22,7 @@ namespace OH {
     void addComponent(OutputComponent*);
     std::map<oh_output_path_t, OutputComponent*>* getComponents();
 
-    void writeOutput(oh_output_path_t, oh_output_data_t&);
+    void writeOutput(const oh_output_path_t, const oh_output_data_t&);
   };
 
   /**

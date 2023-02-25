@@ -23,7 +23,7 @@ void OH::OutputComponent::setup() {
   }
 }
 
-void OH::OutputComponent::writeOutput(oh_output_data_t& data) {
+void OH::OutputComponent::writeOutput(const oh_output_data_t& data) {
   if (this->writers.count(data.point) == 0) {
     log_e("No writer for point (%u, %u)", data.point.x, data.point.y);
     return;
@@ -34,7 +34,7 @@ void OH::OutputComponent::writeOutput(oh_output_data_t& data) {
 
 oh_output_point_t OH::ClosestOutputComponent::findClosestPoints(
     std::list<oh_output_point_t>& pts,
-    oh_output_point_t& target) {
+    const oh_output_point_t& target) {
   std::multimap<float, oh_output_point_t> mp = {};
 
   for (auto& _p : pts) {
@@ -60,7 +60,7 @@ oh_output_point_t OH::ClosestOutputComponent::findClosestPoints(
   return nearest->second;
 }
 
-void OH::ClosestOutputComponent::writeOutput(oh_output_data_t& data) {
+void OH::ClosestOutputComponent::writeOutput(const oh_output_data_t& data) {
   auto closestPoint = this->findClosestPoints(this->points, data.point);
 
   auto state = &this->states[closestPoint];

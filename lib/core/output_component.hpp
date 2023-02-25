@@ -35,18 +35,18 @@ namespace OH {
     std::map<oh_output_point_t, oh_output_state_t>* getOutputStates(void) {
       return &this->states;
     };
-    virtual void writeOutput(oh_output_data_t&);
+    virtual void writeOutput(const oh_output_data_t&);
     void setup() override;
   };
 
   class ClosestOutputComponent : public OutputComponent {
    protected:
-    oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts, oh_output_point_t& target);
+    oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target);
     void setOutputs(oh_output_writers_map_t&);
 
    public:
     ClosestOutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs)
         : OutputComponent(path, outputs) {};
-    void writeOutput(oh_output_data_t&) override;
+    void writeOutput(const oh_output_data_t&) override;
   };
 }  // namespace OH
