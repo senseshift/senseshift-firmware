@@ -61,5 +61,3 @@ void OpenHaptics::begin(void) {
     c->begin();
   }
 }
-
-OpenHaptics App;

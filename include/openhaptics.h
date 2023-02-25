@@ -50,5 +50,3 @@ class OpenHaptics final : public OH::IComponentRegistry<OH::IComponent>, public 
 
   void begin(void);
 };
-
-extern OpenHaptics App;

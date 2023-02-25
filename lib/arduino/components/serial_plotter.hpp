@@ -19,16 +19,12 @@ namespace OH {
     uint32_t sampleRate;
 
   public:
-    SerialPlotter_OutputStates(_Tp& serial, Output* output, uint32_t sampleRate = 100, TaskConfig taskConfig = { "Serial Plotter", 1024, 1, tskNO_AFFINITY })
+    SerialPlotter_OutputStates(_Tp& serial, Output* output, uint32_t sampleRate, TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY })
       : OH::TaskedComponent(taskConfig),
         serial(&serial),
         output(output),
         sampleRate(sampleRate) {};
-    SerialPlotter_OutputStates(_Tp& serial, Output* output, uint32_t sampleRate = 100, const BaseType_t coreId = tskNO_AFFINITY)
-      : OH::TaskedComponent({ "Serial Plotter", 1024, 1, coreId }),
-        serial(&serial),
-        output(output),
-        sampleRate(sampleRate) {};
+    SerialPlotter_OutputStates(_Tp& serial, Output* output) : SerialPlotter_OutputStates(serial, output, 100) {};
 
     void setup(void) override {};
     void loop(void) override;

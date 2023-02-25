@@ -18,6 +18,8 @@
 using namespace OH;
 using namespace BH;
 
+extern OpenHaptics App;
+
 #pragma region bHaptics_trash
 
 oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;

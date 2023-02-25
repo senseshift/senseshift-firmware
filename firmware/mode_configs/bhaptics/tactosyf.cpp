@@ -16,13 +16,15 @@
 using namespace OH;
 using namespace BH;
 
+extern OpenHaptics App;
+
 #pragma region bHaptics_trash
 
-oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTOSY2_SIZE] = BH_LAYOUT_TACTOSY2;
+oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTOSYF_SIZE] = BH_LAYOUT_TACTOSYF;
 
 void vestMotorTransformer(std::string& value) {
-  for (size_t i = 0; i < BH_LAYOUT_TACTOSY2_SIZE; i++) {
-    uint8_t byte = value[i];
+  for (size_t i = 0; i < BH_LAYOUT_TACTOSYF_SIZE; i++) {
+  uint8_t byte = value[i];
 
     oh_output_data_t output_0{
       .point = *indexesToPoints[i],
@@ -36,16 +38,15 @@ void vestMotorTransformer(std::string& value) {
 #pragma endregion bHaptics_trash
 
 void setupMode() {
-  // Configure PWM pins to their positions on the forearm
-  auto forearmOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  // Configure PWM pins to their positions on the feet
+  auto footOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25)},
-      {new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25)}
       // clang-format on
   });
 
-  OutputComponent* forearm = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, forearmOutputs);
-  App.getOutput()->addComponent(forearm);
+  OutputComponent* foot = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, footOutputs);
+  App.getOutput()->addComponent(foot);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App, tskNO_AFFINITY);

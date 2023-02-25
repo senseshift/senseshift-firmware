@@ -18,7 +18,7 @@
 using namespace OH;
 using namespace BH;
 
-#define PWM_FREQUENCY 60
+extern OpenHaptics App;
 
 #pragma region bHaptics_trash
 
