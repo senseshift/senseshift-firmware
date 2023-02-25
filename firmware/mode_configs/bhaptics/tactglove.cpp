@@ -8,6 +8,7 @@
 
 #include "openhaptics.h"
 
+#include <bh_utils.hpp>
 #include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
 
@@ -18,34 +19,32 @@
 using namespace OH;
 using namespace BH;
 
-extern OpenHaptics App;
-
 #pragma region bHaptics_trash
 
-const uint16_t _bh_size_x = 6;
-const uint16_t _bh_size_y = 1;
+// TODO: all of this will need to be re-written to use the new output paths system, when time comes
+
+static const uint16_t _bh_size_x = 6;
+static const uint16_t _bh_size_y = 1;
 
 inline oh_output_point_t* make_point(oh_output_coord_t x, oh_output_coord_t y) {
-  return getPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
+  return mapPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
 }
 
-oh_output_point_t* indexesToPoints[_bh_size_x * _bh_size_y] = {
-    make_point(0, 0), make_point(1, 0), make_point(2, 0),
-    make_point(3, 0), make_point(4, 0), make_point(5, 0)};
+static const uint16_t bhLayoutSize = _bh_size_x * _bh_size_y;
+static const oh_output_point_t* bhLayout[bhLayoutSize] = {
+    // clang-format off
 
-void vestMotorTransformer(std::string& value) {
-  for (size_t i = 0; i < _bh_size_x; i++) {
-    uint8_t byte = value[i];
-    oh_output_data_t output_0;
-    output_0.point = *indexesToPoints[i];
-    output_0.intensity = map(byte, 0, 100, 0, UINT16_MAX);
-    App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, output_0);
-  }
-}
+    // Thumb, Index, Middle, Ring, Pinky
+    make_point(0, 0), make_point(1, 0), make_point(2, 0), make_point(3, 0), make_point(4, 0),
+    // Palm
+    make_point(5, 0)
+
+    // clang-format on
+};
 
 #pragma endregion bHaptics_trash
 
-void setupMode() {
+void setupMode(OpenHaptics* app) {
   // Configure PWM pins to their positions on the glove
   auto gloveOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
@@ -53,12 +52,12 @@ void setupMode() {
       // clang-format on
   });
 
-  OutputComponent* glove = new ClosestOutputComponent(gloveOutputs);
-  App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
+  OutputComponent* glove = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, gloveOutputs);
+  app->getOutput()->addComponent(glove);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App);
-  App.setBattery(battery);
+  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  app->setBattery(battery);
 #endif
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
@@ -67,6 +66,8 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
-  App.setConnection(bhBleConnection);
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, [app](std::string& value)->void {
+    plainOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
+  }, app);
+  app->setConnection(bhBleConnection);
 }

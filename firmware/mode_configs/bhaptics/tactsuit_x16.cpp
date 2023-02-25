@@ -4,10 +4,9 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <utility.hpp>
-
 #include "openhaptics.h"
 
+#include <bh_utils.hpp>
 #include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
 
@@ -18,68 +17,14 @@
 using namespace OH;
 using namespace BH;
 
-extern OpenHaptics App;
-
-#pragma region bHaptics_trash
-
-oh_output_point_t* indexesToPoints[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;
+static const oh_output_point_t* bhLayout[] = BH_LAYOUT_TACTSUITX16;
+static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
 
 // Ouput indices, responsible for x40 => x16 grouping
-uint8_t groups[BH_LAYOUT_TACTSUITX16_GROUPS_SIZE] = BH_LAYOUT_TACTSUITX16_GROUPS;
+static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
+static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
 
-void vestMotorTransformer(std::string& value) {
-  uint8_t result[BH_LAYOUT_TACTSUITX16_SIZE];
-
-  // Unpack values
-  for (auto i = 0; i < 20; i++) {
-    uint8_t byte = value[i];
-    uint actIndex = i * 2;
-
-    result[actIndex] = (byte >> 4) & 0xf;
-    result[actIndex + 1] = (byte & 0xf);
-  }
-
-  // Assign max value into each group
-  for (auto i = 0; i < 16; i++) {
-    auto groupIndex = groups[i];
-
-    if (groupIndex % 10 >= 4) {
-      // Top 3 rows of x40
-      auto maxValue = max(result[groupIndex], max(result[groupIndex + 2], result[groupIndex + 4]));
-
-      result[groupIndex] = maxValue;
-      result[groupIndex + 2] = maxValue;
-      result[groupIndex + 4] = maxValue;
-    } else {
-      // Bottom 2 rows of x40
-      auto maxValue = max(result[groupIndex], result[groupIndex + 2]);
-
-      result[groupIndex] = maxValue;
-      result[groupIndex + 2] = maxValue;
-    }
-  }
-
-  for (uint8_t i = 0; i < BH_LAYOUT_TACTSUITX16_SIZE; i++) {
-    // take only meaningful values
-    if (!contains(groups, i)) {
-      continue;
-    }
-
-    oh_output_data_t output{
-      .point = *indexesToPoints[i],
-      .intensity = static_cast<oh_output_intensity_t>(map(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
-    };
-
-    App.getOutput()->writeOutput(
-      (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK,
-      output
-    );
-  }
-}
-
-#pragma endregion bHaptics_trash
-
-void setupMode() {
+void setupMode(OpenHaptics* app) {
   // Configure PWM pins to their positions on the vest
   auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
@@ -97,12 +42,12 @@ void setupMode() {
   OutputComponent* chestFront = new ClosestOutputComponent(OUTPUT_PATH_CHEST_FRONT, frontOutputs);
   OutputComponent* chestBack = new ClosestOutputComponent(OUTPUT_PATH_CHEST_BACK, backOutputs);
 
-  App.getOutput()->addComponent(chestFront);
-  App.getOutput()->addComponent(chestBack);
+  app->getOutput()->addComponent(chestFront);
+  app->getOutput()->addComponent(chestBack);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, &App, tskNO_AFFINITY);
-  App.setBattery(battery);
+  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  app->setBattery(battery);
 #endif
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
@@ -111,6 +56,8 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, vestMotorTransformer, &App);
-  App.setConnection(bhBleConnection);
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, [app](std::string& value)->void {
+    vestX16OutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
+  }, app);
+  app->setConnection(bhBleConnection);
 }

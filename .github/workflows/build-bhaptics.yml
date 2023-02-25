@@ -163,6 +163,7 @@ jobs:
           - bhaptics_tactosyh_hand_right
           - bhaptics_tactosyf_foot_right
           - bhaptics_tactal
+          - bhaptics_tactglove_right
 
         # Enabling all flags to test build for every feature
         battery_flag:

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "output_constants.h"
+
 #include "abstract_component.hpp"
 #include "output_component.hpp"
 #include "types.hpp"

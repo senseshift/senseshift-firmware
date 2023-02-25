@@ -10,15 +10,15 @@
 
 #ifndef PIO_UNIT_TESTING
 
-OpenHaptics App;
-
-extern void setupMode(void);
+extern void setupMode(OpenHaptics* app);
 
 #if defined(ARDUINO)
 
+static OpenHaptics App;
+
 void setup() {
   Serial.begin(115200);
-  setupMode();
+  setupMode(&App);
 
 #if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
   auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(Serial, App.getOutput());
