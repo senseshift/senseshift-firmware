@@ -14,11 +14,22 @@ namespace OH {
     virtual void begin(void) {};
   };
 
-  class TaskedComponent : public IComponent, public Task<TaskedComponent> {
-    friend class Task<TaskedComponent>;
+  class TaskComponent : public IComponent, public Task<TaskComponent> {
+    friend class Task<TaskComponent>;
 
    public:
-    TaskedComponent(TaskConfig config) : Task<TaskedComponent>(config) {};
+    TaskComponent(TaskConfig config) : Task<TaskComponent>(config) {};
+
+    virtual void run() = 0;
+  };
+
+  class TaskLoopedComponent : public TaskComponent {
+    friend class Task<TaskLoopedComponent>;
+    friend class Task<TaskComponent>;
+    friend class TaskComponent;
+
+   public:
+    TaskLoopedComponent(TaskConfig config) : TaskComponent(config) {};
 
     void run() override {
       while(1) {
@@ -26,11 +37,7 @@ namespace OH {
       }
     };
 
-    virtual void loop(void) {
-      if (this->getHandle() != nullptr) {
-        vTaskDelete(NULL); // Do not loop if not implemented
-      }
-    };
+    virtual void loop(void) = 0;
   };
 
   class AbstractComponent : public IComponent {

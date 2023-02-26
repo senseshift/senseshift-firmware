@@ -1,16 +1,15 @@
 #pragma once
 
 #include "output_constants.h"
-
-#include "abstract_component.hpp"
 #include "output_component.hpp"
-#include "types.hpp"
+
+#include <types.hpp>
+#include <abstract_component.hpp>
 
 #include <map>
 
 namespace OH {
-  // TODO: `IComponentRegistry<OutputComponent>` not working, need to
-  // investigate
+  // TODO: `IComponentRegistry<OutputComponent>` not working, need to investigate
   typedef IComponentRegistry<IComponent> app_registry_t;
 
   class Output {

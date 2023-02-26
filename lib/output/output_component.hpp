@@ -1,8 +1,9 @@
 #pragma once
 
-#include "abstract_component.hpp"
 #include "abstract_output_writer.hpp"
-#include "types.hpp"
+
+#include <abstract_component.hpp>
+#include <types.hpp>
 
 #include <list>
 #include <map>
