@@ -91,7 +91,11 @@ Please note, that documentation is still work-in-progress
 ## Licensing
 
 [![GPL-3.0](https://www.gnu.org/graphics/gplv3-or-later-sm.png)](./LICENSE)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopenhaptics%2Fopenhaptics-firmware.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopenhaptics%2Fopenhaptics-firmware?ref=badge_shield)
 
 This firmware is licensed under [GPL-3.0](./LICENSE). Please see the [LICENSE](./LICENSE) file for details.
 
 OpenHaptics are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. OpenHaptics is not a bHaptics-approved software, nor is it associated with bHaptics.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopenhaptics%2Fopenhaptics-firmware.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopenhaptics%2Fopenhaptics-firmware?ref=badge_large)
