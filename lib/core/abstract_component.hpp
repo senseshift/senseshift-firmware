@@ -23,23 +23,6 @@ namespace OH {
     virtual void run() = 0;
   };
 
-  class TaskLoopedComponent : public TaskComponent {
-    friend class Task<TaskLoopedComponent>;
-    friend class Task<TaskComponent>;
-    friend class TaskComponent;
-
-   public:
-    TaskLoopedComponent(TaskConfig config) : TaskComponent(config) {};
-
-    void run() override {
-      while(1) {
-        loop();
-      }
-    };
-
-    virtual void loop(void) = 0;
-  };
-
   class AbstractComponent : public IComponent {
   };
 

@@ -4,9 +4,11 @@
 #include <Arduino.h>
 #endif
 
-void OH::AbstractBattery::loop() {
-  this->level = this->updateLevel();
-  this->eventDispatcher->postEvent(new BatteryLevelEvent(this->level));
+void OH::AbstractBattery::run() {
+  while (1) {
+    this->level = this->updateLevel();
+    this->eventDispatcher->postEvent(new BatteryLevelEvent(this->level));
 
-  delay(this->config.sampleRate);
+    delay(this->config.sampleRate);
+  }
 };

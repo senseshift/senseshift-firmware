@@ -12,7 +12,7 @@ namespace OH {
    * @tparam _Tp the type of the serial port
    */
   template <class _Tp>
-  class SerialPlotter_OutputStates : public OH::TaskLoopedComponent {
+  class SerialPlotter_OutputStates : public OH::TaskComponent {
   private:
     _Tp* serial;
     Output* output;
@@ -20,14 +20,14 @@ namespace OH {
 
   public:
     SerialPlotter_OutputStates(_Tp& serial, Output* output, uint32_t sampleRate, TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY })
-      : OH::TaskLoopedComponent(taskConfig),
+      : OH::TaskComponent(taskConfig),
         serial(&serial),
         output(output),
         sampleRate(sampleRate) {};
     SerialPlotter_OutputStates(_Tp& serial, Output* output) : SerialPlotter_OutputStates(serial, output, 100) {};
 
     void setup(void) override {};
-    void loop(void) override;
+    void run(void) override;
   };
 
   /**
