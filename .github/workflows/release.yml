@@ -25,7 +25,8 @@ jobs:
           - bhaptics_tactosyf_foot_left
           - bhaptics_tactosyf_foot_right
           - bhaptics_tactal
-          - bhaptics_tactot_dk3
+          - bhaptics_tactglove_left
+          - bhaptics_tactglove_right
 
     steps:
       - uses: actions/checkout@v3
