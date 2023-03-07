@@ -49,9 +49,13 @@
         "iterator": "cpp",
         "map": "cpp",
         "memory_resource": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "*.hpp": "cpp"
     },
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
     "yaml.schemas": {
         "https://json.schemastore.org/github-issue-config.json": ".github/ISSUE_TEMPLATE/config.yml"
-    }
+    },
 }
