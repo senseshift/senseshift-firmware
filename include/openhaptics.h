@@ -1,44 +1,52 @@
 #pragma once
 
-#include <vector>
-
-#include "component.h"
 #include "config/all.h"
-#include "connection.h"
-#include "output.h"
+
+#include <abstract_component.hpp>
+#include <abstract_connection.hpp>
+#include <output.hpp>
+#include <events.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "battery/abstract_battery.h"
+#include <abstract_battery.hpp>
 #endif
 
-class OpenHaptics final {
+#include <vector>
+
+class OpenHaptics final : public OH::IComponentRegistry<OH::IComponent>, public OH::IEventDispatcher
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+, public OH::IBatteryConnected
+#endif
+{
  private:
-  std::vector<Component*> components{};
-  Connection* connection;
-  Output* output;
+  std::set<OH::IComponent*> components{};
+  std::vector<const OH::IEventListener*> eventListeners{};
+  OH::AbstractConnection* connection;
+  OH::Output* output;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery;
+  OH::AbstractBattery* battery;
 #endif
 
  public:
   OpenHaptics();
-  std::vector<Component*> getComponents() { return this->components; };
-  void registerComponent(Component*);
+  std::set<OH::IComponent*> getComponents() {
+    return this->components;
+  };
+  void registerComponent(OH::IComponent*);
 
-  Output* getOutput() { return this->output; };
-  void addOutputComponent(outputPath_t, OutputComponent*);
+  OH::Output* getOutput() { return this->output; };
 
-  void setConnection(Connection*);
-  Connection* getConnection() { return this->connection; };
+  OH::AbstractConnection* getConnection() { return this->connection; };
+  void setConnection(OH::AbstractConnection*);
+
+  void postEvent(const OH::IEvent* event) override;
+  void addEventListener(const OH::IEventListener* listener) override;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  void setBattery(AbstractBattery*);
-  AbstractBattery* getBattery() { return this->battery; };
+  OH::AbstractBattery* getBattery() { return this->battery; };
+  void setBattery(OH::AbstractBattery*);
 #endif
 
-  void setup(void);
-  void loop(void);
+  void begin(void);
 };
-
-extern OpenHaptics App;

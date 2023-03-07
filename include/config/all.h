@@ -1,3 +1,5 @@
+// Ctrl+Click any file to change config
+
 #pragma once
 
 #include "config/battery.h"
