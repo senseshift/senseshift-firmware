@@ -36,7 +36,7 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = {
 
     // Thumb, Index, Middle, Ring, Pinky
     make_point(0, 0), make_point(1, 0), make_point(2, 0), make_point(3, 0), make_point(4, 0),
-    // Palm
+    // Wrist
     make_point(5, 0)
 
     // clang-format on
@@ -48,7 +48,12 @@ void setupMode(OpenHaptics* app) {
   // Configure PWM pins to their positions on the glove
   auto gloveOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      {
+        // Thumb, Index, Middle, Ring, Pinky
+        new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27),
+        // Wrist
+        new PWMOutputWriter(14)
+      },
       // clang-format on
   });
 
