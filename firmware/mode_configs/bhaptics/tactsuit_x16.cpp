@@ -46,7 +46,7 @@ void setupMode(OpenHaptics* app) {
   app->getOutput()->addComponent(chestBack);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(33, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
   app->setBattery(battery);
 #endif
 
