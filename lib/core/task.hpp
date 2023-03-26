@@ -14,8 +14,6 @@ namespace OH {
     const BaseType_t coreId = tskNO_AFFINITY;
   };
 
-  class TaskComponent;
-
   // Static polymorphic abstract base class for a FreeRTOS task using CRTP
   // pattern. Concrete implementations should implement a run() method.
   //
@@ -23,7 +21,6 @@ namespace OH {
   template<typename _Tp>
   class Task {
    template<typename> friend class Task;
-   friend class TaskComponent;
 
    private:
     TaskConfig taskConfig;

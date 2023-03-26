@@ -13,9 +13,6 @@ namespace OH {
     virtual void setup(void) {};
   };
 
-  class AbstractComponent : public IComponent {
-  };
-
   template <class _Tp>
   class IComponentRegistry {
    public:

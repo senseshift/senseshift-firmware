@@ -2,7 +2,7 @@
 
 template<typename _Tp>
 void OH::SerialPlotter_OutputStates<_Tp>::run() {
-  while (1) {
+  while (true) {
     for (auto& _c : *output->getComponents()) {
       oh_output_path_t path = _c.first;
       OH::OutputComponent* component = _c.second;

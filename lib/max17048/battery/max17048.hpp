@@ -11,7 +11,7 @@ namespace OH {
     SFE_MAX1704X* gauge;
 
    protected:
-    uint8_t updateLevel() override;
+    uint8_t updateValue() override;
 
    public:
     MAX1704_Battery(SFE_MAX1704X* gauge, OH::BatteryConfig config, OH::IEventDispatcher* eventDispatcher, const BaseType_t coreId)

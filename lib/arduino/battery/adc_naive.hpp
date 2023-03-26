@@ -8,7 +8,7 @@ namespace OH {
     uint8_t pin;
 
    protected:
-    uint8_t updateLevel() override;
+    uint8_t updateValue() override;
 
    public:
     ADCNaiveBattery(const uint8_t pin, OH::BatteryConfig config, OH::IEventDispatcher* eventDispatcher, TaskConfig taskConfig = { "ADC Battery", 2048, BATTERY_TASK_PRIORITY, tskNO_AFFINITY })

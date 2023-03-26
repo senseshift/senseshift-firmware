@@ -13,7 +13,7 @@ namespace OH {
   /**
    * Output "plane" (e.g. Chest, Palm, Finger, etc.)
    */
-  class OutputComponent : public OH::AbstractComponent {
+  class OutputComponent : public OH::IComponent {
    private:
     oh_output_path_t path;
    protected:

@@ -28,7 +28,6 @@ namespace OH {
    private:
     void run(void);
    protected:
-    BatteryConfig config;
     IEventDispatcher* eventDispatcher;
     uint8_t level = 0;  // 0 = min, 255 = max
 

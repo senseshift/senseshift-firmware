@@ -4,7 +4,7 @@ void OH::INA219_Battery::setup() {
   this->active = this->sensor->begin();
 }
 
-uint8_t OH::INA219_Battery::updateLevel() {
+uint8_t OH::INA219_Battery::updateValue() {
   if (!this->active) {
     return 0;
   }
