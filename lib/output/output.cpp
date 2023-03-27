@@ -5,7 +5,6 @@
 void OH::Output::addComponent(OH::OutputComponent* c) {
   auto path = c->getPath();
   this->components[path] = c;
-  this->app->registerComponent(c);
 }
 
 std::map<oh_output_path_t, OH::OutputComponent*>* OH::Output::getComponents() {

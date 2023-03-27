@@ -18,10 +18,13 @@
 using namespace OH;
 using namespace BH;
 
+extern OpenHaptics App;
+OpenHaptics* app = &App;
+
 static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX40_SIZE;
 static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
 
-void setupMode(OpenHaptics* app) {
+void setupMode() {
   // Configure the PCA9685s
   Adafruit_PWMServoDriver* pwm0 = new Adafruit_PWMServoDriver(0x40);
   pwm0->begin();
@@ -58,10 +61,7 @@ void setupMode(OpenHaptics* app) {
   app->getOutput()->addComponent(chestFront);
   app->getOutput()->addComponent(chestBack);
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
-  app->setBattery(battery);
-#endif
+  app->getOutput()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -69,8 +69,14 @@ void setupMode(OpenHaptics* app) {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, [app](std::string& value)->void {
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
+    Serial.println(value.c_str());
     vestOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize);
   }, app);
-  app->setConnection(bhBleConnection);
+  bhBleConnection->begin();
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  battery->begin();
+#endif
 }

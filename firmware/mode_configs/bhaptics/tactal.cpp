@@ -17,24 +17,33 @@
 using namespace OH;
 using namespace BH;
 
-static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+extern OpenHaptics App;
+OpenHaptics* app = &App;
 
-void setupMode(OpenHaptics* app) {
+// ========= Output =========
+
+const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
+const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+
+// ========= Connection =========
+
+// ========= Battery =========
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+#endif
+
+void setupMode() {
   // Configure PWM pins to their positions on the face
   auto faceOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
       {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
       // clang-format on
   });
+  ClosestOutputComponent* face = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, faceOutputs);
 
-  OutputComponent* face = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, faceOutputs);
   app->getOutput()->addComponent(face);
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
-  app->setBattery(battery);
-#endif
+  app->getOutput()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -42,8 +51,13 @@ void setupMode(OpenHaptics* app) {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, [app](std::string& value)->void {
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
     plainOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
   }, app);
-  app->setConnection(bhBleConnection);
+  bhBleConnection->begin();
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, &App, tskNO_AFFINITY);
+  battery->begin();
+#endif
 }

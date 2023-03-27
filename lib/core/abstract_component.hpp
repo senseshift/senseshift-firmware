@@ -11,16 +11,6 @@ namespace OH {
   class IComponent {
    public:
     virtual void setup(void) {};
-    virtual void begin(void) {};
-  };
-
-  class TaskComponent : public IComponent, public Task<TaskComponent> {
-    friend class Task<TaskComponent>;
-
-   public:
-    TaskComponent(TaskConfig config) : Task<TaskComponent>(config) {};
-
-    virtual void run() = 0;
   };
 
   class AbstractComponent : public IComponent {

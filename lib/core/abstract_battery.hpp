@@ -22,17 +22,26 @@ namespace OH {
     int sampleRate;
   };
 
-  class AbstractBattery : public TaskComponent, public ISensor<uint8_t> {
+  class AbstractBattery : public Task<AbstractBattery>, public ISensor<uint8_t> {
+   friend class Task<AbstractBattery>;
+
+   private:
+    void run(void);
    protected:
     BatteryConfig config;
     IEventDispatcher* eventDispatcher;
     uint8_t level = 0;  // 0 = min, 255 = max
+
+    virtual void setup(void) {};
     virtual uint8_t updateLevel(void) = 0;
 
    public:
-    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : TaskComponent(taskConfig), config(config), eventDispatcher(eventDispatcher) {};
-    void run(void) override;
+    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : Task<AbstractBattery>(taskConfig), config(config), eventDispatcher(eventDispatcher) {};
     uint8_t getValue() override { return this->level; };
+    void begin() override {
+      this->setup();
+      OH::Task<AbstractBattery>::begin();
+    };
   };
 
   /**

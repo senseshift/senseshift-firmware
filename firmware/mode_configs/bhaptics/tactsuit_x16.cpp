@@ -17,6 +17,9 @@
 using namespace OH;
 using namespace BH;
 
+extern OpenHaptics App;
+OpenHaptics* app = &App;
+
 static const oh_output_point_t* bhLayout[] = BH_LAYOUT_TACTSUITX16;
 static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
 
@@ -24,7 +27,7 @@ static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
 static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
 static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
 
-void setupMode(OpenHaptics* app) {
+void setupMode() {
   // Configure PWM pins to their positions on the vest
   auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
@@ -45,10 +48,7 @@ void setupMode(OpenHaptics* app) {
   app->getOutput()->addComponent(chestFront);
   app->getOutput()->addComponent(chestBack);
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
-  app->setBattery(battery);
-#endif
+  app->getOutput()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -56,8 +56,13 @@ void setupMode(OpenHaptics* app) {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, [app](std::string& value)->void {
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
     vestX16OutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
   }, app);
-  app->setConnection(bhBleConnection);
+  bhBleConnection->begin();
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  battery->begin();
+#endif
 }

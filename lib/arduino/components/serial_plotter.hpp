@@ -12,22 +12,29 @@ namespace OH {
    * @tparam _Tp the type of the serial port
    */
   template <class _Tp>
-  class SerialPlotter_OutputStates : public OH::TaskComponent {
+  class SerialPlotter_OutputStates : public Task<SerialPlotter_OutputStates<_Tp>> {
+    friend class Task<SerialPlotter_OutputStates<_Tp>>;
+
   private:
     _Tp* serial;
     Output* output;
     uint32_t sampleRate;
 
+    void setup(void) {};
+    void run(void);
+
   public:
     SerialPlotter_OutputStates(_Tp& serial, Output* output, uint32_t sampleRate, TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY })
-      : OH::TaskComponent(taskConfig),
+      : Task<SerialPlotter_OutputStates<_Tp>>(taskConfig),
         serial(&serial),
         output(output),
         sampleRate(sampleRate) {};
     SerialPlotter_OutputStates(_Tp& serial, Output* output) : SerialPlotter_OutputStates(serial, output, 100) {};
 
-    void setup(void) override {};
-    void run(void) override;
+    void begin() override {
+      this->setup();
+      OH::Task<SerialPlotter_OutputStates<_Tp>>::begin();
+    };
   };
 
   /**

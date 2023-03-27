@@ -9,21 +9,24 @@
 #include <map>
 
 namespace OH {
-  // TODO: `IComponentRegistry<OutputComponent>` not working, need to investigate
-  typedef IComponentRegistry<IComponent> app_registry_t;
-
   class Output {
    private:
-    app_registry_t* app;
+    typedef std::map<oh_output_path_t, OutputComponent*> oh_output_components_map_t;
     std::map<oh_output_path_t, OutputComponent*> components{};
 
    public:
-    Output(app_registry_t* app) : app(app){};
+    Output() {};
 
     void addComponent(OutputComponent*);
-    std::map<oh_output_path_t, OutputComponent*>* getComponents();
+    oh_output_components_map_t* getComponents();
 
     void writeOutput(const oh_output_path_t, const oh_output_data_t&);
+
+    void setup() {
+      for (auto& component : this->components) {
+        component.second->setup();
+      }
+    };
   };
 
   /**
