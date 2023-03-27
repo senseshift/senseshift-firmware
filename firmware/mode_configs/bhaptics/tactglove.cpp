@@ -19,6 +19,9 @@
 using namespace OH;
 using namespace BH;
 
+extern OpenHaptics App;
+OpenHaptics* app = &App;
+
 #pragma region bHaptics_trash
 
 // TODO: all of this will need to be re-written to use the new output paths system, when time comes
@@ -44,7 +47,7 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = {
 
 #pragma endregion bHaptics_trash
 
-void setupMode(OpenHaptics* app) {
+void setupMode() {
   // Configure PWM pins to their positions on the glove
   auto gloveOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off
@@ -60,10 +63,7 @@ void setupMode(OpenHaptics* app) {
   OutputComponent* glove = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, gloveOutputs);
   app->getOutput()->addComponent(glove);
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
-  app->setBattery(battery);
-#endif
+  app->getOutput()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -71,8 +71,13 @@ void setupMode(OpenHaptics* app) {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(&config, [app](std::string& value)->void {
+  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
     plainOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
   }, app);
-  app->setConnection(bhBleConnection);
+  bhBleConnection->begin();
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  battery->begin();
+#endif
 }

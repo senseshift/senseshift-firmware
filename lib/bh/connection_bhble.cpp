@@ -1,4 +1,4 @@
-#include "connection_bhble.hpp"
+#include <connection_bhble.hpp>
 
 #include <output.hpp>
 #include <events.hpp>
@@ -8,19 +8,10 @@
 #include <HardwareSerial.h>
 
 class BHServerCallbacks final : public BLEServerCallbacks {
- private:
-  OH::IEventDispatcher* dispatcher;
-
  public:
-  BHServerCallbacks(OH::IEventDispatcher* dispatcher): dispatcher(dispatcher) {}
-
-  void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) {
-    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_CONNECTED));
-  }
+  BHServerCallbacks() {}
 
   void onDisconnect(BLEServer* pServer) {
-    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_DISCONNECTED));
-
     pServer->startAdvertising();
   }
 };
@@ -93,18 +84,18 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks {
   };
 };
 
-void BH::ConnectionBHBLE::setup() {
-  ConnectionBLE::setup();
+void BH::ConnectionBHBLE::begin() {
+  BLEDevice::init(this->config.deviceName);
 
-  this->bleServer->getAdvertising()->stop();
+  this->bleServer = BLEDevice::createServer();
 
-  this->bleServer->setCallbacks(new BHServerCallbacks(this->dispatcher));
+  this->bleServer->setCallbacks(new BHServerCallbacks());
 
   auto scanResponseData = new BLEAdvertisementData();
-  scanResponseData->setAppearance(this->appearance);
-  scanResponseData->setName(this->deviceName);
+  scanResponseData->setAppearance(this->config.appearance);
+  scanResponseData->setName(this->config.deviceName);
 
-  this->bleServer->getAdvertising()->setAppearance(this->appearance);
+  this->bleServer->getAdvertising()->setAppearance(this->config.appearance);
   this->bleServer->getAdvertising()->setScanResponseData(*scanResponseData);
 
   // Each characteristic needs 2 handles and descriptor 1 handle.
@@ -137,7 +128,7 @@ void BH::ConnectionBHBLE::setup() {
     auto* serialNumberChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID,
         BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
-    serialNumberChar->setValue(this->serialNumber, BH_SERIAL_NUMBER_LENGTH);
+    serialNumberChar->setValue(this->config.serialNumber, BH_SERIAL_NUMBER_LENGTH);
     serialNumberChar->setCallbacks(new SerialOutputCharCallbacks());
   }
 
@@ -238,14 +229,3 @@ void BH::ConnectionBHBLE::setup() {
 
   this->bleServer->getAdvertising()->start();
 }
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-void BH::ConnectionBHBLE::handleBatteryChange(const OH::BatteryLevelEvent* event) const {
-  OH::ConnectionBLE::handleBatteryChange(event);
-
-  uint16_t level = map(event->level, 0, 255, 0, 100);
-
-  this->batteryChar->setValue(level);
-  this->batteryChar->notify();
-}
-#endif

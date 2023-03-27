@@ -9,21 +9,24 @@
 #include <map>
 
 namespace OH {
-  // TODO: `IComponentRegistry<OutputComponent>` not working, need to investigate
-  typedef IComponentRegistry<IComponent> app_registry_t;
-
   class Output {
    private:
-    app_registry_t* app;
+    typedef std::map<oh_output_path_t, OutputComponent*> oh_output_components_map_t;
     std::map<oh_output_path_t, OutputComponent*> components{};
 
    public:
-    Output(app_registry_t* app) : app(app){};
+    Output() {};
 
     void addComponent(OutputComponent*);
-    std::map<oh_output_path_t, OutputComponent*>* getComponents();
+    oh_output_components_map_t* getComponents();
 
     void writeOutput(const oh_output_path_t, const oh_output_data_t&);
+
+    void setup() {
+      for (auto& component : this->components) {
+        component.second->setup();
+      }
+    };
   };
 
   /**
@@ -32,10 +35,8 @@ namespace OH {
    */
   template <typename _Tp>
   oh_output_point_t* mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max) {
-    const oh_output_coord_t x_coord =
-        static_cast<_Tp>(1 == x_max ? 1 : OH_OUTPUT_COORD_MAX * (1 / (float)x_max) * ((float)x));
-    const oh_output_coord_t y_coord =
-        static_cast<_Tp>(1 == y_max ? 1 : OH_OUTPUT_COORD_MAX * (1 / (float)y_max) * ((float)y));
+    const oh_output_coord_t x_coord = map(x, 0, x_max != 0 ? x_max : 1, 0, OH_OUTPUT_COORD_MAX);
+    const oh_output_coord_t y_coord = map(y, 0, y_max != 0 ? y_max : 1, 0, OH_OUTPUT_COORD_MAX);
 
     return new oh_output_point_t(x_coord, y_coord);
   }

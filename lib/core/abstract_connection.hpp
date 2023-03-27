@@ -3,8 +3,8 @@
 #include "abstract_component.hpp"
 #include "events.hpp"
 namespace OH {
-  class AbstractConnection : public AbstractComponent, public IEventListener {
+  class AbstractConnection {
    public:
-    virtual void handleEvent(const IEvent* event) const {};
+    virtual void begin(void) {};
   };
 }  // namespace OH

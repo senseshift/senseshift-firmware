@@ -10,28 +10,30 @@
 
 #ifndef PIO_UNIT_TESTING
 
-extern void setupMode(OpenHaptics* app);
+extern void setupMode();
 
 #if defined(ARDUINO)
 
-static OpenHaptics App;
+OpenHaptics App;
 
 void setup() {
   Serial.begin(115200);
-  setupMode(&App);
+
+  setupMode();
 
 #if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
   auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(Serial, App.getOutput());
-  App.registerComponent(serialOutputState);
+  serialOutputState->begin();
 #endif // SERIAL_PLOTTER
-
-  App.begin();
 
   // Free up the Arduino loop task
   vTaskDelete(NULL);
 }
 
-void loop() {}
+void loop() {
+  // Arduino loop task is deleted in setup()
+  // Delete the `vTaskDelete(NULL);` line in setup() to enable this function
+}
 
 #endif // ARDUINO
 
