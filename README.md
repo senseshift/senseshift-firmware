@@ -15,12 +15,12 @@ Build your own DIY haptic vest, haptic gloves and more!
 [![GitHub](https://img.shields.io/github/stars/openhaptics/openhaptics-firmware.svg)](https://github.com/openhaptics/openhaptics-firmware)
 [![Contributor Covenant](https://img.shields.io/badge/code_of_conduct-contributor_covenant_v2.1-ff69b4)](/CODE_OF_CONDUCT.md)
 
-
 ## Configuration, flashing and connecting
 
 The main documentation on this project is located on [openhaptics.github.io](https://openhaptics.github.io/)
 
 * [Getting Started](https://openhaptics.github.io/docs/getting-started)
+* **NEW** [Build Guides](https://openhaptics.github.io/guides/getting-started)
 * [Hardware Schematics](https://github.com/openhaptics/openhaptics-hardware)
 * [Flashing Firmware](https://openhaptics.github.io/docs/category/flashing-firmware)
 
@@ -58,9 +58,9 @@ Please note, that documentation is still work-in-progress
 
 | Board                | Status       |
 | :------------------- | :----------: |
-| Internal ADC         | 🚧            |
-| MAX1704x             | 🚧            |
-| INA219               | 🚧            |
+| Internal ADC         | ✅            |
+| MAX1704x             | ✅            |
+| INA219               | ✅            |
 | MCP3021              | 🚧            |
 | STUSB4500            | 🚧            |
 
@@ -73,15 +73,15 @@ Please note, that documentation is still work-in-progress
 
 ## Supported devices
 
-| Device                 | Supported Devices    | Retail price | Hardware                                                                                            |
-| :--------------------  | :------------------- | -----------: | :-------------------------------------------------------------------------------------------------- |
-| Haptics Face Interface | Tactal               | US $149      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-face-interface) |
-| Haptic Gloves          | TactGlove            | US $299      | PWM on pins `32`, `33`, `25`, `26`, `27`, `14`                                                      |
-| Haptic Sleeves         | Tactosy for arms     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-forearm-sleeve) |
-| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-gauntlet)       |
-| Haptic Feet Device     | Tactosy for feet     | US $249      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-feet-device)    |
-| X16 Haptic Vest        | TactSuit X16         | US $299      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)       |
-| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x40-haptic-vest)       |
+| Device                 | Supported Devices    | Retail price | DIY Price | Hardware                                                                                            |
+| :--------------------  | :------------------- | -----------: | --------: | :-------------------------------------------------------------------------------------------------- |
+| Haptics Face Interface | Tactal               | US $149      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-face-interface) |
+| Haptic Gloves          | TactGlove            | US $299      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-glove)          |
+| Haptic Sleeves         | Tactosy for arms     | US $249      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-forearm-sleeve) |
+| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-gauntlet)       |
+| Haptic Feet Device     | Tactosy for feet     | US $249      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-feet-device)    |
+| X16 Haptic Vest        | TactSuit X16         | US $299      | ~40$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)       |
+| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | ~70$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x40-haptic-vest)       |
 
 ## For Developers
 

@@ -5,7 +5,6 @@
 void OH::Output::addComponent(OH::OutputComponent* c) {
   auto path = c->getPath();
   this->components[path] = c;
-  this->app->registerComponent(c);
 }
 
 std::map<oh_output_path_t, OH::OutputComponent*>* OH::Output::getComponents() {
@@ -15,7 +14,7 @@ std::map<oh_output_path_t, OH::OutputComponent*>* OH::Output::getComponents() {
 void OH::Output::writeOutput(const oh_output_path_t path, const oh_output_data_t& data) {
   if (this->getComponents()->count(path) == 0) {
     // if no requested component exists, skip
-    log_e("No component found for path %d", path);
+    log_w("No component found for path %d", path);
     return;
   }
 

@@ -25,7 +25,7 @@ void OH::OutputComponent::setup() {
 
 void OH::OutputComponent::writeOutput(const oh_output_data_t& data) {
   if (this->writers.count(data.point) == 0) {
-    log_e("No writer for point (%u, %u)", data.point.x, data.point.y);
+    log_w("No writer for point (%u, %u)", data.point.x, data.point.y);
     return;
   }
 
