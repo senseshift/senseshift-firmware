@@ -22,7 +22,7 @@ The main documentation on this project is located on [openhaptics.github.io](htt
 * [Getting Started](https://openhaptics.github.io/docs/getting-started)
 * **NEW** [Build Guides](https://openhaptics.github.io/guides/getting-started)
 * [Hardware Schematics](https://github.com/openhaptics/openhaptics-hardware)
-* [Flashing Firmware](https://openhaptics.github.io/docs/category/flashing-firmware)
+* [Flashing Firmware](https://openhaptics.github.io/docs/category/firmware)
 
 Please note, that documentation is still work-in-progress
 
