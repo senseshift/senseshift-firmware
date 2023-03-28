@@ -6,11 +6,20 @@
 
 #include "openhaptics.h"
 
-#include "connections/bhaptics.h"
+#include <bh_utils.hpp>
+#include <connection_bhble.hpp>
+#include <abstract_output_writer.hpp>
+#include <output.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "battery/adc_battery.h"
+#include <battery/adc_naive.hpp>
 #endif
+
+using namespace OH;
+using namespace BH;
+
+extern OpenHaptics App;
+OpenHaptics* app = &App;
 
 class TestOutput : public OH::AbstractOutputWriter {
  private:
@@ -38,9 +47,14 @@ void setupMode() {
                   kv.first.y);
   }
 
-  auto test = new ClosestOutputComponent(testOutputs);
+  auto test = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, testOutputs);
 
-  App.getOutput()->addComponent(OUTPUT_PATH_ACCESSORY, test);
+  oh_output_writers_map_t layout{
+    {oh_output_point_t(0, 0), new TestOutput(8)},
+  };
+  auto test2 = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, layout);
+
+  App.getOutput()->addComponent(test);
 
   for (auto i = 0; i < testOutputs.size(); i++) {
     oh_output_data_t outData{
