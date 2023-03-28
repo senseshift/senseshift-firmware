@@ -5,6 +5,10 @@
 
 #include <HardwareSerial.h>
 
+#ifndef SERIAL_PLOTTER_BAUD
+#define SERIAL_PLOTTER_BAUD 115200
+#endif // SERIAL_PLOTTER_BAUD
+
 namespace OH {
   /**
    * Component, that prints the current state of the output to the serial port in Arduino's Serial Plotter format
@@ -42,7 +46,7 @@ namespace OH {
    */
   template<>
   inline void SerialPlotter_OutputStates<HardwareSerial>::setup() {
-    this->serial->begin(115200);
+    this->serial->begin(SERIAL_PLOTTER_BAUD);
   }
 
   template class SerialPlotter_OutputStates<HardwareSerial>;
