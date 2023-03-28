@@ -20,10 +20,10 @@ using namespace BH;
 extern OpenHaptics App;
 OpenHaptics* app = &App;
 
-void setupMode() {
-  static const size_t bhLayoutSize = BH_LAYOUT_TACTOSYF_SIZE;
-  static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSYF;
+static const size_t bhLayoutSize = BH_LAYOUT_TACTOSYF_SIZE;
+static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSYF;
 
+void setupMode() {
   // Configure PWM pins to their positions on the feet
   auto footOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
       // clang-format off

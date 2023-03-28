@@ -20,17 +20,8 @@ using namespace BH;
 extern OpenHaptics App;
 OpenHaptics* app = &App;
 
-// ========= Output =========
-
-const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
-
-// ========= Connection =========
-
-// ========= Battery =========
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#endif
+static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
+static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
 void setupMode() {
   // Configure PWM pins to their positions on the face
