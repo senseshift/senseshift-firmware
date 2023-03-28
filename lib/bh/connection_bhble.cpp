@@ -1,11 +1,30 @@
-#include <connection_bhble.hpp>
+#include "connection_bhble.hpp"
 
 #include <output.hpp>
 #include <events.hpp>
 
 #include <Arduino.h>
-#include <BLE2902.h>
 #include <HardwareSerial.h>
+
+#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+  // BLE2902 not needed: https://github.com/h2zero/NimBLE-Arduino/blob/release/1.4/docs/Migration_guide.md#descriptors
+
+  #define PROPERTY_READ           NIMBLE_PROPERTY::READ
+  #define PROPERTY_WRITE          NIMBLE_PROPERTY::WRITE
+  #define PROPERTY_WRITE_NR       NIMBLE_PROPERTY::WRITE_NR
+  #define PROPERTY_BROADCAST      NIMBLE_PROPERTY::BROADCAST
+  #define PROPERTY_NOTIFY         NIMBLE_PROPERTY::NOTIFY
+  #define PROPERTY_INDICATE       NIMBLE_PROPERTY::INDICATE
+#else
+  #include <BLE2902.h>
+
+  #define PROPERTY_READ           BLECharacteristic::PROPERTY_READ
+  #define PROPERTY_WRITE          BLECharacteristic::PROPERTY_WRITE
+  #define PROPERTY_WRITE_NR       BLECharacteristic::PROPERTY_WRITE_NR
+  #define PROPERTY_BROADCAST      BLECharacteristic::PROPERTY_BROADCAST
+  #define PROPERTY_NOTIFY         BLECharacteristic::PROPERTY_NOTIFY
+  #define PROPERTY_INDICATE       BLECharacteristic::PROPERTY_INDICATE
+#endif
 
 class BHServerCallbacks final : public BLEServerCallbacks {
  public:
@@ -41,9 +60,12 @@ class SerialOutputCharCallbacks : public BLECharacteristicCallbacks {
                   pCharacteristic->getValue().length());
   };
 
-  void onStatus(BLECharacteristic* pCharacteristic,
-                Status s,
-                uint32_t code) override {
+  #if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+	void onStatus(BLECharacteristic* pCharacteristic, Status s, int code) override
+  #else
+	void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) override
+  #endif
+  {
     Serial.printf(">>\tonStatus (UUID: %s) \n",
                   pCharacteristic->getUUID().toString().c_str());
     Serial.printf("\tstatus: %d, code: %u \n", s, code);
@@ -58,11 +80,10 @@ class MotorCharCallbacks : public BLECharacteristicCallbacks {
   bh_motor_handler_t motorTransformer;
 
  public:
-  MotorCharCallbacks(bh_motor_handler_t motorTransformer)
-      : motorTransformer(motorTransformer) {}
+  MotorCharCallbacks(bh_motor_handler_t motorTransformer) : motorTransformer(motorTransformer) {}
 
   void onWrite(BLECharacteristic* pCharacteristic) override {
-    auto value = pCharacteristic->getValue();
+    std::string value = pCharacteristic->getValue();
 
     this->motorTransformer(value);
   };
@@ -100,34 +121,37 @@ void BH::ConnectionBHBLE::begin() {
 
   // Each characteristic needs 2 handles and descriptor 1 handle.
   this->motorService =
-      this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID, 25);
+      this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID);
 
   {
-    MotorCharCallbacks* motorCallbacks =
-        new MotorCharCallbacks(this->motorHandler);
+    MotorCharCallbacks* motorCallbacks = new MotorCharCallbacks(this->motorHandler);
 
     auto* motorChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_UUID,
-        BLECharacteristic::PROPERTY_WRITE_NR);
+        PROPERTY_WRITE_NR
+    );
     motorChar->setCallbacks(motorCallbacks);
 
     auto* motorCharStable = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_STABLE_UUID,
-        BLECharacteristic::PROPERTY_WRITE);
+        PROPERTY_WRITE
+    );
     motorCharStable->setCallbacks(motorCallbacks);
   }
 
   {
     auto* configChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_CONFIG_UUID,
-        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+        PROPERTY_READ | PROPERTY_WRITE
+    );
     configChar->setCallbacks(new ConfigCharCallbacks());
   }
 
   {
     auto* serialNumberChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID,
-        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+        PROPERTY_READ | PROPERTY_WRITE
+    );
     serialNumberChar->setValue(this->config.serialNumber, BH_SERIAL_NUMBER_LENGTH);
     serialNumberChar->setCallbacks(new SerialOutputCharCallbacks());
   }
@@ -135,28 +159,29 @@ void BH::ConnectionBHBLE::begin() {
   {
     this->batteryChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_BATTERY_UUID,
-        BLECharacteristic::PROPERTY_READ |
-            BLECharacteristic::
-                PROPERTY_WRITE_NR  // for whatever reason, it have to be
-                                   // writable, otherwise Desktop app crashes
+        PROPERTY_READ | PROPERTY_WRITE_NR  // for whatever reason, it have to bewritable, otherwise Desktop app crashes
     );
+
+#if !defined(BLUETOOTH_USE_NIMBLE) || BLUETOOTH_USE_NIMBLE != true
     batteryChar->addDescriptor(new BLE2902());
+#endif
 
   // original bHaptics Player require non-null value for battery level, otherwise it crashes
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  uint16_t defaultLevel = 0;
+    uint16_t defaultLevel = 0;
 #else
-  uint16_t defaultLevel = 100;
+    uint16_t defaultLevel = 100;
 #endif
 
-  this->batteryChar->setValue(defaultLevel);
-  // this->batteryChar->notify();
+    this->batteryChar->setValue(defaultLevel);
+    // this->batteryChar->notify();
   }
 
   {
     auto* versionChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_VERSION_UUID,
-        BLECharacteristic::PROPERTY_READ);
+        PROPERTY_READ
+    );
     versionChar->setCallbacks(new SerialOutputCharCallbacks());
     uint16_t firmwareVersion = BH_FIRMWARE_VERSION;
     versionChar->setValue(firmwareVersion);
@@ -165,54 +190,39 @@ void BH::ConnectionBHBLE::begin() {
   {
     auto* monitorChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_TACTSUIT_MONITOR_UUID,
-        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE |
-            BLECharacteristic::PROPERTY_NOTIFY |
-            BLECharacteristic::PROPERTY_BROADCAST |
-            BLECharacteristic::PROPERTY_INDICATE |
-            BLECharacteristic::PROPERTY_WRITE_NR);
+        PROPERTY_READ | PROPERTY_WRITE | PROPERTY_NOTIFY | PROPERTY_BROADCAST | PROPERTY_INDICATE | PROPERTY_WRITE_NR
+    );
     monitorChar->setCallbacks(new SerialOutputCharCallbacks());
+
+#if !defined(BLUETOOTH_USE_NIMBLE) || BLUETOOTH_USE_NIMBLE != true
     monitorChar->addDescriptor(new BLE2902());
+#endif
+
     uint16_t audioCableState = NO_AUDIO_CABLE;
     monitorChar->setValue(audioCableState);
   }
 
   // auto* athGlobalChar = this->motorService->createCharacteristic(
   //     BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID,
-  //     BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE |
-  //     BLECharacteristic::PROPERTY_NOTIFY |
-  //     BLECharacteristic::PROPERTY_BROADCAST|
-  //     BLECharacteristic::PROPERTY_INDICATE|
-  //     BLECharacteristic::PROPERTY_WRITE_NR
+  //     PROPERTY_READ | PROPERTY_WRITE | PROPERTY_NOTIFY | PROPERTY_BROADCAST | PROPERTY_INDICATE | PROPERTY_WRITE_NR
   // );
   // athGlobalChar->setCallbacks(new SerialOutputCharCallbacks());
 
   // auto* athThemeChar = this->motorService->createCharacteristic(
   //     BH_BLE_SERVICE_MOTOR_CHAR_ATH_THEME_UUID,
-  //     BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE |
-  //     BLECharacteristic::PROPERTY_NOTIFY |
-  //     BLECharacteristic::PROPERTY_BROADCAST|
-  //     BLECharacteristic::PROPERTY_INDICATE|
-  //     BLECharacteristic::PROPERTY_WRITE_NR
+  //     PROPERTY_READ | PROPERTY_WRITE | PROPERTY_NOTIFY | PROPERTY_BROADCAST | PROPERTY_INDICATE | PROPERTY_WRITE_NR
   // );
   // athThemeChar->setCallbacks(new SerialOutputCharCallbacks());
 
   // auto* motorMappingChar = this->motorService->createCharacteristic(
   //     BH_BLE_SERVICE_MOTOR_CHAR_MOTTOR_MAPPING_UUID,
-  //     BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE |
-  //     BLECharacteristic::PROPERTY_NOTIFY |
-  //     BLECharacteristic::PROPERTY_BROADCAST|
-  //     BLECharacteristic::PROPERTY_INDICATE|
-  //     BLECharacteristic::PROPERTY_WRITE_NR
+  //     PROPERTY_READ | PROPERTY_WRITE | PROPERTY_NOTIFY | PROPERTY_BROADCAST | PROPERTY_INDICATE | PROPERTY_WRITE_NR
   // );
   // motorMappingChar->setCallbacks(new SerialOutputCharCallbacks());
 
   // auto* signatureMappingChar = this->motorService->createCharacteristic(
   //     BH_BLE_SERVICE_MOTOR_CHAR_SIGNATURE_PATTERN_UUID,
-  //     BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE |
-  //     BLECharacteristic::PROPERTY_NOTIFY |
-  //     BLECharacteristic::PROPERTY_BROADCAST|
-  //     BLECharacteristic::PROPERTY_INDICATE|
-  //     BLECharacteristic::PROPERTY_WRITE_NR
+  //     PROPERTY_READ | PROPERTY_WRITE | PROPERTY_NOTIFY | PROPERTY_BROADCAST | PROPERTY_INDICATE | PROPERTY_WRITE_NR
   // );
   // signatureMappingChar->setCallbacks(new SerialOutputCharCallbacks());
 
@@ -223,7 +233,7 @@ void BH::ConnectionBHBLE::begin() {
 
     auto* dfuControlChar = dfuService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_SIGNATURE_PATTERN_UUID,
-        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+        PROPERTY_READ | PROPERTY_WRITE);
     dfuService->start();
   }
 
