@@ -4,7 +4,6 @@
 #include <events.hpp>
 
 #include <Arduino.h>
-#include <HardwareSerial.h>
 
 #if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
   // BLE2902 not needed: https://github.com/h2zero/NimBLE-Arduino/blob/release/1.4/docs/Migration_guide.md#descriptors
@@ -37,27 +36,15 @@ class BHServerCallbacks final : public BLEServerCallbacks {
 
 class SerialOutputCharCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic* pCharacteristic) override {
-    Serial.printf(">>\tonWrite (UUID: %s) \n",
-                  pCharacteristic->getUUID().toString().c_str());
-    Serial.printf("\tvalue: `%s`, len: %u \n",
-                  pCharacteristic->getValue().c_str(),
-                  pCharacteristic->getValue().length());
+    log_d(">>\tonWrite (UUID: %s)\n\tvalue: `%s`, len: %u", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 
   void onRead(BLECharacteristic* pCharacteristic) override {
-    Serial.printf(">>\tonRead (UUID: %s) \n",
-                  pCharacteristic->getUUID().toString().c_str());
-    Serial.printf("\tvalue: `%s`, len: %u \n",
-                  pCharacteristic->getValue().c_str(),
-                  pCharacteristic->getValue().length());
+    log_d(">>\tonRead (UUID: %s)\n\tvalue: `%s`, len: %u \n", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 
   void onNotify(BLECharacteristic* pCharacteristic) override {
-    Serial.printf(">>\tonNotify (UUID: %s) \n",
-                  pCharacteristic->getUUID().toString().c_str());
-    Serial.printf("\tvalue: `%s`, len: %u \n",
-                  pCharacteristic->getValue().c_str(),
-                  pCharacteristic->getValue().length());
+    log_d(">>\tonNotify (UUID: %s)\n\tvalue: `%s`, len: %u \n", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 
   #if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
@@ -66,12 +53,7 @@ class SerialOutputCharCallbacks : public BLECharacteristicCallbacks {
 	void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) override
   #endif
   {
-    Serial.printf(">>\tonStatus (UUID: %s) \n",
-                  pCharacteristic->getUUID().toString().c_str());
-    Serial.printf("\tstatus: %d, code: %u \n", s, code);
-    Serial.printf("\tvalue: `%s`, len: %u \n",
-                  pCharacteristic->getValue().c_str(),
-                  pCharacteristic->getValue().length());
+    log_d(">>\tonNotify (UUID: %s)\n\tstatus: %d, code: %u \n\tvalue: `%s`, len: %u \n", pCharacteristic->getUUID().toString().c_str(), s, code, pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 };
 
@@ -97,11 +79,11 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks {
       return;
     }
 
-    auto byte_0 = value[0], byte_1 = value[1],
-         byte_2 = value[2];  // this is the only byte, that ever changes
+    auto byte_0 = value[0],
+        byte_1 = value[1],
+        byte_2 = value[2];
 
-    // Serial.printf(">>\tonWrite (Config Char): %3hhu %2hhu %2hhu \n", byte_0,
-    // byte_1, byte_2);
+    log_d(">>\tonWrite (Config Char): %3hhu %2hhu %2hhu", byte_0, byte_1, byte_2);
   };
 };
 
@@ -159,7 +141,7 @@ void BH::ConnectionBHBLE::begin() {
   {
     this->batteryChar = this->motorService->createCharacteristic(
         BH_BLE_SERVICE_MOTOR_CHAR_BATTERY_UUID,
-        PROPERTY_READ | PROPERTY_WRITE_NR  // for whatever reason, it have to bewritable, otherwise Desktop app crashes
+        PROPERTY_READ | PROPERTY_WRITE_NR | PROPERTY_NOTIFY  // for whatever reason, it have to bewritable, otherwise Desktop app crashes
     );
 
 #if !defined(BLUETOOTH_USE_NIMBLE) || BLUETOOTH_USE_NIMBLE != true

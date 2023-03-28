@@ -70,7 +70,6 @@ void setupMode() {
       .serialNumber = serialNumber,
   };
   AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
-    Serial.println(value.c_str());
     vestOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize);
   }, app);
   bhBleConnection->begin();
