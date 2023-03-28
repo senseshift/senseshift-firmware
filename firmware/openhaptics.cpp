@@ -27,7 +27,7 @@ void OpenHaptics::registerComponent(OH::IComponent* component) {
 }
 
 void OpenHaptics::postEvent(const OH::IEvent* event) {
-  log_i("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
+  log_d("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
 
   for (auto* listener : this->eventListeners) {
     listener->handleEvent(event);

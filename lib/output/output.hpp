@@ -34,9 +34,9 @@ namespace OH {
    * @tparam _Tp The type of the point index.
    */
   template <typename _Tp>
-  oh_output_point_t* mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max) {
-    const oh_output_coord_t x_coord = map(x, 0, x_max != 0 ? x_max : 1, 0, OH_OUTPUT_COORD_MAX);
-    const oh_output_coord_t y_coord = map(y, 0, y_max != 0 ? y_max : 1, 0, OH_OUTPUT_COORD_MAX);
+  inline oh_output_point_t* mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max) {
+    const oh_output_coord_t x_coord = map(x + 1, 0, x_max + 2, 0, OH_OUTPUT_COORD_MAX);
+    const oh_output_coord_t y_coord = map(y + 1, 0, y_max + 2, 0, OH_OUTPUT_COORD_MAX);
 
     return new oh_output_point_t(x_coord, y_coord);
   }
