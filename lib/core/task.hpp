@@ -3,8 +3,16 @@
 #include "logging.hpp"
 
 #include <Arduino.h>
-#include <freertos/FreeRTOS.h>   // Include the base FreeRTOS definitions.
-#include <freertos/task.h>       // Include the task definitions.
+
+#if defined(ARDUINO_ARCH_ESP32)
+  #include <freertos/FreeRTOS.h>   // Include the base FreeRTOS definitions.
+  #include <freertos/task.h>       // Include the task definitions.
+#elif defined(ARDUINO_ARCH_STM32)
+  #include <STM32FreeRTOS.h>
+
+  #define tskNO_AFFINITY 0
+  #define xTaskCreateUniversal(pxTaskCode, pcName, usStackDepth, pvParameters, uxPriority, pxCreatedTask, xCoreID) xTaskCreate(pxTaskCode, pcName, usStackDepth, pvParameters, uxPriority, pxCreatedTask)
+#endif
 
 namespace OH {
   struct TaskConfig {
@@ -56,8 +64,8 @@ namespace OH {
         this->taskConfig.coreId       // xCoreID
       );
 
-      assert("Failed to create task" && result == pdPASS);
-      if(!taskHandle) {
+      // assert(result == pdPASS);
+      if(!taskHandle || !result) {
         log_e("Failed to create task %s", this->taskConfig.name);
       }
     };
