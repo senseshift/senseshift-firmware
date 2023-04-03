@@ -22,3 +22,14 @@ void Output::writeOutput(outputPath_t path, outputData_t& data) {
 
   (*componentSearch).second->writeOutput(data);
 }
+
+void Output::loopOutput(outputPath_t path) {
+  auto componentSearch = this->getComponents()->find(path);
+
+  if (componentSearch == this->getComponents()->end()) {
+    // if no requested component exists, skip
+    return;
+  }
+
+  (*componentSearch).second->loop();
+}

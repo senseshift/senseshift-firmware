@@ -38,6 +38,7 @@ class OutputWriter {
  public:
   virtual void setup(){};
   virtual void writeOutput(outputIntensity_t intensity) = 0;
+  virtual void loop(){};
 };
 
 typedef std::map<outputPoint_t, OutputWriter*> outputMap_t;
@@ -58,4 +59,5 @@ class OutputComponent : public Component {
   };
   virtual void writeOutput(outputData_t&) = 0;
   void setup() override;
+  void loop() override;
 };

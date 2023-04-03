@@ -20,3 +20,9 @@ void OutputComponent::setup() {
     kv.second->setup();
   }
 }
+
+void OutputComponent::loop() {
+  for (const auto& kv : this->writers) {
+    kv.second->loop();
+  }
+}

@@ -16,4 +16,6 @@ class Output {
   std::map<outputPath_t, OutputComponent*>* getComponents();
 
   void writeOutput(outputPath_t, outputData_t&);
+
+  void loopOutput(outputPath_t);
 };

@@ -254,7 +254,7 @@ void BHapticsBLEConnection::setup() {
 void BHapticsBLEConnection::loop() {
   BLEConnection::loop();
 
-  auto now_ms = millis();
+  App.getOutput()->loopOutput(OUTPUT_PATH_ACCESSORY);
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
   if (now_ms - this->lastBatteryUpdate >= BATTERY_SAMPLE_RATE) {

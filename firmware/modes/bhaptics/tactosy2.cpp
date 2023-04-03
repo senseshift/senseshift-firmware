@@ -11,6 +11,7 @@
 #include "connections/bhaptics.h"
 #include "output_components/closest.h"
 #include "output_writers/ledc.h"
+#include "output_writers/dio.h"
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include "battery/abstract_battery.h"
@@ -47,8 +48,8 @@ void setupMode() {
   // Configure PWM pins to their positions on the forearm
   auto forearmOutputs = transformAutoOutput({
       // clang-format off
-      {new LEDCOutputWriter(32), new LEDCOutputWriter(33), new LEDCOutputWriter(25)},
-      {new LEDCOutputWriter(26), new LEDCOutputWriter(27), new LEDCOutputWriter(14)},
+      {new DIOOutputWriter(32, UINT8_MAX * 0.5), new DIOOutputWriter(33, UINT8_MAX * 0.5), new DIOOutputWriter(25, UINT8_MAX * 0.5)},
+      {new DIOOutputWriter(26, UINT8_MAX * 0.5), new DIOOutputWriter(27, UINT8_MAX * 0.5), new DIOOutputWriter(14, UINT8_MAX * 0.5)},
       // clang-format on
   });
 
