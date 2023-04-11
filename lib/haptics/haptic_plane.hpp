@@ -1,8 +1,6 @@
 #pragma once
 
-#include "abstract_output_writer.hpp"
-
-#include <abstract_component.hpp>
+#include <abstract_actuator.hpp>
 #include <types.hpp>
 
 #include <list>
@@ -13,9 +11,7 @@ namespace OH {
   /**
    * Output "plane" (e.g. Chest, Palm, Finger, etc.)
    */
-  class OutputComponent : public OH::AbstractComponent {
-   private:
-    oh_output_path_t path;
+  class HapticPlane {
    protected:
     std::list<oh_output_point_t> points{};
     oh_output_writers_map_t writers{};
@@ -24,11 +20,8 @@ namespace OH {
     void setOutputs(oh_output_writers_map_t&);
 
    public:
-    OutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs) : path(path) {
+    HapticPlane(oh_output_writers_map_t& outputs) {
       this->setOutputs(outputs);
-    };
-    oh_output_path_t getPath(void) {
-      return this->path;
     };
     std::list<oh_output_point_t>* getOutputPoints(void) {
       return &this->points;
@@ -37,17 +30,16 @@ namespace OH {
       return &this->states;
     };
     virtual void writeOutput(const oh_output_data_t&);
-    void setup() override;
+    void setup();
   };
 
-  class ClosestOutputComponent : public OutputComponent {
+  class HapticPlane_Closest : public HapticPlane {
    protected:
     oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target);
     void setOutputs(oh_output_writers_map_t&);
 
    public:
-    ClosestOutputComponent(oh_output_path_t path, oh_output_writers_map_t& outputs)
-        : OutputComponent(path, outputs) {};
+    HapticPlane_Closest(oh_output_writers_map_t& outputs) : HapticPlane(outputs) {};
     void writeOutput(const oh_output_data_t&) override;
   };
 }  // namespace OH

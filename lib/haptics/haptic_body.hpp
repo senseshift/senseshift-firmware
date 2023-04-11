@@ -1,23 +1,23 @@
 #pragma once
 
-#include "output_constants.h"
-#include "output_component.hpp"
+#include "haptic_constants.h"
+#include "haptic_plane.hpp"
 
 #include <types.hpp>
-#include <abstract_component.hpp>
 
 #include <map>
+#include <Arduino.h>
 
 namespace OH {
-  class Output {
+  class HapticBody {
    private:
-    typedef std::map<oh_output_path_t, OutputComponent*> oh_output_components_map_t;
-    std::map<oh_output_path_t, OutputComponent*> components{};
+    typedef std::map<oh_output_path_t, HapticPlane*> oh_output_components_map_t;
+    std::map<oh_output_path_t, HapticPlane*> components{};
 
    public:
-    Output() {};
+    HapticBody() {};
 
-    void addComponent(OutputComponent*);
+    void addComponent(const oh_output_path_t, HapticPlane*);
     oh_output_components_map_t* getComponents();
 
     void writeOutput(const oh_output_path_t, const oh_output_data_t&);

@@ -8,6 +8,9 @@
 *.bak
 *.code-workspace
 
+.idea
+cmake-build-debug
+
 # PlatformIO files/dirs
 .pio*
 .pioenvs

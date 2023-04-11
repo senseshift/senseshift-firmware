@@ -9,7 +9,7 @@
 #include <bh_utils.hpp>
 #include <connection_bhble.hpp>
 #include <abstract_output_writer.hpp>
-#include <output.hpp>
+#include <haptic_body.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <battery/adc_naive.hpp>
@@ -21,7 +21,7 @@ using namespace BH;
 extern OpenHaptics App;
 OpenHaptics* app = &App;
 
-class TestOutput : public OH::AbstractOutputWriter {
+class TestOutput : public OH::AbstractActuator {
  private:
   uint8_t channel;
 
@@ -34,7 +34,7 @@ class TestOutput : public OH::AbstractOutputWriter {
 };
 
 void setupMode() {
-  auto testOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  auto testOutputs = mapMatrixCoordinates<AbstractActuator>({
       {new TestOutput(0), new TestOutput(1)},
       {new TestOutput(2), new TestOutput(3)},
       {new TestOutput(4), new TestOutput(5)},
@@ -47,20 +47,25 @@ void setupMode() {
                   kv.first.y);
   }
 
-  auto test = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, testOutputs);
+  auto test = new HapticPlane_Closest(OUTPUT_PATH_ACCESSORY, testOutputs);
 
   oh_output_writers_map_t layout{
     {oh_output_point_t(0, 0), new TestOutput(8)},
   };
-  auto test2 = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, layout);
+  auto test2 = new HapticPlane_Closest(OUTPUT_PATH_ACCESSORY, layout);
 
-  App.getOutput()->addComponent(test);
+  App.getHapticBody()->addComponent(test);
 
   for (auto i = 0; i < testOutputs.size(); i++) {
     oh_output_data_t outData{
         oh_output_point_t(0, 0),
         (uint8_t)map(i, 0, testOutputs.size() - 1, 0, 255),
     };
-    App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, outData);
+    App.getHapticBody()->writeOutput(OUTPUT_PATH_ACCESSORY, outData);
   }
+}
+
+void loopMode() {
+  // Free up the Arduino loop task
+  vTaskDelete(NULL);
 }

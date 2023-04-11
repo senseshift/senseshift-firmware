@@ -1,7 +1,7 @@
 #pragma once
 
-#include <abstract_component.hpp>
-#include <output.hpp>
+#include <task.hpp>
+#include <haptic_body.hpp>
 
 #include <HardwareSerial.h>
 
@@ -21,19 +21,19 @@ namespace OH {
 
   private:
     _Tp* serial;
-    Output* output;
+    HapticBody* output;
     uint32_t sampleRate;
 
     void setup(void) {};
     void run(void);
 
   public:
-    SerialPlotter_OutputStates(_Tp& serial, Output* output, uint32_t sampleRate, TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY })
+    SerialPlotter_OutputStates(_Tp& serial, HapticBody* output, uint32_t sampleRate, TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY })
       : Task<SerialPlotter_OutputStates<_Tp>>(taskConfig),
         serial(&serial),
         output(output),
         sampleRate(sampleRate) {};
-    SerialPlotter_OutputStates(_Tp& serial, Output* output) : SerialPlotter_OutputStates(serial, output, 100) {};
+    SerialPlotter_OutputStates(_Tp& serial, HapticBody* output) : SerialPlotter_OutputStates(serial, output, 100) {};
 
     void begin() override {
       this->setup();

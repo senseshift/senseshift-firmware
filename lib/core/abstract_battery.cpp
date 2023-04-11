@@ -5,10 +5,10 @@
 #endif
 
 void OH::AbstractBattery::run() {
-  while (1) {
-    this->level = this->updateLevel();
-    this->eventDispatcher->postEvent(new BatteryLevelEvent(this->level));
+  while (true) {
+    this->value = this->updateValue();
+    this->eventDispatcher->postEvent(new BatteryLevelEvent(this->value));
 
-    delay(this->config.sampleRate);
+    delay(this->rate);
   }
 };

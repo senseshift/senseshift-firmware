@@ -29,26 +29,26 @@ static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROU
 
 void setupMode() {
   // Configure PWM pins to their positions on the vest
-  auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  auto frontOutputs = mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26)},
       {new PWMOutputWriter(27), new PWMOutputWriter(14), new PWMOutputWriter(12), new PWMOutputWriter(13)},
       // clang-format on
   });
-  auto backOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  auto backOutputs = mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PWMOutputWriter(19), new PWMOutputWriter(18), new PWMOutputWriter(5), new PWMOutputWriter(17)},
       {new PWMOutputWriter(16), new PWMOutputWriter(4), new PWMOutputWriter(2), new PWMOutputWriter(15)},
       // clang-format on
   });
 
-  OutputComponent* chestFront = new ClosestOutputComponent(OUTPUT_PATH_CHEST_FRONT, frontOutputs);
-  OutputComponent* chestBack = new ClosestOutputComponent(OUTPUT_PATH_CHEST_BACK, backOutputs);
+  auto* chestFront = new HapticPlane_Closest(frontOutputs);
+  auto* chestBack = new HapticPlane_Closest(backOutputs);
 
-  app->getOutput()->addComponent(chestFront);
-  app->getOutput()->addComponent(chestBack);
+  app->getHapticBody()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
+  app->getHapticBody()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
 
-  app->getOutput()->setup();
+  app->getHapticBody()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -56,13 +56,18 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
-    vestX16OutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
+  auto* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
+    vestX16OutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
   }, app);
   bhBleConnection->begin();
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  auto* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
   battery->begin();
 #endif
+}
+
+void loopMode() {
+  // Free up the Arduino loop task
+  vTaskDelete(NULL);
 }

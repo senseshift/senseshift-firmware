@@ -1,6 +1,6 @@
 #pragma once
 
-#include "abstract_output_writer.hpp"
+#include "abstract_actuator.hpp"
 #include "point2.hpp"
 
 #include <map>
@@ -25,5 +25,5 @@ namespace OH {
 
 typedef OH::OutputData oh_output_data_t;
 typedef OH::OutputState oh_output_state_t;
-typedef std::map<oh_output_point_t, OH::AbstractOutputWriter*>
+typedef std::map<oh_output_point_t, OH::AbstractActuator*>
     oh_output_writers_map_t;

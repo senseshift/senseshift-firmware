@@ -9,25 +9,11 @@
 #include <logging.hpp>
 
 OpenHaptics::OpenHaptics() {
-  this->output = new OH::Output();
-}
-
-void OpenHaptics::registerComponent(OH::IComponent* component) {
-  if (component == nullptr) {
-    return;
-  }
-
-  for (auto* c : this->components) {
-    if (c == component) {
-      return;
-    }
-  }
-
-  this->components.insert(component);
+  this->pHapticBody = new OH::HapticBody();
 }
 
 void OpenHaptics::postEvent(const OH::IEvent* event) {
-  log_d("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
+  log_i("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
 
   for (auto* listener : this->eventListeners) {
     listener->handleEvent(event);

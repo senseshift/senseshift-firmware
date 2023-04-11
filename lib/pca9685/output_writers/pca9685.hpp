@@ -4,11 +4,10 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <abstract_output_writer.hpp>
-#include <output.hpp>
+#include <abstract_actuator.hpp>
 
 namespace OH {
-  class PCA9685OutputWriter : public OH::AbstractOutputWriter {
+  class PCA9685OutputWriter : public OH::AbstractActuator {
    private:
     Adafruit_PWMServoDriver* driver;
     uint8_t num;

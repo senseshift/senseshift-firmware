@@ -17,7 +17,7 @@ void OH::MAX1704_Battery::setup() {
   }
 }
 
-uint8_t OH::MAX1704_Battery::updateLevel() {
+uint8_t OH::MAX1704_Battery::updateValue() {
   if (!this->active) {
     return 0;
   }

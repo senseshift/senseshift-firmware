@@ -29,6 +29,12 @@ jobs:
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
+        # Enabling all flags to test build for every feature
+        battery_flag:
+          - BATTERY_ENABLED=true
+        serial_plotter_flag:
+          - SERIAL_PLOTTER=true
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -89,6 +95,12 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
+
+    - name: Update build flags (non-macOS)
+      if: runner.os != 'macOS'
+      run: |
+        sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
+        sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
 
     - name: Install PlatformIO
       run: |

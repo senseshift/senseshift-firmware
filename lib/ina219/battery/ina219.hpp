@@ -11,7 +11,7 @@ namespace OH {
     Adafruit_INA219* sensor;
 
    protected:
-    uint8_t updateLevel() override;
+    uint8_t updateValue() override;
 
    public:
     INA219_Battery(Adafruit_INA219* sensor, OH::BatteryConfig config, OH::IEventDispatcher* eventDispatcher, const BaseType_t coreId = tskNO_AFFINITY)

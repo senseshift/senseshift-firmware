@@ -1,6 +1,6 @@
 #include "connection_bhble.hpp"
 
-#include <output.hpp>
+#include <haptic_body.hpp>
 #include <events.hpp>
 
 #include <Arduino.h>
@@ -26,10 +26,18 @@
 #endif
 
 class BHServerCallbacks final : public BLEServerCallbacks {
+ private:
+  OH::IEventDispatcher* dispatcher;
+
  public:
-  BHServerCallbacks() {}
+  BHServerCallbacks(OH::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
+
+  void onConnect(BLEServer* pServer) {
+    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_CONNECTED));
+  }
 
   void onDisconnect(BLEServer* pServer) {
+    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_DISCONNECTED));
     pServer->startAdvertising();
   }
 };
@@ -40,11 +48,11 @@ class SerialOutputCharCallbacks : public BLECharacteristicCallbacks {
   };
 
   void onRead(BLECharacteristic* pCharacteristic) override {
-    log_d(">>\tonRead (UUID: %s)\n\tvalue: `%s`, len: %u \n", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
+    log_d(">>\tonRead (UUID: %s)\n\tvalue: `%s`, len: %u", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 
   void onNotify(BLECharacteristic* pCharacteristic) override {
-    log_d(">>\tonNotify (UUID: %s)\n\tvalue: `%s`, len: %u \n", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
+    log_d(">>\tonNotify (UUID: %s)\n\tvalue: `%s`, len: %u", pCharacteristic->getUUID().toString().c_str(), pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 
   #if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
@@ -53,7 +61,7 @@ class SerialOutputCharCallbacks : public BLECharacteristicCallbacks {
 	void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) override
   #endif
   {
-    log_d(">>\tonNotify (UUID: %s)\n\tstatus: %d, code: %u \n\tvalue: `%s`, len: %u \n", pCharacteristic->getUUID().toString().c_str(), s, code, pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
+    log_d(">>\tonNotify (UUID: %s)\n\tstatus: %d, code: %u \n\tvalue: `%s`, len: %u", pCharacteristic->getUUID().toString().c_str(), s, code, pCharacteristic->getValue().c_str(), pCharacteristic->getValue().length());
   };
 };
 
@@ -90,9 +98,11 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks {
 void BH::ConnectionBHBLE::begin() {
   BLEDevice::init(this->config.deviceName);
 
+  this->callbacks->postInit();
+
   this->bleServer = BLEDevice::createServer();
 
-  this->bleServer->setCallbacks(new BHServerCallbacks());
+  this->bleServer->setCallbacks(new BHServerCallbacks(this->eventDispatcher));
 
   auto scanResponseData = new BLEAdvertisementData();
   scanResponseData->setAppearance(this->config.appearance);

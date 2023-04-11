@@ -1,6 +1,5 @@
 #pragma once
 
-#include "abstract_component.hpp"
 #include "sensor.hpp"
 #include "events.hpp"
 
@@ -19,28 +18,26 @@ namespace OH {
   };
 
   struct BatteryConfig {
-    int sampleRate;
+    uint sampleRate;
   };
 
-  class AbstractBattery : public Task<AbstractBattery>, public ISensor<uint8_t> {
-   friend class Task<AbstractBattery>;
+  class AbstractBattery : public RatePollingComponent<uint8_t> {
+   friend class Task<RatePollingComponent<uint8_t>>;
+   friend class RatePollingComponent<uint8_t>;
 
    private:
-    void run(void);
+    void run(void) override;
    protected:
-    BatteryConfig config;
     IEventDispatcher* eventDispatcher;
-    uint8_t level = 0;  // 0 = min, 255 = max
 
     virtual void setup(void) {};
-    virtual uint8_t updateLevel(void) = 0;
+    uint8_t updateValue() override;
 
    public:
-    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : Task<AbstractBattery>(taskConfig), config(config), eventDispatcher(eventDispatcher) {};
-    uint8_t getValue() override { return this->level; };
+    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : RatePollingComponent<uint8_t>(taskConfig, config.sampleRate), eventDispatcher(eventDispatcher) {};
     void begin() override {
       this->setup();
-      OH::Task<AbstractBattery>::begin();
+      RatePollingComponent<uint8_t>::begin();
     };
   };
 
