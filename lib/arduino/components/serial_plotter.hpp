@@ -1,6 +1,6 @@
 #pragma once
 
-#include <abstract_component.hpp>
+#include <task.hpp>
 #include <haptic_body.hpp>
 
 #include <HardwareSerial.h>

@@ -2,7 +2,6 @@
 
 #include "config/all.h"
 
-#include <abstract_component.hpp>
 #include <abstract_connection.hpp>
 #include <haptic_body.hpp>
 #include <events.hpp>

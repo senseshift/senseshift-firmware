@@ -1,6 +1,6 @@
 #pragma once
 
-#include <abstract_component.hpp>
+#include "task.hpp"
 
 namespace OH
 {

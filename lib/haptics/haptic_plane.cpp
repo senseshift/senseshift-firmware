@@ -1,5 +1,7 @@
 #include "haptic_plane.hpp"
 
+#include <algorithm>
+#include <math.h>
 #include <logging.hpp>
 
 void OH::HapticPlane::setOutputs(oh_output_writers_map_t& outputs) {

@@ -1,6 +1,7 @@
 #include "bh_utils.hpp"
 
 #include <utility.hpp>
+#include <Arduino.h>
 
 void BH::plainOutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const oh_output_path_t path) {
   for (size_t i = 0; i < layoutSize; i++) {

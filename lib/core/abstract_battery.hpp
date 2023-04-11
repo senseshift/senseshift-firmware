@@ -1,6 +1,5 @@
 #pragma once
 
-#include "abstract_component.hpp"
 #include "sensor.hpp"
 #include "events.hpp"
 

@@ -6,6 +6,7 @@
 #include <types.hpp>
 
 #include <map>
+#include <Arduino.h>
 
 namespace OH {
   class HapticBody {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <abstract_actuator.hpp>
-#include <abstract_component.hpp>
 #include <types.hpp>
 
 #include <list>
@@ -12,7 +11,7 @@ namespace OH {
   /**
    * Output "plane" (e.g. Chest, Palm, Finger, etc.)
    */
-  class HapticPlane : public OH::IComponent {
+  class HapticPlane {
    protected:
     std::list<oh_output_point_t> points{};
     oh_output_writers_map_t writers{};
@@ -31,7 +30,7 @@ namespace OH {
       return &this->states;
     };
     virtual void writeOutput(const oh_output_data_t&);
-    void setup() override;
+    void setup();
   };
 
   class HapticPlane_Closest : public HapticPlane {
