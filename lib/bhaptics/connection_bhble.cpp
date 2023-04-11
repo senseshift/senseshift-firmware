@@ -26,10 +26,18 @@
 #endif
 
 class BHServerCallbacks final : public BLEServerCallbacks {
+ private:
+  OH::IEventDispatcher* dispatcher;
+
  public:
-  BHServerCallbacks() {}
+  BHServerCallbacks(OH::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
+
+  void onConnect(BLEServer* pServer) {
+    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_CONNECTED));
+  }
 
   void onDisconnect(BLEServer* pServer) {
+    this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_DISCONNECTED));
     pServer->startAdvertising();
   }
 };
@@ -94,7 +102,7 @@ void BH::ConnectionBHBLE::begin() {
 
   this->bleServer = BLEDevice::createServer();
 
-  this->bleServer->setCallbacks(new BHServerCallbacks());
+  this->bleServer->setCallbacks(new BHServerCallbacks(this->eventDispatcher));
 
   auto scanResponseData = new BLEAdvertisementData();
   scanResponseData->setAppearance(this->config.appearance);
