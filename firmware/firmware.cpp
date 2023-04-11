@@ -15,6 +15,7 @@
 #ifndef PIO_UNIT_TESTING
 
 extern void setupMode();
+extern void loopMode();
 
 #if defined(ARDUINO)
 
@@ -27,14 +28,10 @@ void setup() {
   auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(SERIAL_PLOTTER_PORT, App.getOutput());
   serialOutputState->begin();
 #endif // SERIAL_PLOTTER
-
-  // Free up the Arduino loop task
-  vTaskDelete(NULL);
 }
 
 void loop() {
-  // Arduino loop task is deleted in setup()
-  // Delete the `vTaskDelete(NULL);` line in setup() to enable this function
+  loopMode();
 }
 
 #endif // ARDUINO

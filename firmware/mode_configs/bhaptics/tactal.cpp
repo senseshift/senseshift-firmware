@@ -52,3 +52,8 @@ void setupMode() {
   battery->begin();
 #endif
 }
+
+void loopMode() {
+  // Free up the Arduino loop task
+  vTaskDelete(NULL);
+}

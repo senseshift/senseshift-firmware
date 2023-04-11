@@ -64,3 +64,8 @@ void setupMode() {
     App.getOutput()->writeOutput(OUTPUT_PATH_ACCESSORY, outData);
   }
 }
+
+void loopMode() {
+  // Free up the Arduino loop task
+  vTaskDelete(NULL);
+}
