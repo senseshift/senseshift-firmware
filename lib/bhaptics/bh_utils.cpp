@@ -2,7 +2,7 @@
 
 #include <utility.hpp>
 
-void BH::plainOutputTransformer(OH::Output* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const oh_output_path_t path) {
+void BH::plainOutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const oh_output_path_t path) {
   for (size_t i = 0; i < layoutSize; i++) {
     uint8_t byte = value[i];
 
@@ -15,7 +15,7 @@ void BH::plainOutputTransformer(OH::Output* output, std::string& value, const oh
   }
 }
 
-void BH::vestOutputTransformer(OH::Output* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize) {
+void BH::vestOutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize) {
   for (size_t i = 0; i < layoutSize / 2; i++) {
     uint8_t byte = value[i];
     uint actIndex = i * 2;
@@ -36,7 +36,7 @@ void BH::vestOutputTransformer(OH::Output* output, std::string& value, const oh_
   }
 }
 
-void BH::vestX16OutputTransformer(OH::Output* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const uint8_t layoutGroups[], const size_t layoutGroupsSize) {
+void BH::vestX16OutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const uint8_t layoutGroups[], const size_t layoutGroupsSize) {
   uint8_t result[layoutSize];
 
   // Unpack values

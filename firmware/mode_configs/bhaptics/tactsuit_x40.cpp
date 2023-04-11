@@ -26,17 +26,17 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
 
 void setupMode() {
   // Configure the PCA9685s
-  Adafruit_PWMServoDriver* pwm0 = new Adafruit_PWMServoDriver(0x40);
+  auto* pwm0 = new Adafruit_PWMServoDriver(0x40);
   pwm0->begin();
   pwm0->setPWMFreq(PWM_FREQUENCY);
 
-  Adafruit_PWMServoDriver* pwm1 = new Adafruit_PWMServoDriver(0x41);
+  auto* pwm1 = new Adafruit_PWMServoDriver(0x41);
   pwm1->begin();
   pwm1->setPWMFreq(PWM_FREQUENCY);
 
   // Assign the pins on the configured PCA9685s and PWM pins to locations on the
   // vest
-  auto frontOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  auto frontOutputs = mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PCA9685OutputWriter(pwm0, 0),  new PCA9685OutputWriter(pwm0, 1),  new PCA9685OutputWriter(pwm0, 2),  new PCA9685OutputWriter(pwm0, 3)},
       {new PCA9685OutputWriter(pwm0, 4),  new PCA9685OutputWriter(pwm0, 5),  new PCA9685OutputWriter(pwm0, 6),  new PCA9685OutputWriter(pwm0, 7)},
@@ -45,7 +45,7 @@ void setupMode() {
       {new PWMOutputWriter(32),           new PWMOutputWriter(33),           new PWMOutputWriter(25),           new PWMOutputWriter(26)},
       // clang-format on
   });
-  auto backOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  auto backOutputs = mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PCA9685OutputWriter(pwm1, 0),  new PCA9685OutputWriter(pwm1, 1),  new PCA9685OutputWriter(pwm1, 2),  new PCA9685OutputWriter(pwm1, 3)},
       {new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)},
@@ -55,13 +55,13 @@ void setupMode() {
       // clang-format on
   });
 
-  OutputComponent* chestFront = new ClosestOutputComponent(OUTPUT_PATH_CHEST_FRONT, frontOutputs);
-  OutputComponent* chestBack = new ClosestOutputComponent(OUTPUT_PATH_CHEST_BACK, backOutputs);
+  auto* chestFront = new HapticPlane_Closest(frontOutputs);
+  auto* chestBack = new HapticPlane_Closest(backOutputs);
 
-  app->getOutput()->addComponent(chestFront);
-  app->getOutput()->addComponent(chestBack);
+  app->getHapticBody()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
+  app->getHapticBody()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
 
-  app->getOutput()->setup();
+  app->getHapticBody()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -69,13 +69,13 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
-    vestOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize);
+  auto* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
+    vestOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize);
   }, app);
   bhBleConnection->begin();
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  auto* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
   battery->begin();
 #endif
 }

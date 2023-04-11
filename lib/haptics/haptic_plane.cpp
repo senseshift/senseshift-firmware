@@ -1,8 +1,8 @@
-#include "output_component.hpp"
+#include "haptic_plane.hpp"
 
 #include <logging.hpp>
 
-void OH::OutputComponent::setOutputs(oh_output_writers_map_t& outputs) {
+void OH::HapticPlane::setOutputs(oh_output_writers_map_t& outputs) {
   this->writers.clear();
   this->writers = outputs;
 
@@ -17,13 +17,13 @@ void OH::OutputComponent::setOutputs(oh_output_writers_map_t& outputs) {
   }
 }
 
-void OH::OutputComponent::setup() {
+void OH::HapticPlane::setup() {
   for (const auto& kv : this->writers) {
     kv.second->setup();
   }
 }
 
-void OH::OutputComponent::writeOutput(const oh_output_data_t& data) {
+void OH::HapticPlane::writeOutput(const oh_output_data_t& data) {
   if (this->writers.count(data.point) == 0) {
     log_w("No writer for point (%u, %u)", data.point.x, data.point.y);
     return;
@@ -32,7 +32,7 @@ void OH::OutputComponent::writeOutput(const oh_output_data_t& data) {
   this->writers[data.point]->writeOutput(data.intensity);
 }
 
-oh_output_point_t OH::ClosestOutputComponent::findClosestPoints(
+oh_output_point_t OH::HapticPlane_Closest::findClosestPoints(
     std::list<oh_output_point_t>& pts,
     const oh_output_point_t& target) {
   std::multimap<float, oh_output_point_t> mp = {};
@@ -60,7 +60,7 @@ oh_output_point_t OH::ClosestOutputComponent::findClosestPoints(
   return nearest->second;
 }
 
-void OH::ClosestOutputComponent::writeOutput(const oh_output_data_t& data) {
+void OH::HapticPlane_Closest::writeOutput(const oh_output_data_t& data) {
   auto closestPoint = this->findClosestPoints(this->points, data.point);
 
   auto state = &this->states[closestPoint];

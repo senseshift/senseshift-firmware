@@ -1,6 +1,6 @@
 #include "connection_bhble.hpp"
 
-#include <output.hpp>
+#include <haptic_body.hpp>
 #include <events.hpp>
 
 #include <Arduino.h>

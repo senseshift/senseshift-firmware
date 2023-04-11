@@ -49,7 +49,7 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = {
 
 void setupMode() {
   // Configure PWM pins to their positions on the glove
-  auto gloveOutputs = mapMatrixCoordinates<AbstractOutputWriter>({
+  auto gloveOutputs = mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {
         // Thumb, Index, Middle, Ring, Pinky
@@ -60,10 +60,10 @@ void setupMode() {
       // clang-format on
   });
 
-  OutputComponent* glove = new ClosestOutputComponent(OUTPUT_PATH_ACCESSORY, gloveOutputs);
-  app->getOutput()->addComponent(glove);
+  auto* glove = new HapticPlane_Closest(gloveOutputs);
+  app->getHapticBody()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
 
-  app->getOutput()->setup();
+  app->getHapticBody()->setup();
 
   uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
   ConnectionBHBLE_Config config = {
@@ -71,13 +71,13 @@ void setupMode() {
       .appearance = BH_BLE_APPEARANCE,
       .serialNumber = serialNumber,
   };
-  AbstractConnection* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
-    plainOutputTransformer(app->getOutput(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
+  auto* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
+    plainOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
   }, app);
   bhBleConnection->begin();
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  AbstractBattery* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  auto* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
   battery->begin();
 #endif
 }
