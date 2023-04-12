@@ -1,8 +1,11 @@
 // Override you configs in this file (Ctrl+Click)
 #include "config/all.h"
 
-#include <Arduino.h>
-#include <Wire.h>
+#ifdef UNIT_TEST
+  #include "ArduinoFake.h"
+#else
+  #include "Arduino.h"
+#endif
 
 #include "openhaptics.h"
 
