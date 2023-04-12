@@ -4,9 +4,9 @@
 #include "haptic_plane.hpp"
 
 #include <types.hpp>
+#include <utility.hpp>
 
 #include <map>
-#include <Arduino.h>
 
 namespace OH {
   class HapticBody {
@@ -35,8 +35,8 @@ namespace OH {
    */
   template <typename _Tp>
   inline oh_output_point_t* mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max) {
-    const oh_output_coord_t x_coord = map(x + 1, 0, x_max + 2, 0, OH_OUTPUT_COORD_MAX);
-    const oh_output_coord_t y_coord = map(y + 1, 0, y_max + 2, 0, OH_OUTPUT_COORD_MAX);
+    const oh_output_coord_t x_coord = map<_Tp>(x + 1, 0, x_max + 2, 0, OH_OUTPUT_COORD_MAX);
+    const oh_output_coord_t y_coord = map<_Tp>(y + 1, 0, y_max + 2, 0, OH_OUTPUT_COORD_MAX);
 
     return new oh_output_point_t(x_coord, y_coord);
   }
