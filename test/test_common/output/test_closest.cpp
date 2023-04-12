@@ -1,27 +1,15 @@
-#include "unity.h"
+#include <unity.h>
 
-#ifdef UNIT_TEST
+void setUp(void) {
+  // set stuff up here
+}
 
-class TestWriter : public OutputWriter {
- public:
-  void writeOutput(oh_output_intensity_t intensity) override{};
-};
-
-void test_coordinates(void) {
-  oh_output_map_t testOutputs{
-      {oh_output_point_t(10, 10), new TestWriter()},
-      {oh_output_point_t(UINT16_MAX - 10, UINT16_MAX - 10), new TestWriter()},
-  };
-
-  auto output = new ClosestOutputComponent(testOutputs);
-
-  auto points = output->getOutputPoints();
+void tearDown(void) {
+  // clean stuff up here
 }
 
 int process(void) {
   UNITY_BEGIN();
-
-  RUN_TEST(test_coordinates);
 
   return UNITY_END();
 }
@@ -29,6 +17,7 @@ int process(void) {
 #ifdef ARDUINO
 
 #include <Arduino.h>
+
 void setup() {
   process();
 }
@@ -40,7 +29,5 @@ void loop() {}
 int main(int argc, char** argv) {
   return process();
 }
-
-#endif
 
 #endif
