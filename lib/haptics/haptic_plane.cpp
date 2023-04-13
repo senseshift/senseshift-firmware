@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <math.h>
+#include <utility.hpp>
 #include <logging.hpp>
 
 void OH::HapticPlane::setOutputs(oh_output_writers_map_t& outputs) {
@@ -34,16 +35,14 @@ void OH::HapticPlane::writeOutput(const oh_output_data_t& data) {
   this->writers[data.point]->writeOutput(data.intensity);
 }
 
-oh_output_point_t OH::HapticPlane_Closest::findClosestPoints(
-    std::list<oh_output_point_t>& pts,
-    const oh_output_point_t& target) {
+oh_output_point_t OH::HapticPlane_Closest::findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target) {
+  if (contains(pts, target)) {
+    return target;
+  }
+
   std::multimap<float, oh_output_point_t> mp = {};
 
   for (auto& _p : pts) {
-    if (target == _p) {
-      return _p;  // if coord == target, no other needed
-    }
-
     float dx = abs(((float)target.x / OH_OUTPUT_COORD_MAX) - ((float)_p.x / OH_OUTPUT_COORD_MAX)),
           dy = abs(((float)target.y / OH_OUTPUT_COORD_MAX) - ((float)_p.y / OH_OUTPUT_COORD_MAX));
 

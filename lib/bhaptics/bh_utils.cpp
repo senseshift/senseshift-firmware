@@ -1,7 +1,6 @@
 #include "bh_utils.hpp"
 
 #include <utility.hpp>
-#include <Arduino.h>
 
 void BH::plainOutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const oh_output_path_t path) {
   for (size_t i = 0; i < layoutSize; i++) {
@@ -9,7 +8,8 @@ void BH::plainOutputTransformer(OH::HapticBody* output, std::string& value, cons
 
     oh_output_data_t outputData{
       .point = *layout[i],
-      .intensity = static_cast<oh_output_intensity_t>(map(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     output->writeOutput(path, outputData);
@@ -24,12 +24,14 @@ void BH::vestOutputTransformer(OH::HapticBody* output, std::string& value, const
 
     const oh_output_data_t outputData0{
       .point = *layout[actIndex],
-      .intensity = static_cast<oh_output_intensity_t>(map(((byte >> 4) & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>(((byte >> 4) & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     const oh_output_data_t outputData1{
       .point = *layout[actIndex + 1],
-      .intensity = static_cast<oh_output_intensity_t>(map((byte & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>((byte & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     output->writeOutput(path, outputData0);
@@ -78,7 +80,8 @@ void BH::vestX16OutputTransformer(OH::HapticBody* output, std::string& value, co
     const auto path = (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK;
     const oh_output_data_t outputData{
       .point = *layout[i],
-      .intensity = static_cast<oh_output_intensity_t>(map(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     output->writeOutput(path, outputData);

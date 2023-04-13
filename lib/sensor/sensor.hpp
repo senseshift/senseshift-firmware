@@ -25,11 +25,11 @@ namespace OH
 
     protected:
       _Tp value;
-      uint rate;
+      uint32_t rate;
       virtual _Tp updateValue(void) = 0;
 
     public:
-      RatePollingComponent(TaskConfig taskConfig, uint rate) : Task<RatePollingComponent<_Tp>>(taskConfig), rate(rate) {};
+      RatePollingComponent(TaskConfig taskConfig, uint32_t rate) : Task<RatePollingComponent<_Tp>>(taskConfig), rate(rate) {};
       _Tp getValue() override { return this->value; };
   };
 } // namespace OH
