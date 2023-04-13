@@ -112,6 +112,23 @@ void test_closest_it_correctly_finds_closest(void) {
   TEST_ASSERT_EQUAL(65, actuator4->intensity);
 }
 
+void test_map_points(void) {
+  auto point = mapPoint(0, 0, 0, 0);
+
+  TEST_ASSERT_EQUAL(127, point->x);
+  TEST_ASSERT_EQUAL(127, point->y);
+
+  point = mapPoint(0, 0, 1, 1);
+
+  TEST_ASSERT_EQUAL(85, point->x);
+  TEST_ASSERT_EQUAL(85, point->y);
+
+  point = mapPoint(1, 1, 1, 1);
+
+  TEST_ASSERT_EQUAL(170, point->x);
+  TEST_ASSERT_EQUAL(170, point->y);
+}
+
 int process(void) {
   UNITY_BEGIN();
 
@@ -119,6 +136,7 @@ int process(void) {
   RUN_TEST(test_it_writes_to_correct_output);
   RUN_TEST(test_closest_it_writes_to_correct_if_exact);
   RUN_TEST(test_closest_it_correctly_finds_closest);
+  RUN_TEST(test_map_points);
 
   return UNITY_END();
 }
