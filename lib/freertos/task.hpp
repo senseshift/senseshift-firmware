@@ -8,15 +8,17 @@ extern "C" void delay(uint32_t ms);
 #include <freertos/FreeRTOS.h>   // Include the base FreeRTOS definitions.
 #include <freertos/task.h>       // Include the task definitions.
 
-extern "C" BaseType_t xTaskCreateUniversal(
-  TaskFunction_t pxTaskCode,
-  const char * const pcName,
-  const uint32_t usStackDepth,
-  void * const pvParameters,
-  UBaseType_t uxPriority,
-  TaskHandle_t * const pxCreatedTask,
-  const BaseType_t xCoreID
-);
+extern "C" {
+  BaseType_t xTaskCreateUniversal(
+    TaskFunction_t pxTaskCode,
+    const char * const pcName,
+    const uint32_t usStackDepth,
+    void * const pvParameters,
+    UBaseType_t uxPriority,
+    TaskHandle_t * const pxCreatedTask,
+    const BaseType_t xCoreID
+  );
+}
 #endif
 
 namespace OH {

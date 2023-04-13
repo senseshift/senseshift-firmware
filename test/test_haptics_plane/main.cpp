@@ -3,8 +3,6 @@
 
 using namespace OH;
 
-static HapticPlane* plane = nullptr;
-
 class TestActuator : public AbstractActuator {
  public:
   bool isSetup = false;
@@ -19,14 +17,6 @@ class TestActuator : public AbstractActuator {
   }
 };
 
-void setUp(void) {
-  //
-}
-
-void tearDown(void) {
-  plane = nullptr;
-}
-
 void test_it_sets_up_actuators(void) {
   oh_output_writers_map_t outputs = {
       {{0, 0}, new TestActuator()},
@@ -35,8 +25,7 @@ void test_it_sets_up_actuators(void) {
       {{1, 1}, new TestActuator()},
   };
 
-  plane = new HapticPlane(outputs);
-
+  auto plane = new HapticPlane(outputs);
   plane->setup();
 
   for (auto& kv : outputs) {
@@ -57,7 +46,7 @@ void test_it_writes_to_correct_output(void) {
       {{1, 1}, actuator4},
   };
 
-  plane = new HapticPlane(outputs);
+  auto plane = new HapticPlane(outputs);
   plane->setup();
 
   plane->writeOutput({{0, 0}, 64});
@@ -71,11 +60,65 @@ void test_it_writes_to_correct_output(void) {
   TEST_ASSERT_EQUAL_UINT8(255, actuator4->intensity);
 }
 
+void test_closest_it_writes_to_correct_if_exact(void) {
+  auto actuator = new TestActuator(),
+        actuator2 = new TestActuator(),
+        actuator3 = new TestActuator(),
+        actuator4 = new TestActuator();
+
+  oh_output_writers_map_t outputs = {
+      {{0, 0}, actuator},
+      {{0, 1}, actuator2},
+      {{1, 0}, actuator3},
+      {{1, 1}, actuator4},
+  };
+
+  auto plane = new HapticPlane_Closest(outputs);
+  plane->setup();
+
+  plane->writeOutput({{0, 0}, 1});
+  plane->writeOutput({{0, 1}, 2});
+  plane->writeOutput({{1, 0}, 3});
+  plane->writeOutput({{1, 1}, 4});
+
+  TEST_ASSERT_EQUAL(1, actuator->intensity);
+  TEST_ASSERT_EQUAL(2, actuator2->intensity);
+  TEST_ASSERT_EQUAL(3, actuator3->intensity);
+  TEST_ASSERT_EQUAL(4, actuator4->intensity);
+}
+
+void test_closest_it_correctly_finds_closest(void) {
+  auto actuator = new TestActuator(),
+        actuator2 = new TestActuator(),
+        actuator3 = new TestActuator(),
+        actuator4 = new TestActuator();
+
+  oh_output_writers_map_t outputs = {
+      {{0, 0}, actuator},
+      {{0, 64}, actuator2},
+      {{64, 0}, actuator3},
+      {{64, 64}, actuator4},
+  };
+
+  auto plane = new HapticPlane_Closest(outputs);
+  plane->setup();
+
+  plane->writeOutput({{16, 16}, 16});
+  plane->writeOutput({{65, 65}, 65});
+
+  TEST_ASSERT_EQUAL(16, actuator->intensity);
+  TEST_ASSERT_EQUAL(0, actuator2->intensity);
+  TEST_ASSERT_EQUAL(0, actuator3->intensity);
+  TEST_ASSERT_EQUAL(65, actuator4->intensity);
+}
+
 int process(void) {
   UNITY_BEGIN();
 
   RUN_TEST(test_it_sets_up_actuators);
   RUN_TEST(test_it_writes_to_correct_output);
+  RUN_TEST(test_closest_it_writes_to_correct_if_exact);
+  RUN_TEST(test_closest_it_correctly_finds_closest);
 
   return UNITY_END();
 }
