@@ -11,9 +11,9 @@ namespace OH
   };
 
   template <typename _Tp>
-  class RatePollingComponent : public Task<RatePollingComponent<_Tp>>, public ISensor<_Tp> {
+  class ThrottledSensor : public Task<ThrottledSensor<_Tp>>, public ISensor<_Tp> {
     template<typename> friend class RatePollingComponent;
-    friend class Task<RatePollingComponent<_Tp>>;
+    friend class Task<ThrottledSensor<_Tp>>;
 
     private:
       virtual void run(void) {
@@ -29,7 +29,7 @@ namespace OH
       virtual _Tp updateValue(void) = 0;
 
     public:
-      RatePollingComponent(TaskConfig taskConfig, uint32_t rate) : Task<RatePollingComponent<_Tp>>(taskConfig), rate(rate) {};
+      ThrottledSensor(TaskConfig taskConfig, uint32_t rate) : Task<ThrottledSensor<_Tp>>(taskConfig), rate(rate) {};
       _Tp getValue() override { return this->value; };
   };
 } // namespace OH

@@ -32,7 +32,10 @@ void OH::HapticPlane::writeOutput(const oh_output_data_t& data) {
     return;
   }
 
-  this->writers[data.point]->writeOutput(data.intensity);
+  auto state = &this->states[data.point];
+  state->intensity = data.intensity;
+
+  this->writers.at(data.point)->writeOutput(state->intensity);
 }
 
 oh_output_point_t OH::HapticPlane_Closest::findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target) {
@@ -52,11 +55,13 @@ oh_output_point_t OH::HapticPlane_Closest::findClosestPoints(std::list<oh_output
   }
 
   auto nearest =
-      std::min_element(mp.begin(), mp.end(),
-                       [](const std::pair<float, oh_output_point_t>& a,
-                          const std::pair<float, oh_output_point_t>& b) {
-                         return a.first < b.first;
-                       });
+      std::min_element(
+        mp.begin(),
+        mp.end(),
+        [](const std::pair<float, oh_output_point_t>& a, const std::pair<float, oh_output_point_t>& b) {
+          return a.first < b.first;
+        }
+      );
 
   return nearest->second;
 }

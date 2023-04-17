@@ -21,9 +21,9 @@ namespace OH {
     uint sampleRate;
   };
 
-  class AbstractBattery : public RatePollingComponent<uint8_t> {
-   friend class Task<RatePollingComponent<uint8_t>>;
-   friend class RatePollingComponent<uint8_t>;
+  class AbstractBattery : public ThrottledSensor<uint8_t> {
+   friend class Task<ThrottledSensor<uint8_t>>;
+   friend class ThrottledSensor<uint8_t>;
 
    private:
     void run(void) override;
@@ -34,10 +34,10 @@ namespace OH {
     uint8_t updateValue() override;
 
    public:
-    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : RatePollingComponent<uint8_t>(taskConfig, config.sampleRate), eventDispatcher(eventDispatcher) {};
+    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : ThrottledSensor<uint8_t>(taskConfig, config.sampleRate), eventDispatcher(eventDispatcher) {};
     void begin() override {
       this->setup();
-      RatePollingComponent<uint8_t>::begin();
+      ThrottledSensor<uint8_t>::begin();
     };
   };
 
