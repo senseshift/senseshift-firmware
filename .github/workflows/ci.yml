@@ -72,6 +72,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Speedup package installation
+        if: matrix.coverage
+        uses: abbbi/github-actions-tune@v1
+
       - name: Setup LCOV
         if: matrix.coverage
         uses: hrishikesh-kadam/setup-lcov@v1
@@ -165,6 +169,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Speedup package installation
+        uses: abbbi/github-actions-tune@v1
+
       - name: Setup LCOV
         uses: hrishikesh-kadam/setup-lcov@v1
 
@@ -216,6 +223,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Speedup package installation
+        uses: abbbi/github-actions-tune@v1
 
       - name: Setup LCOV
         uses: hrishikesh-kadam/setup-lcov@v1
