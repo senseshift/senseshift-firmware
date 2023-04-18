@@ -2,9 +2,24 @@
 
 #include "logging.hpp"
 
-#include <Arduino.h>
+extern "C" void delay(uint32_t ms);
+
+#if defined(ARDUINO_ARCH_ESP32)
 #include <freertos/FreeRTOS.h>   // Include the base FreeRTOS definitions.
 #include <freertos/task.h>       // Include the task definitions.
+
+extern "C" {
+  BaseType_t xTaskCreateUniversal(
+    TaskFunction_t pxTaskCode,
+    const char * const pcName,
+    const uint32_t usStackDepth,
+    void * const pvParameters,
+    UBaseType_t uxPriority,
+    TaskHandle_t * const pxCreatedTask,
+    const BaseType_t xCoreID
+  );
+}
+#endif
 
 namespace OH {
   struct TaskConfig {
@@ -14,8 +29,6 @@ namespace OH {
     const BaseType_t coreId = tskNO_AFFINITY;
   };
 
-  class TaskComponent;
-
   // Static polymorphic abstract base class for a FreeRTOS task using CRTP
   // pattern. Concrete implementations should implement a run() method.
   //
@@ -23,7 +36,6 @@ namespace OH {
   template<typename _Tp>
   class Task {
    template<typename> friend class Task;
-   friend class TaskComponent;
 
    private:
     TaskConfig taskConfig;

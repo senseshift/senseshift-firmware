@@ -1,9 +1,8 @@
 #pragma once
 
-#include <abstract_output_writer.hpp>
-#include <output.hpp>
+#include <abstract_actuator.hpp>
 
-class PWMOutputWriter : public OH::AbstractOutputWriter {
+class PWMOutputWriter : public OH::AbstractActuator {
  private:
   static uint8_t CHANNELS;
   uint8_t pin, chan;

@@ -24,4 +24,9 @@ namespace OH {
   inline bool contains(const _Tp* arr, const std::size_t size, const _Tp& val) {
     return std::find(arr, arr + size, val) != arr + size;
   };
+
+  template <typename _Tp>
+  inline _Tp map(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
 }  // namespace OH

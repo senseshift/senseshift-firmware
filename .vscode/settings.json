@@ -50,6 +50,9 @@
         "map": "cpp",
         "memory_resource": "cpp",
         "string_view": "cpp",
+        "bit": "cpp",
+        "set": "cpp",
+        "iostream": "cpp",
         "*.hpp": "cpp"
     },
     "files.eol": "\n",

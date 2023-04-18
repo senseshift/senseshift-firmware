@@ -6,12 +6,16 @@
 #include <bh_types.hpp>
 
 #include <Arduino.h>
-#include <BLEDevice.h>
 #include <esp_wifi.h>
 
+#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+  #include <NimBLEDevice.h>
+#else
+  #include <BLEDevice.h>
+#endif
+
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "abstract_battery.hpp"
-#include <BLE2902.h>
+  #include <abstract_battery.hpp>
 #endif
 
 // typedef void (*bh_motor_handler_t)(std::string&);
@@ -19,6 +23,15 @@ typedef std::function<void(std::string&)> bh_motor_handler_t;
 
 namespace BH
 {
+  class BHBLEConnectionCallbacks {
+    public:
+      virtual void postInit() {
+        log_v("Default postInit");
+      };
+  };
+
+  static BHBLEConnectionCallbacks defaultCallback;
+
   struct ConnectionBHBLE_Config {
     std::string deviceName;
     uint16_t appearance;
@@ -34,6 +47,8 @@ namespace BH
     BLEServer* bleServer = nullptr;
     BLEService* motorService = nullptr;
     BLECharacteristic* batteryChar = nullptr;
+
+    BHBLEConnectionCallbacks* callbacks = &defaultCallback;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
     void handleBatteryChange(const OH::BatteryLevelEvent* event) const;
@@ -58,6 +73,14 @@ namespace BH
         return;
       }
 #endif
+    };
+
+    void setCallbacks(BHBLEConnectionCallbacks* pCallbacks) {
+      if (pCallbacks != nullptr) {
+        this->callbacks = pCallbacks;
+      } else {
+        this->callbacks = &defaultCallback;
+      }
     };
   };
 } // namespace OH

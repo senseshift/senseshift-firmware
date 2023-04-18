@@ -1,4 +1,4 @@
-#include "openhaptics.h"
+#include "senseshift.h"
 
 #if defined(ARDUINO)
 #include <Arduino.h>
@@ -8,31 +8,30 @@
 #include <components/serial_plotter.hpp>
 #endif // SERIAL_PLOTTER
 
+#ifndef SERIAL_PLOTTER_PORT
+#define SERIAL_PLOTTER_PORT Serial
+#endif // SERIAL_PLOTTER_PORT
+
 #ifndef PIO_UNIT_TESTING
 
 extern void setupMode();
+extern void loopMode();
 
 #if defined(ARDUINO)
 
-OpenHaptics App;
+SenseShift App;
 
 void setup() {
-  Serial.begin(115200);
-
   setupMode();
 
 #if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
-  auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(Serial, App.getOutput());
+  auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(SERIAL_PLOTTER_PORT, App.getHapticBody());
   serialOutputState->begin();
 #endif // SERIAL_PLOTTER
-
-  // Free up the Arduino loop task
-  vTaskDelete(NULL);
 }
 
 void loop() {
-  // Arduino loop task is deleted in setup()
-  // Delete the `vTaskDelete(NULL);` line in setup() to enable this function
+  loopMode();
 }
 
 #endif // ARDUINO

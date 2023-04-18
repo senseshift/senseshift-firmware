@@ -2,20 +2,21 @@
 
 #include <utility.hpp>
 
-void BH::plainOutputTransformer(OH::Output* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const oh_output_path_t path) {
+void BH::plainOutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const oh_output_path_t path) {
   for (size_t i = 0; i < layoutSize; i++) {
     uint8_t byte = value[i];
 
     oh_output_data_t outputData{
       .point = *layout[i],
-      .intensity = static_cast<oh_output_intensity_t>(map(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     output->writeOutput(path, outputData);
   }
 }
 
-void BH::vestOutputTransformer(OH::Output* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize) {
+void BH::vestOutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize) {
   for (size_t i = 0; i < layoutSize / 2; i++) {
     uint8_t byte = value[i];
     uint actIndex = i * 2;
@@ -23,12 +24,14 @@ void BH::vestOutputTransformer(OH::Output* output, std::string& value, const oh_
 
     const oh_output_data_t outputData0{
       .point = *layout[actIndex],
-      .intensity = static_cast<oh_output_intensity_t>(map(((byte >> 4) & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>(((byte >> 4) & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     const oh_output_data_t outputData1{
       .point = *layout[actIndex + 1],
-      .intensity = static_cast<oh_output_intensity_t>(map((byte & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>((byte & 0xf), 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     output->writeOutput(path, outputData0);
@@ -36,7 +39,7 @@ void BH::vestOutputTransformer(OH::Output* output, std::string& value, const oh_
   }
 }
 
-void BH::vestX16OutputTransformer(OH::Output* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const uint8_t layoutGroups[], const size_t layoutGroupsSize) {
+void BH::vestX16OutputTransformer(OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize, const uint8_t layoutGroups[], const size_t layoutGroupsSize) {
   uint8_t result[layoutSize];
 
   // Unpack values
@@ -77,7 +80,8 @@ void BH::vestX16OutputTransformer(OH::Output* output, std::string& value, const 
     const auto path = (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK;
     const oh_output_data_t outputData{
       .point = *layout[i],
-      .intensity = static_cast<oh_output_intensity_t>(map(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
+      // TODO: optimize generic type
+      .intensity = static_cast<oh_output_intensity_t>(OH::map<long>(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
     };
 
     output->writeOutput(path, outputData);
