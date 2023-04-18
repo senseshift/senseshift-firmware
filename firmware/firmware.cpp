@@ -1,4 +1,4 @@
-#include "openhaptics.h"
+#include "senseshift.h"
 
 #if defined(ARDUINO)
 #include <Arduino.h>
@@ -19,7 +19,7 @@ extern void loopMode();
 
 #if defined(ARDUINO)
 
-OpenHaptics App;
+SenseShift App;
 
 void setup() {
   setupMode();

@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef BLUETOOTH_NAME
-#define BLUETOOTH_NAME "OpenHaptics"
+#define BLUETOOTH_NAME "SenseShift"
 #endif
 
 #ifndef BLUETOOTH_ADDRESS

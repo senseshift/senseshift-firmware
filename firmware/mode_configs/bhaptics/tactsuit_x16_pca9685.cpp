@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "openhaptics.h"
+#include "senseshift.h"
 
 #include <bh_utils.hpp>
 #include <connection_bhble.hpp>
@@ -17,8 +17,8 @@
 using namespace OH;
 using namespace BH;
 
-extern OpenHaptics App;
-OpenHaptics* app = &App;
+extern SenseShift App;
+SenseShift* app = &App;
 
 static const oh_output_point_t* bhLayout[] = BH_LAYOUT_TACTSUITX16;
 static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;

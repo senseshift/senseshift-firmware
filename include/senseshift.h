@@ -12,7 +12,7 @@
 
 #include <vector>
 
-class OpenHaptics final : public OH::IEventDispatcher
+class SenseShift final : public OH::IEventDispatcher
 {
  private:
   std::vector<const OH::IEventListener*> eventListeners{};
@@ -23,7 +23,7 @@ class OpenHaptics final : public OH::IEventDispatcher
 #endif
 
  public:
-  OpenHaptics();
+  SenseShift();
 
   OH::HapticBody* getHapticBody() {
     return this->pHapticBody;
