@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_binaries:
-    if: github.repository == 'openhaptics/openhaptics-firmware'
+    if: github.repository == 'senseshift/senseshift-firmware'
 
     runs-on: ubuntu-latest
     strategy:

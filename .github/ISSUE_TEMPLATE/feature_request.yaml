@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: >
-        Do you want to ask a question? Are you looking for support? Please use one of the [support links](https://github.com/openhaptics/openhaptics-firmware/issues/new/choose).
+        Do you want to ask a question? Are you looking for support? Please use one of the [support links](https://github.com/senseshift/senseshift-firmware/issues/new/choose).
 
   - type: markdown
     attributes:
@@ -15,7 +15,7 @@ body:
 
         ## Before Requesting a Feature
 
-        - Read and understand OpenHaptics [Code of Conduct](https://github.com/openhaptics/openhaptics-firmware/blob/master/CODE_OF_CONDUCT.md). You are expected to comply with it, including treating everyone with respect.
+        - Read and understand SenseShift [Code of Conduct](https://github.com/senseshift/senseshift-firmware/blob/master/CODE_OF_CONDUCT.md). You are expected to comply with it, including treating everyone with respect.
 
   - type: textarea
     id: implementation_pr

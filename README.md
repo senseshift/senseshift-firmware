@@ -1,4 +1,4 @@
-# OpenHaptics Firmware
+# SenseShift Firmware
 
 This project intended to let people build their own DIY haptic-feedback devices. Integrates to all existing games, that work with bHaptics.
 
@@ -7,22 +7,22 @@ Build your own DIY haptic vest, haptic gloves and more!
 [![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
 [![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter)](https://twitter.com/leon0399)
 
-[![PlatformIO CI](https://github.com/openhaptics/openhaptics-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/openhaptics/openhaptics-firmware/actions/workflows/ci.yml)
-[![GitHub bug issues](https://img.shields.io/github/issues/openhaptics/openhaptics-firmware/bug?color=%23d73a4a)](https://github.com/openhaptics/openhaptics-firmware/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+[![PlatformIO CI](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml)
+[![GitHub bug issues](https://img.shields.io/github/issues/senseshift/senseshift-firmware/bug?color=%23d73a4a)](https://github.com/senseshift/senseshift-firmware/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 
-[![GPL-3.0](https://img.shields.io/github/license/openhaptics/openhaptics-firmware)](/LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/openhaptics/openhaptics-firmware)](https://github.com/openhaptics/openhaptics-firmware/graphs/contributors)
-[![GitHub](https://img.shields.io/github/stars/openhaptics/openhaptics-firmware.svg)](https://github.com/openhaptics/openhaptics-firmware)
+[![GPL-3.0](https://img.shields.io/github/license/senseshift/senseshift-firmware)](/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/senseshift/senseshift-firmware)](https://github.com/senseshift/senseshift-firmware/graphs/contributors)
+[![GitHub](https://img.shields.io/github/stars/senseshift/senseshift-firmware.svg)](https://github.com/senseshift/senseshift-firmware)
 [![Contributor Covenant](https://img.shields.io/badge/code_of_conduct-contributor_covenant_v2.1-ff69b4)](/CODE_OF_CONDUCT.md)
 
 ## Configuration, flashing and connecting
 
-The main documentation on this project is located on [openhaptics.github.io](https://openhaptics.github.io/)
+The main documentation on this project is located on [senseshift.github.io](https://senseshift.github.io/)
 
-* [Getting Started](https://openhaptics.github.io/docs/getting-started)
-* **NEW** [Build Guides](https://openhaptics.github.io/guides/getting-started)
-* [Hardware Schematics](https://github.com/openhaptics/openhaptics-hardware)
-* [Flashing Firmware](https://openhaptics.github.io/docs/category/firmware)
+* [Getting Started](https://senseshift.github.io/docs/getting-started)
+* **NEW** [Build Guides](https://senseshift.github.io/guides/getting-started)
+* [Hardware Schematics](https://github.com/senseshift/senseshift-hardware)
+* [Flashing Firmware](https://senseshift.github.io/docs/category/firmware)
 
 Please note, that documentation is still work-in-progress
 
@@ -38,7 +38,7 @@ Please note, that documentation is still work-in-progress
 | ESP32-S3             | ❌            |
 
 > **Note**  
-> Please, refer to [Documentation on MCUs](https://openhaptics.github.io/docs/hardware/mcu) for more detailed info
+> Please, refer to [Documentation on MCUs](https://senseshift.github.io/docs/hardware/mcu) for more detailed info
 
 ### PWM Drivers
 
@@ -69,19 +69,19 @@ Please note, that documentation is still work-in-progress
 | Protocol             | Status                                                              |
 | :------------------- | :-----------------------------------------------------------------: |
 | bHaptics Bluetooth   | ✅ (Android/Windows/Quest)                                           |
-| OpenHaptics          | [RFC](https://github.com/openhaptics/openhaptics-firmware/issues/9) |
+| SenseShift          | [RFC](https://github.com/senseshift/senseshift-firmware/issues/9) |
 
 ## Supported devices
 
 | Device                 | Supported Devices    | Retail price | DIY Price | Hardware                                                                                            |
 | :--------------------  | :------------------- | -----------: | --------: | :-------------------------------------------------------------------------------------------------- |
-| Haptics Face Interface | Tactal               | US $149      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-face-interface) |
-| Haptic Gloves          | TactGlove            | US $299      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-glove)          |
-| Haptic Sleeves         | Tactosy for arms     | US $249      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-forearm-sleeve) |
-| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-gauntlet)       |
-| Haptic Feet Device     | Tactosy for feet     | US $249      | ~20$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#haptic-feet-device)    |
-| X16 Haptic Vest        | TactSuit X16         | US $299      | ~40$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x16-haptic-vest)       |
-| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | ~70$      | See [Hardware Reference](https://github.com/openhaptics/openhaptics-hardware#x40-haptic-vest)       |
+| Haptics Face Interface | Tactal               | US $149      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-face-interface) |
+| Haptic Gloves          | TactGlove            | US $299      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-glove)          |
+| Haptic Sleeves         | Tactosy for arms     | US $249      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-forearm-sleeve) |
+| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-gauntlet)       |
+| Haptic Feet Device     | Tactosy for feet     | US $249      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-feet-device)    |
+| X16 Haptic Vest        | TactSuit X16         | US $299      | ~40$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#x16-haptic-vest)       |
+| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | ~70$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#x40-haptic-vest)       |
 
 ## For Developers
 
@@ -94,4 +94,4 @@ Please note, that documentation is still work-in-progress
 
 This firmware is licensed under [GPL-3.0](./LICENSE). Please see the [LICENSE](./LICENSE) file for details.
 
-OpenHaptics are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. OpenHaptics is not a bHaptics-approved software, nor is it associated with bHaptics.
+SenseShift are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. SenseShift is not a bHaptics-approved software, nor is it associated with bHaptics.
