@@ -34,13 +34,13 @@ void setupMode() {
   pwm->setPWMFreq(PWM_FREQUENCY);
 
   // Assign the pins on the configured PCA9685 to positions on the vest
-  auto frontOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3)},
       {new PCA9685OutputWriter(pwm, 4), new PCA9685OutputWriter(pwm, 5), new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7)},
       // clang-format on
   });
-  auto backOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11)},
       {new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15)},

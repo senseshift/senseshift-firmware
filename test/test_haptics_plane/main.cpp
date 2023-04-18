@@ -164,18 +164,18 @@ void test_closest_it_updates_state(void) {
   TEST_ASSERT_EQUAL(65, plane->getOutputStates()->at({64, 64}).intensity);
 }
 
-void test_map_points(void) {
-  auto point = mapPoint(0, 0, 0, 0);
+void test_plain_mapper_margin_map_points(void) {
+  auto point = PlaneMapper_Margin::mapPoint(0, 0, 0, 0);
 
   TEST_ASSERT_EQUAL(127, point->x);
   TEST_ASSERT_EQUAL(127, point->y);
 
-  point = mapPoint(0, 0, 1, 1);
+  point = PlaneMapper_Margin::mapPoint(0, 0, 1, 1);
 
   TEST_ASSERT_EQUAL(85, point->x);
   TEST_ASSERT_EQUAL(85, point->y);
 
-  point = mapPoint(1, 1, 1, 1);
+  point = PlaneMapper_Margin::mapPoint(1, 1, 1, 1);
 
   TEST_ASSERT_EQUAL(170, point->x);
   TEST_ASSERT_EQUAL(170, point->y);
@@ -190,7 +190,7 @@ int process(void) {
   RUN_TEST(test_closest_it_writes_to_correct_if_exact);
   RUN_TEST(test_closest_it_correctly_finds_closest);
   RUN_TEST(test_closest_it_updates_state);
-  RUN_TEST(test_map_points);
+  RUN_TEST(test_plain_mapper_margin_map_points);
 
   return UNITY_END();
 }

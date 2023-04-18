@@ -25,7 +25,7 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
 void setupMode() {
   // Configure PWM pins to their positions on the face
-  auto faceOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
       // clang-format on

@@ -25,7 +25,7 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSYF;
 
 void setupMode() {
   // Configure PWM pins to their positions on the feet
-  auto footOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto footOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       { new PWMOutputWriter(32) },
       { new PWMOutputWriter(33) },
