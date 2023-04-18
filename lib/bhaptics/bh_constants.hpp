@@ -1,6 +1,8 @@
 #pragma once
 
-#include <BLEUUID.h>
+#if defined(ARDUINO_ARCH_ESP32)
+  #include <BLEUUID.h>
+#endif
 
 #define BH_SERIAL_NUMBER_LENGTH 10
 
@@ -11,11 +13,11 @@
 #define NO_AUDIO_CABLE 0
 #define AUDIO_CABLE 1
 
-#ifdef BH_DEVICE_TACTSUITX16
+#pragma region BH_DEVICE_TACTSUITX16
 
 #define BH_LAYOUT_TACTSUITX16_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX16_SIZE_Y 2
-#define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y) OH::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_Y - 1))
+#define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_Y - 1))
 
 // X16 suit uses the same packets structure as x40 suit and performs motor grouping in firmware
 #define BH_LAYOUT_TACTSUITX16_SIZE 40
@@ -76,13 +78,13 @@
 #define BH_LAYOUT_TACTSUITX16_GROUPS { 0, 1, 4, 5, 10, 11, 14, 15, 20, 21, 24, 25, 30, 31, 34, 35 }
 #define BH_LAYOUT_TACTSUITX16_GROUPS_SIZE 16
 
-#endif
+#pragma endregion BH_DEVICE_TACTSUITX16
 
-#ifdef BH_DEVICE_TACTSUITX40
+#pragma region BH_DEVICE_TACTSUITX40
 
 #define BH_LAYOUT_TACTSUITX40_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX40_SIZE_Y 5
-#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y) OH::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1))
+#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1))
 
 // X * Y for front and back
 #define BH_LAYOUT_TACTSUITX40_SIZE 40
@@ -135,13 +137,13 @@
     /* 39 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4)   \
 }
 
-#endif
+#pragma endregion BH_DEVICE_TACTSUITX40
 
-#ifdef BH_DEVICE_TACTAL
+#pragma region BH_DEVICE_TACTAL
 
 #define BH_LAYOUT_TACTAL_SIZE_X 6
 #define BH_LAYOUT_TACTAL_SIZE_Y 1
-#define BH_LAYOUT_TACTAL_MAKE_POINT(x, y) OH::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_Y - 1))
+#define BH_LAYOUT_TACTAL_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_Y - 1))
 
 #define BH_LAYOUT_TACTAL_SIZE (BH_LAYOUT_TACTAL_SIZE_X * BH_LAYOUT_TACTAL_SIZE_Y)
 #define BH_LAYOUT_TACTAL {           \
@@ -153,13 +155,13 @@
   BH_LAYOUT_TACTAL_MAKE_POINT(5, 0), \
 }
 
-#endif
+#pragma endregion BH_DEVICE_TACTAL
 
-#ifdef BH_DEVICE_TACTOSY2
+#pragma region BH_DEVICE_TACTOSY2
 
 #define BH_LAYOUT_TACTOSY2_SIZE_X 3
 #define BH_LAYOUT_TACTOSY2_SIZE_Y 2
-#define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y) OH::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_Y - 1))
+#define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_Y - 1))
 
 #define BH_LAYOUT_TACTOSY2_SIZE (BH_LAYOUT_TACTOSY2_SIZE_X * BH_LAYOUT_TACTOSY2_SIZE_Y)
 #define BH_LAYOUT_TACTOSY2 {                                                                                       \
@@ -167,29 +169,29 @@
     BH_LAYOUT_TACTOSY2_MAKE_POINT(0, 1), BH_LAYOUT_TACTOSY2_MAKE_POINT(1, 1), BH_LAYOUT_TACTOSY2_MAKE_POINT(2, 1), \
 }
 
-#endif
+#pragma endregion BH_DEVICE_TACTOSY2
 
-#ifdef BH_DEVICE_TACTOSYH
+#pragma region BH_DEVICE_TACTOSYH
 
 #define BH_LAYOUT_TACTOSYH_SIZE_X 1
 #define BH_LAYOUT_TACTOSYH_SIZE_Y 3
-#define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y) OH::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_Y - 1))
+#define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_Y - 1))
 
 #define BH_LAYOUT_TACTOSYH_SIZE (BH_LAYOUT_TACTOSYH_SIZE_X * BH_LAYOUT_TACTOSYH_SIZE_Y)
 #define BH_LAYOUT_TACTOSYH { BH_LAYOUT_TACTOSYH_MAKE_POINT(0, 0), BH_LAYOUT_TACTOSYH_MAKE_POINT(0, 1), BH_LAYOUT_TACTOSYH_MAKE_POINT(0, 2) }
 
-#endif
+#pragma endregion BH_DEVICE_TACTOSYH
 
-#ifdef BH_DEVICE_TACTOSYF
+#pragma region BH_DEVICE_TACTOSYF
 
 #define BH_LAYOUT_TACTOSYF_SIZE_X 1
 #define BH_LAYOUT_TACTOSYF_SIZE_Y 3
-#define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y) OH::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_Y - 1))
+#define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_Y - 1))
 
 #define BH_LAYOUT_TACTOSYF_SIZE (BH_LAYOUT_TACTOSYF_SIZE_X * BH_LAYOUT_TACTOSYF_SIZE_Y)
 #define BH_LAYOUT_TACTOSYF { BH_LAYOUT_TACTOSYF_MAKE_POINT(0, 0), BH_LAYOUT_TACTOSYF_MAKE_POINT(0, 1), BH_LAYOUT_TACTOSYF_MAKE_POINT(0, 2), }
 
-#endif
+#pragma endregion BH_DEVICE_TACTOSYF
 
 // All below are weird choices of bHaptics engineers...
 // Why to use unconventional UUIDs, that are reserved for other purposes?

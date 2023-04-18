@@ -10,9 +10,8 @@
 #include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "battery/adc_naive.hpp"
-#endif
+#include <HardwareSerial.h>
+#include <BluetoothSerial.h>
 
 using namespace OH;
 using namespace BH;
@@ -20,8 +19,18 @@ using namespace BH;
 extern SenseShift App;
 SenseShift* app = &App;
 
+BluetoothSerial SerialBT;
+BluetoothSerial* btSerial = &SerialBT;
+
 static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
 static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+
+class BLECallbacks : public BHBLEConnectionCallbacks {
+  public:
+    void postInit() {
+      btSerial->begin("SenseShift Serial");
+    }
+};
 
 void setupMode() {
   // Configure PWM pins to their positions on the face
@@ -45,15 +54,17 @@ void setupMode() {
   auto* bhBleConnection = new ConnectionBHBLE(config, [](std::string& value)->void {
     plainOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
   }, app);
+  bhBleConnection->setCallbacks(new BLECallbacks());
   bhBleConnection->begin();
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  auto* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, &App, tskNO_AFFINITY);
-  battery->begin();
-#endif
 }
 
 void loopMode() {
-  // Free up the Arduino loop task
-  vTaskDelete(NULL);
+  // This way is suboptimal, but hardware interrupts for Serial are not supported by the Arduino framework
+  if (btSerial->available()) {
+    Serial.print(btSerial->read());
+  }
+  if (Serial.available()) {
+    btSerial->write(Serial.read());
+  }
+  sleep(20);
 }

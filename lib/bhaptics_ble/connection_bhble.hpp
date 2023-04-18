@@ -15,7 +15,7 @@
 #endif
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include "abstract_battery.hpp"
+  #include <abstract_battery.hpp>
 #endif
 
 // typedef void (*bh_motor_handler_t)(std::string&);

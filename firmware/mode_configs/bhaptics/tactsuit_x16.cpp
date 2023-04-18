@@ -29,13 +29,13 @@ static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROU
 
 void setupMode() {
   // Configure PWM pins to their positions on the vest
-  auto frontOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26)},
       {new PWMOutputWriter(27), new PWMOutputWriter(14), new PWMOutputWriter(12), new PWMOutputWriter(13)},
       // clang-format on
   });
-  auto backOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {new PWMOutputWriter(19), new PWMOutputWriter(18), new PWMOutputWriter(5), new PWMOutputWriter(17)},
       {new PWMOutputWriter(16), new PWMOutputWriter(4), new PWMOutputWriter(2), new PWMOutputWriter(15)},

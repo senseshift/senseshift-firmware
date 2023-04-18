@@ -30,7 +30,7 @@ static const uint16_t _bh_size_x = 6;
 static const uint16_t _bh_size_y = 1;
 
 inline oh_output_point_t* make_point(oh_output_coord_t x, oh_output_coord_t y) {
-  return mapPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
+  return PlaneMapper_Margin::mapPoint(x, y, (oh_output_coord_t) (_bh_size_x - 1), (oh_output_coord_t) (_bh_size_y - 1));
 }
 
 static const uint16_t bhLayoutSize = _bh_size_x * _bh_size_y;
@@ -49,7 +49,7 @@ static const oh_output_point_t* bhLayout[bhLayoutSize] = {
 
 void setupMode() {
   // Configure PWM pins to their positions on the glove
-  auto gloveOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto gloveOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
       {
         // Thumb, Index, Middle, Ring, Pinky

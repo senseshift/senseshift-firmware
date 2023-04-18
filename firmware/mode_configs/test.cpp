@@ -27,7 +27,7 @@ class TestOutput : public OH::AbstractActuator {
 };
 
 void setupMode() {
-  auto testOutputs = mapMatrixCoordinates<AbstractActuator>({
+  auto testOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       {new TestOutput(0), new TestOutput(1)},
       {new TestOutput(2), new TestOutput(3)},
       {new TestOutput(4), new TestOutput(5)},
