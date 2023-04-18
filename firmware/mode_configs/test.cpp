@@ -7,14 +7,14 @@
   #include "Arduino.h"
 #endif
 
-#include "openhaptics.h"
+#include "senseshift.h"
 
 #include <haptic_body.hpp>
 
 using namespace OH;
 
-extern OpenHaptics App;
-OpenHaptics* app = &App;
+extern SenseShift App;
+SenseShift* app = &App;
 
 class TestOutput : public OH::AbstractActuator {
  private:

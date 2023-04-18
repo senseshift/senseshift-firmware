@@ -1,6 +1,6 @@
 #include "config/all.h"
 
-#include "openhaptics.h"
+#include "senseshift.h"
 
 #ifdef ARDUINO
 #include <Arduino.h>
@@ -8,11 +8,11 @@
 
 #include <logging.hpp>
 
-OpenHaptics::OpenHaptics() {
+SenseShift::SenseShift() {
   this->pHapticBody = new OH::HapticBody();
 }
 
-void OpenHaptics::postEvent(const OH::IEvent* event) {
+void SenseShift::postEvent(const OH::IEvent* event) {
   log_i("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
 
   for (auto* listener : this->eventListeners) {
@@ -22,6 +22,6 @@ void OpenHaptics::postEvent(const OH::IEvent* event) {
   delete event;
 }
 
-void OpenHaptics::addEventListener(const OH::IEventListener* listener) {
+void SenseShift::addEventListener(const OH::IEventListener* listener) {
   this->eventListeners.push_back(listener);
 }
