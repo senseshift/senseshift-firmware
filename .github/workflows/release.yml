@@ -25,6 +25,7 @@ jobs:
           - bhaptics_tactosyf_foot_left
           - bhaptics_tactosyf_foot_right
           - bhaptics_tactal
+          - bhaptics_tactvisor
           - bhaptics_tactglove_left
           - bhaptics_tactglove_right
         battery_flag:
