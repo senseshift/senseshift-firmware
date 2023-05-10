@@ -30,6 +30,7 @@ jobs:
           - bhaptics_tactosyh_hand_right
           - bhaptics_tactosyf_foot_right
           - bhaptics_tactal
+          - bhaptics_tactvisor
           - bhaptics_tactglove_right
         battery_flag: [ BATTERY_ENABLED=true ]
         serial_plotter_flag: [ SERIAL_PLOTTER=false ]
