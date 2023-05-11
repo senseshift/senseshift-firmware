@@ -102,7 +102,7 @@ namespace OH
       };
 
       void resetCalibration() override {
-        calibrator.reset();
+        calibrator->reset();
       }
   };
 } // namespace OH

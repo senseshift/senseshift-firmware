@@ -1,0 +1,3 @@
+#pragma once
+
+#define OPENGLOVES_FINGERS_TASK_PRIORITY 1
