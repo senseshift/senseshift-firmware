@@ -39,7 +39,7 @@ using namespace OpenGloves;
   auto* fingerPinky = new FingerSensor(PIN_FINGER_PINKY, FINGER_PINKY_INVERT, new CALIBRATION_CURL());
 #endif
 
-IFinger* fingers[FINGER_COUNT] = {
+FingerSensor* fingers[FINGER_COUNT] = {
 #if FINGER_THUMB_ENABLED
   fingerThumb,
 #endif
@@ -59,7 +59,7 @@ IFinger* fingers[FINGER_COUNT] = {
 
 #pragma endregion
 
-OH::JoystickAxisSensor* joystick[] = {
+OH::JoystickAxisSensor* joystick[JOYSTICK_COUNT] = {
 #if JOYSTICK_ENABLED
   new OH::JoystickAxisSensor(PIN_JOYSTICK_X, JOYSTICK_DEADZONE, JOYSTICK_X_INVERT),
   new OH::JoystickAxisSensor(PIN_JOYSTICK_Y, JOYSTICK_DEADZONE, JOYSTICK_Y_INVERT),
@@ -67,7 +67,13 @@ OH::JoystickAxisSensor* joystick[] = {
 };
 
 void setupMode() {
+  for (int i = 0; i < FINGER_COUNT; i++) {
+    fingers[i]->setup();
+  }
 
+  for (int i = 0; i < JOYSTICK_COUNT; i++) {
+    joystick[i]->setup();
+  }
 }
 
 void loopMode() {

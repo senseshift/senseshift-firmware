@@ -34,6 +34,10 @@ namespace OpenGloves
       FingerSensor(uint8_t pin, bool invert, OH::Calibrator<uint16_t>* calibrator) :
         OH::CalibratedSensor<uint16_t>(calibrator),
         pin(pin), invert(invert) {};
+
+      void setup(void) {
+        pinMode(this->pin, INPUT);
+      };
   };
 
   // TODO: add splay finger sensor

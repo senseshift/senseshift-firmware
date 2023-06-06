@@ -33,5 +33,9 @@ namespace OH {
 
     public:
       JoystickAxisSensor(uint8_t pin, float dead_zone, bool invert = false) : pin(pin), dead_zone(dead_zone), invert(invert) {}
+
+      void setup(void) {
+        pinMode(this->pin, INPUT);
+      };
   };
 }; // namespace OH
