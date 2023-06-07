@@ -19,7 +19,7 @@ class SenseShift final : public OH::IEventDispatcher
   OH::HapticBody* pHapticBody;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  OH::AbstractBattery* battery;
+  OH::BatterySensor* battery;
 #endif
 
  public:

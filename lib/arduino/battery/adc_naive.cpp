@@ -2,10 +2,15 @@
 
 #include <Arduino.h>
 
-void OH::ADCNaiveBattery::setup() {
-  pinMode(this->pin, INPUT);
-}
+namespace OH
+{
+  void ADCNaiveBattery::setup() {
+    pinMode(this->pin, INPUT);
+  }
 
-uint8_t OH::ADCNaiveBattery::updateValue() {
-  return map(analogRead(this->pin), 0.0f, 4095.0f, 0, 255);
-}
+  BatteryState ADCNaiveBattery::getValue() {
+    return {
+      .level = map(analogRead(this->pin), 0.0f, 4095.0f, 0, 255)
+    };
+  }
+} // namespace OH
