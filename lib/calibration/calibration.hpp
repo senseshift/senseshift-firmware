@@ -54,6 +54,14 @@ namespace OH {
         return (output_min + output_max) / 2.0f;
       }
 
+      if (input < value_min) {
+        return output_min;
+      }
+
+      if (input > value_max) {
+        return output_max;
+      }
+
       // Map the input range to the output range.
       T output = accurateMap(input, value_min, value_max, output_min, output_max);
 
