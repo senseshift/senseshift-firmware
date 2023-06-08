@@ -121,7 +121,7 @@ jobs:
           pio pkg update --global
 
       - name: Install libs
-        run: pio lib -e ${{matrix.target}} install
+        run: pio pkg install -e ${{matrix.target}}
 
       - name: Change memory segments
         if: matrix.coverage
@@ -196,7 +196,7 @@ jobs:
           pio pkg update --global
 
       - name: Install libs
-        run: pio lib -e ${{matrix.target}} install
+        run: pio pkg install -e ${{matrix.target}}
 
       - name: Run Unit Tests
         run: pio test -e ${{matrix.target}}
