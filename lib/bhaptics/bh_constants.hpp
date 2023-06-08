@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(ARDUINO_ARCH_ESP32)
+#if defined(ESP32)
   #include <BLEUUID.h>
 #endif
 

@@ -1,4 +1,5 @@
 #include "battery/ina219.hpp"
+#include <utility.hpp>
 
 namespace OH {
   void OH::INA219_Battery::setup() {
@@ -15,7 +16,7 @@ namespace OH {
     auto batteryPercentage = (batteryVoltage - 3.0) / 0.96;
 
     return {
-      map(batteryPercentage, 0.0f, 1.0f, 0, 255)
+      simpleMap<float>(batteryPercentage, 1.0f, 255.0f);
     };
   }
 }
