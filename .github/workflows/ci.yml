@@ -77,11 +77,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: actions/cache@v3
+      - name: Cache PlatformIO
+        uses: actions/cache@v3
         with:
-          path: ~/.platformio/.cache
-          key: ${{ runner.os }}-pio-${{ matrix.target }}
+          path: ~/.platformio
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
       - name: Set up Python
@@ -176,8 +178,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.platformio
-          key: ${{ runner.os }}-pio-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}
             ${{ runner.os }}-pio-
 
       - name: Set up Python
@@ -191,6 +194,9 @@ jobs:
           pip install --upgrade platformio
           pio upgrade --dev
           pio pkg update --global
+
+      - name: Install libs
+        run: pio lib -e ${{matrix.target}} install
 
       - name: Run Unit Tests
         run: pio test -e ${{matrix.target}}

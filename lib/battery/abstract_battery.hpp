@@ -1,7 +1,8 @@
 #pragma once
 
-#include "sensor.hpp"
-#include "events.hpp"
+#include <sensor.hpp>
+#include <task.hpp>
+#include <events.hpp>
 
 #include <stdint.h>
 
@@ -10,42 +11,70 @@
 #endif
 
 namespace OH {
+  /**
+   * Tasked sensor decorator
+   */
+  template <typename _Tp>
+  class TaskedSensor : public Task<TaskedSensor<_Tp>>, public MemoizedSensor<_Tp> {
+    friend class Task<TaskedSensor<_Tp>>;
+
+    private:
+      virtual void run(void) {
+        while (true) {
+          this->updateValue();
+          delay(this->rate);
+        }
+      };
+
+    protected:
+      uint32_t rate;
+
+    public:
+      TaskedSensor(ISensor<_Tp>* sensor, TaskConfig taskConfig, uint32_t rate)
+        : MemoizedSensor<_Tp>(sensor), Task<TaskedSensor<_Tp>>(taskConfig), rate(rate) {};
+
+      void begin() override {
+        this->setup();
+        this->Task<TaskedSensor<_Tp>>::begin();
+      };
+  };
+
+  struct BatteryState {
+    uint8_t level;
+  };
+
   class BatteryLevelEvent : public IEvent
   {
    public:
-    const uint8_t level;
-    BatteryLevelEvent(const uint8_t level): IEvent(OH_EVENT_BATTERY_LEVEL), level(level) {};
+    const BatteryState state;
+    BatteryLevelEvent(const BatteryState state): IEvent(OH_EVENT_BATTERY_LEVEL), state(state) {};
   };
 
   struct BatteryConfig {
     uint sampleRate;
   };
 
-  class AbstractBattery : public ThrottledSensor<uint8_t> {
-   friend class Task<ThrottledSensor<uint8_t>>;
-   friend class ThrottledSensor<uint8_t>;
-
-   private:
-    void run(void) override;
-   protected:
-    IEventDispatcher* eventDispatcher;
-
-    virtual void setup(void) {};
-    uint8_t updateValue() override;
-
-   public:
-    AbstractBattery(BatteryConfig config, IEventDispatcher* eventDispatcher, TaskConfig taskConfig) : ThrottledSensor<uint8_t>(taskConfig, config.sampleRate), eventDispatcher(eventDispatcher) {};
-    void begin() override {
-      this->setup();
-      ThrottledSensor<uint8_t>::begin();
-    };
-  };
-
   /**
-   * Interface for components, that are connected to a battery
+   * Abstract battery sensor
    */
-  class IBatteryConnected {
-   public:
-    virtual AbstractBattery* getBattery() = 0;
+  typedef ISensor<BatteryState> IBatterySensor;
+
+  class BatterySensor : public TaskedSensor<BatteryState> {
+    friend class Task<TaskedSensor<BatteryState>>;
+    friend class TaskedSensor<BatteryState>;
+
+    private:
+      IEventDispatcher* eventDispatcher;
+    public:
+      BatterySensor(IBatterySensor* sensor, IEventDispatcher* eventDispatcher, BatteryConfig config, TaskConfig taskConfig)
+        : TaskedSensor<BatteryState>(sensor, taskConfig, config.sampleRate), eventDispatcher(eventDispatcher) {};
+
+      void run() override {
+        while (true) {
+          this->updateValue();
+          this->eventDispatcher->postEvent(new BatteryLevelEvent(this->value));
+          delay(this->rate);
+        }
+      }
   };
 }  // namespace OH
