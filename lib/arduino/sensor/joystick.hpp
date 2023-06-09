@@ -5,11 +5,14 @@
 #include <Arduino.h>
 
 namespace OH {
-  class JoystickAxisSensor : public ISensor<uint16_t> {
+  /**
+   * Joystick axis sensor decorator
+   */
+  template <typename _Tp>
+  class JoystickAxisSensor : public ISensor<_Tp> {
     private:
-      uint8_t pin;
+      ISensor<_Tp>* sensor;
       float dead_zone;
-      bool invert;
 
       int filterDeadZone(int in) {
         // This function clamps the input to the center of the range if
@@ -19,23 +22,17 @@ namespace OH {
         return abs(center - in) < dead_zone * ANALOG_MAX ? center : in;
       }
 
-    protected:
-      uint16_t getValue(void) override {
-        auto value = analogRead(this->pin);
-        value = this->filterDeadZone(value);
-
-        if (this->invert) {
-          value = ANALOG_MAX - value;
-        }
-
-        return value;
-      }
-
     public:
-      JoystickAxisSensor(uint8_t pin, float dead_zone, bool invert = false) : pin(pin), dead_zone(dead_zone), invert(invert) {}
+      JoystickAxisSensor(ISensor<_Tp>* sensor, float dead_zone) : sensor(sensor), dead_zone(dead_zone) {};
 
       void setup(void) {
-        pinMode(this->pin, INPUT);
+        this->sensor->setup();
       };
+
+      uint16_t getValue(void) override {
+        auto value = this->sensor->getValue();
+        value = this->filterDeadZone(value);
+        return value;
+      }
   };
 }; // namespace OH

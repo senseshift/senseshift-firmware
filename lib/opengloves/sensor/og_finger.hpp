@@ -2,6 +2,7 @@
 
 #include <sensor.hpp>
 #include <calibration.hpp>
+#include <opengloves_protocol.hpp>
 
 #include <Arduino.h>
 
@@ -11,33 +12,14 @@ namespace OpenGloves
     //
   };
 
-  class FingerSensor : public IFinger, public OH::CalibratedSensor<uint16_t>
+  class FingerSensor : public IFinger, public OH::CalibratedSensor<uint16_t>, public EncodedInput
   {
-    private:
-      uint8_t pin;
-      bool invert;
+   private:
+    EncodedInput::Type type;
 
-    protected:
-      uint16_t updateValue(void) override {
-        auto value = analogRead(this->pin);
-
-        if (this->invert) {
-          value = ANALOG_MAX - value;
-        }
-
-        // TODO: add median filter
-
-        return value;
-      };
-
-    public:
-      FingerSensor(uint8_t pin, bool invert, OH::Calibrator<uint16_t>* calibrator) :
-        OH::CalibratedSensor<uint16_t>(calibrator),
-        pin(pin), invert(invert) {};
-
-      void setup(void) {
-        pinMode(this->pin, INPUT);
-      };
+   public:
+    FingerSensor(ISensor<uint16_t>* sensor, OH::Calibrator<uint16_t>* calibrator, EncodedInput::Type type)
+      : CalibratedSensor<uint16_t>(sensor, calibrator), type(type) {}
   };
 
   // TODO: add splay finger sensor
