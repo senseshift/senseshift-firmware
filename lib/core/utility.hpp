@@ -1,5 +1,6 @@
 #pragma once
 
+#include <logging.hpp>
 #include <algorithm>
 #include <iterator>
 

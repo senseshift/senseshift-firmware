@@ -1,25 +1,48 @@
 #pragma once
 
-#include <sensor.hpp>
-#include <calibration.hpp>
-#include <opengloves_protocol.hpp>
-
-#include <Arduino.h>
+#include "og_sensor.hpp"
 
 namespace OpenGloves
 {
-  struct IFinger {
-    //
+  class IFinger : public ICalibratedEncodedSensor, public OH::MemoizedSensor<uint16_t> {
+    public :
+      IFinger(OH::CalibratedSensor<uint16_t>* sensor, EncodedInput::Type type)
+        : ICalibratedEncodedSensor(type), OH::MemoizedSensor<uint16_t>(sensor) { };
   };
 
-  class FingerSensor : public IFinger, public OH::CalibratedSensor<uint16_t>, public EncodedInput
+  class FingerSensor : public IFinger
   {
-   private:
-    EncodedInput::Type type;
-
    public:
-    FingerSensor(ISensor<uint16_t>* sensor, OH::Calibrator<uint16_t>* calibrator, EncodedInput::Type type)
-      : CalibratedSensor<uint16_t>(sensor, calibrator), type(type) {}
+    FingerSensor(OH::CalibratedSensor<uint16_t>* sensor, EncodedInput::Type type) : IFinger(sensor, type) { };
+
+    void setup() override {
+      this->sensor->setup();
+    }
+
+    void updateValue() override {
+      this->value = this->sensor->getValue();
+    }
+
+    void resetCalibration() override {
+      static_cast<OH::CalibratedSensor<uint16_t>*>(this->sensor)->resetCalibration();
+    }
+
+    void enableCalibration() override {
+      static_cast<OH::CalibratedSensor<uint16_t>*>(this->sensor)->enableCalibration();
+    }
+
+    void disableCalibration() override {
+      static_cast<OH::CalibratedSensor<uint16_t>*>(this->sensor)->disableCalibration();
+    }
+
+    size_t getEncodedSize() const override {
+      // Encode string size = AXXXX + '\0'
+      return 6;
+    }
+
+    int encode(char* buffer) const override {
+      return snprintf(buffer, this->getEncodedSize(), "%c%04d", this->getType(), this->value);
+    }
   };
 
   // TODO: add splay finger sensor

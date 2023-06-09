@@ -9,19 +9,19 @@
 
 namespace OH {
   class Calibrated {
+    protected:
+      bool calibrate = false;
+
     public:
       virtual void resetCalibration() = 0;
 
-      virtual void enableCalibration() {
+      void enableCalibration() {
         calibrate = true;
       }
 
-      virtual void disableCalibration() {
+      void disableCalibration() {
         calibrate = false;
       }
-
-    protected:
-      bool calibrate;
   };
 
   template<typename T>
@@ -54,11 +54,11 @@ namespace OH {
         return (output_min + output_max) / 2.0f;
       }
 
-      if (input < value_min) {
+      if (input <= value_min) {
         return output_min;
       }
 
-      if (input > value_max) {
+      if (input >= value_max) {
         return output_max;
       }
 
