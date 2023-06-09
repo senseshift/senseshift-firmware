@@ -77,7 +77,9 @@ namespace OH {
   template<typename _Tp, _Tp sensor_max, _Tp driver_max_deviation, _Tp output_min, _Tp output_max>
   class CenterPointDeviationCalibrator : public Calibrator<_Tp> {
   public:
-    CenterPointDeviationCalibrator() : range_min(sensor_max), range_max(0) {}
+    CenterPointDeviationCalibrator() : range_min(sensor_max), range_max(0) {
+      #warning "CenterPointDeviationCalibrator is untested and may not work as expected."
+    }
 
     void reset() {
       range_min = sensor_max;
@@ -95,13 +97,13 @@ namespace OH {
       _Tp center = (range_min + range_max) / 2.0f;
 
       // Map the input to the sensor range of motion.
-      _Tp output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
+      int output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
 
       // Find the deviation from the center and constrain it to the maximum that the driver supports.
       output = constrain(output - center, -driver_max_deviation, driver_max_deviation);
 
       // Finally map the deviation from the center back to the output range.
-      return accurateMap<int>(output, -driver_max_deviation, driver_max_deviation, output_min, output_max);
+      return (_Tp) accurateMap<int>(output, -driver_max_deviation, driver_max_deviation, output_min, output_max);
     }
 
   private:
@@ -120,7 +122,7 @@ namespace OH {
       _Tp center = sensor_max / 2.0f;
 
       // Map the input to the sensor range of motion.
-      _Tp output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
+      int output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
 
       // Find the deviation from the center and constrain it to the maximum that the driver supports.
       output = constrain(output - center, -driver_max_deviation, driver_max_deviation);
