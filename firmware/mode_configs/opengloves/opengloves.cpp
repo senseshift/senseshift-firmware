@@ -6,7 +6,9 @@
 
 #include <sensor/og_finger.hpp>
 
+#ifndef CALIBRATION_CURL
 #define CALIBRATION_CURL OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>
+#endif
 
 #define FINGER_THUMB_ENABLED (PIN_FINGER_THUMB != -1)
 #define FINGER_INDEX_ENABLED (PIN_FINGER_INDEX != -1)
