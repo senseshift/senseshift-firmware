@@ -6,14 +6,14 @@ namespace OpenGloves
 {
   class IFinger : public ICalibratedEncodedSensor, public OH::MemoizedSensor<uint16_t> {
     public :
-      IFinger(OH::CalibratedSensor<uint16_t>* sensor, EncodedInput::Type type)
+      IFinger(OH::CalibratedSensor<uint16_t>* sensor, IEncodedInput::Type type)
         : ICalibratedEncodedSensor(type), OH::MemoizedSensor<uint16_t>(sensor) { };
   };
 
   class FingerSensor : public IFinger
   {
    public:
-    FingerSensor(OH::CalibratedSensor<uint16_t>* sensor, EncodedInput::Type type) : IFinger(sensor, type) { };
+    FingerSensor(OH::CalibratedSensor<uint16_t>* sensor, IEncodedInput::Type type) : IFinger(sensor, type) { };
 
     void setup() override {
       this->sensor->setup();
