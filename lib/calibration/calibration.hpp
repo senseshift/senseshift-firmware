@@ -8,18 +8,24 @@
 #include <utility.hpp>
 
 namespace OH {
-  class Calibrated {
+  struct ICalibrated {
+    virtual void resetCalibration() = 0;
+    virtual void enableCalibration() = 0;
+    virtual void disableCalibration() = 0;
+  };
+
+  class Calibrated : public ICalibrated {
     protected:
       bool calibrate = false;
 
     public:
       virtual void resetCalibration() = 0;
 
-      void enableCalibration() {
+      void enableCalibration() override {
         calibrate = true;
       }
 
-      void disableCalibration() {
+      void disableCalibration() override {
         calibrate = false;
       }
   };

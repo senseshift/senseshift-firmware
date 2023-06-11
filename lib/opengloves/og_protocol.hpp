@@ -28,24 +28,23 @@ namespace OpenGloves
         return this->type;
       }
 
-      virtual size_t getEncodedSize() const = 0;
-      virtual int encode(char* buffer) const = 0;
-
     private:
       Type type;
   };
 
-  class IEncodedSensor : public IEncodedInput {
+  class IStringEncodedSensor : public IEncodedInput {
     public:
-      IEncodedSensor(Type type) : IEncodedInput(type) { };
+      IStringEncodedSensor(Type type) : IEncodedInput(type) { };
 
       virtual void setup() = 0;
       virtual void updateValue() = 0;
+
+      virtual size_t encodeString(char* buffer) = 0;
   };
 
   class ICommunication {
     public:
       virtual void setup() = 0;
-      virtual void send(std::vector<IEncodedSensor*> sensors) = 0;
+      virtual void send(std::vector<IStringEncodedSensor*> sensors) = 0;
   };
 } // namespace OpenGloves

@@ -29,40 +29,40 @@ using namespace OpenGloves;
 #pragma region FingerSensor
 
 #if FINGER_THUMB_ENABLED
-  auto* fingerThumb = FINGER_CLASS(IEncodedInput::Type::THUMB, PIN_FINGER_THUMB, FINGER_THUMB_INVERT, CALIBRATION_CURL);
+  auto* fingerThumbCurl = FINGER_CLASS(IEncodedInput::Type::THUMB, PIN_FINGER_THUMB, FINGER_THUMB_INVERT, CALIBRATION_CURL);
 #endif
 
 #if FINGER_INDEX_ENABLED
-  auto* fingerIndex = FINGER_CLASS(IEncodedInput::Type::INDEX, PIN_FINGER_INDEX, FINGER_INDEX_INVERT, CALIBRATION_CURL);
+  auto* fingerIndexCurl = FINGER_CLASS(IEncodedInput::Type::INDEX, PIN_FINGER_INDEX, FINGER_INDEX_INVERT, CALIBRATION_CURL);
 #endif
 
 #if FINGER_MIDDLE_ENABLED
-  auto* fingerMiddle = FINGER_CLASS(IEncodedInput::Type::MIDDLE, PIN_FINGER_MIDDLE, FINGER_MIDDLE_INVERT, CALIBRATION_CURL);
+  auto* fingerMiddleCurl = FINGER_CLASS(IEncodedInput::Type::MIDDLE, PIN_FINGER_MIDDLE, FINGER_MIDDLE_INVERT, CALIBRATION_CURL);
 #endif
 
 #if FINGER_RING_ENABLED
-  auto* fingerRing = FINGER_CLASS(IEncodedInput::Type::RING, PIN_FINGER_RING, FINGER_RING_INVERT, CALIBRATION_CURL);
+  auto* fingerRingCurl = FINGER_CLASS(IEncodedInput::Type::RING, PIN_FINGER_RING, FINGER_RING_INVERT, CALIBRATION_CURL);
 #endif
 
 #if FINGER_PINKY_ENABLED
-  auto* fingerPinky = FINGER_CLASS(IEncodedInput::Type::PINKY, PIN_FINGER_PINKY, FINGER_PINKY_INVERT, CALIBRATION_CURL);
+  auto* fingerPinkyCurl = FINGER_CLASS(IEncodedInput::Type::PINKY, PIN_FINGER_PINKY, FINGER_PINKY_INVERT, CALIBRATION_CURL);
 #endif
 
 FingerSensor* fingers[FINGER_COUNT] = {
 #if FINGER_THUMB_ENABLED
-  fingerThumb,
+  fingerThumbCurl,
 #endif
 #if FINGER_INDEX_ENABLED
-  fingerIndex,
+  fingerIndexCurl,
 #endif
 #if FINGER_MIDDLE_ENABLED
-  fingerMiddle,
+  fingerMiddleCurl,
 #endif
 #if FINGER_RING_ENABLED
-  fingerRing,
+  fingerRingCurl,
 #endif
 #if FINGER_PINKY_ENABLED
-  fingerPinky,
+  fingerPinkyCurl,
 #endif
 };
 
@@ -75,28 +75,37 @@ OH::MemoizedSensor<uint16_t>* joystick[JOYSTICK_COUNT] = {
 #endif
 };
 
-std::vector<IEncodedSensor*> inputs = std::vector<IEncodedSensor*>();
+std::vector<IStringEncodedSensor*> inputs = std::vector<IStringEncodedSensor*>();
+std::vector<OH::ICalibrated*> calibrated = std::vector<OH::ICalibrated*>();
 
 auto communication = new SerialCommunication(&Serial);
 
 void setupMode() {
-  communication->setup();
-
   for (size_t i = 0; i < FINGER_COUNT; i++) {
     auto* finger = fingers[i];
-    inputs.push_back(finger);
     finger->setup();
+
+    #if defined(CALIBRATION_ALWAYS_CALIBRATE) && CALIBRATION_ALWAYS_CALIBRATE
+      finger->enableCalibration();
+    #endif
+
+    inputs.push_back(finger);
+    calibrated.push_back(finger);
   }
 
   for (size_t i = 0; i < JOYSTICK_COUNT; i++) {
-    joystick[i]->setup();
+    auto* axis = joystick[i];
+    axis->setup();
   }
+
+  communication->setup();
 }
 
 void loopMode() {
   // update all sensor values
   for (size_t i = 0; i < inputs.size(); i++) {
-    inputs[i]->updateValue();
+    auto* input = inputs[i];
+    input->updateValue();
   }
 
   // send all sensor values
