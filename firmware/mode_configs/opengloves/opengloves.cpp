@@ -22,7 +22,7 @@
 #define JOYSTICK_ENABLED (PIN_JOYSTICK_X != -1 && PIN_JOYSTICK_Y != -1)
 #define JOYSTICK_COUNT (JOYSTICK_ENABLED ? 2 : 0)
 
-#define JOYSTICK_CLASS(type, pin, invert, deadzone) new OH::MemoizedSensor<uint16_t>(new OH::JoystickAxisSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), deadzone))
+#define JOYSTICK_CLASS(type, pin, invert, deadzone) new StringEncodedMemoizedSensor<uint16_t>(new OH::JoystickAxisSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), deadzone), type)
 
 using namespace OpenGloves;
 
@@ -68,7 +68,7 @@ FingerSensor* fingers[FINGER_COUNT] = {
 
 #pragma endregion
 
-OH::MemoizedSensor<uint16_t>* joystick[JOYSTICK_COUNT] = {
+StringEncodedMemoizedSensor<uint16_t>* joystick[JOYSTICK_COUNT] = {
 #if JOYSTICK_ENABLED
   JOYSTICK_CLASS(IEncodedInput::Type::JOY_X, PIN_JOYSTICK_X, JOYSTICK_X_INVERT, JOYSTICK_DEADZONE),
   JOYSTICK_CLASS(IEncodedInput::Type::JOY_Y, PIN_JOYSTICK_Y, JOYSTICK_Y_INVERT, JOYSTICK_DEADZONE),
@@ -96,6 +96,8 @@ void setupMode() {
   for (size_t i = 0; i < JOYSTICK_COUNT; i++) {
     auto* axis = joystick[i];
     axis->setup();
+
+    inputs.push_back(axis);
   }
 
   communication->setup();

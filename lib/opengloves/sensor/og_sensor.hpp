@@ -20,20 +20,33 @@ namespace OpenGloves
       this->value = this->sensor->getValue();
     }
 
-    size_t encodeString(char* buffer) override;
+    size_t getEncodedLength() const override;
+
+    size_t encodeString(char* buffer) const override;
   };
 
   template <>
-  size_t StringEncodedMemoizedSensor<uint16_t>::encodeString(char* buffer) {
-    return snprintf(buffer, 6, "%c%d", this->getType(), this->getValue());
+  size_t StringEncodedMemoizedSensor<uint16_t>::getEncodedLength() const {
+    return 6;
   }
 
   template <>
-  size_t StringEncodedMemoizedSensor<bool>::encodeString(char* buffer) {
+  size_t StringEncodedMemoizedSensor<uint16_t>::encodeString(char* buffer) const {
+    // Format as "Axxxxx", where A is the type and xxxxx is the value without leading zeros.
+    return snprintf(buffer, this->getEncodedLength(), "%c%d", this->getType(), this->value);
+  }
+
+  template <>
+  size_t StringEncodedMemoizedSensor<bool>::getEncodedLength() const {
+    return 1;
+  }
+
+  template <>
+  size_t StringEncodedMemoizedSensor<bool>::encodeString(char* buffer) const {
     if (value) {
       buffer[0] = this->getType();
     }
-    return value ? 1 : 0;
+    return value ? this->getEncodedLength() : 0;
   }
 
 } // namespace OpenGloves

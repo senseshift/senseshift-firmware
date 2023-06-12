@@ -39,12 +39,13 @@ namespace OpenGloves
       virtual void setup() = 0;
       virtual void updateValue() = 0;
 
-      virtual size_t encodeString(char* buffer) = 0;
+      virtual size_t getEncodedLength() const = 0;
+      virtual size_t encodeString(char* buffer) const = 0;
   };
 
   class ICommunication {
     public:
       virtual void setup() = 0;
-      virtual void send(std::vector<IStringEncodedSensor*> sensors) = 0;
+      virtual void send(std::vector<IStringEncodedSensor*> &sensors) = 0;
   };
 } // namespace OpenGloves

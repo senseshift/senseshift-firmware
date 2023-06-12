@@ -17,14 +17,14 @@ namespace OpenGloves
         this->serial->begin(115200);
       }
 
-      void send(std::vector<IStringEncodedSensor*> sensors) override {
+      void send(std::vector<IStringEncodedSensor*> &sensors) override {
         // Encode all of the sensors into a single string.
         size_t length = encodeAll(buffer, sensors);
         // Send the encoded string over serial.
         this->serial->write(buffer, length);
       }
 
-      static size_t encodeAll(char* buffer, std::vector<IStringEncodedSensor*> sensors) {
+      static size_t encodeAll(char* buffer, std::vector<IStringEncodedSensor*> &sensors) {
         size_t offset = 0;
         // Loop over all of the encoders and encode them to the output string.
         for (size_t i = 0; i < sensors.size(); i++) {
