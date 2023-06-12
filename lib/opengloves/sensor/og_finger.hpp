@@ -4,9 +4,18 @@
 
 namespace OpenGloves
 {
-  class FingerSensor : public StringEncodedMemoizedSensor<uint16_t>, public virtual OH::ICalibrated {
+  class IFinger : public StringEncodedMemoizedSensor<uint16_t>, public virtual OH::ICalibrated {
     public :
-      FingerSensor(OH::CalibratedSensor<uint16_t>* sensor, IEncodedInput::Type type) : StringEncodedMemoizedSensor<uint16_t>(sensor, type) { };
+      IFinger(OH::CalibratedSensor<uint16_t>* sensor, IEncodedInput::Type type) : StringEncodedMemoizedSensor<uint16_t>(sensor, type) { };
+
+      uint16_t getCurl() {
+        return this->getValue();
+      }
+  };
+
+  class FingerSensor : public IFinger {
+    public :
+      FingerSensor(OH::CalibratedSensor<uint16_t>* sensor, IEncodedInput::Type type) : IFinger(sensor, type) { };
 
       void resetCalibration() override {
         static_cast<OH::CalibratedSensor<uint16_t>*>(this->sensor)->resetCalibration();

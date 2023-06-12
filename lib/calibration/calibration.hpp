@@ -31,14 +31,14 @@ namespace OH {
   };
 
   template<typename _Tp>
-  struct Calibrator {
+  struct ICalibrator {
     virtual void reset() = 0;
     virtual void update(_Tp input) = 0;
     virtual _Tp calibrate(_Tp input) const = 0;
   };
 
   template<typename _Tp, _Tp output_min, _Tp output_max>
-  class MinMaxCalibrator : public Calibrator<_Tp> {
+  class MinMaxCalibrator : public ICalibrator<_Tp> {
   public:
     MinMaxCalibrator() : value_min(output_max), value_max(output_min) {}
 
@@ -81,7 +81,7 @@ namespace OH {
   };
 
   template<typename _Tp, _Tp sensor_max, _Tp driver_max_deviation, _Tp output_min, _Tp output_max>
-  class CenterPointDeviationCalibrator : public Calibrator<_Tp> {
+  class CenterPointDeviationCalibrator : public ICalibrator<_Tp> {
   public:
     CenterPointDeviationCalibrator() : range_min(sensor_max), range_max(0) {
       #warning "CenterPointDeviationCalibrator is untested and may not work as expected."
@@ -118,7 +118,7 @@ namespace OH {
   };
 
   template<typename _Tp, _Tp sensor_max, _Tp driver_max_deviation, _Tp output_min, _Tp output_max>
-  class FixedCenterPointDeviationCalibrator : public Calibrator<_Tp> {
+  class FixedCenterPointDeviationCalibrator : public ICalibrator<_Tp> {
   public:
     void reset() {}
     void update(_Tp input) {}

@@ -83,7 +83,7 @@ namespace OH
   class CalibratedSensor : public ISensor<_Tp>, public Calibrated {
     protected:
       ISensor<_Tp>* sensor;
-      Calibrator<_Tp>* calibrator;
+      ICalibrator<_Tp>* calibrator;
 
       _Tp getCalibratedValue() {
         auto value = this->sensor->getValue();
@@ -98,9 +98,9 @@ namespace OH
     public:
       /**
        * @param sensor Sensor to be decorated
-       * @param calibrator Calibrator algorithm to be used
+       * @param calibrator ICalibrator algorithm to be used
        */
-      CalibratedSensor(ISensor<_Tp>* sensor, Calibrator<_Tp>* calibrator) : sensor(sensor), calibrator(calibrator) {};
+      CalibratedSensor(ISensor<_Tp>* sensor, ICalibrator<_Tp>* calibrator) : sensor(sensor), calibrator(calibrator) {};
 
       void setup() override {
         this->sensor->setup();

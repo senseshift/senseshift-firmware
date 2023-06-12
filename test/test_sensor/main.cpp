@@ -3,7 +3,7 @@
 
 using namespace OH;
 
-class TestSensor : public ISensor<int> {
+class TestAnalogSensor : public ISensor<int> {
  private:
   int count = 0;
 
@@ -20,7 +20,7 @@ class TestSensor : public ISensor<int> {
 };
 
 void test_memoized_sensor(void) {
-  auto inner = new TestSensor();
+  auto inner = new TestAnalogSensor();
   auto sensor = new MemoizedSensor<int>(inner);
 
   TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
@@ -36,10 +36,51 @@ void test_memoized_sensor(void) {
   TEST_ASSERT_EQUAL_INT(1, sensor->getValue());
 }
 
+class DummyCalibrator : public ICalibrator<int> {
+  public:
+    uint8_t resetCounter = 0;
+    int calibrated = 0;
+
+    void reset() override {
+      this->resetCounter++;
+      this->calibrated = 0;
+    };
+    void update(int input) override {
+      this->calibrated = input;
+    };
+    int calibrate(int input) const override {
+      return calibrated;
+    };
+};
+
+void test_calibrated_sensor(void) {
+  auto inner = new TestAnalogSensor();
+  auto calibrator = new DummyCalibrator();
+  auto sensor = new CalibratedSensor<int>(inner, calibrator);
+
+  TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+  sensor->setup();
+  TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+  calibrator->update(-1);
+  TEST_ASSERT_EQUAL_INT(-1, sensor->getValue());
+
+  sensor->enableCalibration();
+  TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
+
+  sensor->disableCalibration();
+  TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
+
+  sensor->resetCalibration();
+  TEST_ASSERT_EQUAL_INT(0, sensor->getValue());
+  TEST_ASSERT_EQUAL_INT(1, calibrator->resetCounter);
+}
+
 int process(void) {
   UNITY_BEGIN();
 
   RUN_TEST(test_memoized_sensor);
+  RUN_TEST(test_calibrated_sensor);
 
   return UNITY_END();
 }
