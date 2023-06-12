@@ -4,11 +4,16 @@
 
 namespace OpenGloves
 {
-  class IFinger : public StringEncodedMemoizedSensor<uint16_t>, public virtual OH::ICalibrated {
+  class ICurl {
+    public :
+      virtual uint16_t getCurl() = 0;
+  };
+
+  class IFinger : public StringEncodedMemoizedSensor<uint16_t>, public virtual OH::ICalibrated, public virtual ICurl {
     public :
       IFinger(OH::CalibratedSensor<uint16_t>* sensor, IEncodedInput::Type type) : StringEncodedMemoizedSensor<uint16_t>(sensor, type) { };
 
-      uint16_t getCurl() {
+      uint16_t getCurl() override {
         return this->getValue();
       }
   };

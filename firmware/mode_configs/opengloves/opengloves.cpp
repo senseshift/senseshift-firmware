@@ -5,6 +5,7 @@
 #include <sensor/digital.hpp>
 #include <sensor/joystick.hpp>
 #include <sensor/og_finger.hpp>
+#include <sensor/og_gesture.hpp>
 #include <og_serial_commmunications.hpp>
 
 #ifndef CALIBRATION_CURL
@@ -33,6 +34,20 @@
 #define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && (PIN_BUTTON_PINCH != -1))
 #define BUTTON_COUNT (BUTTON_A_ENABLED + BUTTON_B_ENABLED + BUTTON_MENU_ENABLED + BUTTON_JOYSTICK_ENABLED + BUTTON_CALIBRATE_ENABLED + BUTTON_TRIGGER_ENABLED + BUTTON_GRAB_ENABLED + BUTTON_PINCH_ENABLED)
 #define BUTTON_CLASS(type, pin, invert) new StringEncodedMemoizedSensor<bool>(new OH::DigitalSensor<invert>(pin), type)
+
+#ifndef GESTURE_TRIGGER_THRESHOLD
+#define GESTURE_TRIGGER_THRESHOLD (ANALOG_MAX / 2)
+#endif
+
+#ifndef GESTURE_GRAB_THRESHOLD
+#define GESTURE_GRAB_THRESHOLD (ANALOG_MAX / 2)
+#endif
+
+#ifndef GESTURE_PINCH_THRESHOLD
+#define GESTURE_PINCH_THRESHOLD (ANALOG_MAX / 2)
+#endif
+
+#define GESTURE_CLASS(type, sensor) new StringEncodedMemoizedSensor<bool>(sensor, type)
 
 #ifndef UPDATE_RATE
 #define UPDATE_RATE 90
@@ -98,25 +113,38 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #if BUTTON_A_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::A_BTN, PIN_BUTTON_A, BUTTON_A_INVERT),
 #endif
+
 #if BUTTON_B_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::B_BTN, PIN_BUTTON_B, BUTTON_B_INVERT),
 #endif
+
 #if BUTTON_JOYSTICK_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::JOY_BTN, PIN_BUTTON_JOYSTICK, BUTTON_JOYSTICK_INVERT),
 #endif
+
 #if BUTTON_MENU_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::MENU, PIN_BUTTON_MENU, BUTTON_MENU_INVERT),
 #endif
+
 #if BUTTON_CALIBRATE_ENABLED
   calibrateButton,
 #endif
-#if BUTTON_TRIGGER_ENABLED
+
+#if GESTURE_TRIGGER_ENABLED && FINGER_INDEX_ENABLED
+  GESTURE_CLASS(IEncodedInput::Type::TRIGGER, new TriggerGesture(fingerIndexCurl, GESTURE_TRIGGER_THRESHOLD)),
+#elif BUTTON_TRIGGER_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::TRIGGER, PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT),
 #endif
-#if BUTTON_GRAB_ENABLED
+
+#if GESTURE_GRAB_ENABLED && FINGER_INDEX_ENABLED && FINGER_MIDDLE_ENABLED && FINGER_RING_ENABLED && FINGER_PINKY_ENABLED
+  GESTURE_CLASS(IEncodedInput::Type::GRAB, new GrabGesture(fingerIndexCurl, fingerMiddleCurl, fingerRingCurl, fingerPinkyCurl, GESTURE_GRAB_THRESHOLD)),
+#elif BUTTON_GRAB_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::GRAB, PIN_BUTTON_GRAB, BUTTON_GRAB_INVERT),
 #endif
-#if BUTTON_PINCH_ENABLED
+
+#if GESTURE_PINCH_ENABLED && FINGER_THUMB_ENABLED && FINGER_INDEX_ENABLED
+  GESTURE_CLASS(IEncodedInput::Type::PINCH, new PinchGesture(fingerThumbCurl, fingerIndexCurl, GESTURE_PINCH_THRESHOLD)),
+#elif BUTTON_PINCH_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::PINCH, PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT),
 #endif
 };
