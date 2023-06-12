@@ -26,10 +26,18 @@
 #define BUTTON_A_ENABLED (PIN_BUTTON_A != -1)
 #define BUTTON_B_ENABLED (PIN_BUTTON_B != -1)
 #define BUTTON_MENU_ENABLED (PIN_BUTTON_MENU != -1)
-#define BUTTON_CALIBRATE_ENABLED (PIN_BUTTON_CALIBRATE != -1)
 #define BUTTON_JOYSTICK_ENABLED (JOYSTICK_ENABLED && (PIN_BUTTON_JOYSTICK != -1))
-#define BUTTON_COUNT (BUTTON_A_ENABLED + BUTTON_B_ENABLED + BUTTON_MENU_ENABLED + BUTTON_CALIBRATE_ENABLED + BUTTON_JOYSTICK_ENABLED)
+#define BUTTON_CALIBRATE_ENABLED (PIN_BUTTON_CALIBRATE != -1)
+#define BUTTON_TRIGGER_ENABLED (!GESTURE_TRIGGER_ENABLED && (PIN_BUTTON_TRIGGER != -1))
+#define BUTTON_GRAB_ENABLED (!GESTURE_GRAB_ENABLED && (PIN_BUTTON_GRAB != -1))
+#define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && (PIN_BUTTON_PINCH != -1))
+#define BUTTON_COUNT (BUTTON_A_ENABLED + BUTTON_B_ENABLED + BUTTON_MENU_ENABLED + BUTTON_JOYSTICK_ENABLED + BUTTON_CALIBRATE_ENABLED + BUTTON_TRIGGER_ENABLED + BUTTON_GRAB_ENABLED + BUTTON_PINCH_ENABLED)
 #define BUTTON_CLASS(type, pin, invert) new StringEncodedMemoizedSensor<bool>(new OH::DigitalSensor<invert>(pin), type)
+
+#ifndef UPDATE_RATE
+#define UPDATE_RATE 90
+#endif
+#define UPDATE_INTERVAL (1000 / UPDATE_RATE)
 
 using namespace OpenGloves;
 
@@ -93,14 +101,23 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #if BUTTON_B_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::B_BTN, PIN_BUTTON_B, BUTTON_B_INVERT),
 #endif
-#if BUTTON_MENU_ENABLED
-  BUTTON_CLASS(IEncodedInput::Type::MENU, PIN_BUTTON_MENU, BUTTON_MENU_INVERT),
-#endif
 #if BUTTON_JOYSTICK_ENABLED
   BUTTON_CLASS(IEncodedInput::Type::JOY_BTN, PIN_BUTTON_JOYSTICK, BUTTON_JOYSTICK_INVERT),
 #endif
+#if BUTTON_MENU_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::MENU, PIN_BUTTON_MENU, BUTTON_MENU_INVERT),
+#endif
 #if BUTTON_CALIBRATE_ENABLED
   calibrateButton,
+#endif
+#if BUTTON_TRIGGER_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::TRIGGER, PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT),
+#endif
+#if BUTTON_GRAB_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::GRAB, PIN_BUTTON_GRAB, BUTTON_GRAB_INVERT),
+#endif
+#if BUTTON_PINCH_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::PINCH, PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT),
 #endif
 };
 
@@ -140,6 +157,8 @@ void setupMode() {
 }
 
 void loopMode() {
+  auto now = millis();
+
   // update all sensor values
   for (size_t i = 0; i < inputs.size(); i++) {
     auto* input = inputs[i];
@@ -148,4 +167,9 @@ void loopMode() {
 
   // send all sensor values
   communication->send(inputs);
+
+  auto elapsed = millis() - now;
+  if (elapsed < UPDATE_INTERVAL) {
+    delay(UPDATE_INTERVAL - elapsed);
+  }
 }
