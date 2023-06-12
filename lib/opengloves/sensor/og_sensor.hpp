@@ -9,8 +9,8 @@ namespace OpenGloves
   template <typename _Tp>
   class StringEncodedMemoizedSensor : public IStringEncodedSensor, public OH::MemoizedSensor<_Tp> {
     public:
-      StringEncodedMemoizedSensor(OH::ISensor<uint16_t>* sensor, IEncodedInput::Type type)
-        : IStringEncodedSensor(type), OH::MemoizedSensor<uint16_t>(sensor) { };
+      StringEncodedMemoizedSensor(OH::ISensor<_Tp>* sensor, IEncodedInput::Type type)
+        : IStringEncodedSensor(type), OH::MemoizedSensor<_Tp>(sensor) { };
 
     void setup() override {
       this->sensor->setup();

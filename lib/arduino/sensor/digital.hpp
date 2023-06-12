@@ -12,19 +12,14 @@ namespace OH
   {
    private:
     uint8_t pin;
-    uint8_t _pinMode;
 
    public:
-    DigitalSensor(uint8_t pin, uint8_t pinMode) : pin(pin), _pinMode(pinMode) {
-      // static_assert(
-      //   _pinMode == INPUT || _pinMode == INPUT_PULLUP || _pinMode == INPUT_PULLDOWN,
-      //   "pinMode must be INPUT, INPUT_PULLUP or INPUT_PULLDOWN"
-      // );
+    DigitalSensor(uint8_t pin) : pin(pin) {
     }
 
     void setup(void)
     {
-      pinMode(this->pin, this->_pinMode);
+      pinMode(this->pin, INPUT);
     };
 
     bool getValue(void) override;

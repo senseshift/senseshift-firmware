@@ -2,6 +2,7 @@
 #include <calibration.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
+#include <sensor/digital.hpp>
 #include <sensor/joystick.hpp>
 #include <sensor/og_finger.hpp>
 #include <og_serial_commmunications.hpp>
@@ -16,13 +17,19 @@
 #define FINGER_RING_ENABLED (PIN_FINGER_RING != -1)
 #define FINGER_PINKY_ENABLED (PIN_FINGER_PINKY != -1)
 #define FINGER_COUNT (FINGER_THUMB_ENABLED + FINGER_INDEX_ENABLED + FINGER_MIDDLE_ENABLED + FINGER_RING_ENABLED + FINGER_PINKY_ENABLED)
-
 #define FINGER_CLASS(type, pin, invert, calib) new FingerSensor(new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), new calib()), type)
 
 #define JOYSTICK_ENABLED (PIN_JOYSTICK_X != -1 && PIN_JOYSTICK_Y != -1)
 #define JOYSTICK_COUNT (JOYSTICK_ENABLED ? 2 : 0)
-
 #define JOYSTICK_CLASS(type, pin, invert, deadzone) new StringEncodedMemoizedSensor<uint16_t>(new OH::JoystickAxisSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), deadzone), type)
+
+#define BUTTON_A_ENABLED (PIN_BUTTON_A != -1)
+#define BUTTON_B_ENABLED (PIN_BUTTON_B != -1)
+#define BUTTON_MENU_ENABLED (PIN_BUTTON_MENU != -1)
+#define BUTTON_CALIBRATE_ENABLED (PIN_BUTTON_CALIBRATE != -1)
+#define BUTTON_JOYSTICK_ENABLED (JOYSTICK_ENABLED && (PIN_BUTTON_JOYSTICK != -1))
+#define BUTTON_COUNT (BUTTON_A_ENABLED + BUTTON_B_ENABLED + BUTTON_MENU_ENABLED + BUTTON_CALIBRATE_ENABLED + BUTTON_JOYSTICK_ENABLED)
+#define BUTTON_CLASS(type, pin, invert) new StringEncodedMemoizedSensor<bool>(new OH::DigitalSensor<invert>(pin), type)
 
 using namespace OpenGloves;
 
@@ -75,6 +82,28 @@ StringEncodedMemoizedSensor<uint16_t>* joystick[JOYSTICK_COUNT] = {
 #endif
 };
 
+#if BUTTON_CALIBRATE_ENABLED
+StringEncodedMemoizedSensor<bool>* calibrateButton = BUTTON_CLASS(IEncodedInput::Type::CALIBRATE, PIN_BUTTON_CALIBRATE, BUTTON_CALIBRATE_INVERT);
+#endif
+
+std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEncodedMemoizedSensor<bool>*>{
+#if BUTTON_A_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::A_BTN, PIN_BUTTON_A, BUTTON_A_INVERT),
+#endif
+#if BUTTON_B_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::B_BTN, PIN_BUTTON_B, BUTTON_B_INVERT),
+#endif
+#if BUTTON_MENU_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::MENU, PIN_BUTTON_MENU, BUTTON_MENU_INVERT),
+#endif
+#if BUTTON_JOYSTICK_ENABLED
+  BUTTON_CLASS(IEncodedInput::Type::JOY_BTN, PIN_BUTTON_JOYSTICK, BUTTON_JOYSTICK_INVERT),
+#endif
+#if BUTTON_CALIBRATE_ENABLED
+  calibrateButton,
+#endif
+};
+
 std::vector<IStringEncodedSensor*> inputs = std::vector<IStringEncodedSensor*>();
 std::vector<OH::ICalibrated*> calibrated = std::vector<OH::ICalibrated*>();
 
@@ -98,6 +127,13 @@ void setupMode() {
     axis->setup();
 
     inputs.push_back(axis);
+  }
+
+  for (size_t i = 0; i < BUTTON_COUNT; i++) {
+    auto* button = buttons[i];
+    button->setup();
+
+    inputs.push_back(button);
   }
 
   communication->setup();
