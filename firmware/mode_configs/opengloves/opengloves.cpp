@@ -8,9 +8,18 @@
 #include <sensor/og_gesture.hpp>
 #include <og_serial_commmunications.hpp>
 
+#pragma region Calibration
+
 #ifndef CALIBRATION_CURL
 #define CALIBRATION_CURL OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>
 #endif
+#ifndef CALIBRATION_DURATION
+#define CALIBRATION_DURATION 2000 // duration in milliseconds
+#endif
+
+#pragma endregion
+
+#pragma region Fingers
 
 #define FINGER_THUMB_ENABLED (PIN_FINGER_THUMB != -1)
 #define FINGER_INDEX_ENABLED (PIN_FINGER_INDEX != -1)
@@ -20,9 +29,17 @@
 #define FINGER_COUNT (FINGER_THUMB_ENABLED + FINGER_INDEX_ENABLED + FINGER_MIDDLE_ENABLED + FINGER_RING_ENABLED + FINGER_PINKY_ENABLED)
 #define FINGER_CLASS(type, pin, invert, calib) new FingerSensor(new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), new calib()), type)
 
+#pragma endregion
+
+#pragma region Joysticks
+
 #define JOYSTICK_ENABLED (PIN_JOYSTICK_X != -1 && PIN_JOYSTICK_Y != -1)
 #define JOYSTICK_COUNT (JOYSTICK_ENABLED ? 2 : 0)
 #define JOYSTICK_CLASS(type, pin, invert, deadzone) new StringEncodedMemoizedSensor<uint16_t>(new OH::JoystickAxisSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), deadzone), type)
+
+#pragma endregion
+
+#pragma region Buttons
 
 #define BUTTON_A_ENABLED (PIN_BUTTON_A != -1)
 #define BUTTON_B_ENABLED (PIN_BUTTON_B != -1)
@@ -34,6 +51,10 @@
 #define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && (PIN_BUTTON_PINCH != -1))
 #define BUTTON_COUNT (BUTTON_A_ENABLED + BUTTON_B_ENABLED + BUTTON_MENU_ENABLED + BUTTON_JOYSTICK_ENABLED + BUTTON_CALIBRATE_ENABLED + BUTTON_TRIGGER_ENABLED + BUTTON_GRAB_ENABLED + BUTTON_PINCH_ENABLED)
 #define BUTTON_CLASS(type, pin, invert) new StringEncodedMemoizedSensor<bool>(new OH::DigitalSensor<invert>(pin), type)
+
+#pragma endregion
+
+#pragma region Gestures
 
 #ifndef GESTURE_TRIGGER_THRESHOLD
 #define GESTURE_TRIGGER_THRESHOLD (ANALOG_MAX / 2)
@@ -48,6 +69,8 @@
 #endif
 
 #define GESTURE_CLASS(type, sensor) new StringEncodedMemoizedSensor<bool>(sensor, type)
+
+#pragma endregion
 
 #ifndef UPDATE_RATE
 #define UPDATE_RATE 90
@@ -150,7 +173,17 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 };
 
 std::vector<IStringEncodedSensor*> inputs = std::vector<IStringEncodedSensor*>();
+
 std::vector<OH::ICalibrated*> calibrated = std::vector<OH::ICalibrated*>();
+unsigned long long calibrationStarted = 0;
+void startCalibration(void) {
+  for (size_t i = 0; i < calibrated.size(); i++) {
+    auto* input = calibrated[i];
+    input->resetCalibration();
+    input->enableCalibration();
+  }
+  calibrationStarted = millis();
+}
 
 auto communication = new SerialCommunication(&Serial);
 
@@ -158,10 +191,6 @@ void setupMode() {
   for (size_t i = 0; i < FINGER_COUNT; i++) {
     auto* finger = fingers[i];
     finger->setup();
-
-    #if defined(CALIBRATION_ALWAYS_CALIBRATE) && CALIBRATION_ALWAYS_CALIBRATE
-      finger->enableCalibration();
-    #endif
 
     inputs.push_back(finger);
     calibrated.push_back(finger);
@@ -181,6 +210,10 @@ void setupMode() {
     inputs.push_back(button);
   }
 
+#if defined(CALIBRATION_ALWAYS_CALIBRATE) && CALIBRATION_ALWAYS_CALIBRATE
+  startCalibration();
+#endif
+
   communication->setup();
 }
 
@@ -192,6 +225,22 @@ void loopMode() {
     auto* input = inputs[i];
     input->updateValue();
   }
+
+#if BUTTON_CALIBRATE_ENABLED
+  if (calibrateButton->getValue() == true) {
+    startCalibration();
+  }
+#endif
+
+#if !CALIBRATION_ALWAYS_CALIBRATE
+  if (calibrationStarted > 0 && now - calibrationStarted > CALIBRATION_DURATION) {
+    for (size_t i = 0; i < calibrated.size(); i++) {
+      auto* input = calibrated[i];
+      input->disableCalibration();
+    }
+    calibrationStarted = 0;
+  }
+#endif
 
   // send all sensor values
   communication->send(inputs);
