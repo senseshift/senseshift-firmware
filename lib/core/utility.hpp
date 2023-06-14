@@ -1,5 +1,6 @@
 #pragma once
 
+#include <logging.hpp>
 #include <algorithm>
 #include <iterator>
 
@@ -30,8 +31,15 @@ namespace OH {
   };
 
   template <typename _Tp>
-  constexpr inline _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max) {
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  constexpr _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max) {
+    const _Tp run = in_max - in_min;
+    if(run == 0){
+        log_e("map(): Invalid input range, min == max");
+        return (out_min + out_max) / 2;
+    }
+    const _Tp rise = out_max - out_min;
+    const _Tp delta = x - in_min;
+    return (delta * rise) / run + out_min;
   }
 
   // Same as the above, but both mins are 0.

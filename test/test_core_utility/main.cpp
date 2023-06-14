@@ -54,6 +54,8 @@ void test_accurate_map(void) {
   TEST_ASSERT_EQUAL_UINT16(0, accurateMap(2048, 2048, 4095, 0, 255));
   TEST_ASSERT_EQUAL_UINT16(127, accurateMap(3071, 2048, 4095, 0, 255));
   TEST_ASSERT_EQUAL_UINT16(255, accurateMap(4095, 2048, 4095, 0, 255));
+
+  TEST_ASSERT_EQUAL_UINT16(2047, accurateMap(343, 343, 343, 0, 4095));
 }
 
 void test_simple_map(void) {

@@ -2,6 +2,7 @@
 
 #include <type_traits>
 
+#include <logging.hpp>
 #include <calibration.hpp>
 
 #if defined(__AVR__)
@@ -27,7 +28,7 @@ namespace OH
    /**
     * Setup the sensor hardware
     */
-    virtual void setup() {};
+    virtual void setup() = 0;
 
     /**
      * Get the current sensor value
@@ -82,16 +83,9 @@ namespace OH
   class CalibratedSensor : public ISensor<_Tp>, public Calibrated {
     protected:
       ISensor<_Tp>* sensor;
-      Calibrator<_Tp>* calibrator;
+      ICalibrator<_Tp>* calibrator;
 
-    public:
-      /**
-       * @param sensor Sensor to be decorated
-       * @param calibrator Calibrator algorithm to be used
-       */
-      CalibratedSensor(ISensor<_Tp>* sensor, Calibrator<_Tp>* calibrator) : sensor(sensor), calibrator(calibrator) {};
-
-      _Tp getValue() override {
+      _Tp getCalibratedValue() {
         auto value = this->sensor->getValue();
 
         if (this->calibrate) {
@@ -99,10 +93,25 @@ namespace OH
         }
 
         return this->calibrator->calibrate(value);
+      }
+
+    public:
+      /**
+       * @param sensor Sensor to be decorated
+       * @param calibrator ICalibrator algorithm to be used
+       */
+      CalibratedSensor(ISensor<_Tp>* sensor, ICalibrator<_Tp>* calibrator) : sensor(sensor), calibrator(calibrator) {};
+
+      void setup() override {
+        this->sensor->setup();
+      };
+
+      _Tp getValue() override {
+        return this->getCalibratedValue();
       };
 
       void resetCalibration() override {
-        calibrator.reset();
-      }
+        this->calibrator->reset();
+      };
   };
 } // namespace OH
