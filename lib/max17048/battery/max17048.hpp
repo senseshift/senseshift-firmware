@@ -5,17 +5,16 @@
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h>
 
 namespace OH {
-  class MAX1704_Battery : public OH::IBatterySensor {
-   private:
-    bool active = false;
-    SFE_MAX1704X* gauge;
+    class MAX1704_Battery : public OH::IBatterySensor {
+      private:
+        bool active = false;
+        SFE_MAX1704X* gauge;
 
-   protected:
+      protected:
+      public:
+        MAX1704_Battery(SFE_MAX1704X* gauge) : gauge(gauge){};
 
-   public:
-    MAX1704_Battery(SFE_MAX1704X* gauge) : gauge(gauge) {};
-
-    void setup() override;
-    BatteryState getValue() override;
-  };
-}
+        void setup() override;
+        BatteryState getValue() override;
+    };
+} // namespace OH

@@ -2,85 +2,71 @@
 
 #include <sensor/og_finger.hpp>
 
-namespace OpenGloves
-{
-  class Gesture : public OH::ISensor<bool> {
+namespace OpenGloves {
+    class Gesture : public OH::ISensor<bool> {};
 
-  };
+    class GrabGesture : public Gesture {
+      private:
+        ICurl* index;
+        ICurl* middle;
+        ICurl* ring;
+        ICurl* pinky;
+        uint16_t threshold;
 
-  class GrabGesture : public Gesture {
-    private:
-      ICurl* index;
-      ICurl* middle;
-      ICurl* ring;
-      ICurl* pinky;
-      uint16_t threshold;
+      public:
+        GrabGesture(ICurl* index, ICurl* middle, ICurl* ring, ICurl* pinky, uint16_t threshold) :
+          index(index), middle(middle), ring(ring), pinky(pinky), threshold(threshold){};
 
-    public:
-      GrabGesture(
-        ICurl* index,
-        ICurl* middle,
-        ICurl* ring,
-        ICurl* pinky,
-        uint16_t threshold
-      ) : index(index), middle(middle), ring(ring), pinky(pinky), threshold(threshold) { };
+        void setup() override{
+            // this->index->setup();
+            // this->middle->setup();
+            // this->ring->setup();
+            // this->pinky->setup();
+        };
 
-      void setup() override {
-        // this->index->setup();
-        // this->middle->setup();
-        // this->ring->setup();
-        // this->pinky->setup();
-      };
+        bool getValue() override
+        {
+            return this->index->getCurl() > this->threshold && this->middle->getCurl() > this->threshold
+                   && this->ring->getCurl() > this->threshold && this->pinky->getCurl() > this->threshold;
+        }
+    };
 
-      bool getValue() override {
-        return this->index->getCurl() > this->threshold
-          && this->middle->getCurl() > this->threshold
-          && this->ring->getCurl() > this->threshold
-          && this->pinky->getCurl() > this->threshold;
-      }
-  };
+    class TriggerGesture : public Gesture {
+      private:
+        ICurl* index;
+        uint16_t threshold;
 
-  class TriggerGesture : public Gesture {
-    private:
-      ICurl* index;
-      uint16_t threshold;
+      public:
+        TriggerGesture(ICurl* index, uint16_t threshold) : index(index), threshold(threshold){};
 
-    public:
-      TriggerGesture(
-        ICurl* index,
-        uint16_t threshold
-      ) : index(index), threshold(threshold) { };
+        void setup() override{
+            // this->index->setup();
+        };
 
-      void setup() override {
-        // this->index->setup();
-      };
+        bool getValue() override
+        {
+            return this->index->getCurl() > this->threshold;
+        }
+    };
 
-      bool getValue() override {
-        return this->index->getCurl() > this->threshold;
-      }
-  };
+    class PinchGesture : public Gesture {
+      private:
+        ICurl* index;
+        ICurl* thumb;
+        uint16_t threshold;
 
-  class PinchGesture : public Gesture {
-    private:
-      ICurl* index;
-      ICurl* thumb;
-      uint16_t threshold;
+      public:
+        PinchGesture(ICurl* index, ICurl* thumb, uint16_t threshold) :
+          index(index), thumb(thumb), threshold(threshold){};
 
-    public:
-      PinchGesture(
-        ICurl* index,
-        ICurl* thumb,
-        uint16_t threshold
-      ) : index(index), thumb(thumb), threshold(threshold) { };
+        void setup() override{
+            // this->index->setup();
+            // this->thumb->setup();
+        };
 
-      void setup() override {
-        // this->index->setup();
-        // this->thumb->setup();
-      };
-
-      bool getValue() override {
-        return this->index->getCurl() > this->threshold
-          && this->thumb->getCurl() > this->threshold;
-      }
-  };
+        bool getValue() override
+        {
+            return this->index->getCurl() > this->threshold && this->thumb->getCurl() > this->threshold;
+        }
+    };
 } // namespace OpenGloves

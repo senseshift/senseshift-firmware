@@ -13,15 +13,15 @@ typedef OH_OUTPUT_COORD_T oh_output_coord_t;
 typedef OH::Point2b oh_output_point_t;
 
 namespace OH {
-  struct OutputData {
-    oh_output_point_t point;
-    oh_output_intensity_t intensity;
-  };
+    struct OutputData {
+        oh_output_point_t point;
+        oh_output_intensity_t intensity;
+    };
 
-  struct OutputState {
-    oh_output_intensity_t intensity;
-  };
-}  // namespace OH
+    struct OutputState {
+        oh_output_intensity_t intensity;
+    };
+} // namespace OH
 
 typedef OH::OutputData oh_output_data_t;
 typedef OH::OutputState oh_output_state_t;
