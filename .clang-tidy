@@ -1,1 +1,1 @@
-Checks: 'bugprone-*,performance-*,readability-*,google-readability-casting,modernize-use-nullptr,cppcoreguidelines-avoid-non-const-global-variables,misc-misplaced-const'
+Checks: 'bugprone-*,clang-analyzer-*,google-*,hicpp-*,misc-*,modernize-*,performance-*,portability-*,readability-*'
