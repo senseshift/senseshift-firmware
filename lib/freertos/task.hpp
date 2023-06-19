@@ -4,7 +4,7 @@
 
 extern "C" void delay(uint32_t ms);
 
-#if defined(ARDUINO_ARCH_ESP32)
+#if defined(ESP32)
 #include <freertos/FreeRTOS.h>   // Include the base FreeRTOS definitions.
 #include <freertos/task.h>       // Include the task definitions.
 

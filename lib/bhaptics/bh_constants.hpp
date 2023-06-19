@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(ARDUINO_ARCH_ESP32)
+#if defined(ESP32)
   #include <BLEUUID.h>
 #endif
 
@@ -155,7 +155,23 @@
   BH_LAYOUT_TACTAL_MAKE_POINT(5, 0), \
 }
 
-#pragma endregion BH_DEVICE_TACTAL
+#pragma endregion BH_DEVICE_TACTVISOR
+
+#pragma region BH_DEVICE_TACTAL
+
+#define BH_LAYOUT_TACTVISOR_SIZE_X 4
+#define BH_LAYOUT_TACTVISOR_SIZE_Y 1
+#define BH_LAYOUT_TACTVISOR_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_Y - 1))
+
+#define BH_LAYOUT_TACTVISOR_SIZE (BH_LAYOUT_TACTVISOR_SIZE_X * BH_LAYOUT_TACTVISOR_SIZE_Y)
+#define BH_LAYOUT_TACTVISOR {           \
+  BH_LAYOUT_TACTVISOR_MAKE_POINT(0, 0), \
+  BH_LAYOUT_TACTVISOR_MAKE_POINT(1, 0), \
+  BH_LAYOUT_TACTVISOR_MAKE_POINT(2, 0), \
+  BH_LAYOUT_TACTVISOR_MAKE_POINT(3, 0), \
+}
+
+#pragma endregion BH_DEVICE_TACTVISOR
 
 #pragma region BH_DEVICE_TACTOSY2
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <utility.hpp>
 #include <abstract_connection.hpp>
 
 #include <bh_constants.hpp>
@@ -65,7 +66,7 @@ namespace BH
     void handleEvent(const OH::IEvent* event) const override {
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
       if (event->eventName == OH_EVENT_BATTERY_LEVEL) {
-        uint16_t level = map(static_cast<const OH::BatteryLevelEvent*>(event)->level, 0, 255, 0, 100);
+        uint16_t level = OH::simpleMap<uint8_t>(static_cast<const OH::BatteryLevelEvent*>(event)->state.level, 255, 100);
 
         this->batteryChar->setValue(level);
         this->batteryChar->notify();

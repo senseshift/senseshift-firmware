@@ -15,7 +15,7 @@ on:
       - '**/*.md'
 
 jobs:
-  build:
+  build-bhaptics:
     name: Build ${{ matrix.target }} on ${{ matrix.os }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.serial_plotter_flag }} -D ${{ matrix.nimble_flag }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -30,6 +30,7 @@ jobs:
           - bhaptics_tactosyh_hand_right
           - bhaptics_tactosyf_foot_right
           - bhaptics_tactal
+          - bhaptics_tactvisor
           - bhaptics_tactglove_right
         battery_flag: [ BATTERY_ENABLED=true ]
         serial_plotter_flag: [ SERIAL_PLOTTER=false ]
@@ -76,11 +77,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: actions/cache@v3
+      - name: Cache PlatformIO
+        uses: actions/cache@v3
         with:
-          path: ~/.platformio/.cache
-          key: ${{ runner.os }}-pio-${{ matrix.target }}
+          path: |
+            ~/.platformio/.cache
+            ./.pio
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
       - name: Set up Python
@@ -118,7 +123,7 @@ jobs:
           pio pkg update --global
 
       - name: Install libs
-        run: pio lib -e ${{matrix.target}} install
+        run: pio pkg install -e ${{matrix.target}}
 
       - name: Change memory segments
         if: matrix.coverage
@@ -144,6 +149,109 @@ jobs:
         with:
           name: lcov.info.${{matrix.target}}
           path: ./build/lcov/lcov.info.${{matrix.target}}
+          retention-days: 5
+
+  build-opengloves:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        target:
+          - opengloves
+        curl_calibration_flag:
+          - CALIBRATION_CURL="OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
+          - CALIBRATION_CURL="OH::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+          - CALIBRATION_CURL="OH::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+        coverage: [ true ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Speedup package installation
+        if: matrix.coverage
+        uses: abbbi/github-actions-tune@v1
+
+      - name: Setup LCOV
+        if: matrix.coverage
+        uses: hrishikesh-kadam/setup-lcov@v1
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.platformio/.cache
+            ./.pio
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-
+            ${{ runner.os }}-pio-
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Enable coverage (non-macOS)
+        if: runner.os != 'macOS' && matrix.coverage
+        run: |
+          sed -i '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
+      - name: Enable coverage (macOS)
+        if: runner.os == 'macOS' && matrix.coverage
+        run: |
+          sed -i '' '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
+
+      - name: Update build flags (non-macOS)
+        if: runner.os != 'macOS'
+        run: |
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
+      - name: Update build flags (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+          pio upgrade --dev
+          pio pkg update --global
+
+      - name: Install libs
+        run: pio pkg install -e ${{matrix.target}}
+
+      - name: Change memory segments
+        if: matrix.coverage
+        run: |
+          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 289888/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+
+      - name: Build
+        run: |
+          echo "::group::platformio.ini"
+          cat platformio.ini
+          echo "::endgroup::"
+          pio run --environment ${{matrix.target}}
+
+      - name: Collect initial coverage
+        if: matrix.coverage
+        run: |
+          mkdir -p ./build/lcov
+          lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{matrix.target}}-${{ hashFiles('platformio.ini') }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
+
+      - name: Upload coverage Artifact
+        uses: actions/upload-artifact@v3
+        if: matrix.coverage
+        with:
+          name: lcov.info.${{matrix.target}}-${{ hashFiles('platformio.ini') }}
+          path: ./build/lcov/lcov.info.${{matrix.target}}-*
           retention-days: 5
 
   test:
@@ -174,9 +282,12 @@ jobs:
       - name: Cache PlatformIO
         uses: actions/cache@v3
         with:
-          path: ~/.platformio
-          key: ${{ runner.os }}-pio-${{ hashFiles('**/lockfiles') }}
+          path: |
+            ~/.platformio/.cache
+            ./.pio
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}
             ${{ runner.os }}-pio-
 
       - name: Set up Python
@@ -190,6 +301,9 @@ jobs:
           pip install --upgrade platformio
           pio upgrade --dev
           pio pkg update --global
+
+      - name: Install libs
+        run: pio pkg install -e ${{matrix.target}}
 
       - name: Run Unit Tests
         run: pio test -e ${{matrix.target}}
@@ -207,7 +321,10 @@ jobs:
           retention-days: 5
 
   coverage-report:
-    needs: [build, test]
+    needs:
+      - build-bhaptics
+      - build-opengloves
+      - test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

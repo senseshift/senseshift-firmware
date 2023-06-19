@@ -53,7 +53,12 @@
         "bit": "cpp",
         "set": "cpp",
         "iostream": "cpp",
-        "*.hpp": "cpp"
+        "*.hpp": "cpp",
+        "xlocmon": "cpp",
+        "xmemory": "cpp",
+        "xtree": "cpp",
+        "xhash": "cpp",
+        "xlocnum": "cpp"
     },
     "files.eol": "\n",
     "files.insertFinalNewline": true,

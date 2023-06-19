@@ -73,20 +73,26 @@ Please note, that documentation is still work-in-progress
 
 ## Supported devices
 
-| Device                 | Supported Devices    | Retail price | DIY Price | Hardware                                                                                            |
-| :--------------------  | :------------------- | -----------: | --------: | :-------------------------------------------------------------------------------------------------- |
-| Haptics Face Interface | Tactal               | US $149      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-face-interface) |
-| Haptic Gloves          | TactGlove            | US $299      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-glove)          |
-| Haptic Sleeves         | Tactosy for arms     | US $249      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-forearm-sleeve) |
-| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-gauntlet)       |
-| Haptic Feet Device     | Tactosy for feet     | US $249      | ~20$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-feet-device)    |
-| X16 Haptic Vest        | TactSuit X16         | US $299      | ~40$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#x16-haptic-vest)       |
-| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | ~70$      | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#x40-haptic-vest)       |
+| Device                 | Supported Devices    | Retail price | DIY Price         | Hardware                                                                                          |
+| :--------------------  | :------------------- | -----------: | ----------------: | :------------------------------------------------------------------------------------------------ |
+| Haptics Face Interface | Tactal, TactVisor    | US $149      | ~$20              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-face-interface) |
+| Haptic Gloves          | TactGlove            | US $299      | ~$20              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-glove)          |
+| Haptic Sleeves         | Tactosy for arms     | US $249      | ~$20              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-forearm-sleeve) |
+| Haptic Hand Gauntlet   | Tactosy for hands    | US $249      | ~$20              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-gauntlet)       |
+| Haptic Feet Device     | Tactosy for feet     | US $249      | ~$20              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#haptic-feet-device)    |
+| X16 Haptic Vest        | TactSuit X16         | US $299      | ~$40              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#x16-haptic-vest)       |
+| X40 Haptic Vest        | TactSuit X40, Tactot | US $499      | ~$70              | See [Hardware Reference](https://github.com/senseshift/senseshift-hardware#x40-haptic-vest)       |
+| VR Glove / OpenGloves  | LucidGloves          | N/A          | ~$40 &mdash; ~$80 | See [Original Wiki](https://github.com/LucidVR/lucidgloves/wiki)                                  |
 
 ## For Developers
 
 * [Code of Conduct](./CODE_OF_CONDUCT.md)
 * [Contributing Guidelines](./CONTRIBUTING.md)
+
+## Credits
+
+* [LucasVRTech](https://github.com/lucas-vrtech) of the LucidGlove project
+* [JohnRThomas](https://github.com/JohnRThomas) for the his implementation of LucidGlove firmware
 
 ## Licensing
 

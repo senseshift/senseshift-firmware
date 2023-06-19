@@ -67,7 +67,12 @@ void setupMode() {
   bhBleConnection->begin();
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-  auto* battery = new ADCNaiveBattery(36, { .sampleRate = BATTERY_SAMPLE_RATE }, app, tskNO_AFFINITY);
+  auto* battery = new BatterySensor(
+    new ADCNaiveBattery(36),
+    &App,
+    { .sampleRate = BATTERY_SAMPLE_RATE },
+    { "ADC Battery", 4096, BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
+  );
   battery->begin();
 #endif
 }
