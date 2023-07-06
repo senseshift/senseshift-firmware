@@ -6,10 +6,10 @@
 
 namespace OpenGloves {
     template<typename _Tp>
-    class StringEncodedMemoizedSensor : public IStringEncodedSensor, public OH::MemoizedSensor<_Tp> {
+    class StringEncodedMemoizedSensor : public IStringEncodedMemoizedSensor, public OH::MemoizedSensor<_Tp> {
       public:
         StringEncodedMemoizedSensor(OH::ISensor<_Tp>* sensor, IEncodedInput::Type type) :
-          IStringEncodedSensor(type), OH::MemoizedSensor<_Tp>(sensor){};
+          IStringEncodedMemoizedSensor(type), OH::MemoizedSensor<_Tp>(sensor){};
 
         void setup() override
         {
@@ -35,7 +35,8 @@ namespace OpenGloves {
     template<>
     size_t StringEncodedMemoizedSensor<uint16_t>::encodeString(char* buffer) const
     {
-        // Format as "Axxxxx", where A is the type and xxxxx is the value without leading zeros.
+        // Format as "Axxxxx", where A is the type and xxxxx is the value without
+        // leading zeros.
         return snprintf(buffer, this->getEncodedLength(), "%c%d", this->getType(), this->value);
     }
 
