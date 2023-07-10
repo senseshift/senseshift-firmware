@@ -118,6 +118,8 @@ std::optional<StringEncodedMemoizedSensor<bool>> calibrateButton = std::nullopt;
 
 std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEncodedMemoizedSensor<bool>*>
 {
+    // https://github.com/llvm/llvm-project/issues/63776
+    // clang-format off
 #if BUTTON_A_ENABLED
     new BUTTON_CLASS(IEncodedInput::Type::A_BTN, PIN_BUTTON_A, BUTTON_A_INVERT),
 #endif
@@ -166,6 +168,7 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #elif BUTTON_PINCH_ENABLED
     new BUTTON_CLASS(IEncodedInput::Type::PINCH, PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT),
 #endif
+    // clang-format on
 };
 
 std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
