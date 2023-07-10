@@ -26,11 +26,11 @@
 
 #pragma region Fingers
 
-#define FINGER_THUMB_ENABLED (PIN_FINGER_THUMB != -1)
-#define FINGER_INDEX_ENABLED (PIN_FINGER_INDEX != -1)
-#define FINGER_MIDDLE_ENABLED (PIN_FINGER_MIDDLE != -1)
-#define FINGER_RING_ENABLED (PIN_FINGER_RING != -1)
-#define FINGER_PINKY_ENABLED (PIN_FINGER_PINKY != -1)
+#define FINGER_THUMB_ENABLED (defined(PIN_FINGER_THUMB) && (PIN_FINGER_THUMB != -1))
+#define FINGER_INDEX_ENABLED (defined(PIN_FINGER_INDEX) && (PIN_FINGER_INDEX != -1))
+#define FINGER_MIDDLE_ENABLED (defined(PIN_FINGER_MIDDLE) && (PIN_FINGER_MIDDLE != -1))
+#define FINGER_RING_ENABLED (defined(PIN_FINGER_RING) && (PIN_FINGER_RING != -1))
+#define FINGER_PINKY_ENABLED (defined(PIN_FINGER_PINKY) && (PIN_FINGER_PINKY != -1))
 #define FINGER_CLASS(type, pin, invert, calib) \
     FingerSensor(new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), new calib()), type)
 
@@ -38,7 +38,8 @@
 
 #pragma region Joysticks
 
-#define JOYSTICK_ENABLED (PIN_JOYSTICK_X != -1 && PIN_JOYSTICK_Y != -1)
+#define JOYSTICK_ENABLED \
+    (defined(PIN_JOYSTICK_X) && defined(PIN_JOYSTICK_Y) && (PIN_JOYSTICK_X != -1) && (PIN_JOYSTICK_Y != -1))
 
 #define JOYSTICK_CLASS(type, pin, invert, deadzone)                                      \
     StringEncodedMemoizedSensor<uint16_t>(                                               \
@@ -50,11 +51,11 @@
 
 #pragma region Buttons
 
-#define BUTTON_A_ENABLED (PIN_BUTTON_A != -1)
-#define BUTTON_B_ENABLED (PIN_BUTTON_B != -1)
-#define BUTTON_MENU_ENABLED (PIN_BUTTON_MENU != -1)
-#define BUTTON_JOYSTICK_ENABLED (JOYSTICK_ENABLED && (PIN_BUTTON_JOYSTICK != -1))
-#define BUTTON_CALIBRATE_ENABLED (PIN_BUTTON_CALIBRATE != -1)
+#define BUTTON_A_ENABLED (defined(PIN_BUTTON_A) && (PIN_BUTTON_A != -1))
+#define BUTTON_B_ENABLED (defined(PIN_BUTTON_B) && (PIN_BUTTON_B != -1))
+#define BUTTON_MENU_ENABLED (defined(PIN_BUTTON_MENU) && (PIN_BUTTON_MENU != -1))
+#define BUTTON_JOYSTICK_ENABLED (JOYSTICK_ENABLED && defined(PIN_BUTTON_JOYSTICK) && (PIN_BUTTON_JOYSTICK != -1))
+#define BUTTON_CALIBRATE_ENABLED (defined(PIN_BUTTON_CALIBRATE) && (PIN_BUTTON_CALIBRATE != -1))
 #define BUTTON_TRIGGER_ENABLED (!GESTURE_TRIGGER_ENABLED && (PIN_BUTTON_TRIGGER != -1))
 #define BUTTON_GRAB_ENABLED (!GESTURE_GRAB_ENABLED && (PIN_BUTTON_GRAB != -1))
 #define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && (PIN_BUTTON_PINCH != -1))
