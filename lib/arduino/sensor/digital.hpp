@@ -1,39 +1,36 @@
 #pragma once
 
-#include <sensor.hpp>
 #include <Arduino.h>
+#include <sensor.hpp>
 
-namespace OH
-{
-  typedef ISensor<bool> IDigitalSensor;
+namespace OH {
+    typedef ISensor<bool> IDigitalSensor;
 
-  template <bool invert = false>
-  class DigitalSensor : public IDigitalSensor
-  {
-   private:
-    uint8_t pin;
+    template<bool invert = false>
+    class DigitalSensor : public IDigitalSensor {
+      private:
+        uint8_t pin;
 
-   public:
-    DigitalSensor(uint8_t pin) : pin(pin) {
-    }
+      public:
+        DigitalSensor(uint8_t pin) : pin(pin) {}
 
-    void setup(void)
-    {
-      pinMode(this->pin, INPUT);
+        void setup(void)
+        {
+            pinMode(this->pin, INPUT);
+        };
+
+        bool getValue(void) override;
     };
 
-    bool getValue(void) override;
-  };
+    template<>
+    bool DigitalSensor<false>::getValue(void)
+    {
+        return digitalRead(this->pin) == HIGH;
+    }
 
-  template <>
-  bool DigitalSensor<false>::getValue(void)
-  {
-    return digitalRead(this->pin) == HIGH;
-  }
-
-  template <>
-  bool DigitalSensor<true>::getValue(void)
-  {
-    return digitalRead(this->pin) == LOW;
-  }
+    template<>
+    bool DigitalSensor<true>::getValue(void)
+    {
+        return digitalRead(this->pin) == LOW;
+    }
 } // namespace OH

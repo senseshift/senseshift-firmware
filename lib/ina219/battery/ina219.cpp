@@ -2,21 +2,24 @@
 #include <utility.hpp>
 
 namespace OH {
-  void OH::INA219_Battery::setup() {
-    this->active = this->sensor->begin();
-  }
-
-  BatteryState OH::INA219_Battery::getValue() {
-    if (!this->active) {
-      return { 0 };
+    void OH::INA219_Battery::setup()
+    {
+        this->active = this->sensor->begin();
     }
 
-    auto batteryVoltage = this->sensor->getBusVoltage_V();
-    // TODO: change this linear transformation to smth more useful
-    auto batteryPercentage = (batteryVoltage - 3.0) / 0.96;
+    BatteryState OH::INA219_Battery::getValue()
+    {
+        if (!this->active) {
+            return { 0 };
+        }
 
-    return {
-      simpleMap<float>(batteryPercentage, 1.0f, 255.0f);
-    };
-  }
-}
+        auto batteryVoltage = this->sensor->getBusVoltage_V();
+        // TODO: change this linear transformation to smth more useful
+        auto batteryPercentage = (batteryVoltage - 3.0) / 0.96;
+
+        return
+        {
+            simpleMap<float>(batteryPercentage, 1.0f, 255.0f);
+        };
+    }
+} // namespace OH
