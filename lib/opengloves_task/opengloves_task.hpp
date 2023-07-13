@@ -98,6 +98,10 @@ namespace OpenGloves {
                 this->allSensors.push_back(button);
             }
 
+            if (calibrationButton.has_value()) {
+                this->allSensors.push_back(&calibrationButton.value());
+            }
+
             for (auto* joystick : joysticks) {
                 this->allSensors.push_back(joystick);
             }
@@ -105,10 +109,20 @@ namespace OpenGloves {
             for (auto* otherSensor : otherSensors) {
                 this->allSensors.push_back(otherSensor);
             }
+
+            // sort all sensors by type for easier debugging
+            std::sort(
+              this->allSensors.begin(),
+              this->allSensors.end(),
+              [](IStringEncodedMemoizedSensor* a, IStringEncodedMemoizedSensor* b) {
+                  return a->getType() < b->getType();
+              }
+            );
         }
 
         void begin() override
         {
+            log_d("Starting OpenGloves tracking task: %p", this);
             this->setup();
             this->OH::Task<OpenGlovesTrackingTask>::begin();
         };
@@ -139,11 +153,16 @@ namespace OpenGloves {
 
         void setup()
         {
+            log_d("Setting up OpenGloves tracking task: %p", this);
+            log_d("There is a total of %d sensors", this->allSensors.size());
             for (auto* input : this->allSensors) {
+                log_d("Setting up sensor: %c", input->getType());
                 input->setup();
             }
 
+            // Start calibration if no calibration button is present or if configured to always calibrate.
             if (!this->calibrationButton.has_value() || this->config.alwaysCalibrate) {
+                log_d("Starting calibration on startup");
                 this->startCalibration();
             }
 
@@ -160,18 +179,23 @@ namespace OpenGloves {
                     input->updateValue();
                 }
 
-                // Update the calibration.
-                if (!this->config.alwaysCalibrate &&
+                // Update the calibration if calibration has not started, calibration is not configured to always run,
+                // and the calibration button is present and pressed.
+                if (calibrationStarted == 0 &&
+                    !this->config.alwaysCalibrate &&
                     this->calibrationButton.has_value() &&
                     this->calibrationButton.value().getValue()
                 ) {
+                    log_d("Calibration started");
                     this->startCalibration();
                 }
 
+                // Send the sensor values.
                 this->communication.send(this->allSensors);
 
                 // Check if the calibration has finished.
-                if (!this->config.alwaysCalibrate && calibrationStarted > 0 && (now - calibrationStarted) > CALIBRATION_DURATION) {
+                if (!(this->config.alwaysCalibrate) && calibrationStarted > 0 && (now - calibrationStarted) > CALIBRATION_DURATION) {
+                    log_d("Calibration finished");
                     for (size_t i = 0; i < calibrated.size(); i++) {
                         auto* input = calibrated[i];
                         input->disableCalibration();
@@ -179,6 +203,7 @@ namespace OpenGloves {
                     calibrationStarted = 0;
                 }
 
+                // Delay until the next update.
                 auto elapsed = millis() - now;
                 if (elapsed < this->config.updateInterval) {
                     delay(this->config.updateInterval - elapsed);

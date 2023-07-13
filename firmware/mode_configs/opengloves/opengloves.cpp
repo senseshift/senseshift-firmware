@@ -56,9 +56,9 @@
 #define BUTTON_MENU_ENABLED (defined(PIN_BUTTON_MENU) && (PIN_BUTTON_MENU != -1))
 #define BUTTON_JOYSTICK_ENABLED (JOYSTICK_ENABLED && defined(PIN_BUTTON_JOYSTICK) && (PIN_BUTTON_JOYSTICK != -1))
 #define BUTTON_CALIBRATE_ENABLED (defined(PIN_BUTTON_CALIBRATE) && (PIN_BUTTON_CALIBRATE != -1))
-#define BUTTON_TRIGGER_ENABLED (!GESTURE_TRIGGER_ENABLED && (PIN_BUTTON_TRIGGER != -1))
-#define BUTTON_GRAB_ENABLED (!GESTURE_GRAB_ENABLED && (PIN_BUTTON_GRAB != -1))
-#define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && (PIN_BUTTON_PINCH != -1))
+#define BUTTON_TRIGGER_ENABLED (!GESTURE_TRIGGER_ENABLED && defined(PIN_BUTTON_TRIGGER) && (PIN_BUTTON_TRIGGER != -1))
+#define BUTTON_GRAB_ENABLED (!GESTURE_GRAB_ENABLED && defined(PIN_BUTTON_GRAB) && (PIN_BUTTON_GRAB != -1))
+#define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && defined(PIN_BUTTON_PINCH) && (PIN_BUTTON_PINCH != -1))
 
 #define BUTTON_CLASS(type, pin, invert) StringEncodedMemoizedSensor<bool>(new OH::DigitalSensor<invert>(pin), type)
 
@@ -182,27 +182,29 @@ std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
 
 std::vector<IStringEncodedMemoizedSensor*> otherSensors = std::vector<IStringEncodedMemoizedSensor*>();
 
+// todo: allow to configure serial port
+// todo: add BTSerial
+auto communication = SerialCommunication(&Serial, 115200);
+
+OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
+OpenGlovesTrackingTask trackingTask = OpenGlovesTrackingTask(
+  config,
+  communication,
+  handSensors,
+  buttons,
+  joysticks,
+  otherSensors,
+  calibrateButton,
+  {
+    .name = "OpenGloves",
+    .stackDepth = 8192,
+    .priority = 1,
+  }
+);
+
 void setupMode()
 {
-    auto communication = SerialCommunication(&Serial);
-
-    OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
-    OpenGlovesTrackingTask* trackingTask = new OpenGlovesTrackingTask(
-      config,
-      communication,
-      handSensors,
-      buttons,
-      joysticks,
-      otherSensors,
-      calibrateButton,
-      {
-        .name = "OpenGloves",
-        .stackDepth = 4096,
-        .priority = 1,
-      }
-    );
-
-    trackingTask->begin();
+    trackingTask.begin();
 }
 
 void loopMode()

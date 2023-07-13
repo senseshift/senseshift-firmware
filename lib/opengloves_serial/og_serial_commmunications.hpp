@@ -7,14 +7,15 @@ namespace OpenGloves {
     class SerialCommunication : public ICommunication {
       private:
         HardwareSerial* serial;
+        unsigned long baud;
         char* buffer = new char[256];
 
       public:
-        SerialCommunication(HardwareSerial* serial) : serial(serial){};
+        SerialCommunication(HardwareSerial* serial, unsigned long baud) : serial(serial), baud(baud){};
 
         void setup() override
         {
-            //
+            this->serial->begin(this->baud);
         }
 
         void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) override
