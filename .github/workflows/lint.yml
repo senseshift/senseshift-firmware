@@ -1,0 +1,35 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - '**/*.md'
+  push:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  clang-format:
+    name: clang-format - `${{ matrix.path }}`
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - 'lib'
+          - 'include'
+          - 'firmware'
+          - 'examples'
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run clang-format style check for C/C++/Protobuf programs.
+        uses: jidicula/clang-format-action@v4.11.0
+        with:
+          clang-format-version: '16'
+          check-path: ${{ matrix.path }}

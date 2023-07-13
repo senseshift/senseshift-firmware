@@ -1,13 +1,13 @@
 #pragma once
 
 #if defined(ESP32)
-  #include <BLEUUID.h>
+#include <BLEUUID.h>
 #endif
 
 #define BH_SERIAL_NUMBER_LENGTH 10
 
 #ifndef BH_FIRMWARE_VERSION
-#define BH_FIRMWARE_VERSION (uint16_t)UINT16_MAX
+#define BH_FIRMWARE_VERSION (uint16_t) UINT16_MAX
 #endif
 
 #define NO_AUDIO_CABLE 0
@@ -17,10 +17,17 @@
 
 #define BH_LAYOUT_TACTSUITX16_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX16_SIZE_Y 2
-#define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_Y - 1))
+#define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(      \
+      x,                                                      \
+      y,                                                      \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_Y - 1)  \
+    )
 
 // X16 suit uses the same packets structure as x40 suit and performs motor grouping in firmware
 #define BH_LAYOUT_TACTSUITX16_SIZE 40
+// clang-format off
 #define BH_LAYOUT_TACTSUITX16 {                                 \
     /* Front, left part */                                      \
     /*  0 */ BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 0),  /*  0 */  \
@@ -73,9 +80,13 @@
     /* 38 */ BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 1),  /* 18 */  \
     /* 39 */ BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 1),  /* 19 */  \
 }
+// clang-format on
 
 // Ouput indices, responsible for x40 => x16 grouping
-#define BH_LAYOUT_TACTSUITX16_GROUPS { 0, 1, 4, 5, 10, 11, 14, 15, 20, 21, 24, 25, 30, 31, 34, 35 }
+#define BH_LAYOUT_TACTSUITX16_GROUPS                               \
+    {                                                              \
+        0, 1, 4, 5, 10, 11, 14, 15, 20, 21, 24, 25, 30, 31, 34, 35 \
+    }
 #define BH_LAYOUT_TACTSUITX16_GROUPS_SIZE 16
 
 #pragma endregion BH_DEVICE_TACTSUITX16
@@ -84,10 +95,17 @@
 
 #define BH_LAYOUT_TACTSUITX40_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX40_SIZE_Y 5
-#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1))
+#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(      \
+      x,                                                      \
+      y,                                                      \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1)  \
+    )
 
 // X * Y for front and back
 #define BH_LAYOUT_TACTSUITX40_SIZE 40
+// clang-format off
 #define BH_LAYOUT_TACTSUITX40 {                       \
     /* Front, left part */                            \
     /*  0 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0),  \
@@ -136,6 +154,7 @@
     /* 38 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 4),  \
     /* 39 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4)   \
 }
+// clang-format on
 
 #pragma endregion BH_DEVICE_TACTSUITX40
 
@@ -143,9 +162,16 @@
 
 #define BH_LAYOUT_TACTAL_SIZE_X 6
 #define BH_LAYOUT_TACTAL_SIZE_Y 1
-#define BH_LAYOUT_TACTAL_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_Y - 1))
+#define BH_LAYOUT_TACTAL_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                 \
+      y,                                                 \
+      (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_Y - 1)  \
+    )
 
 #define BH_LAYOUT_TACTAL_SIZE (BH_LAYOUT_TACTAL_SIZE_X * BH_LAYOUT_TACTAL_SIZE_Y)
+// clang-format off
 #define BH_LAYOUT_TACTAL {           \
   BH_LAYOUT_TACTAL_MAKE_POINT(0, 0), \
   BH_LAYOUT_TACTAL_MAKE_POINT(1, 0), \
@@ -154,6 +180,7 @@
   BH_LAYOUT_TACTAL_MAKE_POINT(4, 0), \
   BH_LAYOUT_TACTAL_MAKE_POINT(5, 0), \
 }
+// clang-format on
 
 #pragma endregion BH_DEVICE_TACTVISOR
 
@@ -161,15 +188,23 @@
 
 #define BH_LAYOUT_TACTVISOR_SIZE_X 4
 #define BH_LAYOUT_TACTVISOR_SIZE_Y 1
-#define BH_LAYOUT_TACTVISOR_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_Y - 1))
+#define BH_LAYOUT_TACTVISOR_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(    \
+      x,                                                    \
+      y,                                                    \
+      (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_Y - 1)  \
+    )
 
 #define BH_LAYOUT_TACTVISOR_SIZE (BH_LAYOUT_TACTVISOR_SIZE_X * BH_LAYOUT_TACTVISOR_SIZE_Y)
+// clang-format off
 #define BH_LAYOUT_TACTVISOR {           \
   BH_LAYOUT_TACTVISOR_MAKE_POINT(0, 0), \
   BH_LAYOUT_TACTVISOR_MAKE_POINT(1, 0), \
   BH_LAYOUT_TACTVISOR_MAKE_POINT(2, 0), \
   BH_LAYOUT_TACTVISOR_MAKE_POINT(3, 0), \
 }
+// clang-format on
 
 #pragma endregion BH_DEVICE_TACTVISOR
 
@@ -177,13 +212,21 @@
 
 #define BH_LAYOUT_TACTOSY2_SIZE_X 3
 #define BH_LAYOUT_TACTOSY2_SIZE_Y 2
-#define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_Y - 1))
+#define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(   \
+      x,                                                   \
+      y,                                                   \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_Y - 1)  \
+    )
 
 #define BH_LAYOUT_TACTOSY2_SIZE (BH_LAYOUT_TACTOSY2_SIZE_X * BH_LAYOUT_TACTOSY2_SIZE_Y)
+// clang-format off
 #define BH_LAYOUT_TACTOSY2 {                                                                                       \
     BH_LAYOUT_TACTOSY2_MAKE_POINT(0, 0), BH_LAYOUT_TACTOSY2_MAKE_POINT(1, 0), BH_LAYOUT_TACTOSY2_MAKE_POINT(2, 0), \
     BH_LAYOUT_TACTOSY2_MAKE_POINT(0, 1), BH_LAYOUT_TACTOSY2_MAKE_POINT(1, 1), BH_LAYOUT_TACTOSY2_MAKE_POINT(2, 1), \
 }
+// clang-format on
 
 #pragma endregion BH_DEVICE_TACTOSY2
 
@@ -191,10 +234,18 @@
 
 #define BH_LAYOUT_TACTOSYH_SIZE_X 1
 #define BH_LAYOUT_TACTOSYH_SIZE_Y 3
-#define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_Y - 1))
+#define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(   \
+      x,                                                   \
+      y,                                                   \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_Y - 1)  \
+    )
 
 #define BH_LAYOUT_TACTOSYH_SIZE (BH_LAYOUT_TACTOSYH_SIZE_X * BH_LAYOUT_TACTOSYH_SIZE_Y)
+// clang-format off
 #define BH_LAYOUT_TACTOSYH { BH_LAYOUT_TACTOSYH_MAKE_POINT(0, 0), BH_LAYOUT_TACTOSYH_MAKE_POINT(0, 1), BH_LAYOUT_TACTOSYH_MAKE_POINT(0, 2) }
+// clang-format on
 
 #pragma endregion BH_DEVICE_TACTOSYH
 
@@ -202,10 +253,18 @@
 
 #define BH_LAYOUT_TACTOSYF_SIZE_X 1
 #define BH_LAYOUT_TACTOSYF_SIZE_Y 3
-#define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y) OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(x, y, (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1), (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_Y - 1))
+#define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y)                \
+    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(   \
+      x,                                                   \
+      y,                                                   \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1), \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_Y - 1)  \
+    )
 
 #define BH_LAYOUT_TACTOSYF_SIZE (BH_LAYOUT_TACTOSYF_SIZE_X * BH_LAYOUT_TACTOSYF_SIZE_Y)
+// clang-format off
 #define BH_LAYOUT_TACTOSYF { BH_LAYOUT_TACTOSYF_MAKE_POINT(0, 0), BH_LAYOUT_TACTOSYF_MAKE_POINT(0, 1), BH_LAYOUT_TACTOSYF_MAKE_POINT(0, 2), }
+// clang-format on
 
 #pragma endregion BH_DEVICE_TACTOSYF
 
@@ -214,38 +273,25 @@
 // You have  an unlimited amount of other UUIDs
 
 // Main service for communication
-#define BH_BLE_SERVICE_MOTOR_UUID \
-  BLEUUID("6e400001-b5a3-f393-e0a9-e50e24dcca9e")  // Nordic UART Service
+#define BH_BLE_SERVICE_MOTOR_UUID BLEUUID("6e400001-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART Service
 
 // Legacy Characteristic to create haptic feedback
-#define BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_UUID \
-  BLEUUID("6e400002-b5a3-f393-e0a9-e50e24dcca9e")  // Nordic UART RX
+#define BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_UUID BLEUUID("6e400002-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART RX
 
 // Characteristic for Device S/N
-#define BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID \
-  BLEUUID("6e400003-b5a3-f393-e0a9-e50e24dcca9e")  // Nordic UART TX
+#define BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID BLEUUID("6e400003-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART TX
 
 // Glow Color
-#define BH_BLE_SERVICE_MOTOR_CHAR_CONFIG_UUID \
-  BLEUUID("6e400005-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_VERSION_UUID \
-  BLEUUID("6e400007-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_BATTERY_UUID \
-  BLEUUID("6e400008-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_STABLE_UUID \
-  BLEUUID("6e40000a-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_TACTSUIT_MONITOR_UUID \
-  BLEUUID("6e40000b-b5a3-f393-e0a9-e50e24dcca9e")
+#define BH_BLE_SERVICE_MOTOR_CHAR_CONFIG_UUID BLEUUID("6e400005-b5a3-f393-e0a9-e50e24dcca9e")
+#define BH_BLE_SERVICE_MOTOR_CHAR_VERSION_UUID BLEUUID("6e400007-b5a3-f393-e0a9-e50e24dcca9e")
+#define BH_BLE_SERVICE_MOTOR_CHAR_BATTERY_UUID BLEUUID("6e400008-b5a3-f393-e0a9-e50e24dcca9e")
+#define BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_STABLE_UUID BLEUUID("6e40000a-b5a3-f393-e0a9-e50e24dcca9e")
+#define BH_BLE_SERVICE_MOTOR_CHAR_TACTSUIT_MONITOR_UUID BLEUUID("6e40000b-b5a3-f393-e0a9-e50e24dcca9e")
 #define BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID \
-  BLEUUID("6e40000c-b5a3-f393-e0a9-e50e24dcca9e")  // Audio-to-Haptic
-#define BH_BLE_SERVICE_MOTOR_CHAR_ATH_THEME_UUID \
-  BLEUUID("6e40000d-b5a3-f393-e0a9-e50e24dcca9e")  // Audio-to-Haptic
-#define BH_BLE_SERVICE_MOTOR_CHAR_MOTTOR_MAPPING_UUID \
-  BLEUUID("6e40000e-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_SIGNATURE_PATTERN_UUID \
-  BLEUUID("6e40000f-b5a3-f393-e0a9-e50e24dcca9e")
+    BLEUUID("6e40000c-b5a3-f393-e0a9-e50e24dcca9e")                                              // Audio-to-Haptic
+#define BH_BLE_SERVICE_MOTOR_CHAR_ATH_THEME_UUID BLEUUID("6e40000d-b5a3-f393-e0a9-e50e24dcca9e") // Audio-to-Haptic
+#define BH_BLE_SERVICE_MOTOR_CHAR_MOTTOR_MAPPING_UUID BLEUUID("6e40000e-b5a3-f393-e0a9-e50e24dcca9e")
+#define BH_BLE_SERVICE_MOTOR_CHAR_SIGNATURE_PATTERN_UUID BLEUUID("6e40000f-b5a3-f393-e0a9-e50e24dcca9e")
 
-#define BH_BLE_SERVICE_DFU_UUID \
-  BLEUUID("0000fe59-0000-1000-8000-00805f9b34fb")
-#define BH_BLE_SERVICE_DFU_CHAR_CONTROL_UUID \
-  BLEUUID("8ec90003-f315-4f60-9fb8-838830daea50")
+#define BH_BLE_SERVICE_DFU_UUID BLEUUID("0000fe59-0000-1000-8000-00805f9b34fb")
+#define BH_BLE_SERVICE_DFU_CHAR_CONTROL_UUID BLEUUID("8ec90003-f315-4f60-9fb8-838830daea50")

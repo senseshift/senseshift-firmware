@@ -21,17 +21,20 @@ extern void loopMode();
 
 SenseShift App;
 
-void setup() {
-  setupMode();
+void setup()
+{
+    setupMode();
 
 #if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
-  auto* serialOutputState = new OH::SerialPlotter_OutputStates<HardwareSerial>(SERIAL_PLOTTER_PORT, App.getHapticBody());
-  serialOutputState->begin();
+    auto* serialOutputState =
+      new OH::SerialPlotter_OutputStates<HardwareSerial>(SERIAL_PLOTTER_PORT, App.getHapticBody());
+    serialOutputState->begin();
 #endif // SERIAL_PLOTTER
 }
 
-void loop() {
-  loopMode();
+void loop()
+{
+    loopMode();
 }
 
 #endif // ARDUINO
