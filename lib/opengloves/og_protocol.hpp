@@ -32,9 +32,9 @@ namespace OpenGloves {
         Type type;
     };
 
-    class IStringEncodedSensor : public IEncodedInput {
+    class IStringEncodedMemoizedSensor : public IEncodedInput {
       public:
-        IStringEncodedSensor(Type type) : IEncodedInput(type){};
+        IStringEncodedMemoizedSensor(Type type) : IEncodedInput(type){};
 
         virtual void setup() = 0;
         virtual void updateValue() = 0;
@@ -46,6 +46,6 @@ namespace OpenGloves {
     class ICommunication {
       public:
         virtual void setup() = 0;
-        virtual void send(std::vector<IStringEncodedSensor*>& sensors) = 0;
+        virtual void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) = 0;
     };
 } // namespace OpenGloves

@@ -28,6 +28,9 @@ jobs:
           - bhaptics_tactvisor
           - bhaptics_tactglove_left
           - bhaptics_tactglove_right
+
+          - lucidgloves-prototype3-esp32
+          - lucidgloves-prototype4-esp32
         battery_flag:
           - BATTERY_ENABLED=true
         nimble_flag:

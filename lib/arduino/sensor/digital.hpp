@@ -16,7 +16,7 @@ namespace OH {
 
         void setup(void)
         {
-            pinMode(this->pin, INPUT);
+            pinMode(this->pin, INPUT_PULLUP);
         };
 
         bool getValue(void) override;
@@ -25,12 +25,12 @@ namespace OH {
     template<>
     bool DigitalSensor<false>::getValue(void)
     {
-        return digitalRead(this->pin) == HIGH;
+        return digitalRead(this->pin) == LOW;
     }
 
     template<>
     bool DigitalSensor<true>::getValue(void)
     {
-        return digitalRead(this->pin) == LOW;
+        return digitalRead(this->pin) == HIGH;
     }
 } // namespace OH

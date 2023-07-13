@@ -7,17 +7,18 @@ namespace OpenGloves {
     class SerialCommunication : public ICommunication {
       private:
         HardwareSerial* serial;
+        unsigned long baud;
         char* buffer = new char[256];
 
       public:
-        SerialCommunication(HardwareSerial* serial) : serial(serial){};
+        SerialCommunication(HardwareSerial* serial, unsigned long baud) : serial(serial), baud(baud){};
 
         void setup() override
         {
-            this->serial->begin(115200);
+            this->serial->begin(this->baud);
         }
 
-        void send(std::vector<IStringEncodedSensor*>& sensors) override
+        void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) override
         {
             // Encode all of the sensors into a single string.
             size_t length = encodeAll(buffer, sensors);
@@ -25,7 +26,7 @@ namespace OpenGloves {
             this->serial->write(buffer, length);
         }
 
-        static size_t encodeAll(char* buffer, std::vector<IStringEncodedSensor*>& sensors)
+        static size_t encodeAll(char* buffer, std::vector<IStringEncodedMemoizedSensor*>& sensors)
         {
             size_t offset = 0;
             // Loop over all of the encoders and encode them to the output string.

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "og_sensor.hpp"
 
 namespace OpenGloves {
@@ -40,5 +42,13 @@ namespace OpenGloves {
     };
 
     // TODO: add splay finger sensor
+
+    struct HandSensors {
+        std::optional<FingerSensor> thumb = std::nullopt;
+        std::optional<FingerSensor> index = std::nullopt;
+        std::optional<FingerSensor> middle = std::nullopt;
+        std::optional<FingerSensor> ring = std::nullopt;
+        std::optional<FingerSensor> pinky = std::nullopt;
+    };
 
 } // namespace OpenGloves
