@@ -1,30 +1,35 @@
 #pragma once
 
+#include <BluetoothSerial.h>
 #include <HardwareSerial.h>
+#include <Print.h>
+#include <WiFi.h>
+
 #include <og_protocol.hpp>
 
 namespace OpenGloves {
-    class SerialCommunication : public ICommunication {
-      private:
-        HardwareSerial* serial;
-        unsigned long baud;
+    class ISerialCommunication : public ICommunication {
+      protected:
+        Print& channel;
         char* buffer = new char[256];
 
       public:
-        SerialCommunication(HardwareSerial* serial, unsigned long baud) : serial(serial), baud(baud){};
-
-        void setup() override
-        {
-            this->serial->begin(this->baud);
-        }
+        ISerialCommunication(Print& channel) : channel(channel){};
 
         void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) override
         {
+            if (!this->isReady()) {
+                return;
+            }
+
             // Encode all of the sensors into a single string.
             size_t length = encodeAll(buffer, sensors);
             // Send the encoded string over serial.
-            this->serial->write(buffer, length);
+            this->channel.print(buffer);
+            this->channel.flush();
         }
+
+        virtual bool isReady() = 0;
 
         static size_t encodeAll(char* buffer, std::vector<IStringEncodedMemoizedSensor*>& sensors)
         {
@@ -40,6 +45,49 @@ namespace OpenGloves {
             buffer[offset] = '\0';
 
             return offset;
+        }
+    };
+
+    class SerialCommunication : public ISerialCommunication {
+      private:
+        unsigned long baud;
+
+      public:
+        SerialCommunication(HardwareSerial& channel, unsigned long baud) : baud(baud), ISerialCommunication(channel){};
+
+        bool isReady() override
+        {
+            return true;
+        }
+
+        void setup() override
+        {
+            static_cast<HardwareSerial&>(this->channel).begin(this->baud);
+        }
+    };
+
+    class BTSerialCommunication : public ISerialCommunication {
+      private:
+        std::string name;
+
+      public:
+        BTSerialCommunication(BluetoothSerial& channel, std::string prefix) : ISerialCommunication(channel)
+        {
+            char suffix[4];
+            sprintf(suffix, "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
+
+            this->name = prefix + suffix;
+        };
+
+        bool isReady() override
+        {
+            return static_cast<BluetoothSerial&>(this->channel).hasClient();
+        }
+
+        void setup() override
+        {
+            auto& serial = static_cast<BluetoothSerial&>(this->channel);
+            serial.begin(name.c_str());
         }
     };
 } // namespace OpenGloves

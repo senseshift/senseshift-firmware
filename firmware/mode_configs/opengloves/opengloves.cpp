@@ -1,4 +1,5 @@
 #include <calibration.hpp>
+#include <og_constants.hpp>
 #include <og_serial_commmunications.hpp>
 #include <opengloves_task.hpp>
 #include <sensor.hpp>
@@ -8,6 +9,26 @@
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
 #include <utility.hpp>
+
+#pragma region Communication
+
+#ifndef OPENGLOVES_COMMUNCATION
+#define OPENGLOVES_COMMUNCATION OPENGLOVES_COMM_SERIAL
+#endif
+
+#ifndef SERIAL_PORT
+#define SERIAL_PORT Serial
+#endif
+
+#ifndef SERIAL_BAUDRATE
+#define SERIAL_BAUDRATE 115200
+#endif
+
+#ifndef BTSERIAL_PREFIX
+#define BTSERIAL_PREFIX "SenseShift_OG"
+#endif
+
+#pragma endregion
 
 #pragma region Calibration
 
@@ -182,9 +203,12 @@ std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
 
 std::vector<IStringEncodedMemoizedSensor*> otherSensors = std::vector<IStringEncodedMemoizedSensor*>();
 
-// todo: allow to configure serial port
-// todo: add BTSerial
-auto communication = SerialCommunication(&Serial, 115200);
+#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL
+auto communication = SerialCommunication(SERIAL_PORT, SERIAL_BAUDRATE);
+#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL
+BluetoothSerial SerialBT;
+auto communication = BTSerialCommunication(SerialBT, BTSERIAL_PREFIX);
+#endif
 
 OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
 OpenGlovesTrackingTask trackingTask = OpenGlovesTrackingTask(
@@ -196,9 +220,9 @@ OpenGlovesTrackingTask trackingTask = OpenGlovesTrackingTask(
   otherSensors,
   calibrateButton,
   {
-    .name = "OpenGloves",
+    .name = "OpenGlovesSensorTask",
     .stackDepth = 8192,
-    .priority = 1,
+    .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
   }
 );
 
