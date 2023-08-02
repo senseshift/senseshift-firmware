@@ -6,11 +6,15 @@ on:
     types:
       - created
       - prereleased
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      - '.github/workflows/release.yml'
 
 jobs:
-  build_binaries:
-    if: github.repository == 'senseshift/senseshift-firmware'
-
+  build-bhaptics:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,9 +32,6 @@ jobs:
           - bhaptics_tactvisor
           - bhaptics_tactglove_left
           - bhaptics_tactglove_right
-
-          - lucidgloves-prototype3-esp32
-          - lucidgloves-prototype4-esp32
         battery_flag:
           - BATTERY_ENABLED=true
         nimble_flag:
@@ -38,6 +39,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Get firmware name
+        id: firmware_name
+        run: |
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }}
 
       - name: Cache pip
         uses: actions/cache@v3
@@ -50,9 +56,12 @@ jobs:
       - name: Cache PlatformIO
         uses: actions/cache@v3
         with:
-          path: ~/.platformio
-          key: ${{ runner.os }}-pio-${{ hashFiles('**/lockfiles') }}
+          path: |
+            ~/.platformio/.cache
+            ./.pio
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
       - name: Set up Python
@@ -100,8 +109,97 @@ jobs:
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'senseshift/senseshift-firmware'
         with:
           asset_name: ${{matrix.target}}.zip
+          file: ./build/firmware.zip
+          tag: ${{github.ref}}
+
+  build-opengloves:
+    if: github.repository == 'senseshift/senseshift-firmware'
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - lucidgloves-prototype3-esp32
+          - lucidgloves-prototype4-esp32
+        comm_flag:
+          - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_SERIAL
+          - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get firmware name
+        id: firmware_name
+        run: |
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }}
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.platformio/.cache
+            ./.pio
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-
+            ${{ runner.os }}-pio-
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+          pio upgrade --dev
+          pio pkg update --global
+
+      - name: Update build command (non-Windows)
+        run: |
+          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
+          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
+
+      - name: Update build flags (non-macOS)
+        run: |
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
+
+      - name: Build
+        run: |
+          mkdir build
+
+          echo "::group::platformio.ini"
+          cat platformio.ini
+          echo "::endgroup::"
+
+          echo "::group::pio run"
+          pio run --environment ${{matrix.target}} --target upload
+          echo "::endgroup::"
+
+          unzip -l ./build/firmware.zip
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware-${{ steps.firmware_name.outputs.firmware }}
+          path: ./build/firmware.zip
+          retention-days: 5
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'senseshift/senseshift-firmware'
+        with:
+          asset_name: ${{ steps.firmware_name.outputs.firmware }}.zip
           file: ./build/firmware.zip
           tag: ${{github.ref}}
