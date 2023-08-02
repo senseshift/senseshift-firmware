@@ -71,13 +71,7 @@ namespace OpenGloves {
         std::string name;
 
       public:
-        BTSerialCommunication(BluetoothSerial& channel, std::string prefix) : ISerialCommunication(channel)
-        {
-            char suffix[4];
-            sprintf(suffix, "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
-
-            this->name = prefix + suffix;
-        };
+        BTSerialCommunication(BluetoothSerial& channel, std::string name) : ISerialCommunication(channel), name(name){};
 
         bool isReady() override
         {
@@ -87,6 +81,10 @@ namespace OpenGloves {
         void setup() override
         {
             auto& serial = static_cast<BluetoothSerial&>(this->channel);
+            // serial.register_callback([](esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
+            //     log_i("Bluetooth event: %d", event);
+            // });
+            // serial.setTimeout(4);
             serial.begin(name.c_str());
         }
     };

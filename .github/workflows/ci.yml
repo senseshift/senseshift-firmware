@@ -165,6 +165,9 @@ jobs:
         target:
           - lucidgloves-prototype3-esp32
           - lucidgloves-prototype4-esp32
+        comm_flag:
+          - COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
+          - COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_BLE
         coverage: [ false ]
 
         include:
@@ -187,7 +190,7 @@ jobs:
       - name: Get firmware name
         id: firmware_name
         run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.curl_calibration_flag }}
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }} ${{ matrix.curl_calibration_flag }}
 
       - name: Speedup package installation
         if: matrix.coverage
@@ -234,10 +237,12 @@ jobs:
         if: runner.os != 'macOS'
         run: |
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
       - name: Update build flags (macOS)
         if: runner.os == 'macOS'
         run: |
           sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
+          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Install PlatformIO
         run: |
