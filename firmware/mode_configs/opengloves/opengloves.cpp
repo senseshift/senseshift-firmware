@@ -203,32 +203,41 @@ std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
 
 std::vector<IStringEncodedMemoizedSensor*> otherSensors = std::vector<IStringEncodedMemoizedSensor*>();
 
-#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL
-auto communication = SerialCommunication(SERIAL_PORT, SERIAL_BAUDRATE);
-#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL
-BluetoothSerial SerialBT;
-auto communication = BTSerialCommunication(SerialBT, BTSERIAL_PREFIX);
-#endif
-
 OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
-OpenGlovesTrackingTask trackingTask = OpenGlovesTrackingTask(
-  config,
-  communication,
-  handSensors,
-  buttons,
-  joysticks,
-  otherSensors,
-  calibrateButton,
-  {
-    .name = "OpenGlovesSensorTask",
-    .stackDepth = 8192,
-    .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
-  }
-);
+OpenGlovesTrackingTask* trackingTask;
 
 void setupMode()
 {
-    trackingTask.begin();
+#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL
+    auto* communication = new SerialCommunication(SERIAL_PORT, SERIAL_BAUDRATE);
+#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL
+#ifdef BTSERIAL_NAME
+    std::string name = BTSERIAL_NAME;
+#else
+    char suffix[4];
+    sprintf(suffix, "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
+    log_i("Generated Bluetooth suffix: %s", suffix);
+    std::string name = BTSERIAL_PREFIX + std::string(suffix);
+#endif
+    BluetoothSerial* bt_serial = new BluetoothSerial();
+    auto* communication = new BTSerialCommunication(*bt_serial, name);
+#endif
+
+    trackingTask = new OpenGlovesTrackingTask(
+      config,
+      *communication,
+      handSensors,
+      buttons,
+      joysticks,
+      otherSensors,
+      calibrateButton,
+      {
+        .name = "OpenGlovesSensorTask",
+        .stackDepth = 8192,
+        .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
+      }
+    );
+    trackingTask->begin();
 }
 
 void loopMode()
