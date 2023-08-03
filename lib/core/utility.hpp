@@ -4,10 +4,6 @@
 #include <iterator>
 #include <logging.hpp>
 
-#ifndef constrain
-#define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
-#endif
-
 namespace OH {
     /**
      * Checks if a container contains a value.

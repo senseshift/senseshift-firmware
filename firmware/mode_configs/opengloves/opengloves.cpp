@@ -52,8 +52,11 @@
 #define FINGER_MIDDLE_ENABLED (defined(PIN_FINGER_MIDDLE) && (PIN_FINGER_MIDDLE != -1))
 #define FINGER_RING_ENABLED (defined(PIN_FINGER_RING) && (PIN_FINGER_RING != -1))
 #define FINGER_PINKY_ENABLED (defined(PIN_FINGER_PINKY) && (PIN_FINGER_PINKY != -1))
-#define FINGER_CLASS(type, pin, invert, calib) \
-    FingerSensor(new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), new calib()), type)
+#define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                                            \
+    FingerSensor(                                                                                        \
+      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()), \
+      type                                                                                               \
+    )
 
 #pragma endregion
 
@@ -161,7 +164,7 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #if GESTURE_TRIGGER_ENABLED && FINGER_INDEX_ENABLED
     new GESTURE_CLASS(
       IEncodedInput::Type::TRIGGER,
-      new TriggerGesture(&handSensors.index.value(), GESTURE_TRIGGER_THRESHOLD)
+      new TriggerGesture(handSensors.index.value(), GESTURE_TRIGGER_THRESHOLD)
     ),
 #elif BUTTON_TRIGGER_ENABLED
     new BUTTON_CLASS(IEncodedInput::Type::TRIGGER, PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT),
@@ -171,10 +174,10 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
     new GESTURE_CLASS(
       IEncodedInput::Type::GRAB,
       new GrabGesture(
-        &handSensors.index.value(),
-        &handSensors.middle.value(),
-        &handSensors.ring.value(),
-        &handSensors.pinky.value(),
+        handSensors.index.value(),
+        handSensors.middle.value(),
+        handSensors.ring.value(),
+        handSensors.pinky.value(),
         GESTURE_GRAB_THRESHOLD
       )
     ),
@@ -185,7 +188,7 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #if GESTURE_PINCH_ENABLED && FINGER_THUMB_ENABLED && FINGER_INDEX_ENABLED
     new GESTURE_CLASS(
       IEncodedInput::Type::PINCH,
-      new PinchGesture(&handSensors.thumb.value(), &handSensors.index.value(), GESTURE_PINCH_THRESHOLD)
+      new PinchGesture(handSensors.thumb.value(), handSensors.index.value(), GESTURE_PINCH_THRESHOLD)
     ),
 #elif BUTTON_PINCH_ENABLED
     new BUTTON_CLASS(IEncodedInput::Type::PINCH, PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT),
