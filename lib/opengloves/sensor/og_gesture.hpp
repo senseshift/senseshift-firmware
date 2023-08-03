@@ -7,14 +7,14 @@ namespace OpenGloves {
 
     class GrabGesture : public Gesture {
       private:
-        FingerSensor& index;
-        FingerSensor& middle;
-        FingerSensor& ring;
-        FingerSensor& pinky;
+        ICurl& index;
+        ICurl& middle;
+        ICurl& ring;
+        ICurl& pinky;
         uint16_t threshold;
 
       public:
-        GrabGesture(FingerSensor& index, FingerSensor& middle, FingerSensor& ring, FingerSensor& pinky, uint16_t threshold) :
+        GrabGesture(ICurl& index, ICurl& middle, ICurl& ring, ICurl& pinky, uint16_t threshold) :
           index(index), middle(middle), ring(ring), pinky(pinky), threshold(threshold){};
 
         void setup() override{};
@@ -28,11 +28,11 @@ namespace OpenGloves {
 
     class TriggerGesture : public Gesture {
       private:
-        FingerSensor& index;
+        ICurl& index;
         uint16_t threshold;
 
       public:
-        TriggerGesture(FingerSensor& index, uint16_t threshold) : index(index), threshold(threshold){};
+        TriggerGesture(ICurl& index, uint16_t threshold) : index(index), threshold(threshold){};
 
         void setup() override{};
 
@@ -44,12 +44,12 @@ namespace OpenGloves {
 
     class PinchGesture : public Gesture {
       private:
-        FingerSensor& index;
-        FingerSensor& thumb;
+        ICurl& index;
+        ICurl& thumb;
         uint16_t threshold;
 
       public:
-        PinchGesture(FingerSensor& index, FingerSensor& thumb, uint16_t threshold) :
+        PinchGesture(ICurl& index, ICurl& thumb, uint16_t threshold) :
           index(index), thumb(thumb), threshold(threshold){};
 
         void setup() override{};

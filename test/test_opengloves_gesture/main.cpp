@@ -19,58 +19,58 @@ void test_gesture_grab(void)
 {
     uint16_t threshold = 2047;
 
-    auto* index = new TestCurlFinger(threshold - 1);
-    auto* middle = new TestCurlFinger(threshold - 1);
-    auto* ring = new TestCurlFinger(threshold - 1);
-    auto* pinky = new TestCurlFinger(threshold - 1);
+    auto index = TestCurlFinger(threshold - 1);
+    auto middle = TestCurlFinger(threshold - 1);
+    auto ring = TestCurlFinger(threshold - 1);
+    auto pinky = TestCurlFinger(threshold - 1);
 
-    auto* gesture = new GrabGesture(index, middle, ring, pinky, threshold);
+    auto gesture = GrabGesture(index, middle, ring, pinky, threshold);
 
-    TEST_ASSERT_FALSE(gesture->getValue());
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    index->value = threshold + 1;
-    TEST_ASSERT_FALSE(gesture->getValue());
+    index.value = threshold + 1;
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    middle->value = threshold + 1;
-    TEST_ASSERT_FALSE(gesture->getValue());
+    middle.value = threshold + 1;
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    ring->value = threshold + 1;
-    TEST_ASSERT_FALSE(gesture->getValue());
+    ring.value = threshold + 1;
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    pinky->value = threshold + 1;
-    TEST_ASSERT_TRUE(gesture->getValue());
+    pinky.value = threshold + 1;
+    TEST_ASSERT_TRUE(gesture.getValue());
 }
 
 void test_gesture_trigger(void)
 {
     uint16_t threshold = 2047;
 
-    auto* index = new TestCurlFinger(threshold - 1);
+    auto index = TestCurlFinger(threshold - 1);
 
-    auto* gesture = new TriggerGesture(index, threshold);
+    auto gesture = TriggerGesture(index, threshold);
 
-    TEST_ASSERT_FALSE(gesture->getValue());
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    index->value = threshold + 1;
-    TEST_ASSERT_TRUE(gesture->getValue());
+    index.value = threshold + 1;
+    TEST_ASSERT_TRUE(gesture.getValue());
 }
 
 void test_gesture_pinch(void)
 {
     uint16_t threshold = 2047;
 
-    auto* index = new TestCurlFinger(threshold - 1);
-    auto* middle = new TestCurlFinger(threshold - 1);
+    auto index = TestCurlFinger(threshold - 1);
+    auto middle = TestCurlFinger(threshold - 1);
 
-    auto* gesture = new PinchGesture(index, middle, threshold);
+    auto gesture = PinchGesture(index, middle, threshold);
 
-    TEST_ASSERT_FALSE(gesture->getValue());
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    index->value = threshold + 1;
-    TEST_ASSERT_FALSE(gesture->getValue());
+    index.value = threshold + 1;
+    TEST_ASSERT_FALSE(gesture.getValue());
 
-    middle->value = threshold + 1;
-    TEST_ASSERT_TRUE(gesture->getValue());
+    middle.value = threshold + 1;
+    TEST_ASSERT_TRUE(gesture.getValue());
 }
 
 int process(void)

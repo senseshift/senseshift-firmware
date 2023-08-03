@@ -4,19 +4,26 @@
 #include <og_protocol.hpp>
 #include <sensor.hpp>
 
+#include <optional>
+#include <vector>
+
 namespace OpenGloves {
     struct FingerValue {
-        std::vector<uint16_t> curl = std::vector<uint16_t>();
+        std::vector<uint16_t> curl = std::vector<uint16_t>({ 0 });
         std::optional<uint16_t> splay = std::nullopt;
 
-        // uint16_t getCurl() const {
-        //     // average of all curl sensors
-        //     uint16_t value = 0;
-        //     for (auto sensor : curl) {
-        //         value += sensor;
-        //     }
-        //     return value / curl.size();
-        // }
+        uint16_t getTotalCurl() const
+        {
+            if (this->curl.size() == 0) {
+                return 0;
+            }
+
+            uint16_t total = 0;
+            for (auto curl : this->curl) {
+                total += curl;
+            }
+            return total / this->curl.size();
+        }
     };
 
     template<typename _Tp>
@@ -81,19 +88,17 @@ namespace OpenGloves {
     {
         size_t offset = 0;
 
-        if (this->value.curl.size() == 1) {
-            offset += snprintf(buffer + offset, 6, "%c%d", this->type, this->value.curl[0]);
-        }
-
-        if (this->value.splay.has_value()) {
-            offset += snprintf(buffer + offset, 9, "(%cB)%d", this->type, this->value.splay.value());
-        }
+        offset += snprintf(buffer + offset, 6, "%c%d", this->type, this->value.getTotalCurl());
 
         if (this->value.curl.size() > 1) {
             for (size_t i = 0; i < this->value.curl.size(); i++) {
                 char knuckle = 'A' + i;
                 offset += snprintf(buffer + offset, 10, "(%cA%c)%d", this->type, knuckle, this->value.curl[i]);
             }
+        }
+
+        if (this->value.splay.has_value()) {
+            offset += snprintf(buffer + offset, 9, "(%cB)%d", this->type, this->value.splay.value());
         }
 
         return offset;

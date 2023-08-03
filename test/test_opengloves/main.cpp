@@ -37,6 +37,22 @@ class TestBinarySensor : public OH::ISensor<bool> {
     };
 };
 
+class TestFingerSensor : public OH::ISensor<FingerValue> {
+  public:
+    FingerValue value;
+    int setupCounter = 0;
+
+    void setup() override
+    {
+        this->setupCounter++;
+    };
+
+    FingerValue getValue() override
+    {
+        return this->value;
+    };
+};
+
 void test_string_encoded_sensor_uint16(void)
 {
     auto inner = new TestAnalogSensor();
@@ -90,12 +106,52 @@ void test_string_encoded_sensor_bool(void)
     TEST_ASSERT_EQUAL_STRING("J", buffer);
 }
 
+void test_string_encoded_sensor_fingervalue(void)
+{
+    auto inner = new TestFingerSensor();
+    auto sensor = new StringEncodedMemoizedSensor<FingerValue>(inner, IEncodedInput::Type::THUMB);
+
+    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+    sensor->setup();
+    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+    // curl-only
+    char buffer[sensor->getEncodedLength()];
+    sensor->encodeString(buffer);
+    TEST_ASSERT_EQUAL_STRING("A0", buffer);
+
+    inner->value.curl = { 256 };
+    sensor->updateValue();
+    sensor->encodeString(buffer);
+    TEST_ASSERT_EQUAL_STRING("A256", buffer);
+
+    // curl + splay
+    inner->value.splay = 420;
+    sensor->updateValue();
+    sensor->encodeString(buffer);
+    TEST_ASSERT_EQUAL_STRING("A256(AB)420", buffer);
+
+    // multi-curl
+    inner->value.curl = { 128, 256, 512 };
+    inner->value.splay = std::nullopt;
+    sensor->updateValue();
+    sensor->encodeString(buffer);
+    TEST_ASSERT_EQUAL_STRING("A298(AAA)128(AAB)256(AAC)512", buffer); // 298 = (128 + 256 + 512) / 3
+
+    // multi-curl + splay
+    inner->value.splay = 69;
+    sensor->updateValue();
+    sensor->encodeString(buffer);
+    TEST_ASSERT_EQUAL_STRING("A298(AAA)128(AAB)256(AAC)512(AB)69", buffer); // 298 = (128 + 256 + 512) / 3
+}
+
 int process(void)
 {
     UNITY_BEGIN();
 
     RUN_TEST(test_string_encoded_sensor_uint16);
     RUN_TEST(test_string_encoded_sensor_bool);
+    RUN_TEST(test_string_encoded_sensor_fingervalue);
 
     return UNITY_END();
 }
