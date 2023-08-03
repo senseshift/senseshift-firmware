@@ -122,8 +122,8 @@ jobs:
     strategy:
       matrix:
         target:
-          - lucidgloves-prototype3-esp32
-          - lucidgloves-prototype4-esp32
+          - lucidgloves-prototype3
+          - lucidgloves-prototype4
         comm_flag:
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL

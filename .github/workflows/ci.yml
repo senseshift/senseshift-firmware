@@ -163,8 +163,8 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         target:
-          - lucidgloves-prototype3-esp32
-          - lucidgloves-prototype4-esp32
+          - lucidgloves-prototype3
+          - lucidgloves-prototype4
         comm_flag:
           - COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
           - COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_BLE
@@ -172,15 +172,15 @@ jobs:
 
         include:
           - os: ubuntu-latest
-            target: lucidgloves-prototype4-esp32
+            target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
-            target: lucidgloves-prototype4-esp32
+            target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
-            target: lucidgloves-prototype4-esp32
+            target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
             coverage: true
 
