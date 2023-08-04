@@ -183,6 +183,14 @@ jobs:
             target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
             coverage: true
+          - os: ubuntu-latest
+            target: indexer-c
+            comm_flag: COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
+            coverage: true
+          - os: ubuntu-latest
+            target: indexer-cs
+            comm_flag: COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
+            coverage: true
 
     steps:
       - uses: actions/checkout@v3

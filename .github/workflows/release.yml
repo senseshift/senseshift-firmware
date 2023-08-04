@@ -124,6 +124,8 @@ jobs:
         target:
           - lucidgloves-prototype3
           - lucidgloves-prototype4
+          - indexer-c
+          - indexer-cs
         comm_flag:
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL

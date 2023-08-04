@@ -59,7 +59,7 @@ void test_simple_finger_sensor_curl(void)
     calibrator->calibrated = 100;
 
     TEST_ASSERT_EQUAL_INT(100, sensor->getValue().curl[0]); // 2 is inside
-    TEST_ASSERT_EQUAL_INT(100, sensor->getCurl()); // 3 is inside
+    TEST_ASSERT_EQUAL_INT(100, sensor->getCurl());          // 3 is inside
 
     calibrator->calibrated = std::nullopt;
 
@@ -93,9 +93,9 @@ void test_simple_finger_sensor_curl_flex(void)
     calibrator_curl->calibrated = 100;
     calibrator_flex->calibrated = 200;
 
-    TEST_ASSERT_EQUAL_INT(100, sensor->getValue().curl[0]); // 3 is inside
+    TEST_ASSERT_EQUAL_INT(100, sensor->getValue().curl[0]);       // 3 is inside
     TEST_ASSERT_EQUAL_INT(200, sensor->getValue().splay.value()); // 4 is inside
-    TEST_ASSERT_EQUAL_INT(100, sensor->getCurl()); // 5 is inside
+    TEST_ASSERT_EQUAL_INT(100, sensor->getCurl());                // 5 is inside
 
     calibrator_curl->calibrated = std::nullopt;
     calibrator_flex->calibrated = std::nullopt;

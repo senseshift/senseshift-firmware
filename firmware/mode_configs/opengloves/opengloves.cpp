@@ -57,6 +57,18 @@
       new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()), \
       type                                                                                               \
     )
+#define FINGER_THUMB_SPLAY (FINGER_THUMB_ENABLED && defined(PIN_FINGER_THUMB_SPLAY) && (PIN_FINGER_THUMB_SPLAY != -1))
+#define FINGER_INDEX_SPLAY (FINGER_INDEX_ENABLED && defined(PIN_FINGER_INDEX_SPLAY) && (PIN_FINGER_INDEX_SPLAY != -1))
+#define FINGER_MIDDLE_SPLAY \
+    (FINGER_MIDDLE_ENABLED && defined(PIN_FINGER_MIDDLE_SPLAY) && (PIN_FINGER_MIDDLE_SPLAY != -1))
+#define FINGER_RING_SPLAY (FINGER_RING_ENABLED && defined(PIN_FINGER_RING_SPLAY) && (PIN_FINGER_RING_SPLAY != -1))
+#define FINGER_PINKY_SPLAY (FINGER_PINKY_ENABLED && defined(PIN_FINGER_PINKY_SPLAY) && (PIN_FINGER_PINKY_SPLAY != -1))
+#define FINGER_SPLAY_CLASS(type, curl_pin, curl_invert, curl_calib, splay_pin, splay_invert, splay_calib)   \
+    FingerSensor(                                                                                           \
+      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()),    \
+      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<splay_invert>(splay_pin), new splay_calib()), \
+      type                                                                                                  \
+    )
 
 #pragma endregion
 
@@ -113,23 +125,73 @@
 using namespace OpenGloves;
 
 HandSensors handSensors = {
-#if FINGER_THUMB_ENABLED
+#if FINGER_THUMB_SPLAY
+    .thumb = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::THUMB,
+      PIN_FINGER_THUMB,
+      FINGER_THUMB_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_THUMB_SPLAY,
+      FINGER_THUMB_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_THUMB_ENABLED
     .thumb = FINGER_CLASS(IEncodedInput::Type::THUMB, PIN_FINGER_THUMB, FINGER_THUMB_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_INDEX_ENABLED
+#if FINGER_INDEX_SPLAY
+    .index = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::INDEX,
+      PIN_FINGER_INDEX,
+      FINGER_INDEX_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_INDEX_SPLAY,
+      FINGER_INDEX_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_INDEX_ENABLED
     .index = FINGER_CLASS(IEncodedInput::Type::INDEX, PIN_FINGER_INDEX, FINGER_INDEX_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_MIDDLE_ENABLED
+#if FINGER_MIDDLE_SPLAY
+    .middle = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::MIDDLE,
+      PIN_FINGER_MIDDLE,
+      FINGER_MIDDLE_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_MIDDLE_SPLAY,
+      FINGER_MIDDLE_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_MIDDLE_ENABLED
     .middle = FINGER_CLASS(IEncodedInput::Type::MIDDLE, PIN_FINGER_MIDDLE, FINGER_MIDDLE_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_RING_ENABLED
+#if FINGER_RING_SPLAY
+    .ring = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::RING,
+      PIN_FINGER_RING,
+      FINGER_RING_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_RING_SPLAY,
+      FINGER_RING_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_RING_ENABLED
     .ring = FINGER_CLASS(IEncodedInput::Type::RING, PIN_FINGER_RING, FINGER_RING_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_PINKY_ENABLED
+#if FINGER_PINKY_SPLAY
+    .pinky = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::PINKY,
+      PIN_FINGER_PINKY,
+      FINGER_PINKY_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_PINKY_SPLAY,
+      FINGER_PINKY_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_PINKY_ENABLED
     .pinky = FINGER_CLASS(IEncodedInput::Type::PINKY, PIN_FINGER_PINKY, FINGER_PINKY_INVERT, CALIBRATION_CURL),
 #endif
 };
