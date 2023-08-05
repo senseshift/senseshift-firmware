@@ -14,7 +14,7 @@ namespace OH {
         virtual void disableCalibration() = 0;
     };
 
-    class Calibrated : public ICalibrated {
+    class Calibrated : public virtual ICalibrated {
       protected:
         bool calibrate = false;
 
@@ -79,7 +79,7 @@ namespace OH {
             _Tp output = accurateMap<_Tp>(input, value_min, value_max, output_min, output_max);
 
             // Lock the range to the output.
-            return constrain(output, output_min, output_max);
+            return std::clamp(output, output_min, output_max);
         }
 
       private:
@@ -118,8 +118,8 @@ namespace OH {
             // Map the input to the sensor range of motion.
             int output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
 
-            // Find the deviation from the center and constrain it to the maximum that the driver supports.
-            output = constrain(output - center, -driver_max_deviation, driver_max_deviation);
+            // Find the deviation from the center and clamp it to the maximum that the driver supports.
+            output = std::clamp<int>(output - center, -driver_max_deviation, driver_max_deviation);
 
             // Finally map the deviation from the center back to the output range.
             return (_Tp) accurateMap<int>(output, -driver_max_deviation, driver_max_deviation, output_min, output_max);
@@ -144,8 +144,8 @@ namespace OH {
             // Map the input to the sensor range of motion.
             int output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
 
-            // Find the deviation from the center and constrain it to the maximum that the driver supports.
-            output = constrain(output - center, -driver_max_deviation, driver_max_deviation);
+            // Find the deviation from the center and clamp it to the maximum that the driver supports.
+            output = std::clamp<int>(output - center, -driver_max_deviation, driver_max_deviation);
 
             // Finally map the deviation from the center back to the output range.
             return (_Tp) accurateMap<int>(output, -driver_max_deviation, driver_max_deviation, output_min, output_max);

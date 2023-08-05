@@ -11,6 +11,6 @@ namespace OH {
 
     BatteryState ADCNaiveBattery::getValue()
     {
-        return { .level = simpleMap<uint16_t>(analogRead(this->pin), 4095, 255) };
+        return { .level = static_cast<uint8_t>(simpleMap<uint16_t>(analogRead(this->pin), 4095, 255)) };
     }
 } // namespace OH

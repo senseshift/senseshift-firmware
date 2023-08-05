@@ -28,19 +28,24 @@ namespace OpenGloves {
             return this->type;
         }
 
-      private:
+      protected:
         Type type;
     };
 
-    class IStringEncodedMemoizedSensor : public IEncodedInput {
+    class IStringEncoded : public IEncodedInput {
       public:
-        IStringEncodedMemoizedSensor(Type type) : IEncodedInput(type){};
-
-        virtual void setup() = 0;
-        virtual void updateValue() = 0;
+        IStringEncoded(Type type) : IEncodedInput(type){};
 
         virtual size_t getEncodedLength() const = 0;
         virtual size_t encodeString(char* buffer) const = 0;
+    };
+
+    class IStringEncodedMemoizedSensor : public IStringEncoded {
+      public:
+        IStringEncodedMemoizedSensor(Type type) : IStringEncoded(type){};
+
+        virtual void setup() = 0;
+        virtual void updateValue() = 0;
     };
 
     class ICommunication {
