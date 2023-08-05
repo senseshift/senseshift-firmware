@@ -46,23 +46,50 @@ namespace OpenGloves {
 
             return offset;
         }
+
+        virtual bool hasData() = 0;
+
+        virtual bool readCommand(char* buffer, size_t length) = 0;
     };
 
     class SerialCommunication : public ISerialCommunication {
       private:
         unsigned long baud;
+        bool ready = false;
 
       public:
         SerialCommunication(HardwareSerial& channel, unsigned long baud) : baud(baud), ISerialCommunication(channel){};
 
-        bool isReady() override
-        {
-            return true;
-        }
-
         void setup() override
         {
+            if (this->ready) {
+                return;
+            }
+
             static_cast<HardwareSerial&>(this->channel).begin(this->baud);
+            this->ready = true;
+        }
+
+        bool isReady() override
+        {
+            return this->ready;
+        }
+
+        bool hasData() override
+        {
+            return this->isReady() && static_cast<HardwareSerial&>(this->channel).available() > 0;
+        }
+
+        bool readCommand(char* buffer, size_t length) override
+        {
+            if (!this->hasData()) {
+                return false;
+            }
+
+            size_t bytesRead = static_cast<HardwareSerial&>(this->channel).readBytesUntil('\n', buffer, length);
+            buffer[bytesRead] = '\0';
+
+            return bytesRead > 0;
         }
     };
 
@@ -73,19 +100,41 @@ namespace OpenGloves {
       public:
         BTSerialCommunication(BluetoothSerial& channel, std::string name) : ISerialCommunication(channel), name(name){};
 
-        bool isReady() override
-        {
-            return static_cast<BluetoothSerial&>(this->channel).hasClient();
-        }
-
         void setup() override
         {
             auto& serial = static_cast<BluetoothSerial&>(this->channel);
+            if (serial.isReady()) {
+                return;
+            }
+
             // serial.register_callback([](esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
             //     log_i("Bluetooth event: %d", event);
             // });
             // serial.setTimeout(4);
             serial.begin(name.c_str());
+        }
+
+        bool isReady() override
+        {
+            auto& serial = static_cast<BluetoothSerial&>(this->channel);
+            return serial.isReady() && serial.hasClient();
+        }
+
+        bool hasData() override
+        {
+            return this->isReady() && static_cast<BluetoothSerial&>(this->channel).available() > 0;
+        }
+
+        bool readCommand(char* buffer, size_t length) override
+        {
+            if (!this->hasData()) {
+                return false;
+            }
+
+            size_t bytesRead = static_cast<BluetoothSerial&>(this->channel).readBytesUntil('\n', buffer, length);
+            buffer[bytesRead] = '\0';
+
+            return bytesRead > 0;
         }
     };
 } // namespace OpenGloves

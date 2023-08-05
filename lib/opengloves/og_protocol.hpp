@@ -52,5 +52,7 @@ namespace OpenGloves {
       public:
         virtual void setup() = 0;
         virtual void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) = 0;
+        virtual bool hasData() = 0;
+        virtual bool readCommand(char* buffer, size_t length) = 0;
     };
 } // namespace OpenGloves

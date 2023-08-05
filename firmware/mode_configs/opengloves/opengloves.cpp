@@ -1,6 +1,6 @@
 #include <calibration.hpp>
 #include <og_constants.hpp>
-#include <og_serial_commmunications.hpp>
+#include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>

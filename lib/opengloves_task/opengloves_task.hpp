@@ -5,7 +5,7 @@
 #include <optional>
 
 #include <calibration.hpp>
-#include <og_serial_commmunications.hpp>
+#include <og_serial_communication.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
 #include <sensor/digital.hpp>
