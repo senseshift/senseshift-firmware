@@ -66,6 +66,28 @@ jobs:
         run: |
           ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.serial_plotter_flag }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
 
+      - name: Enable coverage (non-macOS)
+        if: runner.os != 'macOS' && matrix.coverage
+        run: |
+          sed -i '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
+      - name: Enable coverage (macOS)
+        if: runner.os == 'macOS' && matrix.coverage
+        run: |
+          sed -i '' '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
+
+      - name: Update build flags (non-macOS)
+        if: runner.os != 'macOS'
+        run: |
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
+      - name: Update build flags (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
+          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
+          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
+
       - name: Speedup package installation
         if: matrix.coverage
         uses: abbbi/github-actions-tune@v1
@@ -88,7 +110,7 @@ jobs:
           path: |
             ~/.platformio/.cache
             ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
@@ -97,28 +119,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      - name: Enable coverage (non-macOS)
-        if: runner.os != 'macOS' && matrix.coverage
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
-      - name: Enable coverage (macOS)
-        if: runner.os == 'macOS' && matrix.coverage
-        run: |
-          sed -i '' '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        if: runner.os != 'macOS'
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
-      - name: Update build flags (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
 
       - name: Install PlatformIO
         run: |
