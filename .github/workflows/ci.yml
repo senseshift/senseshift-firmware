@@ -61,6 +61,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get firmware name
+        id: firmware_name
+        run: |
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.serial_plotter_flag }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
+
       - name: Speedup package installation
         if: matrix.coverage
         uses: abbbi/github-actions-tune@v1
@@ -141,14 +146,14 @@ jobs:
         if: matrix.coverage
         run: |
           mkdir -p ./build/lcov
-          lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{matrix.target}} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
+          lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
 
       - name: Upload coverage Artifact
         uses: actions/upload-artifact@v3
         if: matrix.coverage
         with:
-          name: lcov.info.${{matrix.target}}
-          path: ./build/lcov/lcov.info.${{matrix.target}}
+          name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
+          path: ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }}
           retention-days: 5
 
   build-opengloves:
@@ -158,26 +163,42 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         target:
-          - lucidgloves-prototype3-esp32
-          - lucidgloves-prototype4-esp32
+          - lucidgloves-prototype3
+          - lucidgloves-prototype4
+        comm_flag:
+          - COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
+          - COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_BLE
         coverage: [ false ]
 
         include:
           - os: ubuntu-latest
-            target: lucidgloves-prototype4-esp32
+            target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
-            target: lucidgloves-prototype4-esp32
+            target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
-            target: lucidgloves-prototype4-esp32
+            target: lucidgloves-prototype4
             curl_calibration_flag: CALIBRATION_CURL="OH::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            coverage: true
+          - os: ubuntu-latest
+            target: indexer-c
+            comm_flag: COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
+            coverage: true
+          - os: ubuntu-latest
+            target: indexer-cs
+            comm_flag: COMMUNICATION_PROTOCOL=COMMUNICATION_PROTOCOL_SERIAL
             coverage: true
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Get firmware name
+        id: firmware_name
+        run: |
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }} ${{ matrix.curl_calibration_flag }}
 
       - name: Speedup package installation
         if: matrix.coverage
@@ -224,10 +245,12 @@ jobs:
         if: runner.os != 'macOS'
         run: |
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
       - name: Update build flags (macOS)
         if: runner.os == 'macOS'
         run: |
           sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
+          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Install PlatformIO
         run: |
@@ -255,14 +278,14 @@ jobs:
         if: matrix.coverage
         run: |
           mkdir -p ./build/lcov
-          lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{matrix.target}}-${{ hashFiles('platformio.ini') }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
+          lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
 
       - name: Upload coverage Artifact
         uses: actions/upload-artifact@v3
         if: matrix.coverage
         with:
-          name: lcov.info.${{matrix.target}}-${{ hashFiles('platformio.ini') }}
-          path: ./build/lcov/lcov.info.${{matrix.target}}-*
+          name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
+          path: ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }}
           retention-days: 5
 
   test:

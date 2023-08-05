@@ -35,12 +35,20 @@ namespace OH {
         virtual _Tp getValue() = 0;
     };
 
+    class IMemoizedSensor {
+      public:
+        /**
+         * Update the memoized value
+         */
+        virtual void updateValue() = 0;
+    };
+
     /**
      * Memoized sensor decorator
      * @tparam _Tp Type of the sensor value
      */
     template<typename _Tp>
-    class MemoizedSensor : public ISensor<_Tp> {
+    class MemoizedSensor : public ISensor<_Tp>, public virtual IMemoizedSensor {
       protected:
         ISensor<_Tp>* sensor;
         _Tp value;

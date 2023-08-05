@@ -25,6 +25,7 @@ jobs:
           - 'include'
           - 'firmware'
           - 'examples'
+          - 'test'
       fail-fast: false
     steps:
       - uses: actions/checkout@v3

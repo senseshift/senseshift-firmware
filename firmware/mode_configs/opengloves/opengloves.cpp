@@ -1,4 +1,5 @@
 #include <calibration.hpp>
+#include <og_constants.hpp>
 #include <og_serial_commmunications.hpp>
 #include <opengloves_task.hpp>
 #include <sensor.hpp>
@@ -8,6 +9,26 @@
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
 #include <utility.hpp>
+
+#pragma region Communication
+
+#ifndef OPENGLOVES_COMMUNCATION
+#define OPENGLOVES_COMMUNCATION OPENGLOVES_COMM_SERIAL
+#endif
+
+#ifndef SERIAL_PORT
+#define SERIAL_PORT Serial
+#endif
+
+#ifndef SERIAL_BAUDRATE
+#define SERIAL_BAUDRATE 115200
+#endif
+
+#ifndef BTSERIAL_PREFIX
+#define BTSERIAL_PREFIX "SenseShift_OG"
+#endif
+
+#pragma endregion
 
 #pragma region Calibration
 
@@ -31,8 +52,23 @@
 #define FINGER_MIDDLE_ENABLED (defined(PIN_FINGER_MIDDLE) && (PIN_FINGER_MIDDLE != -1))
 #define FINGER_RING_ENABLED (defined(PIN_FINGER_RING) && (PIN_FINGER_RING != -1))
 #define FINGER_PINKY_ENABLED (defined(PIN_FINGER_PINKY) && (PIN_FINGER_PINKY != -1))
-#define FINGER_CLASS(type, pin, invert, calib) \
-    FingerSensor(new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), new calib()), type)
+#define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                                            \
+    FingerSensor(                                                                                        \
+      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()), \
+      type                                                                                               \
+    )
+#define FINGER_THUMB_SPLAY (FINGER_THUMB_ENABLED && defined(PIN_FINGER_THUMB_SPLAY) && (PIN_FINGER_THUMB_SPLAY != -1))
+#define FINGER_INDEX_SPLAY (FINGER_INDEX_ENABLED && defined(PIN_FINGER_INDEX_SPLAY) && (PIN_FINGER_INDEX_SPLAY != -1))
+#define FINGER_MIDDLE_SPLAY \
+    (FINGER_MIDDLE_ENABLED && defined(PIN_FINGER_MIDDLE_SPLAY) && (PIN_FINGER_MIDDLE_SPLAY != -1))
+#define FINGER_RING_SPLAY (FINGER_RING_ENABLED && defined(PIN_FINGER_RING_SPLAY) && (PIN_FINGER_RING_SPLAY != -1))
+#define FINGER_PINKY_SPLAY (FINGER_PINKY_ENABLED && defined(PIN_FINGER_PINKY_SPLAY) && (PIN_FINGER_PINKY_SPLAY != -1))
+#define FINGER_SPLAY_CLASS(type, curl_pin, curl_invert, curl_calib, splay_pin, splay_invert, splay_calib)   \
+    FingerSensor(                                                                                           \
+      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()),    \
+      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<splay_invert>(splay_pin), new splay_calib()), \
+      type                                                                                                  \
+    )
 
 #pragma endregion
 
@@ -89,23 +125,73 @@
 using namespace OpenGloves;
 
 HandSensors handSensors = {
-#if FINGER_THUMB_ENABLED
+#if FINGER_THUMB_SPLAY
+    .thumb = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::THUMB,
+      PIN_FINGER_THUMB,
+      FINGER_THUMB_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_THUMB_SPLAY,
+      FINGER_THUMB_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_THUMB_ENABLED
     .thumb = FINGER_CLASS(IEncodedInput::Type::THUMB, PIN_FINGER_THUMB, FINGER_THUMB_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_INDEX_ENABLED
+#if FINGER_INDEX_SPLAY
+    .index = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::INDEX,
+      PIN_FINGER_INDEX,
+      FINGER_INDEX_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_INDEX_SPLAY,
+      FINGER_INDEX_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_INDEX_ENABLED
     .index = FINGER_CLASS(IEncodedInput::Type::INDEX, PIN_FINGER_INDEX, FINGER_INDEX_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_MIDDLE_ENABLED
+#if FINGER_MIDDLE_SPLAY
+    .middle = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::MIDDLE,
+      PIN_FINGER_MIDDLE,
+      FINGER_MIDDLE_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_MIDDLE_SPLAY,
+      FINGER_MIDDLE_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_MIDDLE_ENABLED
     .middle = FINGER_CLASS(IEncodedInput::Type::MIDDLE, PIN_FINGER_MIDDLE, FINGER_MIDDLE_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_RING_ENABLED
+#if FINGER_RING_SPLAY
+    .ring = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::RING,
+      PIN_FINGER_RING,
+      FINGER_RING_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_RING_SPLAY,
+      FINGER_RING_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_RING_ENABLED
     .ring = FINGER_CLASS(IEncodedInput::Type::RING, PIN_FINGER_RING, FINGER_RING_INVERT, CALIBRATION_CURL),
 #endif
 
-#if FINGER_PINKY_ENABLED
+#if FINGER_PINKY_SPLAY
+    .pinky = FINGER_SPLAY_CLASS(
+      IEncodedInput::Type::PINKY,
+      PIN_FINGER_PINKY,
+      FINGER_PINKY_INVERT,
+      CALIBRATION_CURL,
+      PIN_FINGER_PINKY_SPLAY,
+      FINGER_PINKY_SPLAY_INVERT,
+      CALIBRATION_SPLAY
+    ),
+#elif FINGER_PINKY_ENABLED
     .pinky = FINGER_CLASS(IEncodedInput::Type::PINKY, PIN_FINGER_PINKY, FINGER_PINKY_INVERT, CALIBRATION_CURL),
 #endif
 };
@@ -140,7 +226,7 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #if GESTURE_TRIGGER_ENABLED && FINGER_INDEX_ENABLED
     new GESTURE_CLASS(
       IEncodedInput::Type::TRIGGER,
-      new TriggerGesture(&handSensors.index.value(), GESTURE_TRIGGER_THRESHOLD)
+      new TriggerGesture(handSensors.index.value(), GESTURE_TRIGGER_THRESHOLD)
     ),
 #elif BUTTON_TRIGGER_ENABLED
     new BUTTON_CLASS(IEncodedInput::Type::TRIGGER, PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT),
@@ -150,10 +236,10 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
     new GESTURE_CLASS(
       IEncodedInput::Type::GRAB,
       new GrabGesture(
-        &handSensors.index.value(),
-        &handSensors.middle.value(),
-        &handSensors.ring.value(),
-        &handSensors.pinky.value(),
+        handSensors.index.value(),
+        handSensors.middle.value(),
+        handSensors.ring.value(),
+        handSensors.pinky.value(),
         GESTURE_GRAB_THRESHOLD
       )
     ),
@@ -164,7 +250,7 @@ std::vector<StringEncodedMemoizedSensor<bool>*> buttons = std::vector<StringEnco
 #if GESTURE_PINCH_ENABLED && FINGER_THUMB_ENABLED && FINGER_INDEX_ENABLED
     new GESTURE_CLASS(
       IEncodedInput::Type::PINCH,
-      new PinchGesture(&handSensors.thumb.value(), &handSensors.index.value(), GESTURE_PINCH_THRESHOLD)
+      new PinchGesture(handSensors.thumb.value(), handSensors.index.value(), GESTURE_PINCH_THRESHOLD)
     ),
 #elif BUTTON_PINCH_ENABLED
     new BUTTON_CLASS(IEncodedInput::Type::PINCH, PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT),
@@ -182,29 +268,41 @@ std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
 
 std::vector<IStringEncodedMemoizedSensor*> otherSensors = std::vector<IStringEncodedMemoizedSensor*>();
 
-// todo: allow to configure serial port
-// todo: add BTSerial
-auto communication = SerialCommunication(&Serial, 115200);
-
 OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
-OpenGlovesTrackingTask trackingTask = OpenGlovesTrackingTask(
-  config,
-  communication,
-  handSensors,
-  buttons,
-  joysticks,
-  otherSensors,
-  calibrateButton,
-  {
-    .name = "OpenGloves",
-    .stackDepth = 8192,
-    .priority = 1,
-  }
-);
+OpenGlovesTrackingTask* trackingTask;
 
 void setupMode()
 {
-    trackingTask.begin();
+#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL
+    auto* communication = new SerialCommunication(SERIAL_PORT, SERIAL_BAUDRATE);
+#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL
+#ifdef BTSERIAL_NAME
+    std::string name = BTSERIAL_NAME;
+#else
+    char suffix[4];
+    sprintf(suffix, "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
+    log_i("Generated Bluetooth suffix: %s", suffix);
+    std::string name = BTSERIAL_PREFIX + std::string(suffix);
+#endif
+    BluetoothSerial* bt_serial = new BluetoothSerial();
+    auto* communication = new BTSerialCommunication(*bt_serial, name);
+#endif
+
+    trackingTask = new OpenGlovesTrackingTask(
+      config,
+      *communication,
+      handSensors,
+      buttons,
+      joysticks,
+      otherSensors,
+      calibrateButton,
+      {
+        .name = "OpenGlovesSensorTask",
+        .stackDepth = 8192,
+        .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
+      }
+    );
+    trackingTask->begin();
 }
 
 void loopMode()
