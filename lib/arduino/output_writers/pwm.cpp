@@ -21,7 +21,7 @@ namespace OH {
     void PWMOutputWriter::writeOutput(oh_output_intensity_t intensity)
     {
 #if defined(ESP32)
-        ledcWrite(chan, simpleMap<uint16_t>(intensity, OH_OUTPUT_INTENSITY_MAX, 4096));
+        ledcWrite(chan, simpleMap<uint16_t>(intensity, OH_OUTPUT_INTENSITY_MAX, (1 << this->resolution) - 1));
 #else
         analogWrite(this->pin, simpleMap<uint16_t>(intensity, OH_OUTPUT_INTENSITY_MAX, 255));
 #endif

@@ -52,5 +52,26 @@ namespace OpenGloves {
       public:
         virtual void setup() = 0;
         virtual void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) = 0;
+        virtual bool hasData() = 0;
+        virtual size_t readCommand(char* buffer, size_t length) = 0;
     };
+
+    typedef enum Command {
+        ThumbCurl,
+        ThumbSplay,
+
+        IndexCurl,
+        IndexSplay,
+
+        MiddleCurl,
+        MiddleSplay,
+
+        RingCurl,
+        RingSplay,
+
+        PinkyCurl,
+        PinkySplay,
+    } Command;
+
+    typedef std::function<void(Command, uint16_t)> CommandCallback;
 } // namespace OpenGloves

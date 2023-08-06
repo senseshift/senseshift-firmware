@@ -1,7 +1,8 @@
 #include <calibration.hpp>
 #include <og_constants.hpp>
-#include <og_serial_commmunications.hpp>
+#include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
+#include <output_writers/servo.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
 #include <sensor/digital.hpp>
@@ -121,6 +122,15 @@
 #ifndef UPDATE_RATE
 #define UPDATE_RATE 90
 #endif
+
+#define FFB_THUMB_ENABLED (defined(PIN_FFB_THUMB) && (PIN_FFB_THUMB != -1))
+#define FFB_INDEX_ENABLED (defined(PIN_FFB_INDEX) && (PIN_FFB_INDEX != -1))
+#define FFB_MIDDLE_ENABLED (defined(PIN_FFB_MIDDLE) && (PIN_FFB_MIDDLE != -1))
+#define FFB_RING_ENABLED (defined(PIN_FFB_RING) && (PIN_FFB_RING != -1))
+#define FFB_PINKY_ENABLED (defined(PIN_FFB_PINKY) && (PIN_FFB_PINKY != -1))
+
+#define FFB_ENABLED \
+    (FFB_THUMB_ENABLED || FFB_INDEX_ENABLED || FFB_MIDDLE_ENABLED || FFB_RING_ENABLED || FFB_PINKY_ENABLED)
 
 using namespace OpenGloves;
 
@@ -268,8 +278,34 @@ std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
 
 std::vector<IStringEncodedMemoizedSensor*> otherSensors = std::vector<IStringEncodedMemoizedSensor*>();
 
-OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
+OpenGlovesTrackingTaskConfig config =
+  OpenGlovesTrackingTaskConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
 OpenGlovesTrackingTask* trackingTask;
+
+#if FFB_ENABLED
+HandActuators handActuators = {
+#if FFB_THUMB_ENABLED
+    .thumb = new OH::ServoActuator(PIN_FFB_THUMB),
+#endif
+
+#if FFB_INDEX_ENABLED
+    .index = new OH::ServoActuator(PIN_FFB_INDEX),
+#endif
+
+#if FFB_MIDDLE_ENABLED
+    .middle = new OH::ServoActuator(PIN_FFB_MIDDLE),
+#endif
+
+#if FFB_RING_ENABLED
+    .ring = new OH::ServoActuator(PIN_FFB_RING),
+#endif
+
+#if FFB_PINKY_ENABLED
+    .pinky = new OH::ServoActuator(PIN_FFB_PINKY),
+#endif
+};
+OpenGlovesForceFeedbackTask* ffbTask;
+#endif
 
 void setupMode()
 {
@@ -302,6 +338,21 @@ void setupMode()
         .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
       }
     );
+
+#if FFB_ENABLED
+    ffbTask = new OpenGlovesForceFeedbackTask(
+      *communication,
+      handActuators,
+      UPDATE_RATE,
+      {
+        .name = "OpenGlovesForceFeedbackTask",
+        .stackDepth = 8192,
+        .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
+      }
+    );
+    ffbTask->begin();
+#endif
+
     trackingTask->begin();
 }
 
