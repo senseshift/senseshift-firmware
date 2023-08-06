@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#define OH_OUTPUT_INTENSITY_T uint8_t
-#define OH_OUTPUT_INTENSITY_MAX UINT8_MAX
+#define OH_OUTPUT_INTENSITY_T uint16_t
+#define OH_OUTPUT_INTENSITY_MAX 4095
 
 typedef OH_OUTPUT_INTENSITY_T oh_output_intensity_t;
 

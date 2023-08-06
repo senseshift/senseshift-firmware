@@ -5,6 +5,8 @@
 #include <optional>
 
 #include <calibration.hpp>
+#include <og_alpha_encoding.hpp>
+#include <og_ffb.hpp>
 #include <og_serial_communication.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
@@ -16,8 +18,8 @@
 #include <utility.hpp>
 
 namespace OpenGloves {
-    struct OpenGlovesConfig {
-        size_t updateInterval;
+    struct OpenGlovesTrackingTaskConfig {
+        size_t updateIntervalMs;
         size_t calibrationDuration;
         bool alwaysCalibrate;
 
@@ -26,11 +28,11 @@ namespace OpenGloves {
          * @param calibrationDuration The duration in milliseconds that the
          * calibration button should be held for.
          */
-        OpenGlovesConfig(size_t updateRate, size_t calibrationDuration, bool alwaysCalibrate) :
+        OpenGlovesTrackingTaskConfig(size_t updateRate, size_t calibrationDuration, bool alwaysCalibrate) :
           calibrationDuration(calibrationDuration), alwaysCalibrate(alwaysCalibrate)
         {
             // Convert the update rate to an interval in milliseconds.
-            this->updateInterval = 1000 / updateRate;
+            this->updateIntervalMs = 1000 / updateRate;
         }
     };
 
@@ -49,7 +51,7 @@ namespace OpenGloves {
          * @param taskConfig The task configuration.
          */
         OpenGlovesTrackingTask(
-          OpenGlovesConfig& config,
+          OpenGlovesTrackingTaskConfig& config,
           ICommunication& communication,
           HandSensors& fingers,
           std::vector<StringEncodedMemoizedSensor<bool>*>& buttons,
@@ -128,7 +130,7 @@ namespace OpenGloves {
         };
 
       private:
-        OpenGlovesConfig& config;
+        OpenGlovesTrackingTaskConfig& config;
 
         HandSensors& fingers;
         ICommunication& communication;
@@ -205,10 +207,125 @@ namespace OpenGloves {
 
                 // Delay until the next update.
                 auto elapsed = millis() - now;
-                if (elapsed < this->config.updateInterval) {
-                    delay(this->config.updateInterval - elapsed);
+                if (elapsed < this->config.updateIntervalMs) {
+                    delay(this->config.updateIntervalMs - elapsed);
                 }
             }
         };
+    };
+
+    class OpenGlovesForceFeedbackTask : public OH::Task<OpenGlovesForceFeedbackTask>
+    {
+        friend class OH::Task<OpenGlovesForceFeedbackTask>;
+
+      public:
+        OpenGlovesForceFeedbackTask(
+          ICommunication& communication,
+          HandActuators& actuators,
+          size_t updateRate,
+          OH::TaskConfig taskConfig
+        ) : communication(communication), actuators(actuators), OH::Task<OpenGlovesForceFeedbackTask>(taskConfig){
+            this->updateIntervalMs = 1000 / updateRate;
+        };
+
+        void begin() override
+        {
+            log_d("Starting OpenGloves force feedback task: %p", this);
+            this->setup();
+            this->OH::Task<OpenGlovesForceFeedbackTask>::begin();
+        };
+
+      private:
+        ICommunication& communication;
+        HandActuators& actuators;
+        size_t updateIntervalMs;
+
+        char commandBuffer[256];
+
+        void setup()
+        {
+            log_d("Setting up OpenGloves force feedback task: %p", this);
+            this->communication.setup();
+
+            if (this->actuators.thumb.has_value()) {
+                this->actuators.thumb.value()->setup();
+            }
+
+            if (this->actuators.index.has_value()) {
+                this->actuators.index.value()->setup();
+            }
+
+            if (this->actuators.middle.has_value()) {
+                this->actuators.middle.value()->setup();
+            }
+
+            if (this->actuators.ring.has_value()) {
+                this->actuators.ring.value()->setup();
+            }
+
+            if (this->actuators.pinky.has_value()) {
+                this->actuators.pinky.value()->setup();
+            }
+        }
+
+        void run()
+        {
+            while (true) {
+                auto now = millis();
+
+                if (this->communication.hasData()) {
+                    auto bytesRead = this->communication.readCommand(this->commandBuffer, sizeof(this->commandBuffer));
+                    if (bytesRead == 0) {
+                        continue;
+                    }
+
+                    std::string command = std::string(this->commandBuffer, bytesRead);
+                    auto commands = AlphaEncodingService::splitCommands(command);
+
+                    for (auto& [command, value] : commands) {
+                        this->handleCommand(command, value);
+                    }
+                }
+
+                // Delay until the next update.
+                auto elapsed = millis() - now;
+                if (elapsed < this->updateIntervalMs) {
+                    delay(this->updateIntervalMs - elapsed);
+                }
+            }
+        }
+
+        void handleCommand(Command command, uint16_t value) {
+            switch (command) {
+                case Command::ThumbCurl:
+                    if (this->actuators.thumb.has_value()) {
+                        this->actuators.thumb.value()->writeOutput(value);
+                    }
+                    break;
+                case Command::IndexCurl:
+                    if (this->actuators.index.has_value()) {
+                        this->actuators.index.value()->writeOutput(value);
+                    }
+                    break;
+                case Command::MiddleCurl:
+                    if (this->actuators.middle.has_value()) {
+                        this->actuators.middle.value()->writeOutput(value);
+                    }
+                    break;
+                case Command::RingCurl:
+                    if (this->actuators.ring.has_value()) {
+                        this->actuators.ring.value()->writeOutput(value);
+                    }
+                    break;
+                case Command::PinkyCurl:
+                    if (this->actuators.pinky.has_value()) {
+                        this->actuators.pinky.value()->writeOutput(value);
+                    }
+                    break;
+                default:
+                    log_w("Unhandled command: %d", command);
+                    break;
+            }
+        }
     };
 } // namespace OpenGloves

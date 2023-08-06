@@ -1,28 +1,13 @@
+#include <functional>
 #include <map>
 #include <stdint.h>
 #include <string>
 #include <vector>
 
 #include <logging.hpp>
+#include <og_protocol.hpp>
 
 namespace OpenGloves {
-    typedef enum Command {
-        ThumbCurl,
-        ThumbSplay,
-
-        IndexCurl,
-        IndexSplay,
-
-        MiddleCurl,
-        MiddleSplay,
-
-        RingCurl,
-        RingSplay,
-
-        PinkyCurl,
-        PinkySplay,
-    } Command;
-
     class AlphaEncodingService {
       public:
         inline static const std::string valueSymbols = "0123456789";
@@ -41,9 +26,13 @@ namespace OpenGloves {
             // clang-format on
         };
 
-        static std::map<Command, int> splitCommands(std::string input_string);
+        AlphaEncodingService() = default;
+
+        static std::map<Command, uint16_t> splitCommands(std::string input_string);
 
       private:
-        static void splitCommand(const std::string& input_string, int start, int end, std::map<Command, int>& commands);
+        CommandCallback callback = nullptr;
+
+        static void splitCommand(const std::string& input_string, size_t start, size_t end, std::map<Command, uint16_t>& commands);
     };
 } // namespace OpenGloves

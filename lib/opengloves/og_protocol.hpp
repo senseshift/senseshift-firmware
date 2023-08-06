@@ -55,4 +55,23 @@ namespace OpenGloves {
         virtual bool hasData() = 0;
         virtual bool readCommand(char* buffer, size_t length) = 0;
     };
+
+    typedef enum Command {
+        ThumbCurl,
+        ThumbSplay,
+
+        IndexCurl,
+        IndexSplay,
+
+        MiddleCurl,
+        MiddleSplay,
+
+        RingCurl,
+        RingSplay,
+
+        PinkyCurl,
+        PinkySplay,
+    } Command;
+
+    typedef std::function<void(Command, uint16_t)> CommandCallback;
 } // namespace OpenGloves

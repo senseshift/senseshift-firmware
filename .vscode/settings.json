@@ -58,7 +58,8 @@
         "xmemory": "cpp",
         "xtree": "cpp",
         "xhash": "cpp",
-        "xlocnum": "cpp"
+        "xlocnum": "cpp",
+        "ledc.h": "c"
     },
     "files.eol": "\n",
     "files.insertFinalNewline": true,

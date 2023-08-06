@@ -268,7 +268,7 @@ std::vector<StringEncodedMemoizedSensor<uint16_t>*> joysticks = {
 
 std::vector<IStringEncodedMemoizedSensor*> otherSensors = std::vector<IStringEncodedMemoizedSensor*>();
 
-OpenGlovesConfig config = OpenGlovesConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
+OpenGlovesTrackingTaskConfig config = OpenGlovesTrackingTaskConfig(UPDATE_RATE, CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
 OpenGlovesTrackingTask* trackingTask;
 
 void setupMode()

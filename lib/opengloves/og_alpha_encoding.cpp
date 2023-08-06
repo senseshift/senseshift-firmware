@@ -1,9 +1,9 @@
 #include "og_alpha_encoding.hpp"
 
 namespace OpenGloves {
-    std::map<Command, int> AlphaEncodingService::splitCommands(std::string input_string)
+    std::map<Command, uint16_t> AlphaEncodingService::splitCommands(std::string input_string)
     {
-        std::map<Command, int> commands;
+        std::map<Command, uint16_t> commands;
 
         size_t start = 0; // Start of the current command
         for (size_t i = 0; i < input_string.size(); i++) {
@@ -23,7 +23,7 @@ namespace OpenGloves {
     }
 
     void AlphaEncodingService::splitCommand(
-      const std::string& input_string, int start, int end, std::map<Command, int>& commands
+      const std::string& input_string, size_t start, size_t end, std::map<Command, uint16_t>& commands
     )
     {
         std::string current_command = input_string.substr(start, end - start);
