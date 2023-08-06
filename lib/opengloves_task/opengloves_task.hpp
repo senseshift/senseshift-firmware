@@ -214,17 +214,15 @@ namespace OpenGloves {
         };
     };
 
-    class OpenGlovesForceFeedbackTask : public OH::Task<OpenGlovesForceFeedbackTask>
-    {
+    class OpenGlovesForceFeedbackTask : public OH::Task<OpenGlovesForceFeedbackTask> {
         friend class OH::Task<OpenGlovesForceFeedbackTask>;
 
       public:
         OpenGlovesForceFeedbackTask(
-          ICommunication& communication,
-          HandActuators& actuators,
-          size_t updateRate,
-          OH::TaskConfig taskConfig
-        ) : communication(communication), actuators(actuators), OH::Task<OpenGlovesForceFeedbackTask>(taskConfig){
+          ICommunication& communication, HandActuators& actuators, size_t updateRate, OH::TaskConfig taskConfig
+        ) :
+          communication(communication), actuators(actuators), OH::Task<OpenGlovesForceFeedbackTask>(taskConfig)
+        {
             this->updateIntervalMs = 1000 / updateRate;
         };
 
@@ -239,8 +237,6 @@ namespace OpenGloves {
         ICommunication& communication;
         HandActuators& actuators;
         size_t updateIntervalMs;
-
-        char commandBuffer[256];
 
         void setup()
         {
@@ -270,16 +266,19 @@ namespace OpenGloves {
 
         void run()
         {
+            char commandBuffer[256];
+            std::string command;
             while (true) {
                 auto now = millis();
 
                 if (this->communication.hasData()) {
-                    auto bytesRead = this->communication.readCommand(this->commandBuffer, sizeof(this->commandBuffer));
+                    auto bytesRead = this->communication.readCommand(commandBuffer, sizeof(commandBuffer));
                     if (bytesRead == 0) {
                         continue;
                     }
 
-                    std::string command = std::string(this->commandBuffer, bytesRead);
+                    command.assign(commandBuffer, bytesRead);
+
                     auto commands = AlphaEncodingService::splitCommands(command);
 
                     for (auto& [command, value] : commands) {
@@ -295,7 +294,8 @@ namespace OpenGloves {
             }
         }
 
-        void handleCommand(Command command, uint16_t value) {
+        void handleCommand(Command command, uint16_t value)
+        {
             switch (command) {
                 case Command::ThumbCurl:
                     if (this->actuators.thumb.has_value()) {

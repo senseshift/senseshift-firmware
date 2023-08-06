@@ -1,11 +1,11 @@
+#pragma once
+
 #include <abstract_actuator.hpp>
 
 #include <optional>
 
-namespace OpenGloves
-{
-    struct HandActuators
-    {
+namespace OpenGloves {
+    struct HandActuators {
         std::optional<OH::AbstractActuator*> thumb = std::nullopt;
         std::optional<OH::AbstractActuator*> index = std::nullopt;
         std::optional<OH::AbstractActuator*> middle = std::nullopt;

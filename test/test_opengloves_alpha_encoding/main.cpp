@@ -8,6 +8,13 @@ void testSplitCommands(void)
     std::map<std::string, std::map<Command, int>> input_strings = {
         // curl only
         {
+          "A2048\n\0",
+          {
+            { Command::ThumbCurl, 2048 },
+          },
+        },
+        // curl only
+        {
           "A100B200C300D400E500",
           {
             { Command::ThumbCurl, 100 },

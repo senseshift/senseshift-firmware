@@ -1,3 +1,5 @@
+#pragma once
+
 #include <functional>
 #include <map>
 #include <stdint.h>
@@ -33,6 +35,8 @@ namespace OpenGloves {
       private:
         CommandCallback callback = nullptr;
 
-        static void splitCommand(const std::string& input_string, size_t start, size_t end, std::map<Command, uint16_t>& commands);
+        static void splitCommand(
+          const std::string& input_string, size_t start, size_t end, std::map<Command, uint16_t>& commands
+        );
     };
 } // namespace OpenGloves

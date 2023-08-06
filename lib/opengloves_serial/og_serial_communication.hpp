@@ -49,7 +49,7 @@ namespace OpenGloves {
 
         virtual bool hasData() = 0;
 
-        virtual bool readCommand(char* buffer, size_t length) = 0;
+        virtual size_t readCommand(char* buffer, size_t length) = 0;
     };
 
     class SerialCommunication : public ISerialCommunication {
@@ -80,7 +80,7 @@ namespace OpenGloves {
             return this->isReady() && static_cast<HardwareSerial&>(this->channel).available() > 0;
         }
 
-        bool readCommand(char* buffer, size_t length) override
+        size_t readCommand(char* buffer, size_t length) override
         {
             if (!this->hasData()) {
                 return false;
@@ -89,7 +89,7 @@ namespace OpenGloves {
             size_t bytesRead = static_cast<HardwareSerial&>(this->channel).readBytesUntil('\n', buffer, length);
             buffer[bytesRead] = '\0';
 
-            return bytesRead > 0;
+            return bytesRead;
         }
     };
 
@@ -125,7 +125,7 @@ namespace OpenGloves {
             return this->isReady() && static_cast<BluetoothSerial&>(this->channel).available() > 0;
         }
 
-        bool readCommand(char* buffer, size_t length) override
+        size_t readCommand(char* buffer, size_t length) override
         {
             if (!this->hasData()) {
                 return false;
@@ -134,7 +134,7 @@ namespace OpenGloves {
             size_t bytesRead = static_cast<BluetoothSerial&>(this->channel).readBytesUntil('\n', buffer, length);
             buffer[bytesRead] = '\0';
 
-            return bytesRead > 0;
+            return bytesRead;
         }
     };
 } // namespace OpenGloves
