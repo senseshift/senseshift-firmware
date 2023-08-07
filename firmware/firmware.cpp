@@ -19,7 +19,7 @@ extern void loopMode();
 
 #if defined(ARDUINO)
 
-SenseShift App;
+SenseShiftCore App;
 
 void setup()
 {

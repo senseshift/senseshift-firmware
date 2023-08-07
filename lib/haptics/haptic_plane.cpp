@@ -5,7 +5,7 @@
 #include <math.h>
 #include <utility.hpp>
 
-void OH::HapticPlane::setOutputs(oh_output_writers_map_t& outputs)
+void OH::HapticPlane::setOutputs(oh_output_actuators_map_t& outputs)
 {
     this->writers.clear();
     this->writers = outputs;

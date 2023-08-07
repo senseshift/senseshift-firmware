@@ -15,13 +15,13 @@ namespace OH {
     class HapticPlane {
       protected:
         std::list<oh_output_point_t> points{};
-        oh_output_writers_map_t writers{};
+        oh_output_actuators_map_t writers{};
         std::map<oh_output_point_t, oh_output_state_t> states{};
 
-        void setOutputs(oh_output_writers_map_t&);
+        void setOutputs(oh_output_actuators_map_t&);
 
       public:
-        HapticPlane(oh_output_writers_map_t& outputs)
+        HapticPlane(oh_output_actuators_map_t& outputs)
         {
             this->setOutputs(outputs);
         };
@@ -40,10 +40,10 @@ namespace OH {
     class HapticPlane_Closest : public HapticPlane {
       protected:
         oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target);
-        void setOutputs(oh_output_writers_map_t&);
+        void setOutputs(oh_output_actuators_map_t&);
 
       public:
-        HapticPlane_Closest(oh_output_writers_map_t& outputs) : HapticPlane(outputs){};
+        HapticPlane_Closest(oh_output_actuators_map_t& outputs) : HapticPlane(outputs){};
         void writeOutput(const oh_output_data_t&) override;
     };
 

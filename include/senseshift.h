@@ -12,7 +12,7 @@
 
 #include <vector>
 
-class SenseShift final : public OH::IEventDispatcher {
+class SenseShiftCore final : public OH::IEventDispatcher {
   private:
     std::vector<const OH::IEventListener*> eventListeners{};
     OH::HapticBody* pHapticBody;
@@ -22,7 +22,7 @@ class SenseShift final : public OH::IEventDispatcher {
 #endif
 
   public:
-    SenseShift();
+    SenseShiftCore();
 
     OH::HapticBody* getHapticBody()
     {

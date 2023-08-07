@@ -13,8 +13,8 @@
 
 using namespace OH;
 
-extern SenseShift App;
-SenseShift* app = &App;
+extern SenseShiftCore App;
+SenseShiftCore* app = &App;
 
 class TestOutput : public OH::AbstractActuator {
   private:

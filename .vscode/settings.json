@@ -59,7 +59,8 @@
         "xtree": "cpp",
         "xhash": "cpp",
         "xlocnum": "cpp",
-        "ledc.h": "c"
+        "ledc.h": "c",
+        "variant": "cpp"
     },
     "files.eol": "\n",
     "files.insertFinalNewline": true,

@@ -17,8 +17,8 @@
 using namespace OH;
 using namespace BH;
 
-extern SenseShift App;
-SenseShift* app = &App;
+extern SenseShiftCore App;
+SenseShiftCore* app = &App;
 
 static const oh_output_point_t* bhLayout[] = BH_LAYOUT_TACTSUITX16;
 static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
