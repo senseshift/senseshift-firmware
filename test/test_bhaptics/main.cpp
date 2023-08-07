@@ -73,22 +73,22 @@ void test_layout_tactsuitx16(void)
 
     vestX16OutputTransformer(body, value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
     TEST_ASSERT_EQUAL_INT(0, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(17, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(204, actuator2->intensity);
-    TEST_ASSERT_EQUAL_INT(221, actuator3->intensity);
-    TEST_ASSERT_EQUAL_INT(34, actuator4->intensity);
-    TEST_ASSERT_EQUAL_INT(51, actuator5->intensity);
-    TEST_ASSERT_EQUAL_INT(238, actuator6->intensity);
-    TEST_ASSERT_EQUAL_INT(255, actuator7->intensity);
+    TEST_ASSERT_EQUAL_INT(273, actuator1->intensity);
+    TEST_ASSERT_EQUAL_INT(3276, actuator2->intensity);
+    TEST_ASSERT_EQUAL_INT(3549, actuator3->intensity);
+    TEST_ASSERT_EQUAL_INT(546, actuator4->intensity);
+    TEST_ASSERT_EQUAL_INT(819, actuator5->intensity);
+    TEST_ASSERT_EQUAL_INT(3822, actuator6->intensity);
+    TEST_ASSERT_EQUAL_INT(4095, actuator7->intensity);
 
-    TEST_ASSERT_EQUAL_INT(68, actuator8->intensity);
-    TEST_ASSERT_EQUAL_INT(85, actuator9->intensity);
-    TEST_ASSERT_EQUAL_INT(136, actuator10->intensity);
-    TEST_ASSERT_EQUAL_INT(153, actuator11->intensity);
-    TEST_ASSERT_EQUAL_INT(102, actuator12->intensity);
-    TEST_ASSERT_EQUAL_INT(119, actuator13->intensity);
-    TEST_ASSERT_EQUAL_INT(170, actuator14->intensity);
-    TEST_ASSERT_EQUAL_INT(187, actuator15->intensity);
+    TEST_ASSERT_EQUAL_INT(1092, actuator8->intensity);
+    TEST_ASSERT_EQUAL_INT(1365, actuator9->intensity);
+    TEST_ASSERT_EQUAL_INT(2184, actuator10->intensity);
+    TEST_ASSERT_EQUAL_INT(2457, actuator11->intensity);
+    TEST_ASSERT_EQUAL_INT(1638, actuator12->intensity);
+    TEST_ASSERT_EQUAL_INT(1911, actuator13->intensity);
+    TEST_ASSERT_EQUAL_INT(2730, actuator14->intensity);
+    TEST_ASSERT_EQUAL_INT(3003, actuator15->intensity);
 }
 
 void test_layout_tactsuitx40(void)
@@ -131,36 +131,36 @@ void test_layout_tactsuitx40(void)
 
     vestOutputTransformer(body, value, bhLayout, bhLayoutSize);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[0][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(17, static_cast<TestActuator*>(frontMatrix[0][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(273, static_cast<TestActuator*>(frontMatrix[0][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[0][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[0][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(34, static_cast<TestActuator*>(frontMatrix[1][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(51, static_cast<TestActuator*>(frontMatrix[1][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(546, static_cast<TestActuator*>(frontMatrix[1][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(819, static_cast<TestActuator*>(frontMatrix[1][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[1][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[1][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(68, static_cast<TestActuator*>(frontMatrix[2][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(85, static_cast<TestActuator*>(frontMatrix[2][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(1092, static_cast<TestActuator*>(frontMatrix[2][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(1365, static_cast<TestActuator*>(frontMatrix[2][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[2][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[2][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(102, static_cast<TestActuator*>(frontMatrix[3][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(119, static_cast<TestActuator*>(frontMatrix[3][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(1638, static_cast<TestActuator*>(frontMatrix[3][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(1911, static_cast<TestActuator*>(frontMatrix[3][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[3][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[3][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(136, static_cast<TestActuator*>(frontMatrix[4][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(153, static_cast<TestActuator*>(frontMatrix[4][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(2184, static_cast<TestActuator*>(frontMatrix[4][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(2457, static_cast<TestActuator*>(frontMatrix[4][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[4][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[4][3])->intensity);
 
-    TEST_ASSERT_EQUAL_INT(170, static_cast<TestActuator*>(backMatrix[0][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(187, static_cast<TestActuator*>(backMatrix[0][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(2730, static_cast<TestActuator*>(backMatrix[0][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(3003, static_cast<TestActuator*>(backMatrix[0][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[0][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[0][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(204, static_cast<TestActuator*>(backMatrix[1][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(221, static_cast<TestActuator*>(backMatrix[1][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(3276, static_cast<TestActuator*>(backMatrix[1][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(3549, static_cast<TestActuator*>(backMatrix[1][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[1][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[1][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(238, static_cast<TestActuator*>(backMatrix[2][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(255, static_cast<TestActuator*>(backMatrix[2][1])->intensity);
+    TEST_ASSERT_EQUAL_INT(3822, static_cast<TestActuator*>(backMatrix[2][0])->intensity);
+    TEST_ASSERT_EQUAL_INT(4095, static_cast<TestActuator*>(backMatrix[2][1])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[2][2])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[2][3])->intensity);
     TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[3][0])->intensity);
@@ -199,7 +199,7 @@ void test_layout_tactal(void)
     std::string value = std::string((char*) values, sizeof(values));
 
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(255, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(4095, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator2->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator3->intensity);
@@ -209,12 +209,12 @@ void test_layout_tactal(void)
     value = "\x10\x20\x30\x40\x50\x60";
 
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(40, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(81, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(122, actuator2->intensity);
-    TEST_ASSERT_EQUAL_INT(163, actuator3->intensity);
-    TEST_ASSERT_EQUAL_INT(204, actuator4->intensity);
-    TEST_ASSERT_EQUAL_INT(244, actuator5->intensity);
+    TEST_ASSERT_EQUAL_INT(655, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(1310, actuator1->intensity);
+    TEST_ASSERT_EQUAL_INT(1965, actuator2->intensity);
+    TEST_ASSERT_EQUAL_INT(2620, actuator3->intensity);
+    TEST_ASSERT_EQUAL_INT(3276, actuator4->intensity);
+    TEST_ASSERT_EQUAL_INT(3931, actuator5->intensity);
 }
 
 void test_layout_tactosy2(void)
@@ -244,7 +244,7 @@ void test_layout_tactosy2(void)
     std::string value = std::string((char*) values, sizeof(values));
 
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(255, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(4095, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator2->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator3->intensity);
@@ -253,12 +253,12 @@ void test_layout_tactosy2(void)
 
     value = "\x10\x20\x30\x40\x50\x60";
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(40, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(81, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(122, actuator2->intensity);
-    TEST_ASSERT_EQUAL_INT(163, actuator3->intensity);
-    TEST_ASSERT_EQUAL_INT(204, actuator4->intensity);
-    TEST_ASSERT_EQUAL_INT(244, actuator5->intensity);
+    TEST_ASSERT_EQUAL_INT(655, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(1310, actuator1->intensity);
+    TEST_ASSERT_EQUAL_INT(1965, actuator2->intensity);
+    TEST_ASSERT_EQUAL_INT(2620, actuator3->intensity);
+    TEST_ASSERT_EQUAL_INT(3276, actuator4->intensity);
+    TEST_ASSERT_EQUAL_INT(3931, actuator5->intensity);
 }
 
 void test_layout_tactosyh(void)
@@ -286,15 +286,15 @@ void test_layout_tactosyh(void)
     std::string value = std::string((char*) values, sizeof(values));
 
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(255, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(4095, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator2->intensity);
 
     value = "\x10\x20\x30";
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(40, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(81, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(122, actuator2->intensity);
+    TEST_ASSERT_EQUAL_INT(655, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(1310, actuator1->intensity);
+    TEST_ASSERT_EQUAL_INT(1965, actuator2->intensity);
 }
 
 void test_layout_tactosyf(void)
@@ -322,15 +322,15 @@ void test_layout_tactosyf(void)
     std::string value = std::string((char*) values, sizeof(values));
 
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(255, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(4095, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator2->intensity);
 
     value = "\x10\x20\x30";
     plainOutputTransformer(body, value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
-    TEST_ASSERT_EQUAL_INT(40, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(81, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(122, actuator2->intensity);
+    TEST_ASSERT_EQUAL_INT(655, actuator0->intensity);
+    TEST_ASSERT_EQUAL_INT(1310, actuator1->intensity);
+    TEST_ASSERT_EQUAL_INT(1965, actuator2->intensity);
 }
 
 int process(void)

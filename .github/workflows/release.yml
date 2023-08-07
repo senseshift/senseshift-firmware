@@ -124,8 +124,11 @@ jobs:
         target:
           - lucidgloves-prototype3
           - lucidgloves-prototype4
+          - lucidgloves-prototype4-ffb
           - indexer-c
+          - indexer-cf
           - indexer-cs
+          - indexer-csf
         comm_flag:
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL
@@ -136,6 +139,15 @@ jobs:
         id: firmware_name
         run: |
           ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }}
+
+      - name: Update build command (non-Windows)
+        run: |
+          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
+          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
+
+      - name: Update build flags (non-macOS)
+        run: |
+          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Cache pip
         uses: actions/cache@v3
@@ -167,15 +179,6 @@ jobs:
           pip install --upgrade platformio
           pio upgrade --dev
           pio pkg update --global
-
-      - name: Update build command (non-Windows)
-        run: |
-          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
-          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Build
         run: |
