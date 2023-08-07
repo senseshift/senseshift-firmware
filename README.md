@@ -1,11 +1,12 @@
 # SenseShift Firmware
 
-This project intended to let people build their own DIY haptic-feedback devices. Integrates to all existing games, that work with bHaptics.
+This project is intended to let people build their own DIY haptic-feedback devices. Integrates into all existing games that work with bHaptics and OpenGloves.
 
-Build your own DIY haptic vest, haptic gloves and more!
+Build your own DIY haptic vest, haptic gloves, and more!
 
 [![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
-[![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%27s%20Twitter&logo=twitter)](https://twitter.com/leon0399)
+[![Developer's Twitter](https://img.shields.io/twitter/follow/senseshiftio?color=%231DA1F2&label=Project%20Twitter&logo=twitter)](https://twitter.com/senseshiftio)
+[![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%20Twitter&logo=twitter)](https://twitter.com/leon0399)
 
 [![PlatformIO CI](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml)
 [![GitHub bug issues](https://img.shields.io/github/issues/senseshift/senseshift-firmware/bug?color=%23d73a4a)](https://github.com/senseshift/senseshift-firmware/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
@@ -15,7 +16,7 @@ Build your own DIY haptic vest, haptic gloves and more!
 [![GitHub](https://img.shields.io/github/stars/senseshift/senseshift-firmware.svg)](https://github.com/senseshift/senseshift-firmware)
 [![Contributor Covenant](https://img.shields.io/badge/code_of_conduct-contributor_covenant_v2.1-ff69b4)](/CODE_OF_CONDUCT.md)
 
-## Configuration, flashing and connecting
+## Configuration, flashing, and connecting
 
 The main documentation on this project is located on [senseshift.github.io](https://senseshift.github.io/)
 
@@ -24,7 +25,7 @@ The main documentation on this project is located on [senseshift.github.io](http
 * [Hardware Schematics](https://github.com/senseshift/senseshift-hardware)
 * [Flashing Firmware](https://senseshift.github.io/docs/category/firmware)
 
-Please note, that documentation is still work-in-progress
+Please note that documentation is still work-in-progress.
 
 ## Supported Hardware
 
@@ -66,10 +67,11 @@ Please note, that documentation is still work-in-progress
 
 ## Supported Protocols
 
-| Protocol             | Status                                                              |
-| :------------------- | :-----------------------------------------------------------------: |
-| bHaptics Bluetooth   | ✅ (Android/Windows/Quest)                                           |
-| SenseShift          | [RFC](https://github.com/senseshift/senseshift-firmware/issues/9) |
+| Protocol                  | Status                                                              |
+| :------------------------ | :-----------------------------------------------------------------: |
+| bHaptics Bluetooth LE     | ✅ (Android/Windows/Quest)                                           |
+| OpenGloves Alpha-encoding | ✅ (Serial/Bluetooth Serial)                                         |
+| SenseShift                | [RFC](https://github.com/senseshift/senseshift-firmware/issues/9)   |
 
 ## Supported devices
 
