@@ -9,6 +9,8 @@
 #include <logging.hpp>
 #include <og_protocol.hpp>
 
+#include <senseshift_interface.hpp>
+
 namespace OpenGloves {
     class AlphaEncodingService {
       public:

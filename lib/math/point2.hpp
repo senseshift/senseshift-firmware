@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <functional>
 
 namespace OH {
     template<typename _Tp>
@@ -41,3 +42,11 @@ namespace OH {
         return std::tie(x, y) < std::tie(rhs.x, rhs.y);
     }
 }; // namespace OH
+
+template <>
+struct std::hash<OH::Point2b> {
+    size_t operator()(const OH::Point2b& p) const noexcept
+    {
+        return ((size_t)p.x << 32) | p.y;
+    }
+};

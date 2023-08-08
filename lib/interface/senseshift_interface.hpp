@@ -1,49 +1,58 @@
 #pragma once
 
-#include <cstdint>
+#include "senseshift_types.hpp"
+
 #include <variant>
 
-#include <abstract_actuator.hpp>
 #include <point2.hpp>
-
-#define OH_OUTPUT_COORD_T uint8_t
-#define OH_OUTPUT_COORD_MAX UINT8_MAX
 
 namespace SenseShift
 {
     namespace Interface {
         namespace Body {
             namespace Haptics {
-                typedef OH_OUTPUT_COORD_T Coordinate;
-                typedef OH::Point2<Coordinate> Point;
-                static const Coordinate CoordinateMin = 0;
-                static const Coordinate CoordinateMax = OH_OUTPUT_COORD_MAX;
+                typedef OH_OUTPUT_COORD_T Coordinate_t;
+                typedef OH::Point2<Coordinate_t> Point_t;
+                static const Coordinate_t COORDINATE_MIN = 0;
+                static const Coordinate_t COORDINATE_MAX = OH_OUTPUT_COORD_MAX;
 
-                typedef OH_OUTPUT_INTENSITY_T Intensity;
-                static const Intensity IntensityMin = 0;
-                static const Intensity IntensityMax = OH_OUTPUT_INTENSITY_MAX;
+                typedef OH_OUTPUT_INTENSITY_T Intensity_t;
+                static const Intensity_t INTENSITY_MIN = 0;
+                static const Intensity_t INTENSITY_MAX = OH_OUTPUT_INTENSITY_MAX;
 
-                typedef enum class Target {
-                    ChestFront,
-                    ChestBack,
+                typedef int32_t TargetIndex_t;
+                static const TargetIndex_t TARGET_INVALID = -1;
+                typedef enum class Target : TargetIndex_t {
+                    Invalid = TARGET_INVALID,
+                    ChestFront = 0,
+                    ChestBack = 1,
                 } Target;
 
-                typedef enum class Layer {
-                    Vibro,
+                typedef int8_t LayerIndex_t;
+                static const LayerIndex_t LAYER_INVALID = -1;
+                typedef enum class Layer : LayerIndex_t {
+                    Invalid = LAYER_INVALID,
+                    Vibro = 0,
                 } Layer;
 
+                /**
+                 * Spatial haptics message
+                 */
                 typedef struct Message {
                     Target target;
                     Layer layer;
-                    Point point;
-                    Intensity intensity;
+                    Point_t point;
+                    Intensity_t intensity;
                 } Message;
             } // namespace Haptics
 
             namespace ForceFeedback {
-                typedef OH_OUTPUT_INTENSITY_T Intensity;
-                static const Intensity IntensityMin = 0;
-                static const Intensity IntensityMax = OH_OUTPUT_INTENSITY_MAX;
+                typedef OH_OUTPUT_INTENSITY_T Intensity_t;
+                static const Intensity_t INTENSITY_MIN = 0;
+                static const Intensity_t INTENSITY_MAX = OH_OUTPUT_INTENSITY_MAX;
+
+                typedef int32_t JointIndex_t;
+                static const JointIndex_t JOINT_INVALID = -1;
 
                 /**
                  * Skeleton joints
@@ -51,8 +60,8 @@ namespace SenseShift
                  * @see https://www.researchgate.net/figure/Proximal-Interphalangeal-PIP-Distal-Interphalangeal-DIP-and-Metacarpophalangeal_fig1_344683759
                  * @see https://www.researchgate.net/figure/Degrees-of-freedom-of-the-wrist-and-fingers-joints_fig1_264907843
                  */
-                typedef enum class Joint {
-                    Unknown,
+                typedef enum class Joint : JointIndex_t {
+                    Invalid = JOINT_INVALID,
 
                     #pragma region Left Hand
                     HandLeftThumbCMC_Yaw,
@@ -121,17 +130,20 @@ namespace SenseShift
 
                 typedef struct Message {
                     Joint joint;
-                    Intensity intensity;
+                    Intensity_t intensity;
                 } Message;
             } // namespace ForceFeedback
         } // namespace Body
 
         namespace Auxiliary {
-            typedef OH_OUTPUT_INTENSITY_T Intensity;
-            static const Intensity IntensityMin = 0;
-            static const Intensity IntensityMax = OH_OUTPUT_INTENSITY_MAX;
+            typedef OH_OUTPUT_INTENSITY_T Intensity_t;
+            static const Intensity_t INTENSITY_MIN = 0;
+            static const Intensity_t INTENSITY_MAX = OH_OUTPUT_INTENSITY_MAX;
 
-            typedef enum class Target {
+            typedef int32_t TargetIndex_t;
+            static const TargetIndex_t TARGET_INVALID = -1;
+            typedef enum class Target : TargetIndex_t {
+                Invalid = TARGET_INVALID,
                 PistolLeft,
                 PistolRight,
 
@@ -141,13 +153,28 @@ namespace SenseShift
 
             typedef struct Message {
                 Target target;
-                Intensity intensity;
+                Intensity_t intensity;
             } Message;
         } // namespace Auxiliary
 
         namespace Meta {
             typedef struct BatteryMessage {
-                uint8_t percentage;
+                typedef uint8_t Percentage_t;
+                static const Percentage_t PERCENTAGE_MIN = 0;
+                static const Percentage_t PERCENTAGE_MAX = 255;
+
+                typedef int8_t StatusIndex_t;
+                static const StatusIndex_t STATUS_INVALID = -1;
+                typedef enum class Status : StatusIndex_t {
+                    Invalid = STATUS_INVALID,
+                    Unknown = 0,
+                    Discharging,
+                    Charging,
+                    Full,
+                } Status;
+
+                Percentage_t percentage;
+                Status status;
             } BatteryMessage;
 
             typedef std::variant<

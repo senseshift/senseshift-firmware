@@ -7,7 +7,7 @@ void BH::plainOutputTransformer(
   std::string& value,
   const oh_output_point_t* layout[],
   const size_t layoutSize,
-  const oh_output_path_t path
+  const oh_output_target_t path
 )
 {
     for (size_t i = 0; i < layoutSize; i++) {

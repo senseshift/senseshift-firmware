@@ -1,32 +1,50 @@
 #pragma once
 
-#include "haptic_constants.h"
 #include "haptic_plane.hpp"
 
-#include <types.hpp>
 #include <utility.hpp>
 
 #include <map>
 
-namespace OH {
-    class HapticBody {
-      private:
-        typedef std::map<oh_output_path_t, HapticPlane*> oh_output_components_map_t;
-        std::map<oh_output_path_t, HapticPlane*> components{};
+namespace SenseShift {
+    namespace Body {
+        namespace Haptics {
+            class HapticBody {
+              public:
+                typedef SenseShift::Interface::Body::Haptics::Target Target_t;
+                typedef SenseShift::Interface::Body::Haptics::Layer Layer_t;
+                typedef std::map<Target_t, Plane*> TargetMap_t;
+                typedef std::map<Layer_t, TargetMap_t> LayerMap_t;
 
-      public:
-        HapticBody(){};
+                HapticBody() = default;
 
-        void addComponent(const oh_output_path_t, HapticPlane*);
-        oh_output_components_map_t* getComponents();
+                void setup()
+                {
+                    for (auto& [_, targets] : this->components) {
+                        for (auto& [_, plane] : targets) {
+                            plane->setup();
+                        }
+                    }
+                };
 
-        void writeOutput(const oh_output_path_t, const oh_output_data_t&);
+                void addComponent(const Target_t, const Layer_t, Plane*);
+                LayerMap_t* getComponents();
 
-        void setup()
-        {
-            for (auto& component : this->components) {
-                component.second->setup();
-            }
-        };
-    };
-} // namespace OH
+                void writeOutput(const Target_t, const Layer_t, const Plane::Point_t&, const Plane::Intensity_t);
+
+                inline void handleMessage(const SenseShift::Interface::Body::Haptics::Message& message)
+                {
+                    this->writeOutput(message.target, message.layer, message.point, message.intensity);
+                }
+
+              private:
+                LayerMap_t components{};
+
+                inline void writeOutput_Unsafe(const Target_t target, const Layer_t layer, const Plane::Point_t& point, const Plane::Intensity_t intensity)
+                {
+                    (*this->components[layer][target]).writeOutput(point, intensity);
+                }
+            };
+        } // namespace Haptics
+    } // namespace Body
+} // namespace SenseShift

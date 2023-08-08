@@ -2,27 +2,25 @@
 
 #include "config/all.h"
 
+#include <senseshift_interface.hpp>
+
 #include <abstract_connection.hpp>
+#include <abstract_battery.hpp>
+
 #include <events.hpp>
 #include <haptic_body.hpp>
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <abstract_battery.hpp>
-#endif
-
+#include <optional>
 #include <vector>
 
-class SenseShiftCore final : public OH::IEventDispatcher {
+class SenseShiftApp final : public OH::IEventDispatcher {
   private:
     std::vector<const OH::IEventListener*> eventListeners{};
     OH::HapticBody* pHapticBody;
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    OH::BatterySensor* battery;
-#endif
+    std::optional<OH::BatterySensor*> batterySensor;
 
   public:
-    SenseShiftCore();
+    SenseShiftApp();
 
     OH::HapticBody* getHapticBody()
     {
@@ -31,4 +29,6 @@ class SenseShiftCore final : public OH::IEventDispatcher {
 
     void postEvent(const OH::IEvent* event) override;
     void addEventListener(const OH::IEventListener* listener) override;
+
+    void handleMessage(const SenseShift::Interface::Message& message);
 };

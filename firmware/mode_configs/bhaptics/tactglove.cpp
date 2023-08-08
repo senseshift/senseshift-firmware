@@ -19,8 +19,8 @@
 using namespace OH;
 using namespace BH;
 
-extern SenseShiftCore App;
-SenseShiftCore* app = &App;
+extern SenseShiftApp App;
+SenseShiftApp* app = &App;
 
 #pragma region bHaptics_trash
 

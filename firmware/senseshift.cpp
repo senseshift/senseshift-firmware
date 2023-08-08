@@ -8,12 +8,12 @@
 
 #include <logging.hpp>
 
-SenseShiftCore::SenseShiftCore()
+SenseShiftApp::SenseShiftApp()
 {
     this->pHapticBody = new OH::HapticBody();
 }
 
-void SenseShiftCore::postEvent(const OH::IEvent* event)
+void SenseShiftApp::postEvent(const OH::IEvent* event)
 {
     log_i("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
 
@@ -24,7 +24,7 @@ void SenseShiftCore::postEvent(const OH::IEvent* event)
     delete event;
 }
 
-void SenseShiftCore::addEventListener(const OH::IEventListener* listener)
+void SenseShiftApp::addEventListener(const OH::IEventListener* listener)
 {
     this->eventListeners.push_back(listener);
 }

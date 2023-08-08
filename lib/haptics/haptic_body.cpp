@@ -2,24 +2,53 @@
 
 #include <logging.hpp>
 
-void OH::HapticBody::addComponent(const oh_output_path_t path, OH::HapticPlane* c)
-{
-    this->components[path] = c;
-}
+namespace SenseShift {
+    namespace Body {
+        namespace Haptics {
+            void HapticBody::addComponent(const Target_t target, const Layer_t layer, Plane* plane)
+            {
+                auto layerSearch = this->components.find(layer);
 
-std::map<oh_output_path_t, OH::HapticPlane*>* OH::HapticBody::getComponents()
-{
-    return &this->components;
-}
+                if (layerSearch == this->components.end()) {
+                    // if layer does not exist, create it
+                    this->components.insert(std::make_pair(layer, TargetMap_t{}));
+                    layerSearch = this->components.find(layer);
+                }
 
-void OH::HapticBody::writeOutput(const oh_output_path_t path, const oh_output_data_t& data)
-{
-    if (this->getComponents()->count(path) == 0) {
-        // if no requested component exists, skip
-        log_w("No component found for path %d", path);
-        return;
+                auto targetSearch = (*layerSearch).second.find(target);
+
+                if (targetSearch == (*layerSearch).second.end()) {
+                    // if target does not exist, create it
+                    (*layerSearch).second.insert(std::make_pair(target, nullptr));
+                    targetSearch = (*layerSearch).second.find(target);
+                }
+
+                (*targetSearch).second = plane;
+            }
+
+            HapticBody::LayerMap_t* HapticBody::getComponents()
+            {
+                return &this->components;
+            }
+
+            void HapticBody::writeOutput(const Target_t target, const Layer_t layer, const Plane::Point_t& point, const Plane::Intensity_t intensity)
+            {
+                auto layerSearch = this->components.find(layer);
+                if (layerSearch == this->components.end()) {
+                    // if layer does not exist, skip
+                    log_w("No layer found for message %d", layer);
+                    return;
+                }
+
+                auto targetSearch = (*layerSearch).second.find(target);
+                if (targetSearch == (*layerSearch).second.end()) {
+                    // if target does not exist, skip
+                    log_w("No target found for message %d (layer %d)", target, layer);
+                    return;
+                }
+
+                this->writeOutput_Unsafe(target, layer, point, intensity);
+            }
+        }
     }
-
-    auto componentSearch = this->getComponents()->find(path);
-    (*componentSearch).second->writeOutput(data);
-}
+};
