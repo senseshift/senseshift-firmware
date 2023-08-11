@@ -8,7 +8,7 @@ void OH::SerialPlotter_OutputStates<_Tp>::run()
             oh_output_path_t path = _c.first;
             OH::HapticPlane* component = _c.second;
 
-            for (auto& _s : *component->getOutputStates()) {
+            for (auto& _s : *component->getActuatorStates()) {
                 oh_output_point_t point = _s.first;
                 oh_output_state_t state = _s.second;
 

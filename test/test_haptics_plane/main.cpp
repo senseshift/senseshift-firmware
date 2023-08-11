@@ -1,9 +1,9 @@
 #include <haptic_plane.hpp>
 #include <unity.h>
 
-using namespace OH;
+using namespace SenseShift::Body::Haptics;
 
-class TestActuator : public AbstractActuator {
+class TestActuator : public OH::AbstractActuator {
   public:
     bool isSetup = false;
     oh_output_intensity_t intensity = 0;
@@ -21,18 +21,21 @@ class TestActuator : public AbstractActuator {
 
 void test_it_sets_up_actuators(void)
 {
-    oh_output_writers_map_t outputs = {
+    VibroPlane::ActuatorMap_t outputs = {
         { { 0, 0 }, new TestActuator() },
         { { 0, 1 }, new TestActuator() },
         { { 1, 0 }, new TestActuator() },
         { { 1, 1 }, new TestActuator() },
     };
 
-    auto plane = new HapticPlane(outputs);
+    auto plane = new VibroPlane(outputs);
     plane->setup();
 
+    TEST_ASSERT_EQUAL(outputs.size(), plane->getAvailablePoints()->size());
     for (auto& kv : outputs) {
-        TEST_ASSERT_TRUE(static_cast<TestActuator*>(kv.second)->isSetup);
+        TEST_ASSERT_TRUE_MESSAGE(plane->getAvailablePoints()->count(kv.first) > 0, "Expected point was not found");
+        TEST_ASSERT_TRUE_MESSAGE(plane->getActuatorStates()->count(kv.first) > 0, "Expected state was not found");
+        TEST_ASSERT_TRUE_MESSAGE(static_cast<TestActuator*>(kv.second)->isSetup, "Actuator was not setup");
     }
 }
 
@@ -41,20 +44,19 @@ void test_it_writes_to_correct_output(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    oh_output_writers_map_t outputs = {
+    VibroPlane::ActuatorMap_t outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
         { { 1, 1 }, actuator4 },
     };
 
-    auto plane = new HapticPlane(outputs);
-    plane->setup();
+    auto plane = new VibroPlane(outputs);
 
-    plane->writeOutput({ { 0, 0 }, 64 });
-    plane->writeOutput({ { 0, 1 }, 128 });
-    plane->writeOutput({ { 1, 0 }, 192 });
-    plane->writeOutput({ { 1, 1 }, 255 });
+    plane->effect({ 0, 0 }, 64);
+    plane->effect({ 0, 1 }, 128);
+    plane->effect({ 1, 0 }, 192);
+    plane->effect({ 1, 1 }, 255);
 
     TEST_ASSERT_EQUAL_UINT8(64, actuator->intensity);
     TEST_ASSERT_EQUAL_UINT8(128, actuator2->intensity);
@@ -67,25 +69,31 @@ void test_it_updates_state(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    oh_output_writers_map_t outputs = {
+    VibroPlane::ActuatorMap_t outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
         { { 1, 1 }, actuator4 },
     };
 
-    auto plane = new HapticPlane(outputs);
-    plane->setup();
+    auto plane = new VibroPlane(outputs);
 
-    plane->writeOutput({ { 0, 0 }, 64 });
-    plane->writeOutput({ { 0, 1 }, 128 });
-    plane->writeOutput({ { 1, 0 }, 192 });
-    plane->writeOutput({ { 1, 1 }, 255 });
+    plane->effect({ 0, 0 }, 64);
+    plane->effect({ 0, 1 }, 128);
+    plane->effect({ 1, 0 }, 192);
+    plane->effect({ 1, 1 }, 255);
 
-    TEST_ASSERT_EQUAL_UINT8(64, plane->getOutputStates()->at({ 0, 0 }).intensity);
-    TEST_ASSERT_EQUAL_UINT8(128, plane->getOutputStates()->at({ 0, 1 }).intensity);
-    TEST_ASSERT_EQUAL_UINT8(192, plane->getOutputStates()->at({ 1, 0 }).intensity);
-    TEST_ASSERT_EQUAL_UINT8(255, plane->getOutputStates()->at({ 1, 1 }).intensity);
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 0 }) > 0);
+    TEST_ASSERT_EQUAL_UINT8(64, plane->getActuatorStates()->at({ 0, 0 }));
+
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 1 }) > 0);
+    TEST_ASSERT_EQUAL_UINT8(128, plane->getActuatorStates()->at({ 0, 1 }));
+
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 1, 0 }) > 0);
+    TEST_ASSERT_EQUAL_UINT8(192, plane->getActuatorStates()->at({ 1, 0 }));
+
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 1, 1 }) > 0);
+    TEST_ASSERT_EQUAL_UINT8(255, plane->getActuatorStates()->at({ 1, 1 }));
 }
 
 void test_closest_it_writes_to_correct_if_exact(void)
@@ -93,20 +101,19 @@ void test_closest_it_writes_to_correct_if_exact(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    oh_output_writers_map_t outputs = {
+    VibroPlane_Closest::ActuatorMap_t outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
         { { 1, 1 }, actuator4 },
     };
 
-    auto plane = new HapticPlane_Closest(outputs);
-    plane->setup();
+    auto plane = new VibroPlane_Closest(outputs);
 
-    plane->writeOutput({ { 0, 0 }, 1 });
-    plane->writeOutput({ { 0, 1 }, 2 });
-    plane->writeOutput({ { 1, 0 }, 3 });
-    plane->writeOutput({ { 1, 1 }, 4 });
+    plane->effect({ 0, 0 }, 1);
+    plane->effect({ 0, 1 }, 2);
+    plane->effect({ 1, 0 }, 3);
+    plane->effect({ 1, 1 }, 4);
 
     TEST_ASSERT_EQUAL(1, actuator->intensity);
     TEST_ASSERT_EQUAL(2, actuator2->intensity);
@@ -119,18 +126,17 @@ void test_closest_it_correctly_finds_closest(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    oh_output_writers_map_t outputs = {
+    VibroPlane_Closest::ActuatorMap_t outputs = {
         { { 0, 0 }, actuator },
         { { 0, 64 }, actuator2 },
         { { 64, 0 }, actuator3 },
         { { 64, 64 }, actuator4 },
     };
 
-    auto plane = new HapticPlane_Closest(outputs);
-    plane->setup();
+    auto plane = new VibroPlane_Closest(outputs);
 
-    plane->writeOutput({ { 16, 16 }, 16 });
-    plane->writeOutput({ { 65, 65 }, 65 });
+    plane->effect({ 16, 16 }, 16);
+    plane->effect({ 65, 65 }, 65);
 
     TEST_ASSERT_EQUAL(16, actuator->intensity);
     TEST_ASSERT_EQUAL(0, actuator2->intensity);
@@ -143,41 +149,47 @@ void test_closest_it_updates_state(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    oh_output_writers_map_t outputs = {
+    VibroPlane_Closest::ActuatorMap_t outputs = {
         { { 0, 0 }, actuator },
         { { 0, 64 }, actuator2 },
         { { 64, 0 }, actuator3 },
         { { 64, 64 }, actuator4 },
     };
 
-    auto plane = new HapticPlane_Closest(outputs);
-    plane->setup();
+    auto plane = new VibroPlane_Closest(outputs);
 
-    plane->writeOutput({ { 16, 16 }, 16 });
-    plane->writeOutput({ { 65, 65 }, 65 });
+    plane->effect({ 16, 16 }, 16);
+    plane->effect({ 65, 65 }, 65);
 
-    TEST_ASSERT_EQUAL(16, plane->getOutputStates()->at({ 0, 0 }).intensity);
-    TEST_ASSERT_EQUAL(0, plane->getOutputStates()->at({ 0, 64 }).intensity);
-    TEST_ASSERT_EQUAL(0, plane->getOutputStates()->at({ 64, 0 }).intensity);
-    TEST_ASSERT_EQUAL(65, plane->getOutputStates()->at({ 64, 64 }).intensity);
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 0 }) > 0);
+    TEST_ASSERT_EQUAL(16, plane->getActuatorStates()->at({ 0, 0 }));
+
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 64 }) > 0);
+    TEST_ASSERT_EQUAL(0, plane->getActuatorStates()->at({ 0, 64 }));
+
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 64, 0 }) > 0);
+    TEST_ASSERT_EQUAL(0, plane->getActuatorStates()->at({ 64, 0 }));
+
+    TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 64, 64 }) > 0);
+    TEST_ASSERT_EQUAL(65, plane->getActuatorStates()->at({ 64, 64 }));
 }
 
 void test_plain_mapper_margin_map_points(void)
 {
-    auto point = PlaneMapper_Margin::mapPoint(0, 0, 0, 0);
+    auto point = PlaneMapper_Margin::mapPoint<uint8_t>(0, 0, 0, 0);
 
-    TEST_ASSERT_EQUAL(127, point->x);
-    TEST_ASSERT_EQUAL(127, point->y);
+    TEST_ASSERT_EQUAL(127, point.x);
+    TEST_ASSERT_EQUAL(127, point.y);
 
-    point = PlaneMapper_Margin::mapPoint(0, 0, 1, 1);
+    point = PlaneMapper_Margin::mapPoint<uint8_t>(0, 0, 1, 1);
 
-    TEST_ASSERT_EQUAL(85, point->x);
-    TEST_ASSERT_EQUAL(85, point->y);
+    TEST_ASSERT_EQUAL(85, point.x);
+    TEST_ASSERT_EQUAL(85, point.y);
 
-    point = PlaneMapper_Margin::mapPoint(1, 1, 1, 1);
+    point = PlaneMapper_Margin::mapPoint<uint8_t>(1, 1, 1, 1);
 
-    TEST_ASSERT_EQUAL(170, point->x);
-    TEST_ASSERT_EQUAL(170, point->y);
+    TEST_ASSERT_EQUAL(170, point.x);
+    TEST_ASSERT_EQUAL(170, point.y);
 }
 
 int process(void)
@@ -187,9 +199,11 @@ int process(void)
     RUN_TEST(test_it_sets_up_actuators);
     RUN_TEST(test_it_writes_to_correct_output);
     RUN_TEST(test_it_updates_state);
+
     RUN_TEST(test_closest_it_writes_to_correct_if_exact);
     RUN_TEST(test_closest_it_correctly_finds_closest);
     RUN_TEST(test_closest_it_updates_state);
+
     RUN_TEST(test_plain_mapper_margin_map_points);
 
     return UNITY_END();

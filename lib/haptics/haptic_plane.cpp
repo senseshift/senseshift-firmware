@@ -3,79 +3,78 @@
 #include <algorithm>
 #include <logging.hpp>
 #include <math.h>
-#include <utility.hpp>
 
-void OH::HapticPlane::setOutputs(oh_output_writers_map_t& outputs)
-{
-    this->writers.clear();
-    this->writers = outputs;
+#include "haptic_plane.hpp"
 
-    this->points.clear();
-    for (auto& _p : outputs) {
-        this->points.push_back(_p.first);
+namespace SenseShift::Body::Haptics {
+    template<typename _Tp>
+    void ActuativePlane<_Tp>::setActuators(const ActuatorMap_t& actuators)
+    {
+        this->actuators.clear();
+        for (const auto& [point, actuator] : actuators) {
+            this->actuators[point] = actuator;
+        }
+
+        this->points.clear();
+        for (const auto& [point, _] : actuators) {
+            this->points.insert(point);
+        }
+
+        this->states.clear();
+        for (const auto& [point, _] : actuators) {
+            this->states[point] = 0;
+        }
     }
 
-    this->states.clear();
-    for (auto& _p : outputs) {
-        this->states[_p.first] = {};
-    }
-}
-
-void OH::HapticPlane::setup()
-{
-    for (const auto& kv : this->writers) {
-        kv.second->setup();
-    }
-}
-
-void OH::HapticPlane::writeOutput(const oh_output_data_t& data)
-{
-    if (this->writers.count(data.point) == 0) {
-        log_w("No writer for point (%u, %u)", data.point.x, data.point.y);
-        return;
+    template<typename _Tp>
+    void ActuativePlane<_Tp>::setup()
+    {
+        for (const auto& [point, actuator] : this->actuators) {
+            actuator->setup();
+        }
     }
 
-    auto state = &this->states[data.point];
-    state->intensity = data.intensity;
+    template<typename _Tp>
+    void ActuativePlane<_Tp>::effect(const Position_t& pos, const Value_t& val)
+    {
+        auto it = this->actuators.find(pos);
+        if (it == this->actuators.end()) {
+            log_w("No actuator for point (%u, %u)", pos.x, pos.y);
+            return;
+        }
 
-    this->writers.at(data.point)->writeOutput(state->intensity);
-}
-
-oh_output_point_t
-  OH::HapticPlane_Closest::findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target)
-{
-    if (contains(pts, target)) {
-        return target;
+        it->second->writeOutput(val);
+        this->states[pos] = val;
     }
 
-    std::multimap<float, oh_output_point_t> mp = {};
-
-    for (auto& _p : pts) {
-        float dx = abs(((float) target.x / OH_OUTPUT_COORD_MAX) - ((float) _p.x / OH_OUTPUT_COORD_MAX)),
-              dy = abs(((float) target.y / OH_OUTPUT_COORD_MAX) - ((float) _p.y / OH_OUTPUT_COORD_MAX));
-
-        auto dist = (float) sqrt(pow(dx, 2) + pow(dy, 2));
-
-        mp.insert({ dist, _p });
+    template<typename _Tp>
+    void ActuativePlane_Closest<_Tp>::effect(const Position_t& pos, const Value_t& val)
+    {
+        auto& closest = this->findClosestPoint(*this->getAvailablePoints(), pos);
+        ActuativePlane<_Tp>::effect(closest, val);
     }
 
-    auto nearest = std::min_element(
-      mp.begin(),
-      mp.end(),
-      [](const std::pair<float, oh_output_point_t>& a, const std::pair<float, oh_output_point_t>& b) {
-          return a.first < b.first;
-      }
-    );
+    template<typename _Tp>
+    const Position_t&
+      ActuativePlane_Closest<_Tp>::findClosestPoint(const PositionSet_t& pts, const Position_t& target) const
+    {
+        // check if exact point exists
+        auto it = pts.find(target);
+        if (it != pts.end()) {
+            return *it;
+        }
 
-    return nearest->second;
-}
+        // find closest point by square distance
+        std::multimap<float, Position_t> mp = {};
+        for (const auto& _p : pts) {
+            mp.insert({ (target - _p), _p });
+        }
 
-void OH::HapticPlane_Closest::writeOutput(const oh_output_data_t& data)
-{
-    auto closestPoint = this->findClosestPoints(this->points, data.point);
+        auto nearest = std::min_element(mp.begin(), mp.end());
 
-    auto state = &this->states[closestPoint];
-    state->intensity = data.intensity;
+        return nearest->second;
+    }
 
-    this->writers.at(closestPoint)->writeOutput(state->intensity);
-}
+    template class ActuativePlane<VibroEffect_t>;
+    template class ActuativePlane_Closest<VibroEffect_t>;
+} // namespace SenseShift::Body::Haptics

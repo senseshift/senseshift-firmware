@@ -2,24 +2,31 @@
 
 #include <logging.hpp>
 
-void OH::HapticBody::addComponent(const oh_output_path_t path, OH::HapticPlane* c)
-{
-    this->components[path] = c;
-}
-
-std::map<oh_output_path_t, OH::HapticPlane*>* OH::HapticBody::getComponents()
-{
-    return &this->components;
-}
-
-void OH::HapticBody::writeOutput(const oh_output_path_t path, const oh_output_data_t& data)
-{
-    if (this->getComponents()->count(path) == 0) {
-        // if no requested component exists, skip
-        log_w("No component found for path %d", path);
-        return;
+namespace SenseShift::Body::Haptics {
+    void HapticBody::setup()
+    {
+        for (auto& [target, plane] : this->vibroTargets) {
+            plane->setup();
+        }
     }
 
-    auto componentSearch = this->getComponents()->find(path);
-    (*componentSearch).second->writeOutput(data);
-}
+    void HapticBody::effect(const EffectRequest_t& effect)
+    {
+        if (effect.effect == Effect::Vibro && std::holds_alternative<VibroEffect_t>(effect.data)) {
+            auto it = this->vibroTargets.find(effect.target);
+            if (it == this->vibroTargets.end()) {
+                log_w("No target found for effect: %d", effect.target);
+                return;
+            }
+
+            it->second->effect(effect.position, std::get<VibroEffect_t>(effect.data));
+        } else {
+            log_w("Non-supported effect type: %d", effect.effect);
+        }
+    }
+
+    void HapticBody::addTarget(const Target_t target, VibroPlane* plane)
+    {
+        this->vibroTargets[target] = plane;
+    }
+} // namespace SenseShift::Body::Haptics
