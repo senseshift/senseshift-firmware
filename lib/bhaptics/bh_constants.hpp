@@ -1,5 +1,7 @@
 #pragma once
 
+#include <haptic_plane.hpp>
+
 #if defined(ESP32)
 #include <BLEUUID.h>
 #endif
@@ -17,12 +19,12 @@
 
 #define BH_LAYOUT_TACTSUITX16_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX16_SIZE_Y 2
-#define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(      \
-      x,                                                      \
-      y,                                                      \
-      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y)                                  \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1),                   \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_Y - 1)                    \
     )
 
 // X16 suit uses the same packets structure as x40 suit and performs motor grouping in firmware
@@ -95,12 +97,12 @@
 
 #define BH_LAYOUT_TACTSUITX40_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX40_SIZE_Y 5
-#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(      \
-      x,                                                      \
-      y,                                                      \
-      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y)                                  \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1),                   \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1)                    \
     )
 
 // X * Y for front and back
@@ -162,12 +164,12 @@
 
 #define BH_LAYOUT_TACTAL_SIZE_X 6
 #define BH_LAYOUT_TACTAL_SIZE_Y 1
-#define BH_LAYOUT_TACTAL_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
-      x,                                                 \
-      y,                                                 \
-      (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTAL_MAKE_POINT(x, y)                                       \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1),                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_Y - 1)                         \
     )
 
 #define BH_LAYOUT_TACTAL_SIZE (BH_LAYOUT_TACTAL_SIZE_X * BH_LAYOUT_TACTAL_SIZE_Y)
@@ -188,12 +190,12 @@
 
 #define BH_LAYOUT_TACTVISOR_SIZE_X 4
 #define BH_LAYOUT_TACTVISOR_SIZE_Y 1
-#define BH_LAYOUT_TACTVISOR_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(    \
-      x,                                                    \
-      y,                                                    \
-      (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTVISOR_MAKE_POINT(x, y)                                    \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_X - 1),                     \
+      (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_Y - 1)                      \
     )
 
 #define BH_LAYOUT_TACTVISOR_SIZE (BH_LAYOUT_TACTVISOR_SIZE_X * BH_LAYOUT_TACTVISOR_SIZE_Y)
@@ -212,12 +214,12 @@
 
 #define BH_LAYOUT_TACTOSY2_SIZE_X 3
 #define BH_LAYOUT_TACTOSY2_SIZE_Y 2
-#define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(   \
-      x,                                                   \
-      y,                                                   \
-      (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y)                                     \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1),                      \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_Y - 1)                       \
     )
 
 #define BH_LAYOUT_TACTOSY2_SIZE (BH_LAYOUT_TACTOSY2_SIZE_X * BH_LAYOUT_TACTOSY2_SIZE_Y)
@@ -234,12 +236,12 @@
 
 #define BH_LAYOUT_TACTOSYH_SIZE_X 1
 #define BH_LAYOUT_TACTOSYH_SIZE_Y 3
-#define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(   \
-      x,                                                   \
-      y,                                                   \
-      (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y)                                     \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1),                      \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_Y - 1)                       \
     )
 
 #define BH_LAYOUT_TACTOSYH_SIZE (BH_LAYOUT_TACTOSYH_SIZE_X * BH_LAYOUT_TACTOSYH_SIZE_Y)
@@ -253,12 +255,12 @@
 
 #define BH_LAYOUT_TACTOSYF_SIZE_X 1
 #define BH_LAYOUT_TACTOSYF_SIZE_Y 3
-#define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y)                \
-    OH::PlaneMapper_Margin::mapPoint<oh_output_coord_t>(   \
-      x,                                                   \
-      y,                                                   \
-      (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1), \
-      (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_Y - 1)  \
+#define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y)                                     \
+    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1),                      \
+      (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_Y - 1)                       \
     )
 
 #define BH_LAYOUT_TACTOSYF_SIZE (BH_LAYOUT_TACTOSYF_SIZE_X * BH_LAYOUT_TACTOSYF_SIZE_Y)

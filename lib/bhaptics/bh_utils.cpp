@@ -2,60 +2,54 @@
 
 #include <utility.hpp>
 
-void BH::plainOutputTransformer(
-  OH::HapticBody* output,
-  std::string& value,
-  const oh_output_point_t* layout[],
-  const size_t layoutSize,
-  const oh_output_path_t path
-)
-{
-    for (size_t i = 0; i < layoutSize; i++) {
-        uint8_t byte = value[i];
+namespace BH {
+    template<size_t N = 20>
+    void vestOutputTransformer(
+      SenseShift::Body::Haptics::HapticBody* output, const char (&value)[N], const oh_output_point_t (&layout)[N * 2]
+    )
+    {
+        for (size_t i = 0; i < N; i++) {
+            uint8_t byte = value[i];
+            uint actIndex = i * 2;
+            const auto target = (actIndex < 10 || actIndex >= 30) ? SenseShift::Body::Haptics::Target::ChestFront
+                                                                  : SenseShift::Body::Haptics::Target::ChestBack;
 
-        oh_output_data_t outputData{
-            .point = *layout[i],
-            // TODO: optimize generic type
-            .intensity =
-              static_cast<oh_output_intensity_t>(OH::accurateMap<long>(byte, 0, 100, 0, OH_OUTPUT_INTENSITY_MAX)),
-        };
-
-        output->writeOutput(path, outputData);
+            output->effect({
+              .effect = SenseShift::Body::Haptics::Effect::Vibro,
+              .target = target,
+              .position = layout[actIndex],
+              .data = SenseShift::Body::Haptics::VibroEffect(
+                OH::simpleMap<SenseShift::Body::Haptics::VibroEffect::Intensity_t>(
+                  ((byte >> 4) & 0xf),
+                  15,
+                  SenseShift::Body::Haptics::VibroEffect::INTENSITY_MAX
+                )
+              ),
+            });
+            output->effect({
+              .effect = SenseShift::Body::Haptics::Effect::Vibro,
+              .target = target,
+              .position = layout[actIndex + 1],
+              .data = SenseShift::Body::Haptics::VibroEffect(
+                OH::simpleMap<SenseShift::Body::Haptics::VibroEffect::Intensity_t>(
+                  (byte & 0xf),
+                  15,
+                  SenseShift::Body::Haptics::VibroEffect::INTENSITY_MAX
+                )
+              ),
+            });
+        }
     }
-}
 
-void BH::vestOutputTransformer(
-  OH::HapticBody* output, std::string& value, const oh_output_point_t* layout[], const size_t layoutSize
-)
-{
-    for (size_t i = 0; i < layoutSize / 2; i++) {
-        uint8_t byte = value[i];
-        uint actIndex = i * 2;
-        const auto path = (actIndex < 10 || actIndex >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK;
-
-        const oh_output_data_t outputData0{
-            .point = *layout[actIndex],
-            // TODO: optimize generic type
-            .intensity =
-              static_cast<oh_output_intensity_t>(OH::simpleMap<long>(((byte >> 4) & 0xf), 15, OH_OUTPUT_INTENSITY_MAX)),
-        };
-
-        const oh_output_data_t outputData1{
-            .point = *layout[actIndex + 1],
-            // TODO: optimize generic type
-            .intensity =
-              static_cast<oh_output_intensity_t>(OH::simpleMap<long>((byte & 0xf), 15, OH_OUTPUT_INTENSITY_MAX)),
-        };
-
-        output->writeOutput(path, outputData0);
-        output->writeOutput(path, outputData1);
-    }
-}
+    template void vestOutputTransformer<20>(
+      SenseShift::Body::Haptics::HapticBody* output, const char (&value)[20], const oh_output_point_t (&layout)[40]
+    );
+} // namespace BH
 
 void BH::vestX16OutputTransformer(
-  OH::HapticBody* output,
-  std::string& value,
-  const oh_output_point_t* layout[],
+  SenseShift::Body::Haptics::HapticBody* output,
+  const std::string& value,
+  const oh_output_point_t* layout,
   const size_t layoutSize,
   const uint8_t layoutGroups[],
   const size_t layoutGroupsSize
@@ -98,14 +92,16 @@ void BH::vestX16OutputTransformer(
             continue;
         }
 
-        const auto path = (i < 10 || i >= 30) ? OUTPUT_PATH_CHEST_FRONT : OUTPUT_PATH_CHEST_BACK;
-        const oh_output_data_t outputData{
-            .point = *layout[i],
-            // TODO: optimize generic type
-            .intensity =
-              static_cast<oh_output_intensity_t>(OH::accurateMap<long>(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX)),
-        };
+        const auto target = (i < 10 || i >= 30) ? SenseShift::Body::Haptics::Target::ChestFront
+                                                : SenseShift::Body::Haptics::Target::ChestBack;
 
-        output->writeOutput(path, outputData);
+        output->effect({
+          .effect = SenseShift::Body::Haptics::Effect::Vibro,
+          .target = target,
+          .position = layout[i],
+          .data = SenseShift::Body::Haptics::VibroEffect(
+            static_cast<oh_output_intensity_t>(OH::accurateMap<long>(result[i], 0, 15, 0, OH_OUTPUT_INTENSITY_MAX))
+          ),
+        });
     }
 }
