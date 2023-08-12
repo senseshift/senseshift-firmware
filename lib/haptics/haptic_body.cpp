@@ -28,5 +28,6 @@ namespace SenseShift::Body::Haptics {
     void HapticBody::addTarget(const Target_t target, VibroPlane* plane)
     {
         this->vibroTargets[target] = plane;
+        this->allTargets.insert({ target, plane });
     }
 } // namespace SenseShift::Body::Haptics

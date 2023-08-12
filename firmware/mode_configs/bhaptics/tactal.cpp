@@ -15,13 +15,15 @@
 #endif
 
 using namespace OH;
+using namespace SenseShift;
+using namespace SenseShift::Body::Haptics;
 using namespace BH;
 
-extern SenseShift App;
-SenseShift* app = &App;
+extern SenseShift::SenseShift App;
+SenseShift::SenseShift* app = &App;
 
 static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+static const oh_output_point_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
 void setupMode()
 {
@@ -32,8 +34,8 @@ void setupMode()
       // clang-format on
     });
 
-    auto* face = new HapticPlane_Closest(faceOutputs);
-    app->getHapticBody()->addComponent(OUTPUT_PATH_ACCESSORY, face);
+    auto* face = new VibroPlane_Closest(faceOutputs);
+    app->getHapticBody()->addTarget(Target::Accessory, face);
 
     app->getHapticBody()->setup();
 
@@ -46,7 +48,9 @@ void setupMode()
     auto* bhBleConnection = new ConnectionBHBLE(
       config,
       [](std::string& value) -> void {
-          plainOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
+        char buf[6];
+        strncpy(buf, value.c_str(), 6);
+        plainOutputTransformer<6>(app->getHapticBody(), buf, bhLayout, Target::Accessory);
       },
       app
     );

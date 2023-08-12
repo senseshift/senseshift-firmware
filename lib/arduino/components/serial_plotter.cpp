@@ -1,19 +1,23 @@
 #include "components/serial_plotter.hpp"
 
+struct PlaneVisitor {
+    const SenseShift::Body::Haptics::Target_t target;
+    HardwareSerial* serial;
+
+    void operator()(const SenseShift::Body::Haptics::VibroPlane* plane) const
+    {
+        for (const auto& [position, state] : *(plane->getActuatorStates())) {
+            this->serial->printf("Output[%u][%ux%u]:%u, ", this->target, position.x, position.y, state.intensity);
+        }
+    }
+};
+
 template<typename _Tp>
 void OH::SerialPlotter_OutputStates<_Tp>::run()
 {
     while (true) {
-        for (auto& _c : *output->getComponents()) {
-            oh_output_path_t path = _c.first;
-            OH::HapticPlane* component = _c.second;
-
-            for (auto& _s : *component->getActuatorStates()) {
-                oh_output_point_t point = _s.first;
-                oh_output_state_t state = _s.second;
-
-                this->serial->printf("Output[%u][%ux%u]:%u, ", path, point.x, point.y, state.intensity);
-            }
+        for (const auto& [target, plane] : *output->getTargets()) {
+            std::visit(PlaneVisitor{target, this->serial}, plane);
         }
         this->serial->println();
 
