@@ -75,6 +75,6 @@ namespace SenseShift::Body::Haptics {
         return nearest->second;
     }
 
-    template class ActuativePlane<VibroEffect_t>;
-    template class ActuativePlane_Closest<VibroEffect_t>;
+    template class ActuativePlane<VibroEffectData_t>;
+    template class ActuativePlane_Closest<VibroEffectData_t>;
 } // namespace SenseShift::Body::Haptics

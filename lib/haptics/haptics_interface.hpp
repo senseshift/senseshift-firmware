@@ -24,6 +24,8 @@ namespace SenseShift::Body::Haptics {
         // Legacy backword compatibility
         Accessory [[deprecated]] = 0x02,
 
+        FaceFront = 0x03,
+
         // TODO: arms, legs, etc.
     } Target_t;
 
@@ -31,28 +33,28 @@ namespace SenseShift::Body::Haptics {
     typedef OH::Point2<Coordinate_t> Position_t;
 
     // Vibration intensity.
-    typedef struct VibroEffect {
+    typedef struct VibroEffectData {
         using Intensity_t = uint16_t;
         inline static const Intensity_t INTENSITY_MIN = 0;
         inline static const Intensity_t INTENSITY_MAX = 4095;
 
         Intensity_t intensity = 0;
 
-        inline constexpr VibroEffect() = default;
-        inline constexpr VibroEffect(Intensity_t intensity) : intensity(intensity) {}
-        inline constexpr VibroEffect(const VibroEffect& other) = default;
+        inline constexpr VibroEffectData() = default;
+        inline constexpr VibroEffectData(const Intensity_t intensity) : intensity(intensity) {}
+        inline constexpr VibroEffectData(const VibroEffectData& other) = default;
 
         inline constexpr operator uint16_t() const
         {
             return intensity;
         }
-    } VibroEffect_t;
+    } VibroEffectData_t;
 
     // TODO: thermal, etc.
 
-    typedef std::variant<VibroEffect_t
+    typedef std::variant<VibroEffectData_t
                          // TODO: thermal, etc.
-                         // ThermalEffect_t
+                         // ThermalEffectData_t
                          >
       EffectData_t;
 

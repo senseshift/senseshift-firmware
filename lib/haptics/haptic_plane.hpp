@@ -21,7 +21,7 @@ namespace SenseShift::Body::Haptics {
      */
     template<typename _Tp>
     class ActuativePlane {
-        static_assert(std::is_same<_Tp, VibroEffect_t>());
+        static_assert(std::is_same<_Tp, VibroEffectData_t>());
 
       public:
         typedef _Tp Value_t;
@@ -59,7 +59,7 @@ namespace SenseShift::Body::Haptics {
         void setActuators(const ActuatorMap_t&);
     };
 
-    typedef ActuativePlane<VibroEffect_t> VibroPlane;
+    typedef ActuativePlane<VibroEffectData_t> VibroPlane;
 
     /**
      * Output plane, finds the closest actuator for the given point.
@@ -81,7 +81,7 @@ namespace SenseShift::Body::Haptics {
         [[nodiscard]] const Position_t& findClosestPoint(const PositionSet_t&, const Position_t&) const;
     };
 
-    typedef ActuativePlane_Closest<VibroEffect_t> VibroPlane_Closest;
+    typedef ActuativePlane_Closest<VibroEffectData_t> VibroPlane_Closest;
 
     // TODO: configurable margin
     class PlaneMapper_Margin {

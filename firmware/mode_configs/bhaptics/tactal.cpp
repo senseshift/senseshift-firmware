@@ -6,7 +6,7 @@
 
 #include "senseshift.h"
 
-#include <bh_utils.hpp>
+#include <bh_encoding.hpp>
 #include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
 
@@ -35,7 +35,7 @@ void setupMode()
     });
 
     auto* face = new VibroPlane_Closest(faceOutputs);
-    app->getHapticBody()->addTarget(Target::Accessory, face);
+    app->getHapticBody()->addTarget(Target::FaceFront, face);
 
     app->getHapticBody()->setup();
 
@@ -48,9 +48,7 @@ void setupMode()
     auto* bhBleConnection = new ConnectionBHBLE(
       config,
       [](std::string& value) -> void {
-        char buf[6];
-        strncpy(buf, value.c_str(), 6);
-        plainOutputTransformer<6>(app->getHapticBody(), buf, bhLayout, Target::Accessory);
+        Decoder::applyPlain<6>(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::FaceFront);
       },
       app
     );

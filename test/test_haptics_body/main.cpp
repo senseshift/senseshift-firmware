@@ -59,25 +59,25 @@ void test_it_handles_effect__vibro(void)
       .effect = Effect::Vibro,
       .target = Target::ChestFront,
       .position = { 0, 0 },
-      .data = (VibroEffect_t) 64,
+      .data = (VibroEffectData_t) 64,
     });
     body->effect({
       .effect = Effect::Vibro,
       .target = Target::ChestFront,
       .position = { 0, 1 },
-      .data = (VibroEffect_t) 128,
+      .data = (VibroEffectData_t) 128,
     });
     body->effect({
       .effect = Effect::Vibro,
       .target = Target::ChestFront,
       .position = { 1, 0 },
-      .data = (VibroEffect_t) 192,
+      .data = (VibroEffectData_t) 192,
     });
     body->effect({
       .effect = Effect::Vibro,
       .target = Target::ChestFront,
       .position = { 1, 1 },
-      .data = (VibroEffect_t) 255,
+      .data = (VibroEffectData_t) 255,
     });
 
     TEST_ASSERT_EQUAL(64, actuator1->intensity);

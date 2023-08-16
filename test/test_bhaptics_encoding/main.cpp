@@ -1,5 +1,5 @@
 #include <bh_types.hpp>
-#include <bh_utils.hpp>
+#include <bh_encoding.hpp>
 
 #include <unity.h>
 
@@ -66,13 +66,12 @@ void test_layout_tactsuitx16(void)
     body->addTarget(Target::ChestBack, backPlane);
     // body->setup();
 
-    uint8_t values[] = {
+    const uint8_t values[] = {
         0x01, 0x00, 0x23, 0x00, 0x00, 0x45, 0x00, 0x67, 0x00, 0x00,
         0x89, 0x00, 0xab, 0x00, 0x00, 0xcd, 0x00, 0xef, 0x00, 0x00,
     };
-    std::string value = std::string((char*) values, sizeof(values));
 
-    vestX16OutputTransformer(body, value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
+    Decoder::applyVestGrouped(body, values, bhLayout, layoutGroups);
     TEST_ASSERT_EQUAL_INT(0, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(273, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(3276, actuator2->intensity);
@@ -124,11 +123,11 @@ void test_layout_tactsuitx40(void)
     body->addTarget(Target::ChestBack, backPlane);
     // body->setup();
 
-    vestOutputTransformer(
+    Decoder::applyVest(
       body,
       {
-        0x01, 0x23, 0x45, 0x67, (char) 0x89, (char) 0xab, (char) 0xcd, (char) 0xef, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00,        0x00,        0x00,        0x00,        0x00, 0x00,
+        0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       },
       bhLayout
     );
@@ -194,9 +193,9 @@ void test_layout_tactal(void)
     });
     auto plane = new VibroPlane(outputs);
 
-    body->addTarget(Target::Accessory, plane);
+    body->addTarget(Target::FaceFront, plane);
 
-    plainOutputTransformer(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout, Target::Accessory);
+    Decoder::applyPlain(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout, Effect::Vibro, Target::FaceFront);
     TEST_ASSERT_EQUAL_INT(4095, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator2->intensity);
@@ -204,7 +203,7 @@ void test_layout_tactal(void)
     TEST_ASSERT_EQUAL_INT(0, actuator4->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuator5->intensity);
 
-    plainOutputTransformer(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout, Target::Accessory);
+    Decoder::applyPlain(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout, Effect::Vibro, Target::FaceFront);
     TEST_ASSERT_EQUAL_INT(655, actuator0->intensity);
     TEST_ASSERT_EQUAL_INT(1310, actuator1->intensity);
     TEST_ASSERT_EQUAL_INT(1965, actuator2->intensity);
