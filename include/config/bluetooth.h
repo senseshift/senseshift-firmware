@@ -12,5 +12,5 @@
 #endif
 
 #ifndef BLUETOOTH_USE_NIMBLE
-#define BLUETOOTH_USE_NIMBLE false
+#define BLUETOOTH_USE_NIMBLE true
 #endif

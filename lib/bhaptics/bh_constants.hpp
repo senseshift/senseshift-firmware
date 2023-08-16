@@ -8,8 +8,16 @@
 
 #define BH_SERIAL_NUMBER_LENGTH 10
 
+#ifndef BH_FIRMWARE_VERSION_MAJOR
+#define BH_FIRMWARE_VERSION_MAJOR ((uint8_t) UINT8_MAX)
+#endif
+
+#ifndef BH_FIRMWARE_VERSION_MINOR
+#define BH_FIRMWARE_VERSION_MINOR ((uint8_t) UINT8_MAX)
+#endif
+
 #ifndef BH_FIRMWARE_VERSION
-#define BH_FIRMWARE_VERSION (uint16_t) UINT16_MAX
+#define BH_FIRMWARE_VERSION (uint16_t)((BH_FIRMWARE_VERSION_MAJOR << 8) | BH_FIRMWARE_VERSION_MINOR)
 #endif
 
 #define NO_AUDIO_CABLE 0
@@ -92,73 +100,6 @@
 #define BH_LAYOUT_TACTSUITX16_GROUPS_SIZE 16
 
 #pragma endregion BH_DEVICE_TACTSUITX16
-
-#pragma region BH_DEVICE_TACTSUITX40
-
-#define BH_LAYOUT_TACTSUITX40_SIZE_X 4
-#define BH_LAYOUT_TACTSUITX40_SIZE_Y 5
-#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y)                                  \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
-      x,                                                                        \
-      y,                                                                        \
-      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1),                   \
-      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1)                    \
-    )
-
-// X * Y for front and back
-#define BH_LAYOUT_TACTSUITX40_SIZE 40
-// clang-format off
-#define BH_LAYOUT_TACTSUITX40 {                       \
-    /* Front, left part */                            \
-    /*  0 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0),  \
-    /*  1 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 0),  \
-    /*  2 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 1),  \
-    /*  3 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 1),  \
-    /*  4 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 2),  \
-    /*  5 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 2),  \
-    /*  6 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 3),  \
-    /*  7 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 3),  \
-    /*  8 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 4),  \
-    /*  9 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 4),  \
-                                                      \
-    /* Back */                                        \
-    /* 11 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0),  \
-    /* 11 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 0),  \
-    /* 12 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 1),  \
-    /* 13 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 1),  \
-    /* 14 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 2),  \
-    /* 15 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 2),  \
-    /* 16 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 3),  \
-    /* 17 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 3),  \
-    /* 18 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 4),  \
-    /* 19 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 4),  \
-                                                      \
-    /* 20 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 0),  \
-    /* 21 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 0),  \
-    /* 22 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 1),  \
-    /* 23 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 1),  \
-    /* 24 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 2),  \
-    /* 25 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 2),  \
-    /* 26 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 3),  \
-    /* 27 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 3),  \
-    /* 28 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 4),  \
-    /* 29 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4),  \
-                                                      \
-    /* Front, again... Now right part */              \
-    /* 30 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 0),  \
-    /* 31 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 0),  \
-    /* 32 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 1),  \
-    /* 33 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 1),  \
-    /* 34 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 2),  \
-    /* 35 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 2),  \
-    /* 36 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 3),  \
-    /* 37 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 3),  \
-    /* 38 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 4),  \
-    /* 39 */ BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4)   \
-}
-// clang-format on
-
-#pragma endregion BH_DEVICE_TACTSUITX40
 
 #pragma region BH_DEVICE_TACTAL
 
@@ -272,7 +213,7 @@
 
 // All below are weird choices of bHaptics engineers...
 // Why to use unconventional UUIDs, that are reserved for other purposes?
-// You have  an unlimited amount of other UUIDs
+// You have an unlimited amount of other UUIDs
 
 // Main service for communication
 #define BH_BLE_SERVICE_MOTOR_UUID BLEUUID("6e400001-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART Service

@@ -21,10 +21,27 @@ namespace SenseShift::Body::Haptics {
         Invalid = TARGET_INVALID,
         ChestFront = 0x00,
         ChestBack = 0x01,
+
         // Legacy backword compatibility
         Accessory [[deprecated]] = 0x02,
 
-        FaceFront = 0x03,
+        FaceFront,
+
+        HandLeftThumb,
+        HandLeftIndex,
+        HandLeftMiddle,
+        HandLeftRing,
+        HandLeftLittle,
+        HandLeftVolar, // Palm
+        HandLeftDorsal, // Back
+
+        HandRightThumb,
+        HandRightIndex,
+        HandRightMiddle,
+        HandRightRing,
+        HandRightLittle,
+        HandRightVolar, // Palm
+        HandRightDorsal, // Back
 
         // TODO: arms, legs, etc.
     } Target_t;

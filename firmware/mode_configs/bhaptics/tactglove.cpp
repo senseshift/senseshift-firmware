@@ -8,7 +8,8 @@
 
 #include "senseshift.h"
 
-#include <bh_utils.hpp>
+#include <bh_encoding.hpp>
+#include <bh_devices.hpp>
 #include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
 
@@ -16,59 +17,36 @@
 #include <battery/adc_naive.hpp>
 #endif
 
+#ifndef BH_LAYOUT
+#define BH_LAYOUT BH::TactGloveLeftLayout
+#endif
+
 using namespace OH;
+using namespace SenseShift;
+using namespace SenseShift::Body::Haptics;
 using namespace BH;
 
-extern SenseShift App;
-SenseShift* app = &App;
+extern SenseShift::SenseShift App;
+SenseShift::SenseShift* app = &App;
 
-#pragma region bHaptics_trash
-
-// TODO: all of this will need to be re-written to use the new output paths system, when time comes
-
-static const uint16_t _bh_size_x = 6;
-static const uint16_t _bh_size_y = 1;
-
-inline oh_output_point_t* make_point(oh_output_coord_t x, oh_output_coord_t y)
-{
-    return PlaneMapper_Margin::mapPoint(
-      x,
-      y,
-      (oh_output_coord_t) (_bh_size_x - 1),
-      (oh_output_coord_t) (_bh_size_y - 1)
-    );
-}
-
-static const uint16_t bhLayoutSize = _bh_size_x * _bh_size_y;
-static const oh_output_point_t* bhLayout[bhLayoutSize] = {
-    // clang-format off
-
-    // Thumb, Index, Middle, Ring, Pinky
-    make_point(0, 0), make_point(1, 0), make_point(2, 0), make_point(3, 0), make_point(4, 0),
-    // Wrist
-    make_point(5, 0)
-
-    // clang-format on
-};
-
-#pragma endregion bHaptics_trash
+const auto& bhLayout = BH_LAYOUT;
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the glove
-    auto gloveOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
-      // clang-format off
-      {
-        // Thumb, Index, Middle, Ring, Pinky
-        new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27),
-        // Wrist
-        new PWMOutputWriter(14)
-      },
-      // clang-format on
-    });
+    auto* motorThumb = new PWMOutputWriter(33); // Thumb
+    auto* motorIndex = new PWMOutputWriter(32); // Index
+    auto* motorMiddle = new PWMOutputWriter(25); // Middle
+    auto* motorRing = new PWMOutputWriter(26); // Ring
+    auto* motorLittle = new PWMOutputWriter(27); // Little
+    auto* motorWrist = new PWMOutputWriter(14); // Wrist
 
-    auto* glove = new HapticPlane_Closest(gloveOutputs);
-    app->getHapticBody()->addComponent(OUTPUT_PATH_ACCESSORY, glove);
+    app->getHapticBody()->addTarget(std::get<0>(bhLayout[0]), new VibroPlane({{ std::get<1>(bhLayout[0]), motorThumb }}));
+    app->getHapticBody()->addTarget(std::get<0>(bhLayout[1]), new VibroPlane({{ std::get<1>(bhLayout[1]), motorIndex }}));
+    app->getHapticBody()->addTarget(std::get<0>(bhLayout[2]), new VibroPlane({{ std::get<1>(bhLayout[2]), motorMiddle }}));
+    app->getHapticBody()->addTarget(std::get<0>(bhLayout[3]), new VibroPlane({{ std::get<1>(bhLayout[3]), motorRing }}));
+    app->getHapticBody()->addTarget(std::get<0>(bhLayout[4]), new VibroPlane({{ std::get<1>(bhLayout[4]), motorLittle }}));
+    app->getHapticBody()->addTarget(std::get<0>(bhLayout[5]), new VibroPlane({{ std::get<1>(bhLayout[5]), motorWrist }}));
 
     app->getHapticBody()->setup();
 
@@ -81,7 +59,7 @@ void setupMode()
     auto* bhBleConnection = new ConnectionBHBLE(
       config,
       [](std::string& value) -> void {
-          plainOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
+        Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect_t::Vibro);
       },
       app
     );

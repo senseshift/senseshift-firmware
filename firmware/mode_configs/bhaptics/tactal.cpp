@@ -34,7 +34,7 @@ void setupMode()
       // clang-format on
     });
 
-    auto* face = new VibroPlane_Closest(faceOutputs);
+    auto* face = new VibroPlane(faceOutputs);
     app->getHapticBody()->addTarget(Target::FaceFront, face);
 
     app->getHapticBody()->setup();

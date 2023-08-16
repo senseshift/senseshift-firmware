@@ -1,5 +1,6 @@
 #include <bh_types.hpp>
 #include <bh_encoding.hpp>
+#include <bh_devices.hpp>
 
 #include <unity.h>
 
@@ -212,6 +213,50 @@ void test_layout_tactal(void)
     TEST_ASSERT_EQUAL_INT(3931, actuator5->intensity);
 }
 
+void test_layout_tactglove(void)
+{
+    TestActuator* actuatorThumb = new TestActuator();
+    TestActuator* actuatorIndex = new TestActuator();
+    TestActuator* actuatorMiddle = new TestActuator();
+    TestActuator* actuatorRing = new TestActuator();
+    TestActuator* actuatorLittle = new TestActuator();
+    TestActuator* actuatorWrist = new TestActuator();
+
+    const auto& bhLayout = BH::TactGloveLeftLayout;
+
+    auto thumb = new VibroPlane({{ std::get<2>(bhLayout[0]), actuatorThumb }});
+    auto index = new VibroPlane({{ std::get<2>(bhLayout[1]), actuatorIndex }});
+    auto middle = new VibroPlane({{ std::get<2>(bhLayout[2]), actuatorMiddle }});
+    auto ring = new VibroPlane({{ std::get<2>(bhLayout[3]), actuatorRing }});
+    auto little = new VibroPlane({{ std::get<2>(bhLayout[4]), actuatorLittle }});
+    auto wrist = new VibroPlane({{ std::get<2>(bhLayout[5]), actuatorWrist }});
+
+    auto body = new HapticBody();
+
+    body->addTarget(Target::HandLeftThumb, thumb);
+    body->addTarget(Target::HandLeftIndex, index);
+    body->addTarget(Target::HandLeftMiddle, middle);
+    body->addTarget(Target::HandLeftRing, ring);
+    body->addTarget(Target::HandLeftLittle, little);
+    body->addTarget(Target::HandLeftDorsal, wrist);
+
+    Decoder::applyPlain(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout);
+    TEST_ASSERT_EQUAL_INT(4095, actuatorThumb->intensity);
+    TEST_ASSERT_EQUAL_INT(0, actuatorIndex->intensity);
+    TEST_ASSERT_EQUAL_INT(0, actuatorMiddle->intensity);
+    TEST_ASSERT_EQUAL_INT(0, actuatorRing->intensity);
+    TEST_ASSERT_EQUAL_INT(0, actuatorLittle->intensity);
+    TEST_ASSERT_EQUAL_INT(0, actuatorWrist->intensity);
+
+    Decoder::applyPlain(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout);
+    TEST_ASSERT_EQUAL_INT(655, actuatorThumb->intensity);
+    TEST_ASSERT_EQUAL_INT(1310, actuatorIndex->intensity);
+    TEST_ASSERT_EQUAL_INT(1965, actuatorMiddle->intensity);
+    TEST_ASSERT_EQUAL_INT(2620, actuatorRing->intensity);
+    TEST_ASSERT_EQUAL_INT(3276, actuatorLittle->intensity);
+    TEST_ASSERT_EQUAL_INT(3931, actuatorWrist->intensity);
+}
+
 int process(void)
 {
     UNITY_BEGIN();
@@ -219,9 +264,6 @@ int process(void)
     RUN_TEST(test_layout_tactsuitx16);
     RUN_TEST(test_layout_tactsuitx40);
     RUN_TEST(test_layout_tactal);
-    // RUN_TEST(test_layout_tactosy2);
-    // RUN_TEST(test_layout_tactosyh);
-    // RUN_TEST(test_layout_tactosyf);
 
     return UNITY_END();
 }
