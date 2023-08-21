@@ -22,10 +22,7 @@ namespace SenseShift::BH {
 
         template<size_t N>
         static void applyPlain(
-          HapticBody_t* output,
-          const uint8_t (&value)[N],
-          const OutputLayout_t (&layout)[N],
-          const Effect_t effect
+          HapticBody_t* output, const uint8_t (&value)[N], const OutputLayout_t (&layout)[N], const Effect_t effect
         )
         {
             for (size_t i = 0; i < N; i++) {
@@ -42,12 +39,8 @@ namespace SenseShift::BH {
         }
 
         template<size_t N>
-        static void applyPlain(
-          HapticBody_t* output,
-          std::string& value,
-          const OutputLayout_t (&layout)[N],
-          const Effect_t effect
-        )
+        static void
+          applyPlain(HapticBody_t* output, std::string& value, const OutputLayout_t (&layout)[N], const Effect_t effect)
         {
             std::uint8_t buf[N];
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
@@ -103,34 +96,29 @@ namespace SenseShift::BH {
         static void applyVest(
           HapticBody_t* output,
           const uint8_t (&value)[VEST_PAYLOAD_SIZE],
-          const Position_t (&layout)[VEST_LAYOUT_SIZE]
+          const OutputLayout_t (&layout)[VEST_LAYOUT_SIZE]
         )
         {
             for (size_t i = 0; i < VEST_PAYLOAD_SIZE; i++) {
                 uint8_t byte = value[i];
                 uint actIndex = i * 2;
-                const auto target = (actIndex < 10 || actIndex >= 30) ? Target_t::ChestFront : Target_t::ChestBack;
-
                 output->effect({
                   .effect = Effect_t::Vibro,
-                  .target = target,
-                  .position = layout[actIndex],
+                  .target = std::get<0>(layout[actIndex]),
+                  .position = std::get<1>(layout[actIndex]),
                   .data = effectDataFromByte(Effect_t::Vibro, ((byte >> 4) & 0xf), 15),
                 });
                 output->effect({
                   .effect = Effect_t::Vibro,
-                  .target = target,
-                  .position = layout[actIndex + 1],
+                  .target = std::get<0>(layout[actIndex + 1]),
+                  .position = std::get<1>(layout[actIndex + 1]),
                   .data = effectDataFromByte(Effect_t::Vibro, (byte & 0xf), 15),
                 });
             }
         }
 
-        static void applyVest(
-          HapticBody_t* output,
-          std::string& value,
-          const Position_t (&layout)[VEST_LAYOUT_SIZE]
-        )
+        static void
+          applyVest(HapticBody_t* output, std::string& value, const OutputLayout_t (&layout)[VEST_LAYOUT_SIZE])
         {
             std::uint8_t buf[VEST_PAYLOAD_SIZE];
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
@@ -146,7 +134,7 @@ namespace SenseShift::BH {
         static void applyVestGrouped(
           HapticBody_t* output,
           const uint8_t (&value)[VEST_PAYLOAD_SIZE],
-          const Position_t (&layout)[VEST_LAYOUT_SIZE],
+          const OutputLayout_t (&layout)[VEST_LAYOUT_SIZE],
           const uint8_t (&layoutGroups)[N]
         )
         {
@@ -187,12 +175,13 @@ namespace SenseShift::BH {
                     continue;
                 }
 
-                const auto target = (i < 10 || i >= 30) ? Target_t::ChestFront : Target_t::ChestBack;
+                const auto target = std::get<0>(layout[i]);
+                const auto position = std::get<1>(layout[i]);
 
                 output->effect({
                   .effect = Effect_t::Vibro,
                   .target = target,
-                  .position = layout[i],
+                  .position = position,
                   .data = effectDataFromByte(Effect_t::Vibro, result[i], 15),
                 });
             }
@@ -202,7 +191,7 @@ namespace SenseShift::BH {
         static void applyVestGrouped(
           HapticBody_t* output,
           std::string& value,
-          const Position_t (&layout)[VEST_LAYOUT_SIZE],
+          const OutputLayout_t (&layout)[VEST_LAYOUT_SIZE],
           const uint8_t (&layoutGroups)[N]
         )
         {

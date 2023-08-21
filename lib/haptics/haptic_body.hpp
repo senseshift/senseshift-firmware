@@ -23,11 +23,13 @@ namespace SenseShift::Body::Haptics {
 
         void addTarget(const Target_t, VibroPlane* plane);
 
-        const PlaneTargetMap_t* getTargets() const { return &allTargets; }
+        [[nodiscard]] const PlaneTargetMap_t* getTargets() const
+        {
+            return &allTargets;
+        }
 
       private:
         PlaneTargetMap_t allTargets{};
         VibroTargetMap_t vibroTargets{};
-
     };
 } // namespace SenseShift::Body::Haptics

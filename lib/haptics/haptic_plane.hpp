@@ -34,6 +34,8 @@ namespace SenseShift::Body::Haptics {
         typedef OH::AbstractActuator Actuator_t;
         typedef std::map<Position_t, Actuator_t*> ActuatorMap_t;
 
+        ActuativePlane() = default;
+
         ActuativePlane(const ActuatorMap_t& actuators)
         {
             this->setActuators(actuators);
@@ -87,7 +89,7 @@ namespace SenseShift::Body::Haptics {
     class PlaneMapper_Margin {
       public:
         template<typename _Tp>
-        [[nodiscard]] static constexpr inline std::map<oh_output_point_t, _Tp*>
+        [[nodiscard]] static constexpr inline std::map<Position_t, _Tp*>
           mapMatrixCoordinates(std::vector<std::vector<_Tp*>> map2d)
         {
             std::map<Position_t, _Tp*> points{};

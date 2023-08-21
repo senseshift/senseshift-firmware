@@ -1,12 +1,10 @@
-#include <bh_devices.hpp>
-#include <bh_encoding.hpp>
-#include <bh_types.hpp>
-
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Body::Haptics;
+using namespace SenseShift::BH;
 using namespace OH;
-using namespace BH;
 
 class TestActuator : public OH::AbstractActuator {
   public:
@@ -27,7 +25,7 @@ class TestActuator : public OH::AbstractActuator {
 void test_layout_tactsuitx16(void)
 {
     static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
-    static const oh_output_point_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX16;
+    static const OutputLayout_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX16;
 
     static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
     static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
@@ -95,7 +93,7 @@ void test_layout_tactsuitx16(void)
 void test_layout_tactsuitx40(void)
 {
     static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX40_SIZE;
-    static const oh_output_point_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
+    static const OutputLayout_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
 
     auto body = new HapticBody();
 
@@ -178,7 +176,7 @@ void test_layout_tactsuitx40(void)
 void test_layout_tactal(void)
 {
     static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-    static const oh_output_point_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+    static const ::SenseShift::Body::Haptics::Position_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
     auto body = new HapticBody();
 
@@ -222,25 +220,21 @@ void test_layout_tactglove(void)
     TestActuator* actuatorLittle = new TestActuator();
     TestActuator* actuatorWrist = new TestActuator();
 
-    const auto& bhLayout = BH::TactGloveLeftLayout;
-
-    auto thumb = new VibroPlane({ { std::get<2>(bhLayout[0]), actuatorThumb } });
-    auto index = new VibroPlane({ { std::get<2>(bhLayout[1]), actuatorIndex } });
-    auto middle = new VibroPlane({ { std::get<2>(bhLayout[2]), actuatorMiddle } });
-    auto ring = new VibroPlane({ { std::get<2>(bhLayout[3]), actuatorRing } });
-    auto little = new VibroPlane({ { std::get<2>(bhLayout[4]), actuatorLittle } });
-    auto wrist = new VibroPlane({ { std::get<2>(bhLayout[5]), actuatorWrist } });
-
     auto body = new HapticBody();
+    const auto& bhLayout = TactGloveLeftLayout;
 
-    body->addTarget(Target::HandLeftThumb, thumb);
-    body->addTarget(Target::HandLeftIndex, index);
-    body->addTarget(Target::HandLeftMiddle, middle);
-    body->addTarget(Target::HandLeftRing, ring);
-    body->addTarget(Target::HandLeftLittle, little);
-    body->addTarget(Target::HandLeftDorsal, wrist);
+    addTactGloveActuators(
+      body,
+      ::SenseShift::Body::Hands::HandSide::Left,
+      actuatorThumb,
+      actuatorIndex,
+      actuatorMiddle,
+      actuatorRing,
+      actuatorLittle,
+      actuatorWrist
+    );
 
-    Decoder::applyPlain(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout);
+    Decoder::applyPlain(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout, Effect::Vibro);
     TEST_ASSERT_EQUAL_INT(4095, actuatorThumb->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuatorIndex->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuatorMiddle->intensity);
@@ -248,7 +242,7 @@ void test_layout_tactglove(void)
     TEST_ASSERT_EQUAL_INT(0, actuatorLittle->intensity);
     TEST_ASSERT_EQUAL_INT(0, actuatorWrist->intensity);
 
-    Decoder::applyPlain(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout);
+    Decoder::applyPlain(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout, Effect::Vibro);
     TEST_ASSERT_EQUAL_INT(655, actuatorThumb->intensity);
     TEST_ASSERT_EQUAL_INT(1310, actuatorIndex->intensity);
     TEST_ASSERT_EQUAL_INT(1965, actuatorMiddle->intensity);
@@ -264,6 +258,7 @@ int process(void)
     RUN_TEST(test_layout_tactsuitx16);
     RUN_TEST(test_layout_tactsuitx40);
     RUN_TEST(test_layout_tactal);
+    RUN_TEST(test_layout_tactglove);
 
     return UNITY_END();
 }

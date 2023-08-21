@@ -32,7 +32,7 @@ namespace SenseShift::Body::Haptics {
         HandLeftMiddle,
         HandLeftRing,
         HandLeftLittle,
-        HandLeftVolar, // Palm
+        HandLeftVolar,  // Palm
         HandLeftDorsal, // Back
 
         HandRightThumb,
@@ -40,7 +40,7 @@ namespace SenseShift::Body::Haptics {
         HandRightMiddle,
         HandRightRing,
         HandRightLittle,
-        HandRightVolar, // Palm
+        HandRightVolar,  // Palm
         HandRightDorsal, // Back
 
         // TODO: arms, legs, etc.

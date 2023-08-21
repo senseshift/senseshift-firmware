@@ -29,4 +29,4 @@ namespace SenseShift {
     {
         this->eventListeners.push_back(listener);
     }
-}
+} // namespace SenseShift

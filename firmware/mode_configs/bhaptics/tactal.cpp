@@ -6,10 +6,10 @@
 
 #include "senseshift.h"
 
+#include <output_writers/pwm.hpp>
+#include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/bh/ble/connection.hpp>
-#include <output_writers/pwm.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include "battery/adc_naive.hpp"
@@ -23,19 +23,18 @@ extern SenseShift::SenseShift App;
 SenseShift::SenseShift* app = &App;
 
 static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-static const oh_output_point_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+static const Position_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the face
-    auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    const auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      { new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14) },
       // clang-format on
     });
 
-    auto* face = new VibroPlane(faceOutputs);
-    app->getHapticBody()->addTarget(Target::FaceFront, face);
+    app->getHapticBody()->addTarget(Target::FaceFront, new VibroPlane_Closest(faceOutputs));
 
     app->getHapticBody()->setup();
 
@@ -44,9 +43,9 @@ void setupMode()
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
         .serialNumber = BH_SERIAL_NUMBER,
-        },
+      },
       [](std::string& value) -> void {
-        BH::Decoder::applyPlain<6>(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::FaceFront);
+          BH::Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::FaceFront);
       },
       app
     );

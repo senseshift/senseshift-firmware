@@ -5,8 +5,16 @@
 
 namespace SenseShift::Body {
     namespace Hands {
-        typedef std::uint8_t HandPositionIndex_t;
-        typedef enum class HandPosition : HandPositionIndex_t { Left, Right } HandPosition_t;
+        typedef std::uint8_t HandSideIndex_t;
+        typedef enum class HandSide : HandSideIndex_t { Left, Right } HandSide_t;
+        typedef std::uint8_t FingerIndex_t;
+        typedef enum class Finger : FingerIndex_t {
+            Thumb,
+            Index,
+            Middle,
+            Ring,
+            Little,
+        } Finger_t;
 
         namespace Haptics {
             /**

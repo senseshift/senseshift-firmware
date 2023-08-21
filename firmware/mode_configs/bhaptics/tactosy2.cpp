@@ -6,48 +6,47 @@
 
 #include "senseshift.h"
 
-#include <bh_utils.hpp>
-#include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
+#include <senseshift/bh/ble/connection.hpp>
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <battery/adc_naive.hpp>
 #endif
 
 using namespace OH;
-using namespace BH;
+using namespace SenseShift;
+using namespace SenseShift::Body::Haptics;
 
-extern SenseShift App;
-SenseShift* app = &App;
+extern SenseShift::SenseShift App;
+SenseShift::SenseShift* app = &App;
 
 static const size_t bhLayoutSize = BH_LAYOUT_TACTOSY2_SIZE;
-static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSY2;
+static const Position_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSY2;
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the forearm
     auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25)},
-      {new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      { new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25) },
+      { new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14) },
       // clang-format on
     });
 
-    auto* forearm = new HapticPlane_Closest(forearmOutputs);
-    app->getHapticBody()->addComponent(OUTPUT_PATH_ACCESSORY, forearm);
+    app->getHapticBody()->addTarget(Target::Accessory, new VibroPlane_Closest(forearmOutputs));
 
     app->getHapticBody()->setup();
 
-    uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
-    ConnectionBHBLE_Config config = {
+    auto* bhBleConnection = new BH::BLE::Connection(
+      {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
-        .serialNumber = serialNumber,
-    };
-    auto* bhBleConnection = new ConnectionBHBLE(
-      config,
+        .serialNumber = BH_SERIAL_NUMBER,
+      },
       [](std::string& value) -> void {
-          plainOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
+          BH::Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::Accessory);
       },
       app
     );

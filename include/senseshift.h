@@ -14,7 +14,7 @@
 
 namespace SenseShift {
     class SenseShift final : public OH::IEventDispatcher {
-    private:
+      private:
         std::vector<const OH::IEventListener*> eventListeners{};
         Body::Haptics::HapticBody* pHapticBody;
 
@@ -22,7 +22,7 @@ namespace SenseShift {
         OH::BatterySensor* battery;
 #endif
 
-    public:
+      public:
         SenseShift();
 
         Body::Haptics::HapticBody* getHapticBody()
@@ -33,4 +33,4 @@ namespace SenseShift {
         void postEvent(const OH::IEvent* event) override;
         void addEventListener(const OH::IEventListener* listener) override;
     };
-}
+} // namespace SenseShift

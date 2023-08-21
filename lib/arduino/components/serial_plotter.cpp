@@ -17,7 +17,7 @@ void OH::SerialPlotter_OutputStates<_Tp>::run()
 {
     while (true) {
         for (const auto& [target, plane] : *output->getTargets()) {
-            std::visit(PlaneVisitor{target, this->serial}, plane);
+            std::visit(PlaneVisitor{ target, this->serial }, plane);
         }
         this->serial->println();
 

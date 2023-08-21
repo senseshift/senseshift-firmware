@@ -35,7 +35,8 @@ namespace OH {
           TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY }
         ) :
           Task<SerialPlotter_OutputStates<_Tp>>(taskConfig), serial(&serial), output(output), sampleRate(sampleRate){};
-        SerialPlotter_OutputStates(_Tp& serial, SenseShift::Body::Haptics::HapticBody* output) : SerialPlotter_OutputStates(serial, output, 100){};
+        SerialPlotter_OutputStates(_Tp& serial, SenseShift::Body::Haptics::HapticBody* output) :
+          SerialPlotter_OutputStates(serial, output, 100){};
 
         void begin() override
         {

@@ -3,8 +3,8 @@
 #include <abstract_connection.hpp>
 #include <utility.hpp>
 
-#include <senseshift/bh/constants.hpp>
 #include <senseshift/bh/ble/constants.hpp>
+#include <senseshift/bh/constants.hpp>
 
 #include <Arduino.h>
 #include <esp_wifi.h>

@@ -8,58 +8,53 @@
 
 #include "senseshift.h"
 
-#include <bh_encoding.hpp>
-#include <bh_devices.hpp>
-#include <connection_bhble.hpp>
 #include <output_writers/pwm.hpp>
+#include <senseshift/bh/ble/connection.hpp>
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <battery/adc_naive.hpp>
 #endif
 
-#ifndef BH_LAYOUT
-#define BH_LAYOUT BH::TactGloveLeftLayout
-#endif
-
 using namespace OH;
 using namespace SenseShift;
 using namespace SenseShift::Body::Haptics;
-using namespace BH;
 
 extern SenseShift::SenseShift App;
 SenseShift::SenseShift* app = &App;
 
-const auto& bhLayout = BH_LAYOUT;
+static const Body::Hands::HandSide_t handSide = Body::Hands::HandSide::SENSESHIFT_HAND_SIDE;
+static const size_t bhLayoutSize = BH_LAYOUT_TACTGLOVE_SIZE;
+// clang-format off
+static const BH::OutputLayout_t (&bhLayout)[bhLayoutSize] = handSide == Body::Hands::HandSide::Left ? BH::TactGloveLeftLayout : BH::TactGloveRightLayout;
+// clang-format on
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the glove
-    auto* motorThumb = new PWMOutputWriter(33); // Thumb
-    auto* motorIndex = new PWMOutputWriter(32); // Index
-    auto* motorMiddle = new PWMOutputWriter(25); // Middle
-    auto* motorRing = new PWMOutputWriter(26); // Ring
-    auto* motorLittle = new PWMOutputWriter(27); // Little
-    auto* motorWrist = new PWMOutputWriter(14); // Wrist
-
-    app->getHapticBody()->addTarget(std::get<0>(bhLayout[0]), new VibroPlane({{ std::get<1>(bhLayout[0]), motorThumb }}));
-    app->getHapticBody()->addTarget(std::get<0>(bhLayout[1]), new VibroPlane({{ std::get<1>(bhLayout[1]), motorIndex }}));
-    app->getHapticBody()->addTarget(std::get<0>(bhLayout[2]), new VibroPlane({{ std::get<1>(bhLayout[2]), motorMiddle }}));
-    app->getHapticBody()->addTarget(std::get<0>(bhLayout[3]), new VibroPlane({{ std::get<1>(bhLayout[3]), motorRing }}));
-    app->getHapticBody()->addTarget(std::get<0>(bhLayout[4]), new VibroPlane({{ std::get<1>(bhLayout[4]), motorLittle }}));
-    app->getHapticBody()->addTarget(std::get<0>(bhLayout[5]), new VibroPlane({{ std::get<1>(bhLayout[5]), motorWrist }}));
+    // Replace `new PWMOutputWriter(...)` with `nullptr` to disable a specific actuator
+    BH::addTactGloveActuators(
+      app->getHapticBody(),
+      handSide,
+      new PWMOutputWriter(32), // Thumb
+      new PWMOutputWriter(33), // Index
+      new PWMOutputWriter(25), // Middle
+      new PWMOutputWriter(26), // Ring
+      new PWMOutputWriter(27), // Little
+      new PWMOutputWriter(14)  // Wrist
+    );
 
     app->getHapticBody()->setup();
 
-    uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
-    ConnectionBHBLE_Config config = {
+    auto* bhBleConnection = new BH::BLE::Connection(
+      {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
-        .serialNumber = serialNumber,
-    };
-    auto* bhBleConnection = new ConnectionBHBLE(
-      config,
+        .serialNumber = BH_SERIAL_NUMBER,
+      },
       [](std::string& value) -> void {
-        Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect_t::Vibro);
+          BH::Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect_t::Vibro);
       },
       app
     );
