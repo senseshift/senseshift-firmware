@@ -12,23 +12,25 @@
 
 #include <vector>
 
-class SenseShift final : public OH::IEventDispatcher {
-  private:
-    std::vector<const OH::IEventListener*> eventListeners{};
-    OH::HapticBody* pHapticBody;
+namespace SenseShift {
+    class SenseShift final : public OH::IEventDispatcher {
+      private:
+        std::vector<const OH::IEventListener*> eventListeners{};
+        Body::Haptics::HapticBody* pHapticBody;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    OH::BatterySensor* battery;
+        OH::BatterySensor* battery;
 #endif
 
-  public:
-    SenseShift();
+      public:
+        SenseShift();
 
-    OH::HapticBody* getHapticBody()
-    {
-        return this->pHapticBody;
+        Body::Haptics::HapticBody* getHapticBody()
+        {
+            return this->pHapticBody;
+        };
+
+        void postEvent(const OH::IEvent* event) override;
+        void addEventListener(const OH::IEventListener* listener) override;
     };
-
-    void postEvent(const OH::IEvent* event) override;
-    void addEventListener(const OH::IEventListener* listener) override;
-};
+} // namespace SenseShift

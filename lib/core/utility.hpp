@@ -30,7 +30,7 @@ namespace OH {
     };
 
     template<typename _Tp>
-    inline _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max)
+    constexpr _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max)
     {
         const _Tp run = in_max - in_min;
         if (run == 0) {

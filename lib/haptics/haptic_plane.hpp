@@ -1,71 +1,98 @@
 #pragma once
 
+#include "haptics_interface.hpp"
+
 #include <abstract_actuator.hpp>
 #include <types.hpp>
 #include <utility.hpp>
 
 #include <list>
 #include <map>
+#include <set>
 #include <vector>
 
-namespace OH {
+namespace SenseShift::Body::Haptics {
+    typedef std::set<Position_t> PositionSet_t;
+
     /**
      * Output "plane" (e.g. Chest, Palm, Finger, etc.)
+     *
+     * @tparam _Tp The type of the output value.
      */
-    class HapticPlane {
-      protected:
-        std::list<oh_output_point_t> points{};
-        oh_output_writers_map_t writers{};
-        std::map<oh_output_point_t, oh_output_state_t> states{};
-
-        void setOutputs(oh_output_writers_map_t&);
+    template<typename _Tp>
+    class ActuativePlane {
+        static_assert(std::is_same<_Tp, VibroEffectData_t>());
 
       public:
-        HapticPlane(oh_output_writers_map_t& outputs)
-        {
-            this->setOutputs(outputs);
-        };
-        std::list<oh_output_point_t>* getOutputPoints(void)
-        {
-            return &this->points;
-        };
-        std::map<oh_output_point_t, oh_output_state_t>* getOutputStates(void)
-        {
-            return &this->states;
-        };
-        virtual void writeOutput(const oh_output_data_t&);
-        void setup();
-    };
+        typedef _Tp Value_t;
+        typedef std::map<Position_t, Value_t> PositionStateMap_t;
 
-    class HapticPlane_Closest : public HapticPlane {
-      protected:
-        oh_output_point_t findClosestPoints(std::list<oh_output_point_t>& pts, const oh_output_point_t& target);
-        void setOutputs(oh_output_writers_map_t&);
-
-      public:
-        HapticPlane_Closest(oh_output_writers_map_t& outputs) : HapticPlane(outputs){};
-        void writeOutput(const oh_output_data_t&) override;
-    };
-
-    class PlaneMapper_Margin {
-      public:
         /**
-         * Re-maps a point index to output coordinate.
-         * @tparam _Tp The type of the point index.
+         * The type of the actuator.
+         * @TODO: Make this a template parameter
          */
-        template<typename _Tp>
-        static inline oh_output_point_t* mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
-        {
-            const oh_output_coord_t x_coord = simpleMap<_Tp>(x + 1, x_max + 2, OH_OUTPUT_COORD_MAX);
-            const oh_output_coord_t y_coord = simpleMap<_Tp>(y + 1, y_max + 2, OH_OUTPUT_COORD_MAX);
+        typedef OH::AbstractActuator Actuator_t;
+        typedef std::map<Position_t, Actuator_t*> ActuatorMap_t;
 
-            return new oh_output_point_t(x_coord, y_coord);
+        ActuativePlane() = default;
+
+        ActuativePlane(const ActuatorMap_t& actuators)
+        {
+            this->setActuators(actuators);
         }
 
-        template<typename _Tp>
-        static inline std::map<oh_output_point_t, _Tp*> mapMatrixCoordinates(std::vector<std::vector<_Tp*>> map2d)
+        void setup();
+        virtual void effect(const Position_t&, const Value_t&);
+
+        [[nodiscard]] const PositionSet_t* getAvailablePoints() const
         {
-            std::map<oh_output_point_t, _Tp*> points{};
+            return &points;
+        }
+        [[nodiscard]] const PositionStateMap_t* getActuatorStates() const
+        {
+            return &states;
+        }
+
+      private:
+        PositionSet_t points;
+        ActuatorMap_t actuators{};
+        PositionStateMap_t states{};
+
+        void setActuators(const ActuatorMap_t&);
+    };
+
+    typedef ActuativePlane<VibroEffectData_t> VibroPlane;
+
+    /**
+     * Output plane, finds the closest actuator for the given point.
+     * @deprecated We should guarantee on the driver level, that the actuator is always exists
+     */
+    template<typename _Tp>
+    class ActuativePlane_Closest : public ActuativePlane<_Tp> {
+      public:
+        typedef _Tp Value_t;
+
+        ActuativePlane_Closest(const typename ActuativePlane<_Tp>::ActuatorMap_t& actuators) :
+          ActuativePlane<_Tp>(actuators)
+        {
+        }
+
+        void effect(const Position_t&, const Value_t&) override;
+
+      private:
+        [[nodiscard]] const Position_t& findClosestPoint(const PositionSet_t&, const Position_t&) const;
+    };
+
+    typedef ActuativePlane_Closest<VibroEffectData_t> VibroPlane_Closest;
+
+    // TODO: configurable margin
+    class PlaneMapper_Margin {
+      public:
+        template<typename _Tp>
+        [[nodiscard]] static constexpr inline std::map<Position_t, _Tp*>
+          mapMatrixCoordinates(std::vector<std::vector<_Tp*>> map2d)
+        {
+            std::map<Position_t, _Tp*> points{};
 
             size_t y_size = map2d.size();
             size_t y_max = y_size - 1;
@@ -76,14 +103,28 @@ namespace OH {
                 size_t x_max = x_size - 1;
 
                 for (size_t x = 0; x < x_size; ++x) {
-                    AbstractActuator* wr = row.at(x);
-                    oh_output_point_t* coord = mapPoint(x, y, x_max, y_max);
+                    auto* wr = row.at(x);
+                    Position_t coord = PlaneMapper_Margin::mapPoint<Position_t::Value_t>(x, y, x_max, y_max);
 
-                    points[*coord] = wr;
+                    points[coord] = wr;
                 }
             }
 
             return points;
         }
+
+        /**
+         * Re-maps a point index to output coordinate.
+         * @tparam _Tp The type of the point index.
+         */
+        template<typename _Tp>
+        [[nodiscard]] static constexpr inline OH::Point2<_Tp> mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
+        {
+            using Point_t = OH::Point2<_Tp>;
+            return Point_t(
+              OH::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
+              OH::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
+            );
+        }
     };
-} // namespace OH
+} // namespace SenseShift::Body::Haptics

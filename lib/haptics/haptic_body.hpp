@@ -1,32 +1,35 @@
 #pragma once
 
-#include "haptic_constants.h"
 #include "haptic_plane.hpp"
+#include "haptics_interface.hpp"
 
 #include <types.hpp>
 #include <utility.hpp>
 
 #include <map>
 
-namespace OH {
+namespace SenseShift::Body::Haptics {
     class HapticBody {
-      private:
-        typedef std::map<oh_output_path_t, HapticPlane*> oh_output_components_map_t;
-        std::map<oh_output_path_t, HapticPlane*> components{};
-
       public:
+        typedef std::variant<VibroPlane*> AuctiativePlane_t;
+        typedef std::multimap<Target_t, AuctiativePlane_t> PlaneTargetMap_t;
+        typedef std::map<Target_t, VibroPlane*> VibroTargetMap_t;
+
         HapticBody(){};
 
-        void addComponent(const oh_output_path_t, HapticPlane*);
-        oh_output_components_map_t* getComponents();
+        void setup();
 
-        void writeOutput(const oh_output_path_t, const oh_output_data_t&);
+        void effect(const EffectRequest_t&);
 
-        void setup()
+        void addTarget(const Target_t, VibroPlane* plane);
+
+        [[nodiscard]] const PlaneTargetMap_t* getTargets() const
         {
-            for (auto& component : this->components) {
-                component.second->setup();
-            }
-        };
+            return &allTargets;
+        }
+
+      private:
+        PlaneTargetMap_t allTargets{};
+        VibroTargetMap_t vibroTargets{};
     };
-} // namespace OH
+} // namespace SenseShift::Body::Haptics

@@ -3,8 +3,8 @@
 #include <abstract_connection.hpp>
 #include <utility.hpp>
 
-#include <bh_constants.hpp>
-#include <bh_types.hpp>
+#include <senseshift/bh/ble/constants.hpp>
+#include <senseshift/bh/constants.hpp>
 
 #include <Arduino.h>
 #include <esp_wifi.h>
@@ -19,45 +19,30 @@
 #include <abstract_battery.hpp>
 #endif
 
-// typedef void (*bh_motor_handler_t)(std::string&);
-typedef std::function<void(std::string&)> bh_motor_handler_t;
+namespace SenseShift::BH::BLE {
+    typedef struct ConnectionConfig {
+        static constexpr size_t SN_LENGTH = 10;
 
-namespace BH {
-    class BHBLEConnectionCallbacks {
+        std::string deviceName;
+        uint16_t appearance;
+        uint8_t serialNumber[SN_LENGTH];
+    } ConnectionConfig_t;
+
+    class ConnectionCallbacks {
       public:
         virtual void postInit()
         {
             log_v("Default postInit");
         };
     };
+    static ConnectionCallbacks defaultCallback;
 
-    static BHBLEConnectionCallbacks defaultCallback;
-
-    struct ConnectionBHBLE_Config {
-        std::string deviceName;
-        uint16_t appearance;
-        uint8_t* serialNumber;
-    };
-
-    class ConnectionBHBLE final : public OH::AbstractConnection, public OH::IEventListener {
-      private:
-        ConnectionBHBLE_Config config;
-        bh_motor_handler_t motorHandler;
-        OH::IEventDispatcher* eventDispatcher;
-
-        BLEServer* bleServer = nullptr;
-        BLEService* motorService = nullptr;
-        BLECharacteristic* batteryChar = nullptr;
-
-        BHBLEConnectionCallbacks* callbacks = &defaultCallback;
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-        void handleBatteryChange(const OH::BatteryLevelEvent* event) const;
-#endif
-
+    class Connection final : public OH::AbstractConnection, public OH::IEventListener {
       public:
-        ConnectionBHBLE(
-          ConnectionBHBLE_Config& config, bh_motor_handler_t motorHandler, OH::IEventDispatcher* eventDispatcher
+        typedef std::function<void(std::string&)> MotorHandler_t;
+
+        Connection(
+          const ConnectionConfig_t& config, MotorHandler_t motorHandler, OH::IEventDispatcher* eventDispatcher
         ) :
           config(config), motorHandler(motorHandler), eventDispatcher(eventDispatcher)
         {
@@ -80,7 +65,7 @@ namespace BH {
 #endif
         };
 
-        void setCallbacks(BHBLEConnectionCallbacks* pCallbacks)
+        void setCallbacks(ConnectionCallbacks* pCallbacks)
         {
             if (pCallbacks != nullptr) {
                 this->callbacks = pCallbacks;
@@ -88,5 +73,20 @@ namespace BH {
                 this->callbacks = &defaultCallback;
             }
         };
+
+      private:
+        const ConnectionConfig_t& config;
+        MotorHandler_t motorHandler;
+        OH::IEventDispatcher* eventDispatcher;
+
+        BLEServer* bleServer = nullptr;
+        BLEService* motorService = nullptr;
+        BLECharacteristic* batteryChar = nullptr;
+
+        ConnectionCallbacks* callbacks = &defaultCallback;
+
+#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
+        void handleBatteryChange(const OH::BatteryLevelEvent* event) const;
+#endif
     };
-} // namespace BH
+} // namespace SenseShift::BH::BLE
