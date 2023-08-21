@@ -1,10 +1,8 @@
 #pragma once
 
-#include <sensor.hpp>
+#include "senseshift/input/sensor.hpp"
 
-#include <Arduino.h>
-
-namespace OH {
+namespace SenseShift::Input {
     /**
      * Joystick axis sensor decorator
      */
@@ -38,4 +36,4 @@ namespace OH {
             return value;
         }
     };
-}; // namespace OH
+}; // namespace SenseShift::Input

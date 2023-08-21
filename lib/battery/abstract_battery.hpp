@@ -1,7 +1,7 @@
 #pragma once
 
 #include <senseshift/events.hpp>
-#include <sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <task.hpp>
 
 #include <stdint.h>
@@ -15,7 +15,7 @@ namespace OH {
      * Tasked sensor decorator
      */
     template<typename _Tp>
-    class TaskedSensor : public Task<TaskedSensor<_Tp>>, public MemoizedSensor<_Tp> {
+    class TaskedSensor : public Task<TaskedSensor<_Tp>>, public ::SenseShift::Input::MemoizedSensor<_Tp> {
         friend class Task<TaskedSensor<_Tp>>;
 
       private:
@@ -31,8 +31,8 @@ namespace OH {
         uint32_t rate;
 
       public:
-        TaskedSensor(ISensor<_Tp>* sensor, TaskConfig taskConfig, uint32_t rate) :
-          MemoizedSensor<_Tp>(sensor), Task<TaskedSensor<_Tp>>(taskConfig), rate(rate){};
+        TaskedSensor(::SenseShift::Input::ISensor<_Tp>* sensor, TaskConfig taskConfig, uint32_t rate) :
+          ::SenseShift::Input::MemoizedSensor<_Tp>(sensor), Task<TaskedSensor<_Tp>>(taskConfig), rate(rate){};
 
         void begin() override
         {
@@ -58,7 +58,7 @@ namespace OH {
     /**
      * Abstract battery sensor
      */
-    typedef ISensor<BatteryState> IBatterySensor;
+    typedef ::SenseShift::Input::ISensor<BatteryState> IBatterySensor;
 
     class BatterySensor : public TaskedSensor<BatteryState> {
         friend class Task<TaskedSensor<BatteryState>>;

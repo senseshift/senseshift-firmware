@@ -2,12 +2,12 @@
 #include <og_constants.hpp>
 #include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/input/sensor/digital.hpp>
 #include <senseshift/arduino/output/servo.hpp>
+#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/joystick.hpp>
 #include <senseshift/utility.hpp>
-#include <sensor.hpp>
-#include <sensor/analog.hpp>
-#include <sensor/digital.hpp>
-#include <sensor/joystick.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
 
@@ -53,10 +53,13 @@
 #define FINGER_MIDDLE_ENABLED (defined(PIN_FINGER_MIDDLE) && (PIN_FINGER_MIDDLE != -1))
 #define FINGER_RING_ENABLED (defined(PIN_FINGER_RING) && (PIN_FINGER_RING != -1))
 #define FINGER_PINKY_ENABLED (defined(PIN_FINGER_PINKY) && (PIN_FINGER_PINKY != -1))
-#define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                                            \
-    FingerSensor(                                                                                        \
-      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()), \
-      type                                                                                               \
+#define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                  \
+    FingerSensor(                                                              \
+      new ::SenseShift::Input::CalibratedSensor<uint16_t>(                     \
+        new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin), \
+        new curl_calib()                                                       \
+      ),                                                                       \
+      type                                                                     \
     )
 #define FINGER_THUMB_SPLAY (FINGER_THUMB_ENABLED && defined(PIN_FINGER_THUMB_SPLAY) && (PIN_FINGER_THUMB_SPLAY != -1))
 #define FINGER_INDEX_SPLAY (FINGER_INDEX_ENABLED && defined(PIN_FINGER_INDEX_SPLAY) && (PIN_FINGER_INDEX_SPLAY != -1))
@@ -64,11 +67,17 @@
     (FINGER_MIDDLE_ENABLED && defined(PIN_FINGER_MIDDLE_SPLAY) && (PIN_FINGER_MIDDLE_SPLAY != -1))
 #define FINGER_RING_SPLAY (FINGER_RING_ENABLED && defined(PIN_FINGER_RING_SPLAY) && (PIN_FINGER_RING_SPLAY != -1))
 #define FINGER_PINKY_SPLAY (FINGER_PINKY_ENABLED && defined(PIN_FINGER_PINKY_SPLAY) && (PIN_FINGER_PINKY_SPLAY != -1))
-#define FINGER_SPLAY_CLASS(type, curl_pin, curl_invert, curl_calib, splay_pin, splay_invert, splay_calib)   \
-    FingerSensor(                                                                                           \
-      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<curl_invert>(curl_pin), new curl_calib()),    \
-      new OH::CalibratedSensor<uint16_t>(new OH::AnalogSensor<splay_invert>(splay_pin), new splay_calib()), \
-      type                                                                                                  \
+#define FINGER_SPLAY_CLASS(type, curl_pin, curl_invert, curl_calib, splay_pin, splay_invert, splay_calib) \
+    FingerSensor(                                                                                         \
+      new ::SenseShift::Input::CalibratedSensor<uint16_t>(                                                \
+        new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin),                            \
+        new curl_calib()                                                                                  \
+      ),                                                                                                  \
+      new ::SenseShift::Input::CalibratedSensor<uint16_t>(                                                \
+        new ::SenseShift::Arduino::Input::AnalogSensor<splay_invert>(splay_pin),                          \
+        new splay_calib()                                                                                 \
+      ),                                                                                                  \
+      type                                                                                                \
     )
 
 #pragma endregion
@@ -78,10 +87,13 @@
 #define JOYSTICK_ENABLED \
     (defined(PIN_JOYSTICK_X) && defined(PIN_JOYSTICK_Y) && (PIN_JOYSTICK_X != -1) && (PIN_JOYSTICK_Y != -1))
 
-#define JOYSTICK_CLASS(type, pin, invert, deadzone)                                      \
-    StringEncodedMemoizedSensor<uint16_t>(                                               \
-      new OH::JoystickAxisSensor<uint16_t>(new OH::AnalogSensor<invert>(pin), deadzone), \
-      type                                                                               \
+#define JOYSTICK_CLASS(type, pin, invert, deadzone)                  \
+    StringEncodedMemoizedSensor<uint16_t>(                           \
+      new ::SenseShift::Input::JoystickAxisSensor<uint16_t>(         \
+        new ::SenseShift::Arduino::Input::AnalogSensor<invert>(pin), \
+        deadzone                                                     \
+      ),                                                             \
+      type                                                           \
     )
 
 #pragma endregion
@@ -97,7 +109,8 @@
 #define BUTTON_GRAB_ENABLED (!GESTURE_GRAB_ENABLED && defined(PIN_BUTTON_GRAB) && (PIN_BUTTON_GRAB != -1))
 #define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && defined(PIN_BUTTON_PINCH) && (PIN_BUTTON_PINCH != -1))
 
-#define BUTTON_CLASS(type, pin, invert) StringEncodedMemoizedSensor<bool>(new OH::DigitalSensor<invert>(pin), type)
+#define BUTTON_CLASS(type, pin, invert) \
+    StringEncodedMemoizedSensor<bool>(new ::SenseShift::Arduino::Input::DigitalSensor<invert>(pin), type)
 
 #pragma endregion
 

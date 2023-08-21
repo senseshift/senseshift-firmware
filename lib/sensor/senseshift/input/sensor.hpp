@@ -16,7 +16,7 @@
 // #define ANALOG_MAX 4095
 #endif
 
-namespace OH {
+namespace SenseShift::Input {
     /**
      * Abstract hardware sensor (e.g. potentiometer, flex sensor, etc.)
      * @tparam _Tp Type of the sensor value
@@ -90,10 +90,10 @@ namespace OH {
      * @tparam _Tp Type of the sensor value
      */
     template<typename _Tp>
-    class CalibratedSensor : public ISensor<_Tp>, public Calibrated {
+    class CalibratedSensor : public ISensor<_Tp>, public OH::Calibrated {
       protected:
         ISensor<_Tp>* sensor;
-        ICalibrator<_Tp>* calibrator;
+        OH::ICalibrator<_Tp>* calibrator;
 
         _Tp getCalibratedValue()
         {
@@ -111,7 +111,8 @@ namespace OH {
          * @param sensor Sensor to be decorated
          * @param calibrator ICalibrator algorithm to be used
          */
-        CalibratedSensor(ISensor<_Tp>* sensor, ICalibrator<_Tp>* calibrator) : sensor(sensor), calibrator(calibrator){};
+        CalibratedSensor(ISensor<_Tp>* sensor, OH::ICalibrator<_Tp>* calibrator) :
+          sensor(sensor), calibrator(calibrator){};
 
         void setup() override
         {
@@ -128,4 +129,4 @@ namespace OH {
             this->calibrator->reset();
         };
     };
-} // namespace OH
+} // namespace SenseShift::Input

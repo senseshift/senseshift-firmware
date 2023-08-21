@@ -1,10 +1,11 @@
 #pragma once
 
-#include <Arduino.h>
-#include <sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
-namespace OH {
-    typedef ISensor<bool> IDigitalSensor;
+#include <Arduino.h>
+
+namespace SenseShift::Arduino::Input {
+    typedef ::SenseShift::Input::ISensor<bool> IDigitalSensor;
 
     template<bool invert = false>
     class DigitalSensor : public IDigitalSensor {
@@ -33,4 +34,4 @@ namespace OH {
     {
         return digitalRead(this->pin) == HIGH;
     }
-} // namespace OH
+} // namespace SenseShift::Arduino::Input

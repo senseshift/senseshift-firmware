@@ -3,7 +3,7 @@
 #include <sensor/og_finger.hpp>
 
 namespace OpenGloves {
-    class Gesture : public OH::ISensor<bool> {};
+    class Gesture : public SenseShift::Input::ISensor<bool> {};
 
     class GrabGesture : public Gesture {
       private:

@@ -3,7 +3,7 @@
 
 using namespace OpenGloves;
 
-class TestAnalogSensor : public OH::ISensor<uint16_t> {
+class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
   private:
     uint16_t count = 0;
 
@@ -21,7 +21,7 @@ class TestAnalogSensor : public OH::ISensor<uint16_t> {
     };
 };
 
-class TestBinarySensor : public OH::ISensor<bool> {
+class TestBinarySensor : public SenseShift::Input::ISensor<bool> {
   public:
     bool value = false;
     int setupCounter = 0;
@@ -37,7 +37,7 @@ class TestBinarySensor : public OH::ISensor<bool> {
     };
 };
 
-class TestFingerSensor : public OH::ISensor<FingerValue> {
+class TestFingerSensor : public SenseShift::Input::ISensor<FingerValue> {
   public:
     FingerValue value;
     int setupCounter = 0;

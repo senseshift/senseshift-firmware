@@ -1,12 +1,12 @@
 #pragma once
 
-#include <sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 #include <Arduino.h>
 
-namespace OH {
+namespace SenseShift::Arduino::Input {
     template<bool invert = false>
-    class AnalogSensor : public ISensor<uint16_t> {
+    class AnalogSensor : public ::SenseShift::Input::ISensor<uint16_t> {
       private:
         uint8_t pin;
 
@@ -32,4 +32,4 @@ namespace OH {
     {
         return ANALOG_MAX - analogRead(this->pin);
     }
-} // namespace OH
+} // namespace SenseShift::Arduino::Input

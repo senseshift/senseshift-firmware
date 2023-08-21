@@ -1,6 +1,7 @@
-#include <sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <unity.h>
 
+using namespace SenseShift::Input;
 using namespace OH;
 
 class TestAnalogSensor : public ISensor<int> {

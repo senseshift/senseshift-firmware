@@ -3,7 +3,7 @@
 
 using namespace OpenGloves;
 
-class TestAnalogSensor : public OH::ISensor<uint16_t> {
+class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
   private:
     uint16_t count = 0;
 
@@ -45,7 +45,7 @@ void test_simple_finger_sensor_curl(void)
 {
     auto* inner = new TestAnalogSensor();
     auto* calibrator = new DummyCalibrator();
-    auto* calibrated = new OH::CalibratedSensor<uint16_t>(inner, calibrator);
+    auto* calibrated = new SenseShift::Input::CalibratedSensor<uint16_t>(inner, calibrator);
     auto* sensor = new SimpleFingerSensor(calibrated);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
@@ -71,11 +71,11 @@ void test_simple_finger_sensor_curl_flex(void)
 {
     auto* inner_curl = new TestAnalogSensor();
     auto* calibrator_curl = new DummyCalibrator();
-    auto* calibrated_curl = new OH::CalibratedSensor<uint16_t>(inner_curl, calibrator_curl);
+    auto* calibrated_curl = new SenseShift::Input::CalibratedSensor<uint16_t>(inner_curl, calibrator_curl);
 
     auto* inner_flex = new TestAnalogSensor();
     auto* calibrator_flex = new DummyCalibrator();
-    auto* calibrated_flex = new OH::CalibratedSensor<uint16_t>(inner_flex, calibrator_flex);
+    auto* calibrated_flex = new SenseShift::Input::CalibratedSensor<uint16_t>(inner_flex, calibrator_flex);
 
     auto* sensor = new SimpleFingerSensor(calibrated_curl, calibrated_flex);
 
@@ -111,7 +111,7 @@ void test_finger_sensor_curl(void)
 {
     auto* inner = new TestAnalogSensor();
     auto* calibrator = new DummyCalibrator();
-    auto* calibrated = new OH::CalibratedSensor<uint16_t>(inner, calibrator);
+    auto* calibrated = new SenseShift::Input::CalibratedSensor<uint16_t>(inner, calibrator);
     auto* sensor = new FingerSensor(calibrated, IEncodedInput::Type::INDEX);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);

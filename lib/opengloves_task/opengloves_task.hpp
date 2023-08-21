@@ -8,11 +8,11 @@
 #include <og_alpha_encoding.hpp>
 #include <og_ffb.hpp>
 #include <og_serial_communication.hpp>
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/joystick.hpp>
 #include <senseshift/utility.hpp>
-#include <sensor.hpp>
-#include <sensor/analog.hpp>
-#include <sensor/digital.hpp>
-#include <sensor/joystick.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
 #include <task.hpp>
