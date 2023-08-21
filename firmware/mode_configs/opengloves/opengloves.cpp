@@ -2,7 +2,7 @@
 #include <og_constants.hpp>
 #include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
-#include <output_writers/servo.hpp>
+#include <senseshift/arduino/output/servo.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
 #include <sensor/digital.hpp>
@@ -285,23 +285,23 @@ OpenGlovesTrackingTask* trackingTask;
 #if FFB_ENABLED
 HandActuators handActuators = {
 #if FFB_THUMB_ENABLED
-    .thumb = new OH::ServoActuator(PIN_FFB_THUMB),
+    .thumb = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_THUMB),
 #endif
 
 #if FFB_INDEX_ENABLED
-    .index = new OH::ServoActuator(PIN_FFB_INDEX),
+    .index = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_INDEX),
 #endif
 
 #if FFB_MIDDLE_ENABLED
-    .middle = new OH::ServoActuator(PIN_FFB_MIDDLE),
+    .middle = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_MIDDLE),
 #endif
 
 #if FFB_RING_ENABLED
-    .ring = new OH::ServoActuator(PIN_FFB_RING),
+    .ring = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_RING),
 #endif
 
 #if FFB_PINKY_ENABLED
-    .pinky = new OH::ServoActuator(PIN_FFB_PINKY),
+    .pinky = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_PINKY),
 #endif
 };
 OpenGlovesForceFeedbackTask* ffbTask;

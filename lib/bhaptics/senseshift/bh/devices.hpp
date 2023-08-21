@@ -297,12 +297,12 @@ namespace SenseShift::BH {
     inline void addTactGloveActuators(
       HapticBody* hapticBody,
       const HandSide_t side,
-      OH::AbstractActuator* const thumbActuator,
-      OH::AbstractActuator* const indexActuator,
-      OH::AbstractActuator* const middleActuator,
-      OH::AbstractActuator* const ringActuator,
-      OH::AbstractActuator* const littleActuator,
-      OH::AbstractActuator* const wristActuator
+      VibroPlane::Actuator_t* const thumbActuator,
+      VibroPlane::Actuator_t* const indexActuator,
+      VibroPlane::Actuator_t* const middleActuator,
+      VibroPlane::Actuator_t* const ringActuator,
+      VibroPlane::Actuator_t* const littleActuator,
+      VibroPlane::Actuator_t* const wristActuator
     )
     {
         const OutputLayout_t(&layout)[6] = (side == HandSide_t::Left) ? TactGloveLeftLayout : TactGloveRightLayout;

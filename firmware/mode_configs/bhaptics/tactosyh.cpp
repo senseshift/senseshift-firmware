@@ -6,7 +6,7 @@
 
 #include "senseshift.h"
 
-#include <output_writers/pwm.hpp>
+#include <senseshift/arduino/output/pwm.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
@@ -17,6 +17,8 @@
 
 using namespace OH;
 using namespace SenseShift;
+using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
 extern SenseShift::SenseShift App;
@@ -28,7 +30,7 @@ static const Position_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSYH;
 void setupMode()
 {
     // Configure PWM pins to their positions on the hands
-    auto handOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto handOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
       { new PWMOutputWriter(32) },
       { new PWMOutputWriter(33) },
@@ -40,14 +42,14 @@ void setupMode()
 
     app->getHapticBody()->setup();
 
-    auto* bhBleConnection = new BH::BLE::Connection(
+    auto* bhBleConnection = new BLE::Connection(
       {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
         .serialNumber = BH_SERIAL_NUMBER,
       },
       [](std::string& value) -> void {
-          BH::Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::Accessory);
+          Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::Accessory);
       },
       app
     );

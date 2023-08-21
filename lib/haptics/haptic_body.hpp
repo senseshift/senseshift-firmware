@@ -3,7 +3,6 @@
 #include "haptic_plane.hpp"
 #include "haptics_interface.hpp"
 
-#include <types.hpp>
 #include <utility.hpp>
 
 #include <map>

@@ -7,8 +7,8 @@
 #include "haptic_plane.hpp"
 
 namespace SenseShift::Body::Haptics {
-    template<typename _Tp>
-    void ActuativePlane<_Tp>::setActuators(const ActuatorMap_t& actuators)
+    template<typename _Tp, typename _Ta>
+    void ActuativePlane<_Tp, _Ta>::setActuators(const ActuatorMap_t& actuators)
     {
         this->actuators.clear();
         for (const auto& [point, actuator] : actuators) {
@@ -26,16 +26,16 @@ namespace SenseShift::Body::Haptics {
         }
     }
 
-    template<typename _Tp>
-    void ActuativePlane<_Tp>::setup()
+    template<typename _Tp, typename _Ta>
+    void ActuativePlane<_Tp, _Ta>::setup()
     {
         for (const auto& [point, actuator] : this->actuators) {
             actuator->setup();
         }
     }
 
-    template<typename _Tp>
-    void ActuativePlane<_Tp>::effect(const Position_t& pos, const Value_t& val)
+    template<typename _Tp, typename _Ta>
+    void ActuativePlane<_Tp, _Ta>::effect(const Position_t& pos, const Value_t& val)
     {
         auto it = this->actuators.find(pos);
         if (it == this->actuators.end()) {
@@ -47,16 +47,16 @@ namespace SenseShift::Body::Haptics {
         this->states[pos] = val;
     }
 
-    template<typename _Tp>
-    void ActuativePlane_Closest<_Tp>::effect(const Position_t& pos, const Value_t& val)
+    template<typename _Tp, typename _Ta>
+    void ActuativePlane_Closest<_Tp, _Ta>::effect(const Position_t& pos, const Value_t& val)
     {
         auto& closest = this->findClosestPoint(*this->getAvailablePoints(), pos);
-        ActuativePlane<_Tp>::effect(closest, val);
+        ActuativePlane<_Tp, _Ta>::effect(closest, val);
     }
 
-    template<typename _Tp>
+    template<typename _Tp, typename _Ta>
     const Position_t&
-      ActuativePlane_Closest<_Tp>::findClosestPoint(const PositionSet_t& pts, const Position_t& target) const
+      ActuativePlane_Closest<_Tp, _Ta>::findClosestPoint(const PositionSet_t& pts, const Position_t& target) const
     {
         // check if exact point exists
         auto it = pts.find(target);
@@ -75,6 +75,8 @@ namespace SenseShift::Body::Haptics {
         return nearest->second;
     }
 
-    template class ActuativePlane<VibroEffectData_t>;
-    template class ActuativePlane_Closest<VibroEffectData_t>;
+    template class ActuativePlane<VibroEffectData_t, ::SenseShift::Output::IActuator<VibroEffectData_t::Intensity_t>>;
+    template class ActuativePlane_Closest<
+      VibroEffectData_t,
+      ::SenseShift::Output::IActuator<VibroEffectData_t::Intensity_t>>;
 } // namespace SenseShift::Body::Haptics
