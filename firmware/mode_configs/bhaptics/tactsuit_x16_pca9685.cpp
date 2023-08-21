@@ -6,7 +6,7 @@
 
 #include "senseshift.h"
 
-#include <output_writers/pca9685.hpp>
+#include <senseshift/arduino/output/pca9685.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
@@ -17,13 +17,15 @@
 
 using namespace OH;
 using namespace SenseShift;
+using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
 extern SenseShift::SenseShift App;
 SenseShift::SenseShift* app = &App;
 
 static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
-static const BH::OutputLayout_t bhLayout[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;
+static const OutputLayout_t bhLayout[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;
 
 // Ouput indices, responsible for x40 => x16 grouping
 static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
@@ -37,13 +39,13 @@ void setupMode()
     pwm->setPWMFreq(PWM_FREQUENCY);
 
     // Assign the pins on the configured PCA9685 to positions on the vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
       { new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3) },
       { new PCA9685OutputWriter(pwm, 4), new PCA9685OutputWriter(pwm, 5), new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7) },
       // clang-format on
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
       { new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11) },
       { new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15) },
@@ -55,14 +57,14 @@ void setupMode()
 
     app->getHapticBody()->setup();
 
-    auto* bhBleConnection = new BH::BLE::Connection(
+    auto* bhBleConnection = new BLE::Connection(
       {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
         .serialNumber = BH_SERIAL_NUMBER,
       },
       [](std::string& value) -> void {
-          BH::Decoder::applyVestGrouped(app->getHapticBody(), value, bhLayout, layoutGroups);
+          Decoder::applyVestGrouped(app->getHapticBody(), value, bhLayout, layoutGroups);
       },
       app
     );

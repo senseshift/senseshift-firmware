@@ -2,18 +2,19 @@
 #include <unity.h>
 
 using namespace SenseShift::Body::Haptics;
+using namespace SenseShift::Output;
 
-class TestActuator : public OH::AbstractActuator {
+class TestActuator : public IActuator<uint16_t> {
   public:
     bool isSetup = false;
-    oh_output_intensity_t intensity = 0;
+    uint16_t intensity = 0;
 
-    TestActuator() : AbstractActuator() {}
+    TestActuator() : IActuator<uint16_t>() {}
     void setup() override
     {
         this->isSetup = true;
     }
-    void writeOutput(oh_output_intensity_t intensity) override
+    void writeOutput(uint16_t intensity) override
     {
         this->intensity = intensity;
     }

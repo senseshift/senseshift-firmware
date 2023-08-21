@@ -8,7 +8,7 @@
 
 #include "senseshift.h"
 
-#include <output_writers/pwm.hpp>
+#include <senseshift/arduino/output/pwm.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
@@ -19,6 +19,8 @@
 
 using namespace OH;
 using namespace SenseShift;
+using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
 extern SenseShift::SenseShift App;
@@ -27,14 +29,14 @@ SenseShift::SenseShift* app = &App;
 static const Body::Hands::HandSide_t handSide = Body::Hands::HandSide::SENSESHIFT_HAND_SIDE;
 static const size_t bhLayoutSize = BH_LAYOUT_TACTGLOVE_SIZE;
 // clang-format off
-static const BH::OutputLayout_t (&bhLayout)[bhLayoutSize] = handSide == Body::Hands::HandSide::Left ? BH::TactGloveLeftLayout : BH::TactGloveRightLayout;
+static const OutputLayout_t (&bhLayout)[bhLayoutSize] = handSide == Body::Hands::HandSide::Left ? BH::TactGloveLeftLayout : BH::TactGloveRightLayout;
 // clang-format on
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the glove
     // Replace `new PWMOutputWriter(...)` with `nullptr` to disable a specific actuator
-    BH::addTactGloveActuators(
+    addTactGloveActuators(
       app->getHapticBody(),
       handSide,
       new PWMOutputWriter(32), // Thumb
@@ -47,14 +49,14 @@ void setupMode()
 
     app->getHapticBody()->setup();
 
-    auto* bhBleConnection = new BH::BLE::Connection(
+    auto* bhBleConnection = new BLE::Connection(
       {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
         .serialNumber = BH_SERIAL_NUMBER,
       },
       [](std::string& value) -> void {
-          BH::Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect_t::Vibro);
+          Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect_t::Vibro);
       },
       app
     );

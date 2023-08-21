@@ -2,21 +2,21 @@
 #include <senseshift/bh/encoding.hpp>
 #include <unity.h>
 
-using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::BH;
-using namespace OH;
+using namespace SenseShift::Body::Haptics;
+using namespace SenseShift::Output;
 
-class TestActuator : public OH::AbstractActuator {
+class TestActuator : public IActuator<uint16_t> {
   public:
     bool isSetup = false;
-    oh_output_intensity_t intensity = 0;
+    uint16_t intensity = 0;
 
-    TestActuator() : AbstractActuator() {}
+    TestActuator() : IActuator<uint16_t>() {}
     void setup() override
     {
         this->isSetup = true;
     }
-    void writeOutput(oh_output_intensity_t intensity) override
+    void writeOutput(uint16_t intensity) override
     {
         this->intensity = intensity;
     }
@@ -49,11 +49,11 @@ void test_layout_tactsuitx16(void)
     TestActuator* actuator14 = new TestActuator();
     TestActuator* actuator15 = new TestActuator();
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<OH::AbstractActuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       { actuator0, actuator1, actuator2, actuator3 },
       { actuator4, actuator5, actuator6, actuator7 },
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       { actuator8, actuator9, actuator10, actuator11 },
       { actuator12, actuator13, actuator14, actuator15 },
     });
@@ -97,14 +97,14 @@ void test_layout_tactsuitx40(void)
 
     auto body = new HapticBody();
 
-    std::vector<std::vector<AbstractActuator*>> frontMatrix = {
+    std::vector<std::vector<VibroPlane::Actuator_t*>> frontMatrix = {
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
-    std::vector<std::vector<AbstractActuator*>> backMatrix = {
+    std::vector<std::vector<VibroPlane::Actuator_t*>> backMatrix = {
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
@@ -112,8 +112,8 @@ void test_layout_tactsuitx40(void)
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>(frontMatrix);
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>(backMatrix);
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>(frontMatrix);
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>(backMatrix);
 
     auto frontPlane = new VibroPlane(frontOutputs);
     auto backPlane = new VibroPlane(backOutputs);
@@ -187,7 +187,7 @@ void test_layout_tactal(void)
     TestActuator* actuator4 = new TestActuator();
     TestActuator* actuator5 = new TestActuator();
 
-    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       { actuator0, actuator1, actuator2, actuator3, actuator4, actuator5 },
     });
     auto plane = new VibroPlane(outputs);

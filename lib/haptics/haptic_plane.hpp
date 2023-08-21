@@ -2,8 +2,8 @@
 
 #include "haptics_interface.hpp"
 
-#include <abstract_actuator.hpp>
-#include <types.hpp>
+#include <senseshift/output/actuator.hpp>
+
 #include <utility.hpp>
 
 #include <list>
@@ -19,20 +19,16 @@ namespace SenseShift::Body::Haptics {
      *
      * @tparam _Tp The type of the output value.
      */
-    template<typename _Tp>
+    template<typename _Tp, typename _Ta>
     class ActuativePlane {
         static_assert(std::is_same<_Tp, VibroEffectData_t>());
 
       public:
-        typedef _Tp Value_t;
-        typedef std::map<Position_t, Value_t> PositionStateMap_t;
+        using Value_t = _Tp;
+        using Actuator_t = _Ta;
 
-        /**
-         * The type of the actuator.
-         * @TODO: Make this a template parameter
-         */
-        typedef OH::AbstractActuator Actuator_t;
         typedef std::map<Position_t, Actuator_t*> ActuatorMap_t;
+        typedef std::map<Position_t, Value_t> PositionStateMap_t;
 
         ActuativePlane() = default;
 
@@ -61,19 +57,20 @@ namespace SenseShift::Body::Haptics {
         void setActuators(const ActuatorMap_t&);
     };
 
-    typedef ActuativePlane<VibroEffectData_t> VibroPlane;
+    typedef ActuativePlane<VibroEffectData_t, ::SenseShift::Output::IActuator<VibroEffectData_t::Intensity_t>>
+      VibroPlane;
 
     /**
      * Output plane, finds the closest actuator for the given point.
      * @deprecated We should guarantee on the driver level, that the actuator is always exists
      */
-    template<typename _Tp>
-    class ActuativePlane_Closest : public ActuativePlane<_Tp> {
+    template<typename _Tp, typename _Ta>
+    class ActuativePlane_Closest : public ActuativePlane<_Tp, _Ta> {
       public:
         typedef _Tp Value_t;
 
-        ActuativePlane_Closest(const typename ActuativePlane<_Tp>::ActuatorMap_t& actuators) :
-          ActuativePlane<_Tp>(actuators)
+        ActuativePlane_Closest(const typename ActuativePlane<_Tp, _Ta>::ActuatorMap_t& actuators) :
+          ActuativePlane<_Tp, _Ta>(actuators)
         {
         }
 
@@ -83,7 +80,8 @@ namespace SenseShift::Body::Haptics {
         [[nodiscard]] const Position_t& findClosestPoint(const PositionSet_t&, const Position_t&) const;
     };
 
-    typedef ActuativePlane_Closest<VibroEffectData_t> VibroPlane_Closest;
+    typedef ActuativePlane_Closest<VibroEffectData_t, ::SenseShift::Output::IActuator<VibroEffectData_t::Intensity_t>>
+      VibroPlane_Closest;
 
     // TODO: configurable margin
     class PlaneMapper_Margin {

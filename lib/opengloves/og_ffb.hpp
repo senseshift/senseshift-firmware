@@ -1,15 +1,15 @@
 #pragma once
 
-#include <abstract_actuator.hpp>
+#include <senseshift/output/actuator.hpp>
 
 #include <optional>
 
 namespace OpenGloves {
     struct HandActuators {
-        std::optional<OH::AbstractActuator*> thumb = std::nullopt;
-        std::optional<OH::AbstractActuator*> index = std::nullopt;
-        std::optional<OH::AbstractActuator*> middle = std::nullopt;
-        std::optional<OH::AbstractActuator*> ring = std::nullopt;
-        std::optional<OH::AbstractActuator*> pinky = std::nullopt;
+        std::optional<::SenseShift::Output::IActuator<uint16_t>*> thumb = std::nullopt;
+        std::optional<::SenseShift::Output::IActuator<uint16_t>*> index = std::nullopt;
+        std::optional<::SenseShift::Output::IActuator<uint16_t>*> middle = std::nullopt;
+        std::optional<::SenseShift::Output::IActuator<uint16_t>*> ring = std::nullopt;
+        std::optional<::SenseShift::Output::IActuator<uint16_t>*> pinky = std::nullopt;
     };
 } // namespace OpenGloves
