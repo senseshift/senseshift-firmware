@@ -2,6 +2,7 @@
 #include <unity.h>
 
 using namespace OpenGloves;
+using namespace SenseShift::Calibration;
 
 class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
   private:
@@ -21,7 +22,7 @@ class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
     };
 };
 
-class DummyCalibrator : public OH::ICalibrator<uint16_t> {
+class DummyCalibrator : public ICalibrator<uint16_t> {
   public:
     uint8_t resetCounter = 0;
     std::optional<uint16_t> calibrated = std::nullopt;

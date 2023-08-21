@@ -33,7 +33,7 @@ jobs:
           - bhaptics_tactvisor
           - bhaptics_tactglove_right
         battery_flag: [ SENSESHIFT_BATTERY_ENABLED=true ]
-        serial_plotter_flag: [ SERIAL_PLOTTER=false ]
+        serial_plotter_flag: [ SENSESHIFT_SERIAL_PLOTTER=false ]
         nimble_flag: [ BLUETOOTH_USE_NIMBLE=false ]
         coverage: [ false ]
 
@@ -43,19 +43,19 @@ jobs:
             os: ubuntu-latest
             coverage: true
             battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-            serial_plotter_flag: SERIAL_PLOTTER=true
+            serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=true
             nimble_flag: BLUETOOTH_USE_NIMBLE=true
           # - target: bhaptics_tactsuit_x40
           #   os: ubuntu-latest
           #   coverage: true
           #   battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-          #   serial_plotter_flag: SERIAL_PLOTTER=true
+          #   serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=true
           #   nimble_flag: BLUETOOTH_USE_NIMBLE=false
           - target: bhaptics_tactsuit_x40
             os: ubuntu-latest
             coverage: false
             battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-            serial_plotter_flag: SERIAL_PLOTTER=false
+            serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=false
             nimble_flag: BLUETOOTH_USE_NIMBLE=true
 
     steps:
@@ -177,15 +177,15 @@ jobs:
         include:
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="OH::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="OH::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
             coverage: true
           - os: ubuntu-latest
             target: indexer-csf

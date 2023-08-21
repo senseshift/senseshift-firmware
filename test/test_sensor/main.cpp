@@ -2,7 +2,7 @@
 #include <unity.h>
 
 using namespace SenseShift::Input;
-using namespace OH;
+using namespace SenseShift::Calibration;
 
 class TestAnalogSensor : public ISensor<int> {
   private:

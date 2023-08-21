@@ -4,13 +4,13 @@
 #include <Arduino.h>
 #endif // ARDUINO
 
-#if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
-#include <components/serial_plotter.hpp>
-#endif // SERIAL_PLOTTER
+#if defined(SENSESHIFT_SERIAL_PLOTTER) && SENSESHIFT_SERIAL_PLOTTER == true
+#include <senseshift/arduino/components/serial_plotter.hpp>
+#endif // SENSESHIFT_SERIAL_PLOTTER
 
-#ifndef SERIAL_PLOTTER_PORT
-#define SERIAL_PLOTTER_PORT Serial
-#endif // SERIAL_PLOTTER_PORT
+#ifndef SENSESHIFT_SERIAL_PLOTTER_PORT
+#define SENSESHIFT_SERIAL_PLOTTER_PORT Serial
+#endif // SENSESHIFT_SERIAL_PLOTTER_PORT
 
 #ifndef PIO_UNIT_TESTING
 
@@ -25,11 +25,13 @@ void setup()
 {
     setupMode();
 
-#if defined(SERIAL_PLOTTER) && SERIAL_PLOTTER == true
-    auto* serialOutputState =
-      new OH::SerialPlotter_OutputStates<HardwareSerial>(SERIAL_PLOTTER_PORT, App.getHapticBody());
+#if defined(SENSESHIFT_SERIAL_PLOTTER) && SENSESHIFT_SERIAL_PLOTTER == true
+    auto* serialOutputState = new ::SenseShift::Arduino::SerialPlotter_OutputStates<HardwareSerial>(
+      SENSESHIFT_SERIAL_PLOTTER_PORT,
+      App.getHapticBody()
+    );
     serialOutputState->begin();
-#endif // SERIAL_PLOTTER
+#endif // SENSESHIFT_SERIAL_PLOTTER
 }
 
 void loop()

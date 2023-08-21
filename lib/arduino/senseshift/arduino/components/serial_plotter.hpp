@@ -9,19 +9,23 @@
 #define SERIAL_PLOTTER_BAUD 115200
 #endif // SERIAL_PLOTTER_BAUD
 
-namespace OH {
+namespace SenseShift::Arduino {
     /**
      * Component, that prints the current state of the output to the serial port in Arduino's Serial Plotter format
      *
      * @tparam _Tp the type of the serial port
      */
     template<class _Tp>
-    class SerialPlotter_OutputStates : public Task<SerialPlotter_OutputStates<_Tp>> {
-        friend class Task<SerialPlotter_OutputStates<_Tp>>;
+    class SerialPlotter_OutputStates : public OH::Task<SerialPlotter_OutputStates<_Tp>> {
+        static_assert(
+          std::is_base_of<Print, _Tp>::value,
+          "SerialPlotter_OutputStates only can be used with types, that inherit from Print"
+        );
+        friend class OH::Task<SerialPlotter_OutputStates<_Tp>>;
 
       private:
         _Tp* serial;
-        SenseShift::Body::Haptics::HapticBody* output;
+        ::SenseShift::Body::Haptics::HapticBody* output;
         uint32_t sampleRate;
 
         void setup(void){};
@@ -30,12 +34,15 @@ namespace OH {
       public:
         SerialPlotter_OutputStates(
           _Tp& serial,
-          SenseShift::Body::Haptics::HapticBody* output,
+          ::SenseShift::Body::Haptics::HapticBody* output,
           uint32_t sampleRate,
-          TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY }
+          OH::TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY }
         ) :
-          Task<SerialPlotter_OutputStates<_Tp>>(taskConfig), serial(&serial), output(output), sampleRate(sampleRate){};
-        SerialPlotter_OutputStates(_Tp& serial, SenseShift::Body::Haptics::HapticBody* output) :
+          OH::Task<SerialPlotter_OutputStates<_Tp>>(taskConfig),
+          serial(&serial),
+          output(output),
+          sampleRate(sampleRate){};
+        SerialPlotter_OutputStates(_Tp& serial, ::SenseShift::Body::Haptics::HapticBody* output) :
           SerialPlotter_OutputStates(serial, output, 100){};
 
         void begin() override
@@ -55,4 +62,4 @@ namespace OH {
     }
 
     template class SerialPlotter_OutputStates<HardwareSerial>;
-} // namespace OH
+} // namespace SenseShift::Arduino

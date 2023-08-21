@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+#include <functional>
+#include <vector>
+
 namespace OpenGloves {
     struct IEncodedInput {
       public:

@@ -18,7 +18,7 @@ getBhapticsName() {
         target="$target+battery"
     fi
 
-    if [[ $flags =~ SERIAL_PLOTTER=true ]]; then
+    if [[ $flags =~ SENSESHIFT_SERIAL_PLOTTER=true ]]; then
         echo "::debug::Serial Plotter is enabled, appending +serialplotter to the target"
         target="$target+serialplotter"
     fi

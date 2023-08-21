@@ -1,7 +1,7 @@
 #include <senseshift/calibration.hpp>
 #include <unity.h>
 
-using namespace OH;
+using namespace SenseShift::Calibration;
 
 void test_minmax_calibrator(void)
 {

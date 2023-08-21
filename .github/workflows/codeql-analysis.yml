@@ -33,7 +33,7 @@ jobs:
         battery_flag:
           - SENSESHIFT_BATTERY_ENABLED=true
         serial_plotter_flag:
-          - SERIAL_PLOTTER=true
+          - SENSESHIFT_SERIAL_PLOTTER=true
 
     steps:
     - name: Checkout repository
