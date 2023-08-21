@@ -3,10 +3,12 @@
 #include <cmath>
 #include <tuple>
 
-namespace OH {
+namespace SenseShift::Math {
     template<typename _Tp>
     struct Point2 {
-        static_assert(std::is_arithmetic<_Tp>::value, "OH::Point2 only can be used with arithmetic types");
+        static_assert(
+          std::is_arithmetic<_Tp>::value, "::SenseShift::Math::Point2 only can be used with arithmetic types"
+        );
 
         typedef _Tp Value_t;
 
@@ -46,4 +48,4 @@ namespace OH {
     typedef Point2<int> Point2i;
     typedef Point2<short> Point2s;
     typedef Point2<unsigned short> Point2w;
-}; // namespace OH
+}; // namespace SenseShift::Math

@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <variant>
 
-#include <point2.hpp>
+#include <senseshift/math/point2.hpp>
 
 namespace SenseShift::Body::Haptics {
     typedef uint8_t EffectIntex_t;
@@ -47,7 +47,7 @@ namespace SenseShift::Body::Haptics {
     } Target_t;
 
     typedef uint8_t Coordinate_t;
-    typedef OH::Point2<Coordinate_t> Position_t;
+    typedef ::SenseShift::Math::Point2<Coordinate_t> Position_t;
 
     // Vibration intensity.
     typedef struct VibroEffectData {

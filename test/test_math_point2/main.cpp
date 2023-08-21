@@ -1,7 +1,7 @@
-#include <point2.hpp>
+#include <senseshift/math/point2.hpp>
 #include <unity.h>
 
-using namespace OH;
+using namespace SenseShift::Math;
 
 void test_operator_equal(void)
 {

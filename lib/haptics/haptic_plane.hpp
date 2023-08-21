@@ -115,9 +115,11 @@ namespace SenseShift::Body::Haptics {
          * @tparam _Tp The type of the point index.
          */
         template<typename _Tp>
-        [[nodiscard]] static constexpr inline OH::Point2<_Tp> mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
+        [[nodiscard]] static constexpr inline ::SenseShift::Math::Point2<_Tp>
+          mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
         {
-            using Point_t = OH::Point2<_Tp>;
+            using Point_t = ::SenseShift::Math::Point2<_Tp>;
+
             return Point_t(
               ::SenseShift::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
               ::SenseShift::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
