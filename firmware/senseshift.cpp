@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #endif
 
-#include <logging.hpp>
+#include <senseshift/logging.hpp>
 
 namespace SenseShift {
     SenseShift::SenseShift()
@@ -14,7 +14,7 @@ namespace SenseShift {
         this->pHapticBody = new Body::Haptics::HapticBody();
     }
 
-    void SenseShift::postEvent(const OH::IEvent* event)
+    void SenseShift::postEvent(const IEvent* event)
     {
         log_i("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
 
@@ -25,7 +25,7 @@ namespace SenseShift {
         delete event;
     }
 
-    void SenseShift::addEventListener(const OH::IEventListener* listener)
+    void SenseShift::addEventListener(const IEventListener* listener)
     {
         this->eventListeners.push_back(listener);
     }

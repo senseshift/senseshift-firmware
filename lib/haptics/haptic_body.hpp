@@ -3,7 +3,7 @@
 #include "haptic_plane.hpp"
 #include "haptics_interface.hpp"
 
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <map>
 

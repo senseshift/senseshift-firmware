@@ -1,7 +1,7 @@
 #pragma once
 
 #include <senseshift/output/actuator.hpp>
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <ESP32Servo.h>
 
@@ -21,7 +21,9 @@ namespace SenseShift::Arduino::Output {
 
         void writeOutput(std::uint16_t intensity) override
         {
-            servo.writeMicroseconds(OH::accurateMap<std::uint16_t>(intensity, 0, MAX_INTENSITY, this->min, this->max));
+            servo.writeMicroseconds(
+              ::SenseShift::accurateMap<std::uint16_t>(intensity, 0, MAX_INTENSITY, this->min, this->max)
+            );
         };
 
       private:

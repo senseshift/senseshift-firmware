@@ -1,18 +1,19 @@
 #pragma once
 
+#include <cstdint>
 #include <functional>
 #include <map>
-#include <stdint.h>
 #include <string>
 #include <vector>
 
-#include <logging.hpp>
 #include <og_protocol.hpp>
+#include <senseshift/logging.hpp>
 
 namespace OpenGloves {
     class AlphaEncodingService {
       public:
         inline static const std::string valueSymbols = "0123456789";
+        // TODO: use Frozen library to save memory
         inline static const std::map<std::string, Command> commandMap = {
             // clang-format off
             { "A", Command::ThumbCurl },

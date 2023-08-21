@@ -3,13 +3,13 @@
 #include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
 #include <senseshift/arduino/output/servo.hpp>
+#include <senseshift/utility.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
 #include <sensor/digital.hpp>
 #include <sensor/joystick.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
-#include <utility.hpp>
 
 #pragma region Communication
 

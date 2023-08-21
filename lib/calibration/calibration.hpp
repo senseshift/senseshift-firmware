@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 namespace OH {
     struct ICalibrated {
@@ -76,7 +76,7 @@ namespace OH {
             }
 
             // Map the input range to the output range.
-            _Tp output = accurateMap<_Tp>(input, value_min, value_max, output_min, output_max);
+            _Tp output = ::SenseShift::accurateMap<_Tp>(input, value_min, value_max, output_min, output_max);
 
             // Lock the range to the output.
             return std::clamp(output, output_min, output_max);
@@ -105,9 +105,9 @@ namespace OH {
         {
             // Update the min and the max.
             if (input < range_min)
-                range_min = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
+                range_min = ::SenseShift::accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
             if (input > range_max)
-                range_max = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
+                range_max = ::SenseShift::accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
         }
 
         _Tp calibrate(_Tp input) const
@@ -116,13 +116,19 @@ namespace OH {
             _Tp center = (range_min + range_max) / 2.0f;
 
             // Map the input to the sensor range of motion.
-            int output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
+            int output = ::SenseShift::accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
 
             // Find the deviation from the center and clamp it to the maximum that the driver supports.
             output = std::clamp<int>(output - center, -driver_max_deviation, driver_max_deviation);
 
             // Finally map the deviation from the center back to the output range.
-            return (_Tp) accurateMap<int>(output, -driver_max_deviation, driver_max_deviation, output_min, output_max);
+            return (_Tp)::SenseShift::accurateMap<int>(
+              output,
+              -driver_max_deviation,
+              driver_max_deviation,
+              output_min,
+              output_max
+            );
         }
 
       private:
@@ -142,13 +148,19 @@ namespace OH {
             _Tp center = sensor_max / 2.0f;
 
             // Map the input to the sensor range of motion.
-            int output = accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
+            int output = ::SenseShift::accurateMap<_Tp>(input, output_min, output_max, 0, sensor_max);
 
             // Find the deviation from the center and clamp it to the maximum that the driver supports.
             output = std::clamp<int>(output - center, -driver_max_deviation, driver_max_deviation);
 
             // Finally map the deviation from the center back to the output range.
-            return (_Tp) accurateMap<int>(output, -driver_max_deviation, driver_max_deviation, output_min, output_max);
+            return (_Tp)::SenseShift::accurateMap<int>(
+              output,
+              -driver_max_deviation,
+              driver_max_deviation,
+              output_min,
+              output_max
+            );
         }
     };
 } // namespace OH

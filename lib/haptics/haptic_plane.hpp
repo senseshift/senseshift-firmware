@@ -3,8 +3,7 @@
 #include "haptics_interface.hpp"
 
 #include <senseshift/output/actuator.hpp>
-
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <list>
 #include <map>
@@ -120,8 +119,8 @@ namespace SenseShift::Body::Haptics {
         {
             using Point_t = OH::Point2<_Tp>;
             return Point_t(
-              OH::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
-              OH::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
+              ::SenseShift::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
+              ::SenseShift::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
             );
         }
     };

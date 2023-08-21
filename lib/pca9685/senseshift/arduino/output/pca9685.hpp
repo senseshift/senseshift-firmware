@@ -1,7 +1,7 @@
 #pragma once
 
 #include <senseshift/output/actuator.hpp>
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
@@ -16,7 +16,7 @@ namespace SenseShift::Arduino::Output {
 
         void writeOutput(std::uint16_t intensity) override
         {
-            this->driver->setPin(this->num, OH::simpleMap<std::uint16_t>(intensity, MAX_INTENSITY, 4095));
+            this->driver->setPin(this->num, ::SenseShift::simpleMap<std::uint16_t>(intensity, MAX_INTENSITY, 4095));
         }
 
       private:

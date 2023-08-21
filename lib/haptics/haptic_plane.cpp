@@ -1,8 +1,8 @@
 #include "haptic_plane.hpp"
 
 #include <algorithm>
-#include <logging.hpp>
-#include <math.h>
+#include <cmath>
+#include <senseshift/logging.hpp>
 
 #include "haptic_plane.hpp"
 

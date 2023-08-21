@@ -3,7 +3,7 @@
 #include <type_traits>
 
 #include <calibration.hpp>
-#include <logging.hpp>
+#include <senseshift/logging.hpp>
 
 #if defined(__AVR__)
 #define ANALOG_MAX 1023

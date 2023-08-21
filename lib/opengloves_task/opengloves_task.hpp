@@ -8,6 +8,7 @@
 #include <og_alpha_encoding.hpp>
 #include <og_ffb.hpp>
 #include <og_serial_communication.hpp>
+#include <senseshift/utility.hpp>
 #include <sensor.hpp>
 #include <sensor/analog.hpp>
 #include <sensor/digital.hpp>
@@ -15,7 +16,6 @@
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
 #include <task.hpp>
-#include <utility.hpp>
 
 namespace OpenGloves {
     struct OpenGlovesTrackingTaskConfig {

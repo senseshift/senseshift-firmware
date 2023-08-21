@@ -6,7 +6,7 @@
 #define OH_EVENT_CONNECTED "connected"
 #define OH_EVENT_DISCONNECTED "disconnected"
 
-namespace OH {
+namespace SenseShift {
     enum Event {
 
     };
@@ -27,4 +27,4 @@ namespace OH {
         virtual void postEvent(const IEvent* event) = 0;
         virtual void addEventListener(const IEventListener* handler) = 0;
     };
-} // namespace OH
+} // namespace SenseShift

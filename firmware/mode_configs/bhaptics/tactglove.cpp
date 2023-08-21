@@ -4,14 +4,13 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <utility.hpp>
-
 #include "senseshift.h"
 
 #include <senseshift/arduino/output/pwm.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
+#include <senseshift/utility.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <battery/adc_naive.hpp>

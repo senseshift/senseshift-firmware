@@ -1,9 +1,8 @@
 #include "senseshift/bh/ble/connection.hpp"
 
-#include <senseshift/bh/constants.hpp>
-
-#include <events.hpp>
 #include <haptic_body.hpp>
+#include <senseshift/bh/constants.hpp>
+#include <senseshift/events.hpp>
 
 #include <Arduino.h>
 
@@ -30,19 +29,19 @@
 namespace SenseShift::BH::BLE {
     class BHServerCallbacks final : public BLEServerCallbacks {
       private:
-        OH::IEventDispatcher* dispatcher;
+        ::SenseShift::IEventDispatcher* dispatcher;
 
       public:
-        BHServerCallbacks(OH::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
+        BHServerCallbacks(::SenseShift::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
 
         void onConnect(BLEServer* pServer)
         {
-            this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_CONNECTED));
+            this->dispatcher->postEvent(new ::SenseShift::IEvent(OH_EVENT_CONNECTED));
         }
 
         void onDisconnect(BLEServer* pServer)
         {
-            this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_DISCONNECTED));
+            this->dispatcher->postEvent(new ::SenseShift::IEvent(OH_EVENT_DISCONNECTED));
             pServer->startAdvertising();
         }
     };

@@ -2,9 +2,9 @@
 
 #include <algorithm>
 #include <iterator>
-#include <logging.hpp>
+#include <senseshift/logging.hpp>
 
-namespace OH {
+namespace SenseShift {
     /**
      * Checks if a container contains a value.
      *
@@ -48,4 +48,4 @@ namespace OH {
     {
         return x * out_max / in_max;
     }
-} // namespace OH
+} // namespace SenseShift

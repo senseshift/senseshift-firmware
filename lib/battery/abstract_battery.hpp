@@ -1,6 +1,6 @@
 #pragma once
 
-#include <events.hpp>
+#include <senseshift/events.hpp>
 #include <sensor.hpp>
 #include <task.hpp>
 
@@ -45,10 +45,10 @@ namespace OH {
         uint8_t level;
     };
 
-    class BatteryLevelEvent : public IEvent {
+    class BatteryLevelEvent : public ::SenseShift::IEvent {
       public:
         const BatteryState state;
-        BatteryLevelEvent(const BatteryState state) : IEvent(OH_EVENT_BATTERY_LEVEL), state(state){};
+        BatteryLevelEvent(const BatteryState state) : ::SenseShift::IEvent(OH_EVENT_BATTERY_LEVEL), state(state){};
     };
 
     struct BatteryConfig {
@@ -65,11 +65,14 @@ namespace OH {
         friend class TaskedSensor<BatteryState>;
 
       private:
-        IEventDispatcher* eventDispatcher;
+        ::SenseShift::IEventDispatcher* eventDispatcher;
 
       public:
         BatterySensor(
-          IBatterySensor* sensor, IEventDispatcher* eventDispatcher, BatteryConfig config, TaskConfig taskConfig
+          IBatterySensor* sensor,
+          ::SenseShift::IEventDispatcher* eventDispatcher,
+          BatteryConfig config,
+          TaskConfig taskConfig
         ) :
           TaskedSensor<BatteryState>(sensor, taskConfig, config.sampleRate), eventDispatcher(eventDispatcher){};
 

@@ -2,9 +2,8 @@
 
 #include "config/all.h"
 
-#include <abstract_connection.hpp>
-#include <events.hpp>
 #include <haptic_body.hpp>
+#include <senseshift/events.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
 #include <abstract_battery.hpp>
@@ -13,9 +12,9 @@
 #include <vector>
 
 namespace SenseShift {
-    class SenseShift final : public OH::IEventDispatcher {
+    class SenseShift final : public IEventDispatcher {
       private:
-        std::vector<const OH::IEventListener*> eventListeners{};
+        std::vector<const IEventListener*> eventListeners{};
         Body::Haptics::HapticBody* pHapticBody;
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
@@ -30,7 +29,7 @@ namespace SenseShift {
             return this->pHapticBody;
         };
 
-        void postEvent(const OH::IEvent* event) override;
-        void addEventListener(const OH::IEventListener* listener) override;
+        void postEvent(const IEvent* event) override;
+        void addEventListener(const IEventListener* listener) override;
     };
 } // namespace SenseShift

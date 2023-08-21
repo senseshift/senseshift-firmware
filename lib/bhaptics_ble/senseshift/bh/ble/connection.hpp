@@ -1,10 +1,9 @@
 #pragma once
 
-#include <abstract_connection.hpp>
-#include <utility.hpp>
-
 #include <senseshift/bh/ble/constants.hpp>
 #include <senseshift/bh/constants.hpp>
+#include <senseshift/events.hpp>
+#include <senseshift/utility.hpp>
 
 #include <Arduino.h>
 #include <esp_wifi.h>
@@ -37,12 +36,12 @@ namespace SenseShift::BH::BLE {
     };
     static ConnectionCallbacks defaultCallback;
 
-    class Connection final : public OH::AbstractConnection, public OH::IEventListener {
+    class Connection final : public ::SenseShift::IEventListener {
       public:
         typedef std::function<void(std::string&)> MotorHandler_t;
 
         Connection(
-          const ConnectionConfig_t& config, MotorHandler_t motorHandler, OH::IEventDispatcher* eventDispatcher
+          const ConnectionConfig_t& config, MotorHandler_t motorHandler, ::SenseShift::IEventDispatcher* eventDispatcher
         ) :
           config(config), motorHandler(motorHandler), eventDispatcher(eventDispatcher)
         {
@@ -50,12 +49,15 @@ namespace SenseShift::BH::BLE {
         };
 
         void begin(void);
-        void handleEvent(const OH::IEvent* event) const override
+        void handleEvent(const ::SenseShift::IEvent* event) const override
         {
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
             if (event->eventName == OH_EVENT_BATTERY_LEVEL) {
-                uint16_t level =
-                  OH::simpleMap<uint8_t>(static_cast<const OH::BatteryLevelEvent*>(event)->state.level, 255, 100);
+                uint16_t level = ::SenseShift::simpleMap<uint8_t>(
+                  static_cast<const OH::BatteryLevelEvent*>(event)->state.level,
+                  255,
+                  100
+                );
 
                 this->batteryChar->setValue(level);
                 this->batteryChar->notify();
@@ -77,7 +79,7 @@ namespace SenseShift::BH::BLE {
       private:
         const ConnectionConfig_t& config;
         MotorHandler_t motorHandler;
-        OH::IEventDispatcher* eventDispatcher;
+        ::SenseShift::IEventDispatcher* eventDispatcher;
 
         BLEServer* bleServer = nullptr;
         BLEService* motorService = nullptr;
