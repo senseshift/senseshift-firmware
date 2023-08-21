@@ -1,5 +1,6 @@
 #pragma once
 
+#include <senseshift/battery.hpp>
 #include <senseshift/bh/ble/constants.hpp>
 #include <senseshift/bh/constants.hpp>
 #include <senseshift/events.hpp>
@@ -12,10 +13,6 @@
 #include <NimBLEDevice.h>
 #else
 #include <BLEDevice.h>
-#endif
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <abstract_battery.hpp>
 #endif
 
 namespace SenseShift::BH::BLE {
@@ -36,25 +33,22 @@ namespace SenseShift::BH::BLE {
     };
     static ConnectionCallbacks defaultCallback;
 
-    class Connection final : public ::SenseShift::IEventListener {
+    class Connection final : public IEventListener {
       public:
         typedef std::function<void(std::string&)> MotorHandler_t;
 
-        Connection(
-          const ConnectionConfig_t& config, MotorHandler_t motorHandler, ::SenseShift::IEventDispatcher* eventDispatcher
-        ) :
+        Connection(const ConnectionConfig_t& config, MotorHandler_t motorHandler, IEventDispatcher* eventDispatcher) :
           config(config), motorHandler(motorHandler), eventDispatcher(eventDispatcher)
         {
             this->eventDispatcher->addEventListener(this);
         };
 
         void begin(void);
-        void handleEvent(const ::SenseShift::IEvent* event) const override
+        void handleEvent(const IEvent* event) const override
         {
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
             if (event->eventName == OH_EVENT_BATTERY_LEVEL) {
-                uint16_t level = ::SenseShift::simpleMap<uint8_t>(
-                  static_cast<const OH::BatteryLevelEvent*>(event)->state.level,
+                uint16_t level = simpleMap<uint8_t>(
+                  static_cast<const ::SenseShift::Battery::BatteryLevelEvent*>(event)->state.level,
                   255,
                   100
                 );
@@ -64,7 +58,6 @@ namespace SenseShift::BH::BLE {
 
                 return;
             }
-#endif
         };
 
         void setCallbacks(ConnectionCallbacks* pCallbacks)
@@ -86,9 +79,5 @@ namespace SenseShift::BH::BLE {
         BLECharacteristic* batteryChar = nullptr;
 
         ConnectionCallbacks* callbacks = &defaultCallback;
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-        void handleBatteryChange(const OH::BatteryLevelEvent* event) const;
-#endif
     };
 } // namespace SenseShift::BH::BLE

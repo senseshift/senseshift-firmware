@@ -3,11 +3,8 @@
 #include "config/all.h"
 
 #include <haptic_body.hpp>
+#include <senseshift/battery/sensor.hpp>
 #include <senseshift/events.hpp>
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <abstract_battery.hpp>
-#endif
 
 #include <vector>
 
@@ -16,10 +13,7 @@ namespace SenseShift {
       private:
         std::vector<const IEventListener*> eventListeners{};
         Body::Haptics::HapticBody* pHapticBody;
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-        OH::BatterySensor* battery;
-#endif
+        Battery::BatterySensor* battery;
 
       public:
         SenseShift();

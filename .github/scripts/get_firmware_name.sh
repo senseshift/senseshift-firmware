@@ -13,7 +13,7 @@ getBhapticsName() {
         target="$target+nimble"
     fi
 
-    if [[ $flags =~ BATTERY_ENABLED=true ]]; then
+    if [[ $flags =~ SENSESHIFT_BATTERY_ENABLED=true ]]; then
         echo "::debug::Battery is enabled, appending +battery to the target"
         target="$target+battery"
     fi

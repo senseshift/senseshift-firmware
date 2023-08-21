@@ -31,7 +31,7 @@ jobs:
 
         # Enabling all flags to test build for every feature
         battery_flag:
-          - BATTERY_ENABLED=true
+          - SENSESHIFT_BATTERY_ENABLED=true
         serial_plotter_flag:
           - SERIAL_PLOTTER=true
 

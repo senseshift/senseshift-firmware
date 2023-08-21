@@ -185,11 +185,7 @@ namespace SenseShift::BH::BLE {
 #endif
 
             // original bHaptics Player require non-null value for battery level, otherwise it crashes
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
             uint16_t defaultLevel = 0;
-#else
-            uint16_t defaultLevel = 100;
-#endif
 
             this->batteryChar->setValue(defaultLevel);
             // this->batteryChar->notify();
