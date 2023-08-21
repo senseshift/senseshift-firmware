@@ -7,7 +7,7 @@
 
 #include <senseshift/utility.hpp>
 
-namespace OH {
+namespace SenseShift::Calibration {
     struct ICalibrated {
         virtual void resetCalibration() = 0;
         virtual void enableCalibration() = 0;
@@ -34,6 +34,8 @@ namespace OH {
 
     template<typename _Tp>
     struct ICalibrator {
+        static_assert(std::is_arithmetic<_Tp>::value, "ICalibrator only can be used with arithmetic types");
+
         virtual void reset() = 0;
         virtual void update(_Tp input) = 0;
         virtual _Tp calibrate(_Tp input) const = 0;
@@ -163,4 +165,4 @@ namespace OH {
             );
         }
     };
-} // namespace OH
+} // namespace SenseShift::Calibration

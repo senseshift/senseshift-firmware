@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include <calibration.hpp>
+#include <senseshift/calibration.hpp>
 #include <senseshift/logging.hpp>
 
 #if defined(__AVR__)
@@ -90,10 +90,10 @@ namespace SenseShift::Input {
      * @tparam _Tp Type of the sensor value
      */
     template<typename _Tp>
-    class CalibratedSensor : public ISensor<_Tp>, public OH::Calibrated {
+    class CalibratedSensor : public ISensor<_Tp>, public ::SenseShift::Calibration::Calibrated {
       protected:
         ISensor<_Tp>* sensor;
-        OH::ICalibrator<_Tp>* calibrator;
+        ::SenseShift::Calibration::ICalibrator<_Tp>* calibrator;
 
         _Tp getCalibratedValue()
         {
@@ -111,7 +111,7 @@ namespace SenseShift::Input {
          * @param sensor Sensor to be decorated
          * @param calibrator ICalibrator algorithm to be used
          */
-        CalibratedSensor(ISensor<_Tp>* sensor, OH::ICalibrator<_Tp>* calibrator) :
+        CalibratedSensor(ISensor<_Tp>* sensor, ::SenseShift::Calibration::ICalibrator<_Tp>* calibrator) :
           sensor(sensor), calibrator(calibrator){};
 
         void setup() override

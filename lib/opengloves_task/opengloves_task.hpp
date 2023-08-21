@@ -4,12 +4,12 @@
 
 #include <optional>
 
-#include <calibration.hpp>
 #include <og_alpha_encoding.hpp>
 #include <og_ffb.hpp>
 #include <og_serial_communication.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/calibration.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/joystick.hpp>
 #include <senseshift/utility.hpp>
@@ -141,7 +141,8 @@ namespace OpenGloves {
         std::vector<IStringEncodedMemoizedSensor*> allSensors;
 
         std::optional<StringEncodedMemoizedSensor<bool>>& calibrationButton;
-        std::vector<OH::ICalibrated*> calibrated = std::vector<OH::ICalibrated*>();
+        std::vector<SenseShift::Calibration::ICalibrated*> calibrated =
+          std::vector<SenseShift::Calibration::ICalibrated*>();
         unsigned long long calibrationStarted = 0;
 
         void startCalibration()

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <calibration.hpp>
 #include <og_protocol.hpp>
 #include <senseshift/input/sensor.hpp>
 

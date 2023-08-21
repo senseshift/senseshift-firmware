@@ -80,7 +80,7 @@ namespace OpenGloves {
     /**
      * Simple finger sensor that only provides calibration.
      */
-    class CalibratedFingerSensor : public SimpleFingerSensor, public OH::ICalibrated {
+    class CalibratedFingerSensor : public SimpleFingerSensor, public SenseShift::Calibration::ICalibrated {
       public:
         CalibratedFingerSensor(FingerSensors sensors) : SimpleFingerSensor(sensors){};
 
@@ -121,7 +121,10 @@ namespace OpenGloves {
         }
     };
 
-    class FingerSensor : public StringEncodedMemoizedSensor<FingerValue>, public OH::ICalibrated, public ICurl {
+    class FingerSensor :
+      public StringEncodedMemoizedSensor<FingerValue>,
+      public SenseShift::Calibration::ICalibrated,
+      public ICurl {
       public:
         FingerSensor(CalibratedFingerSensor* sensor, IEncodedInput::Type type) :
           StringEncodedMemoizedSensor<FingerValue>(sensor, type){};

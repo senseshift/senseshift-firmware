@@ -50,17 +50,17 @@ getOpenGlovesName() {
         target="$target+bluetooth"
     fi
 
-    if [[ $flags =~ CALIBRATION_CURL=OH::MinMaxCalibrator ]]; then
+    if [[ $flags =~ CALIBRATION_CURL=::SenseShift::Calibration::MinMaxCalibrator ]]; then
         echo "::debug::MinMaxCalibrator is enabled, appending +curl_minmax to the target"
         target="$target+curl_minmaxcalib"
     fi
 
-    if [[ $flags =~ CALIBRATION_CURL=OH::CenterPointDeviationCalibrator ]]; then
+    if [[ $flags =~ CALIBRATION_CURL=::SenseShift::Calibration::CenterPointDeviationCalibrator ]]; then
         echo "::debug::CenterPointDeviationCalibrator is enabled, appending +curl_cpcalib to the target"
         target="$target+curl_cpcalib"
     fi
 
-    if [[ $flags =~ CALIBRATION_CURL=OH::FixedCenterPointDeviationCalibrator ]]; then
+    if [[ $flags =~ CALIBRATION_CURL=::SenseShift::Calibration::FixedCenterPointDeviationCalibrator ]]; then
         echo "::debug::FixedCenterPointDeviationCalibrator is enabled, appending +curl_fcpcalib to the target"
         target="$target+curl_fcpcalib"
     fi

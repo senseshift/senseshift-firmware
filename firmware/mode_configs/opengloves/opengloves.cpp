@@ -1,10 +1,10 @@
-#include <calibration.hpp>
 #include <og_constants.hpp>
 #include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
 #include <senseshift/arduino/output/servo.hpp>
+#include <senseshift/calibration.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/joystick.hpp>
 #include <senseshift/utility.hpp>
@@ -34,10 +34,10 @@
 #pragma region Calibration
 
 #ifndef CALIBRATION_CURL
-#define CALIBRATION_CURL OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>
+#define CALIBRATION_CURL ::SenseShift::Calibration::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>
 #endif
 #ifndef CALIBRATION_SPLAY
-#define CALIBRATION_SPLAY OH::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>
+#define CALIBRATION_SPLAY ::SenseShift::Calibration::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>
 #endif
 
 #ifndef CALIBRATION_DURATION
