@@ -6,8 +6,9 @@
 
 #include "senseshift.h"
 
-#include <bh_encoding.hpp>
-#include <connection_bhble.hpp>
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
+#include <senseshift/bh/ble/connection.hpp>
 #include <output_writers/pwm.hpp>
 
 #if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
@@ -17,7 +18,6 @@
 using namespace OH;
 using namespace SenseShift;
 using namespace SenseShift::Body::Haptics;
-using namespace BH;
 
 extern SenseShift::SenseShift App;
 SenseShift::SenseShift* app = &App;
@@ -39,16 +39,14 @@ void setupMode()
 
     app->getHapticBody()->setup();
 
-    uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
-    ConnectionBHBLE_Config config = {
+    auto* bhBleConnection = new BH::BLE::Connection(
+      {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
-        .serialNumber = serialNumber,
-    };
-    auto* bhBleConnection = new ConnectionBHBLE(
-      config,
+        .serialNumber = BH_SERIAL_NUMBER,
+        },
       [](std::string& value) -> void {
-        Decoder::applyPlain<6>(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::FaceFront);
+        BH::Decoder::applyPlain<6>(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::FaceFront);
       },
       app
     );

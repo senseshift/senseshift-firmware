@@ -3,14 +3,18 @@
 #include <cstring>
 #include <haptic_body.hpp>
 
-namespace BH {
+namespace SenseShift::BH {
     class Decoder {
       public:
-        typedef SenseShift::Body::Haptics::VibroEffectData_t VibroEffectData_t;
-        typedef SenseShift::Body::Haptics::EffectData_t EffectData_t;
-        typedef SenseShift::Body::Haptics::Effect_t Effect_t;
-        typedef SenseShift::Body::Haptics::Target_t Target_t;
-        typedef SenseShift::Body::Haptics::Position_t Position_t;
+        using VibroEffectData_t = ::SenseShift::Body::Haptics::VibroEffectData_t;
+        using EffectData_t = ::SenseShift::Body::Haptics::EffectData_t;
+
+        using Effect_t = ::SenseShift::Body::Haptics::Effect_t;
+        using Target_t = ::SenseShift::Body::Haptics::Target_t;
+        using Position_t = ::SenseShift::Body::Haptics::Position_t;
+
+        using HapticBody_t = ::SenseShift::Body::Haptics::HapticBody;
+
         typedef std::tuple<Target_t, Position_t> OutputLayout_t;
 
         static const size_t VEST_LAYOUT_SIZE = 40;
@@ -18,7 +22,7 @@ namespace BH {
 
         template<size_t N>
         static void applyPlain(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           const uint8_t (&value)[N],
           const OutputLayout_t (&layout)[N],
           const Effect_t effect
@@ -39,7 +43,7 @@ namespace BH {
 
         template<size_t N>
         static void applyPlain(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           std::string& value,
           const OutputLayout_t (&layout)[N],
           const Effect_t effect
@@ -57,7 +61,7 @@ namespace BH {
          */
         template<size_t N>
         static void applyPlain(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           const uint8_t (&value)[N],
           const Position_t (&layout)[N],
           const Effect_t effect,
@@ -79,14 +83,14 @@ namespace BH {
 
         template<size_t N>
         static void applyPlain(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           std::string& value,
           const Position_t (&layout)[N],
           const Effect_t effect,
           const Target_t target
         )
         {
-            std::uint8_t buf[6];
+            std::uint8_t buf[N];
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
             std::memcpy(buf, value.c_str(), copyLength);
 
@@ -97,7 +101,7 @@ namespace BH {
          * Apply vest-encoded data to the output.
          */
         static void applyVest(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           const uint8_t (&value)[VEST_PAYLOAD_SIZE],
           const Position_t (&layout)[VEST_LAYOUT_SIZE]
         )
@@ -123,7 +127,7 @@ namespace BH {
         }
 
         static void applyVest(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           std::string& value,
           const Position_t (&layout)[VEST_LAYOUT_SIZE]
         )
@@ -140,7 +144,7 @@ namespace BH {
          */
         template<size_t N>
         static void applyVestGrouped(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           const uint8_t (&value)[VEST_PAYLOAD_SIZE],
           const Position_t (&layout)[VEST_LAYOUT_SIZE],
           const uint8_t (&layoutGroups)[N]
@@ -196,7 +200,7 @@ namespace BH {
 
         template<size_t N>
         static void applyVestGrouped(
-          SenseShift::Body::Haptics::HapticBody* output,
+          HapticBody_t* output,
           std::string& value,
           const Position_t (&layout)[VEST_LAYOUT_SIZE],
           const uint8_t (&layoutGroups)[N]
@@ -223,4 +227,4 @@ namespace BH {
             }
         }
     };
-} // namespace BH
+} // namespace SenseShift::BH

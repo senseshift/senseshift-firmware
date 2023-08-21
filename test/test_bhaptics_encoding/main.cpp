@@ -1,6 +1,6 @@
-#include <bh_types.hpp>
-#include <bh_encoding.hpp>
 #include <bh_devices.hpp>
+#include <bh_encoding.hpp>
+#include <bh_types.hpp>
 
 #include <unity.h>
 
@@ -224,12 +224,12 @@ void test_layout_tactglove(void)
 
     const auto& bhLayout = BH::TactGloveLeftLayout;
 
-    auto thumb = new VibroPlane({{ std::get<2>(bhLayout[0]), actuatorThumb }});
-    auto index = new VibroPlane({{ std::get<2>(bhLayout[1]), actuatorIndex }});
-    auto middle = new VibroPlane({{ std::get<2>(bhLayout[2]), actuatorMiddle }});
-    auto ring = new VibroPlane({{ std::get<2>(bhLayout[3]), actuatorRing }});
-    auto little = new VibroPlane({{ std::get<2>(bhLayout[4]), actuatorLittle }});
-    auto wrist = new VibroPlane({{ std::get<2>(bhLayout[5]), actuatorWrist }});
+    auto thumb = new VibroPlane({ { std::get<2>(bhLayout[0]), actuatorThumb } });
+    auto index = new VibroPlane({ { std::get<2>(bhLayout[1]), actuatorIndex } });
+    auto middle = new VibroPlane({ { std::get<2>(bhLayout[2]), actuatorMiddle } });
+    auto ring = new VibroPlane({ { std::get<2>(bhLayout[3]), actuatorRing } });
+    auto little = new VibroPlane({ { std::get<2>(bhLayout[4]), actuatorLittle } });
+    auto wrist = new VibroPlane({ { std::get<2>(bhLayout[5]), actuatorWrist } });
 
     auto body = new HapticBody();
 

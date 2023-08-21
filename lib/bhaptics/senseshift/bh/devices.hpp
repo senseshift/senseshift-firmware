@@ -1,34 +1,81 @@
 #pragma once
 
+#include <hand_interface.hpp>
 #include <haptic_plane.hpp>
 
-#if defined(ESP32)
-#include <BLEUUID.h>
-#endif
+#pragma region BH_DEVICE_TACTSUITX40
 
-#define BH_SERIAL_NUMBER_LENGTH 10
+#define BH_LAYOUT_TACTSUITX40_SIZE_X 4
+#define BH_LAYOUT_TACTSUITX40_SIZE_Y 5
+#define BH_LAYOUT_TACTSUITX40_MAKE_POINT(x, y)                                  \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+      x,                                                                        \
+      y,                                                                        \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_X - 1),                   \
+      (oh_output_coord_t) (BH_LAYOUT_TACTSUITX40_SIZE_Y - 1)                    \
+    )
 
-#ifndef BH_FIRMWARE_VERSION_MAJOR
-#define BH_FIRMWARE_VERSION_MAJOR ((uint8_t) UINT8_MAX)
-#endif
+// X * Y for front and back
+#define BH_LAYOUT_TACTSUITX40_SIZE 40
+// clang-format off
+#define BH_LAYOUT_TACTSUITX40 {                       \
+    /* Front, left part */                            \
+    /*  0 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0) },  \
+    /*  1 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 0) },  \
+    /*  2 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 1) },  \
+    /*  3 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 1) },  \
+    /*  4 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 2) },  \
+    /*  5 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 2) },  \
+    /*  6 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 3) },  \
+    /*  7 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 3) },  \
+    /*  8 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 4) },  \
+    /*  9 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 4) },  \
+                                                      \
+    /* Back */                                        \
+    /* 11 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0) },  \
+    /* 11 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 0) },  \
+    /* 12 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 1) },  \
+    /* 13 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 1) },  \
+    /* 14 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 2) },  \
+    /* 15 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 2) },  \
+    /* 16 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 3) },  \
+    /* 17 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 3) },  \
+    /* 18 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 4) },  \
+    /* 19 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 4) },  \
+                                                      \
+    /* 20 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 0) },  \
+    /* 21 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 0) },  \
+    /* 22 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 1) },  \
+    /* 23 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 1) },  \
+    /* 24 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 2) },  \
+    /* 25 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 2) },  \
+    /* 26 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 3) },  \
+    /* 27 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 3) },  \
+    /* 28 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 4) },  \
+    /* 29 */ { Target_t::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4) },  \
+                                                      \
+    /* Front, again... Now right part */              \
+    /* 30 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 0) },  \
+    /* 31 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 0) },  \
+    /* 32 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 1) },  \
+    /* 33 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 1) },  \
+    /* 34 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 2) },  \
+    /* 35 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 2) },  \
+    /* 36 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 3) },  \
+    /* 37 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 3) },  \
+    /* 38 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 4) },  \
+    /* 39 */ { Target_t::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4) }   \
+}
+// clang-format on
 
-#ifndef BH_FIRMWARE_VERSION_MINOR
-#define BH_FIRMWARE_VERSION_MINOR ((uint8_t) UINT8_MAX)
-#endif
-
-#ifndef BH_FIRMWARE_VERSION
-#define BH_FIRMWARE_VERSION (uint16_t)((BH_FIRMWARE_VERSION_MAJOR << 8) | BH_FIRMWARE_VERSION_MINOR)
-#endif
-
-#define NO_AUDIO_CABLE 0
-#define AUDIO_CABLE 1
+#pragma endregion BH_DEVICE_TACTSUITX40
 
 #pragma region BH_DEVICE_TACTSUITX16
 
 #define BH_LAYOUT_TACTSUITX16_SIZE_X 4
 #define BH_LAYOUT_TACTSUITX16_SIZE_Y 2
 #define BH_LAYOUT_TACTSUITX16_MAKE_POINT(x, y)                                  \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
       x,                                                                        \
       y,                                                                        \
       (oh_output_coord_t) (BH_LAYOUT_TACTSUITX16_SIZE_X - 1),                   \
@@ -106,7 +153,7 @@
 #define BH_LAYOUT_TACTAL_SIZE_X 6
 #define BH_LAYOUT_TACTAL_SIZE_Y 1
 #define BH_LAYOUT_TACTAL_MAKE_POINT(x, y)                                       \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
       x,                                                                        \
       y,                                                                        \
       (oh_output_coord_t) (BH_LAYOUT_TACTAL_SIZE_X - 1),                        \
@@ -132,7 +179,7 @@
 #define BH_LAYOUT_TACTVISOR_SIZE_X 4
 #define BH_LAYOUT_TACTVISOR_SIZE_Y 1
 #define BH_LAYOUT_TACTVISOR_MAKE_POINT(x, y)                                    \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
       x,                                                                        \
       y,                                                                        \
       (oh_output_coord_t) (BH_LAYOUT_TACTVISOR_SIZE_X - 1),                     \
@@ -156,7 +203,7 @@
 #define BH_LAYOUT_TACTOSY2_SIZE_X 3
 #define BH_LAYOUT_TACTOSY2_SIZE_Y 2
 #define BH_LAYOUT_TACTOSY2_MAKE_POINT(x, y)                                     \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
       x,                                                                        \
       y,                                                                        \
       (oh_output_coord_t) (BH_LAYOUT_TACTOSY2_SIZE_X - 1),                      \
@@ -178,7 +225,7 @@
 #define BH_LAYOUT_TACTOSYH_SIZE_X 1
 #define BH_LAYOUT_TACTOSYH_SIZE_Y 3
 #define BH_LAYOUT_TACTOSYH_MAKE_POINT(x, y)                                     \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
       x,                                                                        \
       y,                                                                        \
       (oh_output_coord_t) (BH_LAYOUT_TACTOSYH_SIZE_X - 1),                      \
@@ -197,7 +244,7 @@
 #define BH_LAYOUT_TACTOSYF_SIZE_X 1
 #define BH_LAYOUT_TACTOSYF_SIZE_Y 3
 #define BH_LAYOUT_TACTOSYF_MAKE_POINT(x, y)                                     \
-    SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
+    ::SenseShift::Body::Haptics::PlaneMapper_Margin::mapPoint<oh_output_coord_t>( \
       x,                                                                        \
       y,                                                                        \
       (oh_output_coord_t) (BH_LAYOUT_TACTOSYF_SIZE_X - 1),                      \
@@ -211,30 +258,28 @@
 
 #pragma endregion BH_DEVICE_TACTOSYF
 
-// All below are weird choices of bHaptics engineers...
-// Why to use unconventional UUIDs, that are reserved for other purposes?
-// You have an unlimited amount of other UUIDs
+namespace SenseShift::BH {
+    using namespace ::SenseShift::Body::Hands::Haptics;
 
-// Main service for communication
-#define BH_BLE_SERVICE_MOTOR_UUID BLEUUID("6e400001-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART Service
+    using Effect_t = ::SenseShift::Body::Haptics::Effect_t;
+    using Target_t = ::SenseShift::Body::Haptics::Target_t;
+    using Position_t = ::SenseShift::Body::Haptics::Position_t;
 
-// Legacy Characteristic to create haptic feedback
-#define BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_UUID BLEUUID("6e400002-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART RX
+    typedef std::tuple<Target_t, Position_t> OutputLayout_t;
 
-// Characteristic for Device S/N
-#define BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID BLEUUID("6e400003-b5a3-f393-e0a9-e50e24dcca9e") // Nordic UART TX
+    // TactSuit X40 motor positions
+    static constexpr const OutputLayout_t TactSuitX40Layout[] = BH_LAYOUT_TACTSUITX40;
 
-// Glow Color
-#define BH_BLE_SERVICE_MOTOR_CHAR_CONFIG_UUID BLEUUID("6e400005-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_VERSION_UUID BLEUUID("6e400007-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_BATTERY_UUID BLEUUID("6e400008-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_MOTOR_STABLE_UUID BLEUUID("6e40000a-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_TACTSUIT_MONITOR_UUID BLEUUID("6e40000b-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID \
-    BLEUUID("6e40000c-b5a3-f393-e0a9-e50e24dcca9e")                                              // Audio-to-Haptic
-#define BH_BLE_SERVICE_MOTOR_CHAR_ATH_THEME_UUID BLEUUID("6e40000d-b5a3-f393-e0a9-e50e24dcca9e") // Audio-to-Haptic
-#define BH_BLE_SERVICE_MOTOR_CHAR_MOTTOR_MAPPING_UUID BLEUUID("6e40000e-b5a3-f393-e0a9-e50e24dcca9e")
-#define BH_BLE_SERVICE_MOTOR_CHAR_SIGNATURE_PATTERN_UUID BLEUUID("6e40000f-b5a3-f393-e0a9-e50e24dcca9e")
-
-#define BH_BLE_SERVICE_DFU_UUID BLEUUID("0000fe59-0000-1000-8000-00805f9b34fb")
-#define BH_BLE_SERVICE_DFU_CHAR_CONTROL_UUID BLEUUID("8ec90003-f315-4f60-9fb8-838830daea50")
+    // TactGlove Wrist motor position
+    static constexpr const Position_t WRIST_MOTOR_POSITION(127, 191);
+    static constexpr const OutputLayout_t TactGloveLeftLayout[] = {
+        { Target_t::HandLeftThumb, FINGERTIP_POSITION },  { Target_t::HandLeftIndex, FINGERTIP_POSITION },
+        { Target_t::HandLeftMiddle, FINGERTIP_POSITION }, { Target_t::HandLeftRing, FINGERTIP_POSITION },
+        { Target_t::HandLeftLittle, FINGERTIP_POSITION }, { Target_t::HandLeftDorsal, WRIST_MOTOR_POSITION },
+    };
+    static constexpr const OutputLayout_t TactGloveRightLayout[] = {
+        { Target_t::HandRightThumb, FINGERTIP_POSITION },  { Target_t::HandRightIndex, FINGERTIP_POSITION },
+        { Target_t::HandRightMiddle, FINGERTIP_POSITION }, { Target_t::HandRightRing, FINGERTIP_POSITION },
+        { Target_t::HandRightLittle, FINGERTIP_POSITION }, { Target_t::HandRightDorsal, WRIST_MOTOR_POSITION },
+    };
+} // namespace SenseShift::BH

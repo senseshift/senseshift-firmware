@@ -1,0 +1,17 @@
+#pragma once
+
+#ifndef BH_FIRMWARE_VERSION_MAJOR
+#define BH_FIRMWARE_VERSION_MAJOR ((uint8_t) UINT8_MAX)
+#endif
+
+#ifndef BH_FIRMWARE_VERSION_MINOR
+#define BH_FIRMWARE_VERSION_MINOR ((uint8_t) UINT8_MAX)
+#endif
+
+#ifndef BH_FIRMWARE_VERSION
+#define BH_FIRMWARE_VERSION (uint16_t)((BH_FIRMWARE_VERSION_MAJOR << 8) | BH_FIRMWARE_VERSION_MINOR)
+#endif
+
+// TODO: use enum
+#define NO_AUDIO_CABLE 0
+#define AUDIO_CABLE 1
