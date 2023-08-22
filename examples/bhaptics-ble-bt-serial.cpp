@@ -13,7 +13,6 @@
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 
-using namespace OH;
 using namespace BH;
 
 extern SenseShift App;

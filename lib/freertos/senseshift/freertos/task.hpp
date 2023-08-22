@@ -21,7 +21,7 @@ BaseType_t xTaskCreateUniversal(
 }
 #endif
 
-namespace OH {
+namespace SenseShift::FreeRTOS {
     struct TaskConfig {
         const char* name;
         uint32_t stackDepth;
@@ -78,4 +78,4 @@ namespace OH {
             }
         };
     };
-} // namespace OH
+} // namespace SenseShift::FreeRTOS

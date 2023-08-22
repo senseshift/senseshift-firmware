@@ -2,9 +2,9 @@
 
 #include "senseshift/battery.hpp"
 
+#include <senseshift/freertos/task.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/utility.hpp>
-#include <task.hpp>
 
 #ifndef SENSESHIFT_BATTERY_TASK_PRIORITY
 #define SENSESHIFT_BATTERY_TASK_PRIORITY 1
@@ -19,17 +19,23 @@ namespace SenseShift::Battery {
      * Tasked sensor decorator
      */
     template<typename _Tp>
-    class TaskedSensor : public OH::Task<TaskedSensor<_Tp>>, public ::SenseShift::Input::MemoizedSensor<_Tp> {
-        friend class OH::Task<TaskedSensor<_Tp>>;
+    class TaskedSensor :
+      public ::SenseShift::FreeRTOS::Task<TaskedSensor<_Tp>>,
+      public ::SenseShift::Input::MemoizedSensor<_Tp> {
+        friend class ::SenseShift::FreeRTOS::Task<TaskedSensor<_Tp>>;
 
       public:
-        TaskedSensor(::SenseShift::Input::ISensor<_Tp>* sensor, OH::TaskConfig taskConfig, const uint32_t rate) :
-          ::SenseShift::Input::MemoizedSensor<_Tp>(sensor), OH::Task<TaskedSensor<_Tp>>(taskConfig), rate(rate){};
+        TaskedSensor(
+          ::SenseShift::Input::ISensor<_Tp>* sensor, ::SenseShift::FreeRTOS::TaskConfig taskConfig, const uint32_t rate
+        ) :
+          ::SenseShift::Input::MemoizedSensor<_Tp>(sensor),
+          ::SenseShift::FreeRTOS::Task<TaskedSensor<_Tp>>(taskConfig),
+          rate(rate){};
 
         void begin() override
         {
             this->setup();
-            this->OH::Task<TaskedSensor<_Tp>>::begin();
+            this->::SenseShift::FreeRTOS::Task<TaskedSensor<_Tp>>::begin();
         };
 
       protected:
@@ -51,7 +57,7 @@ namespace SenseShift::Battery {
     typedef ::SenseShift::Input::ISensor<BatteryState> IBatterySensor;
 
     class BatterySensor : public TaskedSensor<BatteryState> {
-        friend class OH::Task<TaskedSensor<BatteryState>>;
+        friend class ::SenseShift::FreeRTOS::Task<TaskedSensor<BatteryState>>;
         friend class TaskedSensor<BatteryState>;
 
       public:
@@ -59,7 +65,7 @@ namespace SenseShift::Battery {
           IBatterySensor* sensor,
           ::SenseShift::IEventDispatcher* eventDispatcher,
           const BatteryConfig_t& config,
-          OH::TaskConfig taskConfig
+          ::SenseShift::FreeRTOS::TaskConfig taskConfig
         ) :
           TaskedSensor<BatteryState>(sensor, taskConfig, config.sampleRate), eventDispatcher(eventDispatcher){};
 

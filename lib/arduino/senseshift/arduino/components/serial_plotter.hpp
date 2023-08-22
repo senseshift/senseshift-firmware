@@ -1,7 +1,7 @@
 #pragma once
 
 #include <haptic_body.hpp>
-#include <task.hpp>
+#include <senseshift/freertos/task.hpp>
 
 #include <HardwareSerial.h>
 
@@ -16,12 +16,12 @@ namespace SenseShift::Arduino {
      * @tparam _Tp the type of the serial port
      */
     template<class _Tp>
-    class SerialPlotter_OutputStates : public OH::Task<SerialPlotter_OutputStates<_Tp>> {
+    class SerialPlotter_OutputStates : public ::SenseShift::FreeRTOS::Task<SerialPlotter_OutputStates<_Tp>> {
         static_assert(
           std::is_base_of<Print, _Tp>::value,
           "SerialPlotter_OutputStates only can be used with types, that inherit from Print"
         );
-        friend class OH::Task<SerialPlotter_OutputStates<_Tp>>;
+        friend class ::SenseShift::FreeRTOS::Task<SerialPlotter_OutputStates<_Tp>>;
 
       private:
         _Tp* serial;
@@ -36,9 +36,9 @@ namespace SenseShift::Arduino {
           _Tp& serial,
           ::SenseShift::Body::Haptics::HapticBody* output,
           uint32_t sampleRate,
-          OH::TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY }
+          ::SenseShift::FreeRTOS::TaskConfig taskConfig = { "Serial Plotter", 2048, 1, tskNO_AFFINITY }
         ) :
-          OH::Task<SerialPlotter_OutputStates<_Tp>>(taskConfig),
+          ::SenseShift::FreeRTOS::Task<SerialPlotter_OutputStates<_Tp>>(taskConfig),
           serial(&serial),
           output(output),
           sampleRate(sampleRate){};
@@ -48,7 +48,7 @@ namespace SenseShift::Arduino {
         void begin() override
         {
             this->setup();
-            OH::Task<SerialPlotter_OutputStates<_Tp>>::begin();
+            ::SenseShift::FreeRTOS::Task<SerialPlotter_OutputStates<_Tp>>::begin();
         };
     };
 

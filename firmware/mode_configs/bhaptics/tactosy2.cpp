@@ -13,7 +13,6 @@
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
 
-using namespace OH;
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;

@@ -14,7 +14,6 @@
 #include <senseshift/bh/encoding.hpp>
 #include <senseshift/utility.hpp>
 
-using namespace OH;
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
