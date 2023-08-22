@@ -11,15 +11,9 @@ class TestAnalogSensor : public ISensor<int> {
   public:
     int setupCounter = 0;
 
-    void setup() override
-    {
-        this->setupCounter++;
-    };
+    void setup() override { this->setupCounter++; };
 
-    int getValue() override
-    {
-        return ++this->count;
-    };
+    int getValue() override { return ++this->count; };
 };
 
 void test_memoized_sensor(void)
@@ -50,14 +44,8 @@ class DummyCalibrator : public ICalibrator<int> {
         this->resetCounter++;
         this->calibrated = 0;
     };
-    void update(int input) override
-    {
-        this->calibrated = input;
-    };
-    int calibrate(int input) const override
-    {
-        return calibrated;
-    };
+    void update(int input) override { this->calibrated = input; };
+    int calibrate(int input) const override { return calibrated; };
 };
 
 void test_calibrated_sensor(void)

@@ -61,10 +61,7 @@ namespace SenseShift::Body::Haptics {
         inline constexpr VibroEffectData(const Intensity_t intensity) : intensity(intensity) {}
         inline constexpr VibroEffectData(const VibroEffectData& other) = default;
 
-        inline constexpr operator uint16_t() const
-        {
-            return intensity;
-        }
+        inline constexpr operator uint16_t() const { return intensity; }
     } VibroEffectData_t;
 
     // TODO: thermal, etc.

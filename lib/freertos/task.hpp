@@ -58,10 +58,7 @@ namespace OH {
         Task(TaskConfig config) : taskConfig(config){};
         virtual ~Task(){};
 
-        TaskHandle_t getHandle() const
-        {
-            return taskHandle;
-        };
+        TaskHandle_t getHandle() const { return taskHandle; };
 
         virtual void begin()
         {

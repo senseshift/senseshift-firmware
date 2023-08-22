@@ -26,10 +26,7 @@ namespace SenseShift::BH::BLE {
 
     class ConnectionCallbacks {
       public:
-        virtual void postInit()
-        {
-            log_v("Default postInit");
-        };
+        virtual void postInit() { log_v("Default postInit"); };
     };
     static ConnectionCallbacks defaultCallback;
 

@@ -15,10 +15,7 @@ namespace SenseShift::Arduino::Input {
       public:
         DigitalSensor(uint8_t pin) : pin(pin) {}
 
-        void setup(void)
-        {
-            pinMode(this->pin, INPUT_PULLUP);
-        };
+        void setup(void) { pinMode(this->pin, INPUT_PULLUP); };
 
         bool getValue(void) override;
     };

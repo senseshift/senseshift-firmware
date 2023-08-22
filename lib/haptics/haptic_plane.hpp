@@ -31,22 +31,13 @@ namespace SenseShift::Body::Haptics {
 
         ActuativePlane() = default;
 
-        ActuativePlane(const ActuatorMap_t& actuators)
-        {
-            this->setActuators(actuators);
-        }
+        ActuativePlane(const ActuatorMap_t& actuators) { this->setActuators(actuators); }
 
         void setup();
         virtual void effect(const Position_t&, const Value_t&);
 
-        [[nodiscard]] const PositionSet_t* getAvailablePoints() const
-        {
-            return &points;
-        }
-        [[nodiscard]] const PositionStateMap_t* getActuatorStates() const
-        {
-            return &states;
-        }
+        [[nodiscard]] const PositionSet_t* getAvailablePoints() const { return &points; }
+        [[nodiscard]] const PositionStateMap_t* getActuatorStates() const { return &states; }
 
       private:
         PositionSet_t points;

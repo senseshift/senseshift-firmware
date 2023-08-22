@@ -24,10 +24,7 @@ namespace SenseShift::Input {
       public:
         JoystickAxisSensor(ISensor<_Tp>* sensor, float dead_zone) : sensor(sensor), dead_zone(dead_zone){};
 
-        void setup(void)
-        {
-            this->sensor->setup();
-        };
+        void setup(void) { this->sensor->setup(); };
 
         uint16_t getValue(void) override
         {

@@ -68,10 +68,7 @@ namespace OpenGloves {
             return value;
         }
 
-        uint16_t getCurl() override
-        {
-            return this->getValue().getTotalCurl();
-        }
+        uint16_t getCurl() override { return this->getValue().getTotalCurl(); }
 
       protected:
         FingerSensors sensors;
@@ -139,25 +136,13 @@ namespace OpenGloves {
         FingerSensor(SenseShift::Input::CalibratedSensor<uint16_t>* curl1, IEncodedInput::Type type) :
           StringEncodedMemoizedSensor<FingerValue>(new CalibratedFingerSensor(curl1, std::nullopt), type){};
 
-        void resetCalibration() override
-        {
-            static_cast<CalibratedFingerSensor*>(this->sensor)->resetCalibration();
-        }
+        void resetCalibration() override { static_cast<CalibratedFingerSensor*>(this->sensor)->resetCalibration(); }
 
-        void enableCalibration() override
-        {
-            static_cast<CalibratedFingerSensor*>(this->sensor)->enableCalibration();
-        }
+        void enableCalibration() override { static_cast<CalibratedFingerSensor*>(this->sensor)->enableCalibration(); }
 
-        void disableCalibration() override
-        {
-            static_cast<CalibratedFingerSensor*>(this->sensor)->disableCalibration();
-        }
+        void disableCalibration() override { static_cast<CalibratedFingerSensor*>(this->sensor)->disableCalibration(); }
 
-        uint16_t getCurl() override
-        {
-            return this->getValue().getTotalCurl();
-        }
+        uint16_t getCurl() override { return this->getValue().getTotalCurl(); }
     };
 
     struct HandSensors {

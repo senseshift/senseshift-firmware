@@ -11,15 +11,9 @@ class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
   public:
     int setupCounter = 0;
 
-    void setup() override
-    {
-        this->setupCounter++;
-    };
+    void setup() override { this->setupCounter++; };
 
-    uint16_t getValue() override
-    {
-        return this->count++;
-    };
+    uint16_t getValue() override { return this->count++; };
 };
 
 class DummyCalibrator : public ICalibrator<uint16_t> {
@@ -32,14 +26,8 @@ class DummyCalibrator : public ICalibrator<uint16_t> {
         this->resetCounter++;
         this->calibrated = std::nullopt;
     };
-    void update(uint16_t input) override
-    {
-        this->calibrated = input;
-    };
-    uint16_t calibrate(uint16_t input) const override
-    {
-        return this->calibrated.value_or(input);
-    };
+    void update(uint16_t input) override { this->calibrated = input; };
+    uint16_t calibrate(uint16_t input) const override { return this->calibrated.value_or(input); };
 };
 
 void test_simple_finger_sensor_curl(void)

@@ -36,10 +36,7 @@ namespace OpenGloves {
 
         void setup() override{};
 
-        bool getValue() override
-        {
-            return this->index.getCurl() > this->threshold;
-        }
+        bool getValue() override { return this->index.getCurl() > this->threshold; }
     };
 
     class PinchGesture : public Gesture {

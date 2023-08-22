@@ -27,10 +27,7 @@ namespace OpenGloves {
 
         IEncodedInput(Type type) : type(type){};
 
-        constexpr Type getType() const
-        {
-            return this->type;
-        }
+        constexpr Type getType() const { return this->type; }
 
       protected:
         Type type;

@@ -21,20 +21,11 @@ namespace SenseShift::Math {
         constexpr Point2(_Tp x, _Tp y) : x(x), y(y){};
         constexpr Point2(const Point2<_Tp>& v) : x((_Tp) v.x), y((_Tp) v.y){};
 
-        constexpr inline bool operator==(const Point2<_Tp>& rhs) const
-        {
-            return x == rhs.x && y == rhs.y;
-        }
+        constexpr inline bool operator==(const Point2<_Tp>& rhs) const { return x == rhs.x && y == rhs.y; }
 
-        constexpr inline bool operator!=(const Point2<_Tp>& rhs) const
-        {
-            return !(*this == rhs);
-        }
+        constexpr inline bool operator!=(const Point2<_Tp>& rhs) const { return !(*this == rhs); }
 
-        constexpr bool operator<(const Point2<_Tp>& rhs) const
-        {
-            return std::tie(x, y) < std::tie(rhs.x, rhs.y);
-        }
+        constexpr bool operator<(const Point2<_Tp>& rhs) const { return std::tie(x, y) < std::tie(rhs.x, rhs.y); }
 
         constexpr float operator-(const Point2<_Tp>& rhs) const
         {

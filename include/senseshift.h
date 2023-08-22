@@ -18,10 +18,7 @@ namespace SenseShift {
       public:
         SenseShift();
 
-        Body::Haptics::HapticBody* getHapticBody()
-        {
-            return this->pHapticBody;
-        };
+        Body::Haptics::HapticBody* getHapticBody() { return this->pHapticBody; };
 
         void postEvent(const IEvent* event) override;
         void addEventListener(const IEventListener* listener) override;

@@ -21,15 +21,9 @@ namespace SenseShift::Calibration {
       public:
         virtual void resetCalibration() = 0;
 
-        void enableCalibration() override
-        {
-            calibrate = true;
-        }
+        void enableCalibration() override { calibrate = true; }
 
-        void disableCalibration() override
-        {
-            calibrate = false;
-        }
+        void disableCalibration() override { calibrate = false; }
     };
 
     template<typename _Tp>

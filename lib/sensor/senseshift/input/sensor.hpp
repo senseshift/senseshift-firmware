@@ -62,26 +62,17 @@ namespace SenseShift::Input {
         /**
          * Setup the sensor hardware
          */
-        void setup() override
-        {
-            this->sensor->setup();
-        };
+        void setup() override { this->sensor->setup(); };
 
         /**
          * Get the current memoized value
          */
-        _Tp getValue() override
-        {
-            return this->value;
-        };
+        _Tp getValue() override { return this->value; };
 
         /**
          * Read actual value from the hardware and memoize it
          */
-        void updateValue()
-        {
-            this->value = this->sensor->getValue();
-        };
+        void updateValue() { this->value = this->sensor->getValue(); };
     };
 
     /**
@@ -114,19 +105,10 @@ namespace SenseShift::Input {
         CalibratedSensor(ISensor<_Tp>* sensor, ::SenseShift::Calibration::ICalibrator<_Tp>* calibrator) :
           sensor(sensor), calibrator(calibrator){};
 
-        void setup() override
-        {
-            this->sensor->setup();
-        };
+        void setup() override { this->sensor->setup(); };
 
-        _Tp getValue() override
-        {
-            return this->getCalibratedValue();
-        };
+        _Tp getValue() override { return this->getCalibratedValue(); };
 
-        void resetCalibration() override
-        {
-            this->calibrator->reset();
-        };
+        void resetCalibration() override { this->calibrator->reset(); };
     };
 } // namespace SenseShift::Input

@@ -13,10 +13,7 @@ namespace SenseShift::Arduino::Input {
       public:
         AnalogSensor(uint8_t pin) : pin(pin) {}
 
-        void setup(void)
-        {
-            pinMode(this->pin, INPUT);
-        };
+        void setup(void) { pinMode(this->pin, INPUT); };
 
         uint16_t getValue(void) override;
     };

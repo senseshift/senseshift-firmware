@@ -22,10 +22,7 @@ class TestOutput : public OH::AbstractActuator {
 
   public:
     TestOutput(uint8_t channel) : channel(channel){};
-    uint8_t getChannel()
-    {
-        return channel;
-    };
+    uint8_t getChannel() { return channel; };
     void writeOutput(oh_output_intensity_t intensity){};
 };
 
