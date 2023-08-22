@@ -169,7 +169,9 @@ namespace SenseShift::BH::BLE {
               BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID,
               PROPERTY_READ | PROPERTY_WRITE
             );
-            serialNumberChar->setValue(this->config.serialNumber, ConnectionConfig_t::SN_LENGTH);
+            uint8_t serialNumber[ConnectionConfig_t::SN_LENGTH];
+            memcpy(serialNumber, this->config.serialNumber, ConnectionConfig_t::SN_LENGTH);
+            serialNumberChar->setValue(serialNumber, ConnectionConfig_t::SN_LENGTH);
             serialNumberChar->setCallbacks(new LogOutputCharCallbacks());
         }
 
