@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <esp_wifi.h>
 
-#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+#if defined(SENSESHIFT_BLE_USE_NIMBLE) && SENSESHIFT_BLE_USE_NIMBLE == true
 #include <NimBLEDevice.h>
 #else
 #include <BLEDevice.h>
