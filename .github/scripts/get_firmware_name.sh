@@ -32,6 +32,22 @@ getBhapticsName() {
     fi
 }
 
+handleCalibrationFlag() {
+    local target=$1
+    local flag=$2
+    local prefix=$3
+
+    if [[ $flag =~ MinMaxCalibrator ]]; then
+        target="$target+${prefix}_minmax"
+    elif [[ $flag =~ FixedCenterPointDeviationCalibrator ]]; then
+        target="$target+${prefix}_fcpd"
+    elif [[ $flag =~ CenterPointDeviationCalibrator ]]; then
+        target="$target+${prefix}_cpd"
+    fi
+
+    echo "$target"
+}
+
 getOpenGlovesName() {
     local target=$1
     # rest of params
@@ -43,27 +59,20 @@ getOpenGlovesName() {
     if [[ $flags =~ OPENGLOVES_COMM_SERIAL ]]; then
         echo "::debug::Serial is enabled, appending +serial to the target"
         target="$target+serial"
-    fi
-
-    if [[ $flags =~ OPENGLOVES_COMM_BTSERIAL ]]; then
+    elif [[ $flags =~ OPENGLOVES_COMM_BTSERIAL ]]; then
         echo "::debug::Bluetooth Serial is enabled, appending +bluetooth to the target"
         target="$target+bluetooth"
     fi
 
-    if [[ $flags =~ CALIBRATION_CURL=::SenseShift::Calibration::MinMaxCalibrator ]]; then
-        echo "::debug::MinMaxCalibrator is enabled, appending +curl_minmax to the target"
-        target="$target+curl_minmaxcalib"
-    fi
+    for flag in "${@:2}"; do
+        if [[ $flag =~ CALIBRATION_CURL ]]; then
+            target=$(handleCalibrationFlag "$target" "$flag" "curl_calib")
+        fi
 
-    if [[ $flags =~ CALIBRATION_CURL=::SenseShift::Calibration::CenterPointDeviationCalibrator ]]; then
-        echo "::debug::CenterPointDeviationCalibrator is enabled, appending +curl_cpcalib to the target"
-        target="$target+curl_cpcalib"
-    fi
-
-    if [[ $flags =~ CALIBRATION_CURL=::SenseShift::Calibration::FixedCenterPointDeviationCalibrator ]]; then
-        echo "::debug::FixedCenterPointDeviationCalibrator is enabled, appending +curl_fcpcalib to the target"
-        target="$target+curl_fcpcalib"
-    fi
+        if [[ $flag =~ CALIBRATION_SPLAY ]]; then
+            target=$(handleCalibrationFlag "$target" "$flag" "splay_calib")
+        fi
+    done
 
     echo "firmware=$target"
     if [[ -n "$GITHUB_ACTIONS" ]]; then
@@ -77,9 +86,9 @@ getOpenGlovesName() {
 target=$1
 echo "::debug::Target is $target"
 if [[ $target =~ ^(bhaptics) ]]; then
-    getBhapticsName $@
+    getBhapticsName "${@}"
 elif [[ $target =~ ^(opengloves|lucidgloves|indexer) ]]; then
-    getOpenGlovesName $@
+    getOpenGlovesName "${@}"
 else
     echo "::error::Unknown target $target"
     exit 1
