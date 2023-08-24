@@ -13,7 +13,7 @@ namespace SenseShift {
       private:
         std::vector<const IEventListener*> eventListeners{};
         Body::Haptics::HapticBody* pHapticBody;
-        Battery::BatterySensor* battery;
+        ::SenseShift::Battery::IBatterySensor* battery;
 
       public:
         SenseShift();

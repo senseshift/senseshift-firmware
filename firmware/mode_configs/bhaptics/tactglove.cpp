@@ -12,11 +12,14 @@
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
+#include <senseshift/freertos/battery.hpp>
 #include <senseshift/utility.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
+using namespace SenseShift::FreeRTOS::Battery;
+using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
@@ -61,10 +64,9 @@ void setupMode()
     bhBleConnection->begin();
 
 #if defined(SENSESHIFT_BATTERY_ENABLED) && SENSESHIFT_BATTERY_ENABLED == true
-    auto* battery = new BatterySensor(
-      new NaiveBatterySensor(new AnalogSensor(36)),
-      &App,
-      { .sampleRate = SENSESHIFT_BATTERY_SAMPLE_RATE },
+    auto* battery = new TaskedSensor<BatteryState>(
+      new BatterySensor(new NaiveBatterySensor(new AnalogSensor(36)), app),
+      SENSESHIFT_BATTERY_SAMPLE_RATE,
       { "ADC Battery", 4096, SENSESHIFT_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
     battery->begin();

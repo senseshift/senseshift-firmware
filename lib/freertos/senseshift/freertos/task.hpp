@@ -38,25 +38,18 @@ namespace SenseShift::FreeRTOS {
         template<typename>
         friend class Task;
 
-      private:
-        TaskConfig taskConfig;
-        TaskHandle_t taskHandle = nullptr;
-
-        static void taskFunction(void* params)
-        {
-            _Tp* task = static_cast<_Tp*>(params);
-            task->run();
-        }
-
       public:
         Task(const char* name, uint32_t stackDepth, UBaseType_t priority, const BaseType_t coreId = tskNO_AFFINITY)
         {
-            TaskConfig config = { name, stackDepth, priority, coreId };
-
-            this->taskConfig = config;
+            this->taskConfig = { name, stackDepth, priority, coreId };
         };
-        Task(TaskConfig config) : taskConfig(config){};
-        virtual ~Task(){};
+        Task(TaskConfig& config) : taskConfig(config){};
+        virtual ~Task()
+        {
+            if (taskHandle) {
+                vTaskDelete(taskHandle);
+            }
+        };
 
         TaskHandle_t getHandle() const { return taskHandle; };
 
@@ -77,5 +70,15 @@ namespace SenseShift::FreeRTOS {
                 log_e("Failed to create task %s", this->taskConfig.name);
             }
         };
+
+      private:
+        const TaskConfig& taskConfig;
+        TaskHandle_t taskHandle = nullptr;
+
+        static void taskFunction(void* params)
+        {
+            _Tp* task = static_cast<_Tp*>(params);
+            task->run();
+        }
     };
 } // namespace SenseShift::FreeRTOS
