@@ -1,6 +1,6 @@
 #pragma once
 
-#include "haptics_interface.hpp"
+#include "senseshift/body/haptics/interface.hpp"
 
 #include <senseshift/output/actuator.hpp>
 #include <senseshift/utility.hpp>

@@ -1,4 +1,4 @@
-#include <haptic_body.hpp>
+#include <senseshift/body/haptics/body.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Body::Haptics;

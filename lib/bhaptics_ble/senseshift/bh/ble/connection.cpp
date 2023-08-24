@@ -1,7 +1,7 @@
 #include "senseshift/bh/ble/connection.hpp"
 
-#include <haptic_body.hpp>
 #include <senseshift/bh/constants.hpp>
+#include <senseshift/body/haptics/body.hpp>
 #include <senseshift/events.hpp>
 
 #include <Arduino.h>
