@@ -11,6 +11,6 @@
     }
 #endif
 
-#ifndef BLUETOOTH_USE_NIMBLE
-#define BLUETOOTH_USE_NIMBLE true
+#ifndef SENSESHIFT_BLE_USE_NIMBLE
+#define SENSESHIFT_BLE_USE_NIMBLE false
 #endif

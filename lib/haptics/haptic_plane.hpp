@@ -3,8 +3,7 @@
 #include "haptics_interface.hpp"
 
 #include <senseshift/output/actuator.hpp>
-
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <list>
 #include <map>
@@ -32,22 +31,13 @@ namespace SenseShift::Body::Haptics {
 
         ActuativePlane() = default;
 
-        ActuativePlane(const ActuatorMap_t& actuators)
-        {
-            this->setActuators(actuators);
-        }
+        ActuativePlane(const ActuatorMap_t& actuators) { this->setActuators(actuators); }
 
         void setup();
         virtual void effect(const Position_t&, const Value_t&);
 
-        [[nodiscard]] const PositionSet_t* getAvailablePoints() const
-        {
-            return &points;
-        }
-        [[nodiscard]] const PositionStateMap_t* getActuatorStates() const
-        {
-            return &states;
-        }
+        [[nodiscard]] const PositionSet_t* getAvailablePoints() const { return &points; }
+        [[nodiscard]] const PositionStateMap_t* getActuatorStates() const { return &states; }
 
       private:
         PositionSet_t points;
@@ -116,12 +106,14 @@ namespace SenseShift::Body::Haptics {
          * @tparam _Tp The type of the point index.
          */
         template<typename _Tp>
-        [[nodiscard]] static constexpr inline OH::Point2<_Tp> mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
+        [[nodiscard]] static constexpr inline ::SenseShift::Math::Point2<_Tp>
+          mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
         {
-            using Point_t = OH::Point2<_Tp>;
+            using Point_t = ::SenseShift::Math::Point2<_Tp>;
+
             return Point_t(
-              OH::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
-              OH::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
+              ::SenseShift::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
+              ::SenseShift::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
             );
         }
     };

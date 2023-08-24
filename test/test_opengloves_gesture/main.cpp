@@ -9,10 +9,7 @@ class TestCurlFinger : public ICurl {
 
     TestCurlFinger(uint16_t initialValue = 0) : value(initialValue){};
 
-    uint16_t getCurl() override
-    {
-        return this->value;
-    }
+    uint16_t getCurl() override { return this->value; }
 };
 
 void test_gesture_grab(void)

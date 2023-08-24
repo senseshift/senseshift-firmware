@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include <logging.hpp>
+#include <senseshift/logging.hpp>
 
 namespace SenseShift::Output {
     // Singular output point (e.g. vibration motor)

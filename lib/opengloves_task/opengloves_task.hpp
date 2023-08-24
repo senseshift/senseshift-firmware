@@ -4,18 +4,18 @@
 
 #include <optional>
 
-#include <calibration.hpp>
 #include <og_alpha_encoding.hpp>
 #include <og_ffb.hpp>
 #include <og_serial_communication.hpp>
-#include <sensor.hpp>
-#include <sensor/analog.hpp>
-#include <sensor/digital.hpp>
-#include <sensor/joystick.hpp>
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/calibration.hpp>
+#include <senseshift/freertos/task.hpp>
+#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/joystick.hpp>
+#include <senseshift/utility.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
-#include <task.hpp>
-#include <utility.hpp>
 
 namespace OpenGloves {
     struct OpenGlovesTrackingTaskConfig {
@@ -36,8 +36,8 @@ namespace OpenGloves {
         }
     };
 
-    class OpenGlovesTrackingTask : public OH::Task<OpenGlovesTrackingTask> {
-        friend class OH::Task<OpenGlovesTrackingTask>;
+    class OpenGlovesTrackingTask : public SenseShift::FreeRTOS::Task<OpenGlovesTrackingTask> {
+        friend class SenseShift::FreeRTOS::Task<OpenGlovesTrackingTask>;
 
       public:
         /**
@@ -58,7 +58,7 @@ namespace OpenGloves {
           std::vector<StringEncodedMemoizedSensor<uint16_t>*>& joysticks,
           std::vector<IStringEncodedMemoizedSensor*>& otherSensors,
           std::optional<StringEncodedMemoizedSensor<bool>>& calibrationButton,
-          OH::TaskConfig taskConfig
+          SenseShift::FreeRTOS::TaskConfig taskConfig
         ) :
           config(config),
           communication(communication),
@@ -68,7 +68,7 @@ namespace OpenGloves {
           otherSensors(otherSensors),
           calibrationButton(calibrationButton),
           allSensors(std::vector<IStringEncodedMemoizedSensor*>()),
-          OH::Task<OpenGlovesTrackingTask>(taskConfig)
+          SenseShift::FreeRTOS::Task<OpenGlovesTrackingTask>(taskConfig)
         {
             if (fingers.thumb.has_value()) {
                 auto* thumb = &fingers.thumb.value();
@@ -126,7 +126,7 @@ namespace OpenGloves {
         {
             log_d("Starting OpenGloves tracking task: %p", this);
             this->setup();
-            this->OH::Task<OpenGlovesTrackingTask>::begin();
+            this->SenseShift::FreeRTOS::Task<OpenGlovesTrackingTask>::begin();
         };
 
       private:
@@ -141,7 +141,8 @@ namespace OpenGloves {
         std::vector<IStringEncodedMemoizedSensor*> allSensors;
 
         std::optional<StringEncodedMemoizedSensor<bool>>& calibrationButton;
-        std::vector<OH::ICalibrated*> calibrated = std::vector<OH::ICalibrated*>();
+        std::vector<SenseShift::Calibration::ICalibrated*> calibrated =
+          std::vector<SenseShift::Calibration::ICalibrated*>();
         unsigned long long calibrationStarted = 0;
 
         void startCalibration()
@@ -214,14 +215,19 @@ namespace OpenGloves {
         };
     };
 
-    class OpenGlovesForceFeedbackTask : public OH::Task<OpenGlovesForceFeedbackTask> {
-        friend class OH::Task<OpenGlovesForceFeedbackTask>;
+    class OpenGlovesForceFeedbackTask : public SenseShift::FreeRTOS::Task<OpenGlovesForceFeedbackTask> {
+        friend class SenseShift::FreeRTOS::Task<OpenGlovesForceFeedbackTask>;
 
       public:
         OpenGlovesForceFeedbackTask(
-          ICommunication& communication, HandActuators& actuators, size_t updateRate, OH::TaskConfig taskConfig
+          ICommunication& communication,
+          HandActuators& actuators,
+          size_t updateRate,
+          SenseShift::FreeRTOS::TaskConfig taskConfig
         ) :
-          communication(communication), actuators(actuators), OH::Task<OpenGlovesForceFeedbackTask>(taskConfig)
+          communication(communication),
+          actuators(actuators),
+          SenseShift::FreeRTOS::Task<OpenGlovesForceFeedbackTask>(taskConfig)
         {
             this->updateIntervalMs = 1000 / updateRate;
         };
@@ -230,7 +236,7 @@ namespace OpenGloves {
         {
             log_d("Starting OpenGloves force feedback task: %p", this);
             this->setup();
-            this->OH::Task<OpenGlovesForceFeedbackTask>::begin();
+            this->SenseShift::FreeRTOS::Task<OpenGlovesForceFeedbackTask>::begin();
         };
 
       private:

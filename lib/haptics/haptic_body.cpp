@@ -1,6 +1,6 @@
 #include "haptic_body.hpp"
 
-#include <logging.hpp>
+#include <senseshift/logging.hpp>
 
 namespace SenseShift::Body::Haptics {
     void HapticBody::setup()

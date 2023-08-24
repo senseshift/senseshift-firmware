@@ -1,8 +1,7 @@
 #pragma once
 
-#include <calibration.hpp>
 #include <og_protocol.hpp>
-#include <sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 #include <optional>
 #include <vector>
@@ -27,20 +26,16 @@ namespace OpenGloves {
     };
 
     template<typename _Tp>
-    class StringEncodedMemoizedSensor : public IStringEncodedMemoizedSensor, public OH::MemoizedSensor<_Tp> {
+    class StringEncodedMemoizedSensor :
+      public IStringEncodedMemoizedSensor,
+      public SenseShift::Input::MemoizedSensor<_Tp> {
       public:
-        StringEncodedMemoizedSensor(OH::ISensor<_Tp>* sensor, IEncodedInput::Type type) :
-          IStringEncodedMemoizedSensor(type), OH::MemoizedSensor<_Tp>(sensor){};
+        StringEncodedMemoizedSensor(SenseShift::Input::ISensor<_Tp>* sensor, IEncodedInput::Type type) :
+          IStringEncodedMemoizedSensor(type), SenseShift::Input::MemoizedSensor<_Tp>(sensor){};
 
-        void setup() override
-        {
-            this->sensor->setup();
-        }
+        void setup() override { this->sensor->setup(); }
 
-        void updateValue() override
-        {
-            this->value = this->sensor->getValue();
-        }
+        void updateValue() override { this->value = this->sensor->getValue(); }
 
         size_t getEncodedLength() const override;
 

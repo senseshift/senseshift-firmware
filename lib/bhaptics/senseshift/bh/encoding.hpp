@@ -171,7 +171,7 @@ namespace SenseShift::BH {
 
             for (uint8_t i = 0; i < VEST_LAYOUT_SIZE; i++) {
                 // take only meaningful values
-                if (!OH::contains(layoutGroups, VEST_LAYOUT_SIZE, i)) {
+                if (!::SenseShift::contains(layoutGroups, VEST_LAYOUT_SIZE, i)) {
                     continue;
                 }
 
@@ -208,9 +208,11 @@ namespace SenseShift::BH {
         {
             switch (effect) {
                 case Effect_t::Vibro:
-                    return VibroEffectData_t(
-                      OH::simpleMap<VibroEffectData_t::Intensity_t>(byte, maxValue, VibroEffectData_t::INTENSITY_MAX)
-                    );
+                    return VibroEffectData_t(::SenseShift::simpleMap<VibroEffectData_t::Intensity_t>(
+                      byte,
+                      maxValue,
+                      VibroEffectData_t::INTENSITY_MAX
+                    ));
                 default:
                     throw std::runtime_error("Unknown effect");
             }

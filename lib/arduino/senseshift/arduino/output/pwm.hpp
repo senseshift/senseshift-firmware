@@ -1,7 +1,7 @@
 #pragma once
 
 #include <senseshift/output/actuator.hpp>
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <Arduino.h>
 
@@ -28,10 +28,13 @@ namespace SenseShift::Arduino::Output {
         void writeOutput(std::uint16_t intensity) override
         {
 #if defined(ESP32)
-            ledcWrite(chan, OH::simpleMap<std::uint16_t>(intensity, MAX_INTENSITY, (1 << this->resolution) - 1));
+            ledcWrite(
+              chan,
+              ::SenseShift::simpleMap<std::uint16_t>(intensity, MAX_INTENSITY, (1 << this->resolution) - 1)
+            );
 #else
             // Arduino only supports 8-bit PWM
-            analogWrite(this->pin, OH::simpleMap<std::uint16_t>(intensity, MAX_INTENSITY, (1 << 8) - 1));
+            analogWrite(this->pin, ::SenseShift::simpleMap<std::uint16_t>(intensity, MAX_INTENSITY, (1 << 8) - 1));
 #endif
         }
 

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+#include <functional>
+#include <vector>
+
 namespace OpenGloves {
     struct IEncodedInput {
       public:
@@ -23,10 +27,7 @@ namespace OpenGloves {
 
         IEncodedInput(Type type) : type(type){};
 
-        constexpr Type getType() const
-        {
-            return this->type;
-        }
+        constexpr Type getType() const { return this->type; }
 
       protected:
         Type type;

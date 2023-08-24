@@ -1,13 +1,12 @@
 #include "senseshift/bh/ble/connection.hpp"
 
-#include <senseshift/bh/constants.hpp>
-
-#include <events.hpp>
 #include <haptic_body.hpp>
+#include <senseshift/bh/constants.hpp>
+#include <senseshift/events.hpp>
 
 #include <Arduino.h>
 
-#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+#if defined(SENSESHIFT_BLE_USE_NIMBLE) && SENSESHIFT_BLE_USE_NIMBLE == true
 // BLE2902 not needed: https://github.com/h2zero/NimBLE-Arduino/blob/release/1.4/docs/Migration_guide.md#descriptors
 
 #define PROPERTY_READ NIMBLE_PROPERTY::READ
@@ -30,19 +29,19 @@
 namespace SenseShift::BH::BLE {
     class BHServerCallbacks final : public BLEServerCallbacks {
       private:
-        OH::IEventDispatcher* dispatcher;
+        ::SenseShift::IEventDispatcher* dispatcher;
 
       public:
-        BHServerCallbacks(OH::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
+        BHServerCallbacks(::SenseShift::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
 
         void onConnect(BLEServer* pServer)
         {
-            this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_CONNECTED));
+            this->dispatcher->postEvent(new ::SenseShift::IEvent(OH_EVENT_CONNECTED));
         }
 
         void onDisconnect(BLEServer* pServer)
         {
-            this->dispatcher->postEvent(new OH::IEvent(OH_EVENT_DISCONNECTED));
+            this->dispatcher->postEvent(new ::SenseShift::IEvent(OH_EVENT_DISCONNECTED));
             pServer->startAdvertising();
         }
     };
@@ -78,7 +77,7 @@ namespace SenseShift::BH::BLE {
             );
         };
 
-#if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+#if defined(SENSESHIFT_BLE_USE_NIMBLE) && SENSESHIFT_BLE_USE_NIMBLE == true
         void onStatus(BLECharacteristic* pCharacteristic, Status s, int code) override
 #else
         void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) override
@@ -170,7 +169,9 @@ namespace SenseShift::BH::BLE {
               BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID,
               PROPERTY_READ | PROPERTY_WRITE
             );
-            serialNumberChar->setValue(this->config.serialNumber, ConnectionConfig_t::SN_LENGTH);
+            uint8_t serialNumber[ConnectionConfig_t::SN_LENGTH];
+            memcpy(serialNumber, this->config.serialNumber, ConnectionConfig_t::SN_LENGTH);
+            serialNumberChar->setValue(serialNumber, ConnectionConfig_t::SN_LENGTH);
             serialNumberChar->setCallbacks(new LogOutputCharCallbacks());
         }
 
@@ -181,16 +182,12 @@ namespace SenseShift::BH::BLE {
                 | PROPERTY_NOTIFY // for whatever reason, it have to be writable, otherwise Desktop app crashes
             );
 
-#if !defined(BLUETOOTH_USE_NIMBLE) || BLUETOOTH_USE_NIMBLE != true
+#if !defined(SENSESHIFT_BLE_USE_NIMBLE) || SENSESHIFT_BLE_USE_NIMBLE != true
             batteryChar->addDescriptor(new BLE2902());
 #endif
 
             // original bHaptics Player require non-null value for battery level, otherwise it crashes
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
             uint16_t defaultLevel = 0;
-#else
-            uint16_t defaultLevel = 100;
-#endif
 
             this->batteryChar->setValue(defaultLevel);
             // this->batteryChar->notify();
@@ -212,7 +209,7 @@ namespace SenseShift::BH::BLE {
             );
             monitorChar->setCallbacks(new LogOutputCharCallbacks());
 
-#if !defined(BLUETOOTH_USE_NIMBLE) || BLUETOOTH_USE_NIMBLE != true
+#if !defined(SENSESHIFT_BLE_USE_NIMBLE) || SENSESHIFT_BLE_USE_NIMBLE != true
             monitorChar->addDescriptor(new BLE2902());
 #endif
 

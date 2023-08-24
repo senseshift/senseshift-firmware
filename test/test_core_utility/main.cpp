@@ -1,7 +1,7 @@
+#include <senseshift/utility.hpp>
 #include <unity.h>
-#include <utility.hpp>
 
-using namespace OH;
+using namespace SenseShift;
 
 void test_contains_container(void)
 {

@@ -3,7 +3,7 @@
 #include "haptic_plane.hpp"
 #include "haptics_interface.hpp"
 
-#include <utility.hpp>
+#include <senseshift/utility.hpp>
 
 #include <map>
 
@@ -22,10 +22,7 @@ namespace SenseShift::Body::Haptics {
 
         void addTarget(const Target_t, VibroPlane* plane);
 
-        [[nodiscard]] const PlaneTargetMap_t* getTargets() const
-        {
-            return &allTargets;
-        }
+        [[nodiscard]] const PlaneTargetMap_t* getTargets() const { return &allTargets; }
 
       private:
         PlaneTargetMap_t allTargets{};

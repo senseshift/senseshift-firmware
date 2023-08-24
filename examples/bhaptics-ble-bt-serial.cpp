@@ -13,7 +13,6 @@
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 
-using namespace OH;
 using namespace BH;
 
 extern SenseShift App;
@@ -27,10 +26,7 @@ static const ::SenseShift::Body::Haptics::Position_t* bhLayout[bhLayoutSize] = B
 
 class BLECallbacks : public BHBLEConnectionCallbacks {
   public:
-    void postInit()
-    {
-        btSerial->begin("SenseShift Serial");
-    }
+    void postInit() { btSerial->begin("SenseShift Serial"); }
 };
 
 void setupMode()

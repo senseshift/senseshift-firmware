@@ -12,14 +12,8 @@ class TestActuator : public IActuator<uint16_t> {
     uint16_t intensity = 0;
 
     TestActuator() : IActuator<uint16_t>() {}
-    void setup() override
-    {
-        this->isSetup = true;
-    }
-    void writeOutput(uint16_t intensity) override
-    {
-        this->intensity = intensity;
-    }
+    void setup() override { this->isSetup = true; }
+    void writeOutput(uint16_t intensity) override { this->intensity = intensity; }
 };
 
 void test_layout_tactsuitx16(void)

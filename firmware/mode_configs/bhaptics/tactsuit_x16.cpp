@@ -6,18 +6,20 @@
 
 #include "senseshift.h"
 
+#include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/output/pwm.hpp>
+#include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
+#include <senseshift/freertos/battery.hpp>
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <battery/adc_naive.hpp>
-#endif
-
-using namespace OH;
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::Arduino::Input;
+using namespace SenseShift::FreeRTOS::Battery;
+using namespace SenseShift::FreeRTOS::Input;
+using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
@@ -65,12 +67,11 @@ void setupMode()
     );
     bhBleConnection->begin();
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    auto* battery = new BatterySensor(
-      new ADCNaiveBattery(36),
-      &App,
-      { .sampleRate = BATTERY_SAMPLE_RATE },
-      { "ADC Battery", 4096, BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
+#if defined(SENSESHIFT_BATTERY_ENABLED) && SENSESHIFT_BATTERY_ENABLED == true
+    auto* battery = new TaskedSensor<BatteryState>(
+      new BatterySensor(new NaiveBatterySensor(new AnalogSensor(36)), app),
+      SENSESHIFT_BATTERY_SAMPLE_RATE,
+      { "ADC Battery", 4096, SENSESHIFT_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
     battery->begin();
 #endif

@@ -3,54 +3,36 @@
 
 using namespace OpenGloves;
 
-class TestAnalogSensor : public OH::ISensor<uint16_t> {
+class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
   private:
     uint16_t count = 0;
 
   public:
     int setupCounter = 0;
 
-    void setup() override
-    {
-        this->setupCounter++;
-    };
+    void setup() override { this->setupCounter++; };
 
-    uint16_t getValue() override
-    {
-        return ++this->count;
-    };
+    uint16_t getValue() override { return ++this->count; };
 };
 
-class TestBinarySensor : public OH::ISensor<bool> {
+class TestBinarySensor : public SenseShift::Input::ISensor<bool> {
   public:
     bool value = false;
     int setupCounter = 0;
 
-    void setup() override
-    {
-        this->setupCounter++;
-    };
+    void setup() override { this->setupCounter++; };
 
-    bool getValue() override
-    {
-        return this->value;
-    };
+    bool getValue() override { return this->value; };
 };
 
-class TestFingerSensor : public OH::ISensor<FingerValue> {
+class TestFingerSensor : public SenseShift::Input::ISensor<FingerValue> {
   public:
     FingerValue value;
     int setupCounter = 0;
 
-    void setup() override
-    {
-        this->setupCounter++;
-    };
+    void setup() override { this->setupCounter++; };
 
-    FingerValue getValue() override
-    {
-        return this->value;
-    };
+    FingerValue getValue() override { return this->value; };
 };
 
 void test_string_encoded_sensor_uint16(void)

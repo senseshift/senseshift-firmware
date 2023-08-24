@@ -70,10 +70,7 @@ namespace OpenGloves {
             this->ready = true;
         }
 
-        bool isReady() override
-        {
-            return this->ready;
-        }
+        bool isReady() override { return this->ready; }
 
         bool hasData() override
         {

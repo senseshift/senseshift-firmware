@@ -3,7 +3,7 @@
 #include <sensor/og_finger.hpp>
 
 namespace OpenGloves {
-    class Gesture : public OH::ISensor<bool> {};
+    class Gesture : public SenseShift::Input::ISensor<bool> {};
 
     class GrabGesture : public Gesture {
       private:
@@ -36,10 +36,7 @@ namespace OpenGloves {
 
         void setup() override{};
 
-        bool getValue() override
-        {
-            return this->index.getCurl() > this->threshold;
-        }
+        bool getValue() override { return this->index.getCurl() > this->threshold; }
     };
 
     class PinchGesture : public Gesture {
