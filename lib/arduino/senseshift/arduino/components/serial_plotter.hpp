@@ -1,6 +1,6 @@
 #pragma once
 
-#include <haptic_body.hpp>
+#include <senseshift/body/haptics/body.hpp>
 #include <senseshift/freertos/task.hpp>
 
 #include <HardwareSerial.h>

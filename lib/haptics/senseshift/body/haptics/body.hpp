@@ -1,7 +1,7 @@
 #pragma once
 
-#include "haptic_plane.hpp"
-#include "haptics_interface.hpp"
+#include "senseshift/body/haptics/interface.hpp"
+#include "senseshift/body/haptics/plane.hpp"
 
 #include <senseshift/utility.hpp>
 

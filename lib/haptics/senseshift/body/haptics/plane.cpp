@@ -1,10 +1,8 @@
-#include "haptic_plane.hpp"
+#include "senseshift/body/haptics/plane.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <senseshift/logging.hpp>
-
-#include "haptic_plane.hpp"
 
 namespace SenseShift::Body::Haptics {
     template<typename _Tp, typename _Ta>
