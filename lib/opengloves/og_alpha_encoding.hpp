@@ -1,10 +1,15 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <map>
 #include <string>
 #include <vector>
+
+#include <frozen/map.h>
+#include <frozen/string.h>
+#include <frozen/unordered_map.h>
 
 #include <og_protocol.hpp>
 #include <senseshift/logging.hpp>
@@ -13,9 +18,8 @@ namespace OpenGloves {
     class AlphaEncodingService {
       public:
         inline static const std::string valueSymbols = "0123456789";
-        // TODO: use Frozen library to save memory
-        inline static const std::map<std::string, Command> commandMap = {
-            // clang-format off
+        inline static const auto commandMap = frozen::make_map<std::string, Command>({
+          // clang-format off
             { "A", Command::ThumbCurl },
             { "(AB)", Command::ThumbSplay },
             { "B", Command::IndexCurl },
@@ -26,8 +30,8 @@ namespace OpenGloves {
             { "(DB)", Command::RingSplay },
             { "E", Command::PinkyCurl },
             { "(EB)", Command::PinkySplay },
-            // clang-format on
-        };
+          // clang-format on
+        });
 
         AlphaEncodingService() = default;
 

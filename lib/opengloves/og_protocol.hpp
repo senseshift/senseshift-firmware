@@ -57,7 +57,8 @@ namespace OpenGloves {
         virtual size_t readCommand(char* buffer, size_t length) = 0;
     };
 
-    typedef enum Command {
+    typedef uint16_t CommandIndex_t;
+    typedef enum Command : CommandIndex_t {
         ThumbCurl,
         ThumbSplay,
 

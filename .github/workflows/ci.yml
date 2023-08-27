@@ -60,6 +60,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name
@@ -194,6 +196,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name
@@ -298,6 +302,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
