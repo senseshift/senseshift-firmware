@@ -81,4 +81,33 @@ namespace SenseShift::FreeRTOS {
             task->run();
         }
     };
+
+    inline void monitorTask()
+    {
+        log_i("----------------------------------------\nFree Heap: %d\n", xPortGetFreeHeapSize());
+        volatile UBaseType_t uxArraySize = uxTaskGetNumberOfTasks();
+        TaskStatus_t* pxTaskStatusArray = (TaskStatus_t*) pvPortMalloc(uxArraySize * sizeof(TaskStatus_t));
+        if (!pxTaskStatusArray) {
+            log_e("Failed to allocate memory for task status array!");
+            return;
+        }
+        uxArraySize = uxTaskGetSystemState(pxTaskStatusArray, uxArraySize, NULL);
+        for (UBaseType_t i = 0; i < uxArraySize; i++) {
+            log_i(
+              "Task: %s\n\tStack High Watermark: %d\n\tState: %d\n",
+              pxTaskStatusArray[i].pcTaskName,
+              pxTaskStatusArray[i].usStackHighWaterMark,
+              pxTaskStatusArray[i].eCurrentState
+            );
+
+            if (pxTaskStatusArray[i].usStackHighWaterMark < 20) {
+                log_w(
+                  "Warning: Task %s has low stack space, only %dB awailable!",
+                  pxTaskStatusArray[i].pcTaskName,
+                  pxTaskStatusArray[i].usStackHighWaterMark * 4
+                );
+            }
+        }
+        vPortFree(pxTaskStatusArray);
+    }
 } // namespace SenseShift::FreeRTOS
