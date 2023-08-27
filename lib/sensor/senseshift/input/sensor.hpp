@@ -35,7 +35,7 @@ namespace SenseShift::Input {
         virtual _Tp getValue() = 0;
     };
 
-    class IMemoizedSensor {
+    class IMemoized {
       public:
         /**
          * Update the memoized value
@@ -43,12 +43,15 @@ namespace SenseShift::Input {
         virtual void updateValue() = 0;
     };
 
+    template<typename _Tp>
+    class IMemoizedSensor : public virtual IMemoized, public virtual ISensor<_Tp> {};
+
     /**
      * Memoized sensor decorator
      * @tparam _Tp Type of the sensor value
      */
     template<typename _Tp>
-    class MemoizedSensor : public ISensor<_Tp>, public virtual IMemoizedSensor {
+    class MemoizedSensor : public IMemoizedSensor<_Tp> {
       protected:
         ISensor<_Tp>* sensor;
         _Tp value;

@@ -13,7 +13,7 @@ namespace SenseShift::FreeRTOS::Input {
         friend class Task<SensorUpdateTask>;
 
       private:
-        using Sensor_t = ::SenseShift::Input::IMemoizedSensor;
+        using Sensor_t = ::SenseShift::Input::IMemoized;
 
       public:
         SensorUpdateTask(Sensor_t* sensor, std::uint32_t updateDelay, TaskConfig taskConfig) :
