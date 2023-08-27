@@ -39,6 +39,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name
@@ -134,6 +136,8 @@ jobs:
           - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name

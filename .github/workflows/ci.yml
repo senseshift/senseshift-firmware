@@ -60,6 +60,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name
@@ -194,6 +196,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name
@@ -298,6 +302,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
@@ -382,7 +388,7 @@ jobs:
           ls -lahR ./build/lcov/
 
           find ./build/lcov -name 'lcov.info.*' -exec echo -a {} \; | xargs lcov -o ./build/lcov/lcov.info
-          lcov --remove ./build/lcov/lcov.info '/usr/include/*' '*.platformio/*' '*/.pio/*' '*/tool-unity/*' '*/test/*' '*/MockArduino/*' -o ./build/lcov/lcov.info.cleaned
+          lcov --remove ./build/lcov/lcov.info '/usr/include/*' '*.platformio/*' '*/.pio/*' '*/tool-unity/*' '*/test/*' '*/MockArduino/*' '*/lib/frozen/*' -o ./build/lcov/lcov.info.cleaned
 
       - name: Generate HTML report
         run: genhtml -p $PWD -o ./build/coverage/ --demangle-cpp ./build/lcov/lcov.info.cleaned

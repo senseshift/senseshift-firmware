@@ -33,7 +33,7 @@ namespace OpenGloves {
         }
 
         // Split the command into prefix and number
-        size_t split_index = current_command.find_last_not_of(valueSymbols) + 1;
+        size_t split_index = current_command.find_last_not_of(valueSymbols.data()) + 1;
 
         if (split_index >= current_command.size()) {
             log_w("Invalid command: %s", current_command.c_str());
