@@ -3,34 +3,34 @@
 
 using namespace OpenGloves;
 
-class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
+class TestAnalogSensor : public SenseShift::Input::ISimpleSensor<uint16_t> {
   private:
     uint16_t count = 0;
 
   public:
     int setupCounter = 0;
 
-    void setup() override { this->setupCounter++; };
+    void init() override { this->setupCounter++; };
 
     uint16_t getValue() override { return ++this->count; };
 };
 
-class TestBinarySensor : public SenseShift::Input::ISensor<bool> {
+class TestBinarySensor : public SenseShift::Input::ISimpleSensor<bool> {
   public:
     bool value = false;
     int setupCounter = 0;
 
-    void setup() override { this->setupCounter++; };
+    void init() override { this->setupCounter++; };
 
     bool getValue() override { return this->value; };
 };
 
-class TestFingerSensor : public SenseShift::Input::ISensor<FingerValue> {
+class TestFingerSensor : public SenseShift::Input::ISimpleSensor<FingerValue> {
   public:
     FingerValue value;
     int setupCounter = 0;
 
-    void setup() override { this->setupCounter++; };
+    void init() override { this->setupCounter++; };
 
     FingerValue getValue() override { return this->value; };
 };
@@ -41,7 +41,7 @@ void test_string_encoded_sensor_uint16(void)
     auto sensor = new StringEncodedMemoizedSensor<uint16_t>(inner, IEncodedInput::Type::INDEX);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     TEST_ASSERT_EQUAL_INT(0, sensor->getValue());
@@ -63,7 +63,7 @@ void test_string_encoded_sensor_bool(void)
     auto sensor = new StringEncodedMemoizedSensor<bool>(inner, IEncodedInput::Type::A_BTN);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     TEST_ASSERT_FALSE(sensor->getValue());
@@ -94,7 +94,7 @@ void test_string_encoded_sensor_fingervalue(void)
     auto sensor = new StringEncodedMemoizedSensor<FingerValue>(inner, IEncodedInput::Type::THUMB);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     // curl-only

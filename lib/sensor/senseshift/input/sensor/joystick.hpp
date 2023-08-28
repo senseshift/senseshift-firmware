@@ -7,9 +7,9 @@ namespace SenseShift::Input {
      * Joystick axis sensor decorator
      */
     template<typename _Tp>
-    class JoystickAxisSensor : public ISensor<_Tp> {
+    class JoystickAxisSensor : public ISimpleSensor<_Tp> {
       private:
-        ISensor<_Tp>* sensor;
+        ISimpleSensor<_Tp>* sensor;
         float dead_zone;
 
         int filterDeadZone(int in)
@@ -22,9 +22,9 @@ namespace SenseShift::Input {
         }
 
       public:
-        JoystickAxisSensor(ISensor<_Tp>* sensor, float dead_zone) : sensor(sensor), dead_zone(dead_zone){};
+        JoystickAxisSensor(ISimpleSensor<_Tp>* sensor, float dead_zone) : sensor(sensor), dead_zone(dead_zone){};
 
-        void setup(void) { this->sensor->setup(); };
+        void init() override { this->sensor->init(); };
 
         uint16_t getValue(void) override
         {

@@ -4,14 +4,14 @@
 using namespace SenseShift::Input;
 using namespace SenseShift::Calibration;
 
-class TestAnalogSensor : public ISensor<int> {
+class TestAnalogSensor : public ISimpleSensor<int> {
   private:
     int count = 0;
 
   public:
     int setupCounter = 0;
 
-    void setup() override { this->setupCounter++; };
+    void init() override { this->setupCounter++; };
 
     int getValue() override { return ++this->count; };
 };
@@ -22,13 +22,13 @@ void test_memoized_sensor(void)
     auto sensor = new MemoizedSensor<int>(inner);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     TEST_ASSERT_EQUAL_INT(0, sensor->getValue());
     TEST_ASSERT_EQUAL_INT(0, sensor->getValue());
 
-    sensor->updateValue();
+    sensor->tick();
 
     TEST_ASSERT_EQUAL_INT(1, sensor->getValue());
     TEST_ASSERT_EQUAL_INT(1, sensor->getValue());
@@ -52,10 +52,10 @@ void test_calibrated_sensor(void)
 {
     auto inner = new TestAnalogSensor();
     auto calibrator = new DummyCalibrator();
-    auto sensor = new CalibratedSensor<int>(inner, calibrator);
+    auto sensor = new CalibratedSimpleSensor<int>(inner, calibrator);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     calibrator->update(-1);

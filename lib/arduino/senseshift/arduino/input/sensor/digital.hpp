@@ -5,7 +5,7 @@
 #include <Arduino.h>
 
 namespace SenseShift::Arduino::Input {
-    typedef ::SenseShift::Input::ISensor<bool> IDigitalSensor;
+    typedef ::SenseShift::Input::ISimpleSensor<bool> IDigitalSensor;
 
     template<bool invert = false>
     class DigitalSensor : public IDigitalSensor {
@@ -15,19 +15,19 @@ namespace SenseShift::Arduino::Input {
       public:
         DigitalSensor(uint8_t pin) : pin(pin) {}
 
-        void setup(void) { pinMode(this->pin, INPUT_PULLUP); };
+        void init() override { pinMode(this->pin, INPUT_PULLUP); };
 
-        bool getValue(void) override;
+        bool getValue() override;
     };
 
     template<>
-    bool DigitalSensor<false>::getValue(void)
+    bool DigitalSensor<false>::getValue()
     {
         return digitalRead(this->pin) == LOW;
     }
 
     template<>
-    bool DigitalSensor<true>::getValue(void)
+    bool DigitalSensor<true>::getValue()
     {
         return digitalRead(this->pin) == HIGH;
     }

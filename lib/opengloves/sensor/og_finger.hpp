@@ -6,19 +6,19 @@
 
 namespace OpenGloves {
     struct FingerSensors {
-        std::vector<SenseShift::Input::CalibratedSensor<uint16_t>*> curl =
-          std::vector<SenseShift::Input::CalibratedSensor<uint16_t>*>();
-        std::optional<SenseShift::Input::CalibratedSensor<uint16_t>*> splay = std::nullopt;
+        std::vector<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> curl =
+          std::vector<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*>();
+        std::optional<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> splay = std::nullopt;
 
         FingerSensors(
-          std::vector<SenseShift::Input::CalibratedSensor<uint16_t>*> curl,
-          std::optional<SenseShift::Input::CalibratedSensor<uint16_t>*> splay = std::nullopt
+          std::vector<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> curl,
+          std::optional<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> splay = std::nullopt
         ) :
           curl(curl), splay(splay){};
 
         FingerSensors(
-          SenseShift::Input::CalibratedSensor<uint16_t>* curl1,
-          std::optional<SenseShift::Input::CalibratedSensor<uint16_t>*> splay = std::nullopt
+          SenseShift::Input::CalibratedSimpleSensor<uint16_t>* curl1,
+          std::optional<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> splay = std::nullopt
         ) :
           curl({ curl1 }), splay(splay){};
     };
@@ -31,25 +31,25 @@ namespace OpenGloves {
         virtual uint16_t getCurl() = 0;
     };
 
-    typedef SenseShift::Input::ISensor<FingerValue> IFingerSensor;
+    typedef SenseShift::Input::ISimpleSensor<FingerValue> IFingerSensor;
 
     class SimpleFingerSensor : public IFingerSensor, public ICurl {
       public:
         SimpleFingerSensor(FingerSensors sensors) : sensors(sensors){};
 
         SimpleFingerSensor(
-          SenseShift::Input::CalibratedSensor<uint16_t>* curl1,
-          std::optional<SenseShift::Input::CalibratedSensor<uint16_t>*> splay = std::nullopt
+          SenseShift::Input::CalibratedSimpleSensor<uint16_t>* curl1,
+          std::optional<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> splay = std::nullopt
         ) :
           sensors(curl1, splay){};
 
-        void setup() override
+        void init() override
         {
             for (auto sensor : sensors.curl) {
-                sensor->setup();
+                sensor->init();
             }
             if (sensors.splay.has_value()) {
-                sensors.splay.value()->setup();
+                sensors.splay.value()->init();
             }
         }
 
@@ -82,8 +82,8 @@ namespace OpenGloves {
         CalibratedFingerSensor(FingerSensors sensors) : SimpleFingerSensor(sensors){};
 
         CalibratedFingerSensor(
-          SenseShift::Input::CalibratedSensor<uint16_t>* curl1,
-          std::optional<SenseShift::Input::CalibratedSensor<uint16_t>*> splay = std::nullopt
+          SenseShift::Input::CalibratedSimpleSensor<uint16_t>* curl1,
+          std::optional<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> splay = std::nullopt
         ) :
           SimpleFingerSensor(curl1, splay){};
 
@@ -127,13 +127,13 @@ namespace OpenGloves {
           StringEncodedMemoizedSensor<FingerValue>(sensor, type){};
 
         FingerSensor(
-          SenseShift::Input::CalibratedSensor<uint16_t>* curl1,
-          std::optional<SenseShift::Input::CalibratedSensor<uint16_t>*> splay,
+          SenseShift::Input::CalibratedSimpleSensor<uint16_t>* curl1,
+          std::optional<SenseShift::Input::CalibratedSimpleSensor<uint16_t>*> splay,
           IEncodedInput::Type type
         ) :
           StringEncodedMemoizedSensor<FingerValue>(new CalibratedFingerSensor(curl1, splay), type){};
 
-        FingerSensor(SenseShift::Input::CalibratedSensor<uint16_t>* curl1, IEncodedInput::Type type) :
+        FingerSensor(SenseShift::Input::CalibratedSimpleSensor<uint16_t>* curl1, IEncodedInput::Type type) :
           StringEncodedMemoizedSensor<FingerValue>(new CalibratedFingerSensor(curl1, std::nullopt), type){};
 
         void resetCalibration() override { static_cast<CalibratedFingerSensor*>(this->sensor)->resetCalibration(); }

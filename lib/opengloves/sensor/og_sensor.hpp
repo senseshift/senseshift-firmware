@@ -30,10 +30,10 @@ namespace OpenGloves {
       public IStringEncodedMemoizedSensor,
       public SenseShift::Input::MemoizedSensor<_Tp> {
       public:
-        StringEncodedMemoizedSensor(SenseShift::Input::ISensor<_Tp>* sensor, IEncodedInput::Type type) :
+        StringEncodedMemoizedSensor(SenseShift::Input::ISimpleSensor<_Tp>* sensor, IEncodedInput::Type type) :
           IStringEncodedMemoizedSensor(type), SenseShift::Input::MemoizedSensor<_Tp>(sensor){};
 
-        void setup() override { this->sensor->setup(); }
+        void init() override { this->sensor->init(); }
 
         void updateValue() override { this->value = this->sensor->getValue(); }
 

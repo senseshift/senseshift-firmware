@@ -4,14 +4,14 @@
 using namespace OpenGloves;
 using namespace SenseShift::Calibration;
 
-class TestAnalogSensor : public SenseShift::Input::ISensor<uint16_t> {
+class TestAnalogSensor : public SenseShift::Input::ISimpleSensor<uint16_t> {
   private:
     uint16_t count = 0;
 
   public:
     int setupCounter = 0;
 
-    void setup() override { this->setupCounter++; };
+    void init() override { this->setupCounter++; };
 
     uint16_t getValue() override { return this->count++; };
 };
@@ -34,11 +34,11 @@ void test_simple_finger_sensor_curl(void)
 {
     auto* inner = new TestAnalogSensor();
     auto* calibrator = new DummyCalibrator();
-    auto* calibrated = new SenseShift::Input::CalibratedSensor<uint16_t>(inner, calibrator);
+    auto* calibrated = new SenseShift::Input::CalibratedSimpleSensor<uint16_t>(inner, calibrator);
     auto* sensor = new SimpleFingerSensor(calibrated);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     // since the sensor is not memoized, the value is updated on every call
@@ -60,17 +60,17 @@ void test_simple_finger_sensor_curl_flex(void)
 {
     auto* inner_curl = new TestAnalogSensor();
     auto* calibrator_curl = new DummyCalibrator();
-    auto* calibrated_curl = new SenseShift::Input::CalibratedSensor<uint16_t>(inner_curl, calibrator_curl);
+    auto* calibrated_curl = new SenseShift::Input::CalibratedSimpleSensor<uint16_t>(inner_curl, calibrator_curl);
 
     auto* inner_flex = new TestAnalogSensor();
     auto* calibrator_flex = new DummyCalibrator();
-    auto* calibrated_flex = new SenseShift::Input::CalibratedSensor<uint16_t>(inner_flex, calibrator_flex);
+    auto* calibrated_flex = new SenseShift::Input::CalibratedSimpleSensor<uint16_t>(inner_flex, calibrator_flex);
 
     auto* sensor = new SimpleFingerSensor(calibrated_curl, calibrated_flex);
 
     TEST_ASSERT_EQUAL_INT(0, inner_curl->setupCounter);
     TEST_ASSERT_EQUAL_INT(0, inner_flex->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner_curl->setupCounter);
     TEST_ASSERT_EQUAL_INT(1, inner_flex->setupCounter);
 
@@ -100,11 +100,11 @@ void test_finger_sensor_curl(void)
 {
     auto* inner = new TestAnalogSensor();
     auto* calibrator = new DummyCalibrator();
-    auto* calibrated = new SenseShift::Input::CalibratedSensor<uint16_t>(inner, calibrator);
+    auto* calibrated = new SenseShift::Input::CalibratedSimpleSensor<uint16_t>(inner, calibrator);
     auto* sensor = new FingerSensor(calibrated, IEncodedInput::Type::INDEX);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->setup();
+    sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     TEST_ASSERT_EQUAL_INT(0, sensor->getValue().curl[0]);

@@ -160,7 +160,7 @@ namespace OpenGloves {
             log_d("There is a total of %d sensors", this->allSensors.size());
             for (auto* input : this->allSensors) {
                 log_d("Setting up sensor: %c", input->getType());
-                input->setup();
+                input->init();
             }
 
             // Start calibration if no calibration button is present or if configured to always calibrate.

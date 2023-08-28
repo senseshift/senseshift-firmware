@@ -13,7 +13,7 @@ namespace SenseShift::FreeRTOS::Input {
         friend class Task<SensorUpdateTask>;
 
       private:
-        using Sensor_t = ::SenseShift::Input::IMemoizedSensor;
+        using Sensor_t = ::SenseShift::ITickable;
 
       public:
         SensorUpdateTask(Sensor_t* sensor, std::uint32_t updateDelay, TaskConfig taskConfig) :
@@ -26,14 +26,14 @@ namespace SenseShift::FreeRTOS::Input {
         void run()
         {
             while (true) {
-                this->sensor->updateValue();
+                this->sensor->tick();
                 ::delay(this->updateDelay);
             }
         }
     };
 
     template<typename _Tp>
-    class TaskedSensor : public SensorUpdateTask, public ::SenseShift::Input::ISensor<_Tp> {
+    class TaskedSensor : public SensorUpdateTask, public ::SenseShift::Input::ISimpleSensor<_Tp> {
         friend class SensorUpdateTask;
 
       private:
@@ -45,11 +45,11 @@ namespace SenseShift::FreeRTOS::Input {
 
         void begin() override
         {
-            this->setup();
+            this->init();
             SensorUpdateTask::begin();
         };
 
-        void setup() override { this->sensor->setup(); };
+        void init() override { this->sensor->init(); };
 
         _Tp getValue() override { return this->sensor->getValue(); };
 
