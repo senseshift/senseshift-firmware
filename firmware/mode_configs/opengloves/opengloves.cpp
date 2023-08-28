@@ -55,7 +55,7 @@
 #define FINGER_PINKY_ENABLED (defined(PIN_FINGER_PINKY) && (PIN_FINGER_PINKY != -1))
 #define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                  \
     FingerSensor(                                                              \
-      new ::SenseShift::Input::CalibratedSensor<uint16_t>(                     \
+      new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(               \
         new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin), \
         new curl_calib()                                                       \
       ),                                                                       \
@@ -69,11 +69,11 @@
 #define FINGER_PINKY_SPLAY (FINGER_PINKY_ENABLED && defined(PIN_FINGER_PINKY_SPLAY) && (PIN_FINGER_PINKY_SPLAY != -1))
 #define FINGER_SPLAY_CLASS(type, curl_pin, curl_invert, curl_calib, splay_pin, splay_invert, splay_calib) \
     FingerSensor(                                                                                         \
-      new ::SenseShift::Input::CalibratedSensor<uint16_t>(                                                \
+      new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                                          \
         new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin),                            \
         new curl_calib()                                                                                  \
       ),                                                                                                  \
-      new ::SenseShift::Input::CalibratedSensor<uint16_t>(                                                \
+      new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                                          \
         new ::SenseShift::Arduino::Input::AnalogSensor<splay_invert>(splay_pin),                          \
         new splay_calib()                                                                                 \
       ),                                                                                                  \

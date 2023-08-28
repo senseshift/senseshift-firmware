@@ -45,7 +45,7 @@ namespace OpenGloves {
       public:
         IStringEncodedMemoizedSensor(Type type) : IStringEncoded(type){};
 
-        virtual void setup() = 0;
+        virtual void init() = 0;
         virtual void updateValue() = 0;
     };
 

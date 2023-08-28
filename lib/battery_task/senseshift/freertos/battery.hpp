@@ -10,9 +10,9 @@ namespace SenseShift::FreeRTOS::Battery {
           ::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState>(sensor),
           eventDispatcher(eventDispatcher){};
 
-        void updateValue() override
+        void tick() override
         {
-            this->::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState>::updateValue();
+            this->::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState>::tick();
             this->eventDispatcher->postEvent(new ::SenseShift::Battery::BatteryLevelEvent(this->value));
         }
 
