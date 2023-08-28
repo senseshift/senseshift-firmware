@@ -4,8 +4,10 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -13,11 +15,8 @@
 #include <frozen/string.h>
 #include <frozen/unordered_map.h>
 
-#include <og_protocol.hpp>
-#include <senseshift/logging.hpp>
-
 namespace SenseShift::OpenGloves {
-    class AlphaEncodingService {
+    class AlphaEncodingService : public ISerializer {
       public:
         inline static constexpr frozen::string valueSymbols = "0123456789";
         inline static const auto prefixToCommandMap = frozen::make_map<std::string, Sensor_t>({
@@ -84,10 +83,10 @@ namespace SenseShift::OpenGloves {
 
         AlphaEncodingService() = default;
 
-        static const std::vector<Command_t> decode(const std::string& buffer);
-        static const std::string encode(const std::vector<Command_t>& commands);
+        std::vector<Command_t> deserialize(const std::string& buffer) const override;
+        std::string serialize(const std::vector<Command_t>& commands) const override;
 
       private:
-        static void splitCommand(const std::string& buffer, size_t start, size_t end, std::vector<Command_t>& dest);
+        static void parseCommand(const std::string& command, std::vector<Command_t>& dest);
     };
 } // namespace SenseShift::OpenGloves

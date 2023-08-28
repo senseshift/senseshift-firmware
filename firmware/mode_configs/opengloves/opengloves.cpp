@@ -190,7 +190,7 @@ OpenGlovesForceFeedbackTask* ffbTask;
 void setupMode()
 {
 #if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL
-    auto* communication = new SerialCommunication(SERIAL_PORT, SERIAL_BAUDRATE);
+    auto* communication = new SerialTransport(SERIAL_PORT, SERIAL_BAUDRATE);
 #elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL
 #ifdef BTSERIAL_NAME
     std::string name = BTSERIAL_NAME;
@@ -201,7 +201,7 @@ void setupMode()
     std::string name = BTSERIAL_PREFIX + std::string(suffix);
 #endif
     BluetoothSerial* bt_serial = new BluetoothSerial();
-    auto* communication = new BTSerialCommunication(*bt_serial, name);
+    auto* communication = new BluetoothSerialTransport(*bt_serial, name);
 #endif
 
     trackingTask = new OpenGlovesTrackingTask(

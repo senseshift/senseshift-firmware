@@ -1,6 +1,6 @@
 #pragma once
 
-#include <senseshift/opengloves/constants.h>
+#include <senseshift/opengloves/constants.hpp>
 
 #pragma region Communication
 
@@ -129,9 +129,7 @@
 
 #pragma endregion
 
-#ifndef UPDATE_RATE
-#define UPDATE_RATE 90
-#endif
+#pragma region FFB
 
 #define FFB_THUMB_ENABLED (defined(PIN_FFB_THUMB) && (PIN_FFB_THUMB != -1))
 #define FFB_INDEX_ENABLED (defined(PIN_FFB_INDEX) && (PIN_FFB_INDEX != -1))
@@ -141,3 +139,9 @@
 
 #define FFB_ENABLED \
     (FFB_THUMB_ENABLED || FFB_INDEX_ENABLED || FFB_MIDDLE_ENABLED || FFB_RING_ENABLED || FFB_PINKY_ENABLED)
+
+#pragma endregion
+
+#ifndef UPDATE_RATE
+#define UPDATE_RATE 90
+#endif

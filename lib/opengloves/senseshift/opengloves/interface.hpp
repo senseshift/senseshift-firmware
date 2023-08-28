@@ -12,7 +12,7 @@ namespace SenseShift::OpenGloves {
     static const AnalogSensorValue_t ANALOG_SENSOR_VALUE_MAX = 0xFFFF;
 
     typedef uint16_t JointIndex_t;
-    typedef enum class Joint : JointIndex_t {
+    enum class Joint : JointIndex_t {
         ThumbCurl,
         ThumbSplay,
         ThumbMCP_Curl,
@@ -41,20 +41,20 @@ namespace SenseShift::OpenGloves {
         LittleMCP_Curl,
         LittlePIP_Curl,
         LittleDIP_Curl,
-    } Joint_t;
-    typedef std::tuple<Joint_t, AnalogSensorValue_t> JointCommand_t;
+    };
+    typedef std::tuple<Joint, AnalogSensorValue_t> JointCommand_t;
 
     typedef uint16_t AnalogSensorTypeIndex_t;
-    typedef enum class AnalogSensorType : AnalogSensorTypeIndex_t {
+    enum class AnalogSensorType : AnalogSensorTypeIndex_t {
         JoystickX,
         JoystickY,
 
         Trigger,
-    } AnalogSensorType_t;
-    typedef std::tuple<AnalogSensorType_t, AnalogSensorValue_t> AnalogSensorCommand_t;
+    };
+    typedef std::tuple<AnalogSensorType, AnalogSensorValue_t> AnalogSensorCommand_t;
 
     typedef uint16_t DigitalSensorTypeIndex_t;
-    typedef enum class DigitalSensorType : DigitalSensorTypeIndex_t {
+    enum class DigitalSensorType : DigitalSensorTypeIndex_t {
         JoystickButton,
 
         ButtonA,
@@ -65,11 +65,23 @@ namespace SenseShift::OpenGloves {
         GestureTrigger,
         GestureGrab,
         GesturePinch,
-    } DigitalSensorType_t;
+    };
 
-    typedef std::variant<Joint_t, AnalogSensorType_t, DigitalSensorType_t> Sensor_t;
+    typedef std::variant<Joint, AnalogSensorType, DigitalSensorType> Sensor_t;
 
-    typedef std::variant<JointCommand_t, AnalogSensorCommand_t, DigitalSensorType_t> Command_t;
+    typedef std::variant<JointCommand_t, AnalogSensorCommand_t, DigitalSensorType> Command_t;
 
     typedef std::function<Command_t> CommandCallback_t;
+
+    class ITransport {
+      public:
+        virtual void setup() = 0;
+        virtual size_t send(char* buffer, size_t length) = 0;
+        virtual bool hasData() = 0;
+        virtual size_t read(char* buffer, size_t length) = 0;
+    };
+    struct ISerializer {
+        virtual std::string serialize(const std::vector<Command_t>& commands) const = 0;
+        virtual std::vector<Command_t> deserialize(const std::string& buffer) const = 0;
+    };
 } // namespace SenseShift::OpenGloves

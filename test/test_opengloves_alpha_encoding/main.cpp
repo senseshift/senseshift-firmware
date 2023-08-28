@@ -90,8 +90,9 @@ void testDecode(void)
         },
     };
 
+    auto encoder = AlphaEncodingService();
     for (auto& [input_string, expected_commands] : input_strings) {
-        auto commands = AlphaEncodingService::decode(input_string);
+        auto commands = encoder.deserialize(input_string);
 
         TEST_ASSERT_EQUAL_MESSAGE(
           expected_commands.size(),
@@ -171,13 +172,49 @@ void testEncode(void)
         },
     };
 
+    auto encoder = AlphaEncodingService();
     for (auto& [expected_string, commands] : expectations) {
-        auto actual_string = AlphaEncodingService::encode(commands);
+        auto actual_string = encoder.serialize(commands);
         TEST_ASSERT_EQUAL_STRING_MESSAGE(
           expected_string.c_str(),
           actual_string.c_str(),
           "Encoded string does not match expected string"
         );
+    }
+}
+
+void testTwoWay(void)
+{
+    auto encoder = AlphaEncodingService();
+
+    std::vector<std::vector<Command_t>> expectations = {
+        {
+          std::make_pair(Joint::ThumbCurl, 2048),
+        },
+        {
+          std::make_pair(Joint::ThumbCurl, 10),
+          std::make_pair(Joint::IndexCurl, 20),
+          std::make_pair(Joint::MiddleCurl, 30),
+          std::make_pair(Joint::RingCurl, 40),
+          std::make_pair(Joint::LittleCurl, 50),
+        },
+    };
+
+    for (auto& commands : expectations) {
+        auto encoded_string = encoder.serialize(commands);
+        auto decoded_commands = encoder.deserialize(encoded_string);
+
+        TEST_ASSERT_EQUAL_MESSAGE(
+          commands.size(),
+          decoded_commands.size(),
+          "Expected commands size does not match actual commands size"
+        );
+
+        for (auto& command : commands) {
+            // find the command in the actual commands
+            auto it = std::find(decoded_commands.begin(), decoded_commands.end(), command);
+            TEST_ASSERT_MESSAGE(it != decoded_commands.end(), "Command not found in actual commands");
+        }
     }
 }
 
@@ -187,6 +224,7 @@ int process(void)
 
     RUN_TEST(testDecode);
     RUN_TEST(testEncode);
+    RUN_TEST(testTwoWay);
 
     return UNITY_END();
 }

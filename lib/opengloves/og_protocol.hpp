@@ -48,32 +48,4 @@ namespace OpenGloves {
         virtual void setup() = 0;
         virtual void updateValue() = 0;
     };
-
-    class ICommunication {
-      public:
-        virtual void setup() = 0;
-        virtual void send(std::vector<IStringEncodedMemoizedSensor*>& sensors) = 0;
-        virtual bool hasData() = 0;
-        virtual size_t readCommand(char* buffer, size_t length) = 0;
-    };
-
-    typedef uint16_t CommandIndex_t;
-    typedef enum Command : CommandIndex_t {
-        ThumbCurl,
-        ThumbSplay,
-
-        IndexCurl,
-        IndexSplay,
-
-        MiddleCurl,
-        MiddleSplay,
-
-        RingCurl,
-        RingSplay,
-
-        PinkyCurl,
-        PinkySplay,
-    } Command;
-
-    typedef std::function<void(Command, uint16_t)> CommandCallback;
 } // namespace OpenGloves
