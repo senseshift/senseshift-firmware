@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <iterator>
-#include <senseshift/logging.hpp>
+#include <type_traits>
 
 namespace SenseShift {
     /**
@@ -17,6 +17,12 @@ namespace SenseShift {
         return std::find(std::begin(c), std::end(c), val) != std::end(c);
     };
 
+    template<>
+    inline bool contains<std::string&, char>(std::string& s, char val)
+    {
+        return s.find(val) != std::string::npos;
+    };
+
     template<typename _Tp>
     inline bool contains(_Tp* begin, _Tp* end, const _Tp& val)
     {
@@ -26,26 +32,10 @@ namespace SenseShift {
     template<typename _Tp>
     constexpr inline bool contains(const _Tp* arr, const std::size_t size, const _Tp& val)
     {
+        static_assert(
+          std::is_same<_Tp, typename std::iterator_traits<_Tp*>::value_type>::value,
+          "Container and value must be of the same type"
+        );
         return std::find(arr, arr + size, val) != arr + size;
     };
-
-    template<typename _Tp>
-    constexpr _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max)
-    {
-        const _Tp run = in_max - in_min;
-        if (run == 0) {
-            log_e("map(): Invalid input range, min == max");
-            return (out_min + out_max) / 2;
-        }
-        const _Tp rise = out_max - out_min;
-        const _Tp delta = x - in_min;
-        return (delta * rise) / run + out_min;
-    }
-
-    // Same as the above, but both mins are 0.
-    template<typename _Tp>
-    constexpr inline _Tp simpleMap(_Tp x, _Tp in_max, _Tp out_max)
-    {
-        return x * out_max / in_max;
-    }
 } // namespace SenseShift

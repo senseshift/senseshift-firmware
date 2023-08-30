@@ -13,7 +13,8 @@ namespace SenseShift::Arduino::Battery {
       public:
         INA219_Battery(Adafruit_INA219* sensor) : sensor(sensor){};
 
-        void setup() override { this->active = this->sensor->begin(); }
+        void init() override { this->active = this->sensor->begin(); }
+
         ::SenseShift::Battery::BatteryState getValue() override
         {
             if (!this->active) {

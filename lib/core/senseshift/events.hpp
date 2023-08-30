@@ -6,6 +6,10 @@
 #define OH_EVENT_CONNECTED "connected"
 #define OH_EVENT_DISCONNECTED "disconnected"
 
+// TODO: Use ETL
+// https://www.etlcpp.com/observer.html
+// https://www.etlcpp.com/messages.html
+
 namespace SenseShift {
     enum Event {
 

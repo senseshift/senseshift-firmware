@@ -3,7 +3,9 @@
 #if defined(ESP32)
 
 #include <esp32-hal-log.h>
+
 #elif defined(UNITY_INCLUDE_PRINT_FORMATTED)
+
 #define log_e(...) TEST_PRINTF(__VA_ARGS__)
 #define log_w(...) TEST_PRINTF(__VA_ARGS__)
 #define log_i(...) TEST_PRINTF(__VA_ARGS__)

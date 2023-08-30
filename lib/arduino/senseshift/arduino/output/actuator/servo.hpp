@@ -6,11 +6,11 @@
 #include <ESP32Servo.h>
 
 namespace SenseShift::Arduino::Output {
-    class ServoActuator : public ::SenseShift::Output::IActuator<std::uint16_t> {
+    class ActuatorServo : public ::SenseShift::Output::IActuator<std::uint16_t> {
       public:
         static inline constexpr const std::uint16_t MAX_INTENSITY = 4095;
 
-        ServoActuator(const uint8_t pin, const std::uint16_t min = 500, const std::uint16_t max = 2400) :
+        ActuatorServo(const uint8_t pin, const std::uint16_t min = 500, const std::uint16_t max = 2400) :
           pin(pin), min(min), max(max){};
 
         void setup() override

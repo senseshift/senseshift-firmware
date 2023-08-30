@@ -6,11 +6,11 @@
 #include <Arduino.h>
 
 namespace SenseShift::Arduino::Output {
-    class PWMOutputWriter : public ::SenseShift::Output::IActuator<std::uint16_t> {
+    class ActuatorPWM : public ::SenseShift::Output::IActuator<std::uint16_t> {
       public:
         static inline constexpr const std::uint16_t MAX_INTENSITY = 4095;
 
-        PWMOutputWriter(const std::uint8_t pin, const double freq = 60, const std::uint8_t resolution = 12) :
+        ActuatorPWM(const std::uint8_t pin, const double freq = 60, const std::uint8_t resolution = 12) :
           pin(pin), freq(freq), resolution(resolution){};
 
         void setup() override

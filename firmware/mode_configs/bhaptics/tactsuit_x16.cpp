@@ -7,17 +7,16 @@
 #include "senseshift.h"
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/pwm.hpp>
+#include <senseshift/arduino/output/actuator/pwm.hpp>
 #include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/battery.hpp>
+#include <senseshift/freertos/input/sensor.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Battery;
 using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
@@ -38,14 +37,14 @@ void setupMode()
     // Configure PWM pins to their positions on the vest
     auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26) },
-      { new PWMOutputWriter(27), new PWMOutputWriter(14), new PWMOutputWriter(12), new PWMOutputWriter(13) },
+      { new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25), new ActuatorPWM(26) },
+      { new ActuatorPWM(27), new ActuatorPWM(14), new ActuatorPWM(12), new ActuatorPWM(13) },
       // clang-format on
     });
     auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PWMOutputWriter(19), new PWMOutputWriter(18), new PWMOutputWriter(5), new PWMOutputWriter(17) },
-      { new PWMOutputWriter(16), new PWMOutputWriter(4), new PWMOutputWriter(2), new PWMOutputWriter(15)  },
+      { new ActuatorPWM(19), new ActuatorPWM(18), new ActuatorPWM(5), new ActuatorPWM(17) },
+      { new ActuatorPWM(16), new ActuatorPWM(4), new ActuatorPWM(2), new ActuatorPWM(15)  },
       // clang-format on
     });
 

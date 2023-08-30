@@ -13,7 +13,7 @@ namespace SenseShift::Arduino::Battery {
          * @see
          * https://github.com/sparkfun/SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library/blob/main/examples/Example1_Simple/Example1_Simple.ino
          */
-        void setup() override
+        void init() override
         {
             // Set up the MAX17043 LiPo fuel gauge:
             this->active = this->gauge->begin();
@@ -35,7 +35,7 @@ namespace SenseShift::Arduino::Battery {
                 return { 0 };
             }
 
-            return { .level = this->gauge->getSOC() };
+            return { .level = simpleMap(this->gauge->getSOC(), 1.0f, 255.0f) };
         }
 
       private:

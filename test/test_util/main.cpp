@@ -76,6 +76,7 @@ int process(void)
     RUN_TEST(test_contains_container);
     RUN_TEST(test_contains_iterator);
     RUN_TEST(test_contains_string);
+
     RUN_TEST(test_accurate_map);
     RUN_TEST(test_simple_map);
 

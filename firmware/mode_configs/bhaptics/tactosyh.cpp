@@ -7,17 +7,16 @@
 #include "senseshift.h"
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/pwm.hpp>
+#include <senseshift/arduino/output/actuator/pwm.hpp>
 #include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/battery.hpp>
+#include <senseshift/freertos/input/sensor.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Battery;
 using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
@@ -34,9 +33,9 @@ void setupMode()
     // Configure PWM pins to their positions on the hands
     auto handOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PWMOutputWriter(32) },
-      { new PWMOutputWriter(33) },
-      { new PWMOutputWriter(25) }
+      { new ActuatorPWM(32) },
+      { new ActuatorPWM(33) },
+      { new ActuatorPWM(25) }
       // clang-format on
     });
 

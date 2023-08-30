@@ -7,18 +7,17 @@
 #include "senseshift.h"
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/pwm.hpp>
+#include <senseshift/arduino/output/actuator/pwm.hpp>
 #include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/battery.hpp>
+#include <senseshift/freertos/input/sensor.hpp>
 #include <senseshift/utility.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Battery;
 using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
@@ -40,12 +39,12 @@ void setupMode()
     addTactGloveActuators(
       app->getHapticBody(),
       handSide,
-      new PWMOutputWriter(32), // Thumb
-      new PWMOutputWriter(33), // Index
-      new PWMOutputWriter(25), // Middle
-      new PWMOutputWriter(26), // Ring
-      new PWMOutputWriter(27), // Little
-      new PWMOutputWriter(14)  // Wrist
+      new ActuatorPWM(32), // Thumb
+      new ActuatorPWM(33), // Index
+      new ActuatorPWM(25), // Middle
+      new ActuatorPWM(26), // Ring
+      new ActuatorPWM(27), // Little
+      new ActuatorPWM(14)  // Wrist
     );
 
     app->getHapticBody()->setup();

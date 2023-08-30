@@ -7,17 +7,16 @@
 #include "senseshift.h"
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/pca9685.hpp>
+#include <senseshift/arduino/output/actuator/pca9685.hpp>
 #include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/battery.hpp>
+#include <senseshift/freertos/input/sensor.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Battery;
 using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
@@ -43,14 +42,14 @@ void setupMode()
     // Assign the pins on the configured PCA9685 to positions on the vest
     auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3) },
-      { new PCA9685OutputWriter(pwm, 4), new PCA9685OutputWriter(pwm, 5), new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7) },
+      { new ActuatorPCA9685(pwm, 0), new ActuatorPCA9685(pwm, 1), new ActuatorPCA9685(pwm, 2), new ActuatorPCA9685(pwm, 3) },
+      { new ActuatorPCA9685(pwm, 4), new ActuatorPCA9685(pwm, 5), new ActuatorPCA9685(pwm, 6), new ActuatorPCA9685(pwm, 7) },
       // clang-format on
     });
     auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11) },
-      { new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15) },
+      { new ActuatorPCA9685(pwm, 8),  new ActuatorPCA9685(pwm, 9),  new ActuatorPCA9685(pwm, 10), new ActuatorPCA9685(pwm, 11) },
+      { new ActuatorPCA9685(pwm, 12), new ActuatorPCA9685(pwm, 13), new ActuatorPCA9685(pwm, 14), new ActuatorPCA9685(pwm, 15) },
       // clang-format on
     });
 
