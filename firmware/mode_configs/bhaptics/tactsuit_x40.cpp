@@ -7,18 +7,17 @@
 #include "senseshift.h"
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/pca9685.hpp>
-#include <senseshift/arduino/output/pwm.hpp>
+#include <senseshift/arduino/output/actuator/pca9685.hpp>
+#include <senseshift/arduino/output/actuator/pwm.hpp>
 #include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/battery.hpp>
+#include <senseshift/freertos/input/sensor.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Battery;
 using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
@@ -45,20 +44,20 @@ void setupMode()
     // vest
     auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PCA9685OutputWriter(pwm0, 0),  new PCA9685OutputWriter(pwm0, 1),  new PCA9685OutputWriter(pwm0, 2),  new PCA9685OutputWriter(pwm0, 3)  },
-      { new PCA9685OutputWriter(pwm0, 4),  new PCA9685OutputWriter(pwm0, 5),  new PCA9685OutputWriter(pwm0, 6),  new PCA9685OutputWriter(pwm0, 7)  },
-      { new PCA9685OutputWriter(pwm0, 8),  new PCA9685OutputWriter(pwm0, 9),  new PCA9685OutputWriter(pwm0, 10), new PCA9685OutputWriter(pwm0, 11) },
-      { new PCA9685OutputWriter(pwm0, 12), new PCA9685OutputWriter(pwm0, 13), new PCA9685OutputWriter(pwm0, 14), new PCA9685OutputWriter(pwm0, 15) },
-      { new PWMOutputWriter(32),           new PWMOutputWriter(33),           new PWMOutputWriter(25),           new PWMOutputWriter(26)           },
+      { new ActuatorPCA9685(pwm0, 0),  new ActuatorPCA9685(pwm0, 1),  new ActuatorPCA9685(pwm0, 2),  new ActuatorPCA9685(pwm0, 3)  },
+      { new ActuatorPCA9685(pwm0, 4),  new ActuatorPCA9685(pwm0, 5),  new ActuatorPCA9685(pwm0, 6),  new ActuatorPCA9685(pwm0, 7)  },
+      { new ActuatorPCA9685(pwm0, 8),  new ActuatorPCA9685(pwm0, 9),  new ActuatorPCA9685(pwm0, 10), new ActuatorPCA9685(pwm0, 11) },
+      { new ActuatorPCA9685(pwm0, 12), new ActuatorPCA9685(pwm0, 13), new ActuatorPCA9685(pwm0, 14), new ActuatorPCA9685(pwm0, 15) },
+      { new ActuatorPWM(32),           new ActuatorPWM(33),           new ActuatorPWM(25),           new ActuatorPWM(26)           },
       // clang-format on
     });
     auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
       // clang-format off
-      { new PCA9685OutputWriter(pwm1, 0),  new PCA9685OutputWriter(pwm1, 1),  new PCA9685OutputWriter(pwm1, 2),  new PCA9685OutputWriter(pwm1, 3)  },
-      { new PCA9685OutputWriter(pwm1, 4),  new PCA9685OutputWriter(pwm1, 5),  new PCA9685OutputWriter(pwm1, 6),  new PCA9685OutputWriter(pwm1, 7)  },
-      { new PCA9685OutputWriter(pwm1, 8),  new PCA9685OutputWriter(pwm1, 9),  new PCA9685OutputWriter(pwm1, 10), new PCA9685OutputWriter(pwm1, 11) },
-      { new PCA9685OutputWriter(pwm1, 12), new PCA9685OutputWriter(pwm1, 13), new PCA9685OutputWriter(pwm1, 14), new PCA9685OutputWriter(pwm1, 15) },
-      { new PWMOutputWriter(27),           new PWMOutputWriter(14),           new PWMOutputWriter(12),           new PWMOutputWriter(13)           },
+      { new ActuatorPCA9685(pwm1, 0),  new ActuatorPCA9685(pwm1, 1),  new ActuatorPCA9685(pwm1, 2),  new ActuatorPCA9685(pwm1, 3)  },
+      { new ActuatorPCA9685(pwm1, 4),  new ActuatorPCA9685(pwm1, 5),  new ActuatorPCA9685(pwm1, 6),  new ActuatorPCA9685(pwm1, 7)  },
+      { new ActuatorPCA9685(pwm1, 8),  new ActuatorPCA9685(pwm1, 9),  new ActuatorPCA9685(pwm1, 10), new ActuatorPCA9685(pwm1, 11) },
+      { new ActuatorPCA9685(pwm1, 12), new ActuatorPCA9685(pwm1, 13), new ActuatorPCA9685(pwm1, 14), new ActuatorPCA9685(pwm1, 15) },
+      { new ActuatorPWM(27),           new ActuatorPWM(14),           new ActuatorPWM(12),           new ActuatorPWM(13)           },
       // clang-format on
     });
 

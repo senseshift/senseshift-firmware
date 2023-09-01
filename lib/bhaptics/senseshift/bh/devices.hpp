@@ -1,7 +1,7 @@
 #pragma once
 
 #include <hand_interface.hpp>
-#include <haptic_body.hpp>
+#include <senseshift/body/haptics/body.hpp>
 
 #pragma region BH_DEVICE_TACTSUITX40
 

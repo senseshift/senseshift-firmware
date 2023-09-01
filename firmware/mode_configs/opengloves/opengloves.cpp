@@ -3,7 +3,7 @@
 #include <opengloves_task.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
-#include <senseshift/arduino/output/servo.hpp>
+#include <senseshift/arduino/output/actuator/servo.hpp>
 #include <senseshift/calibration.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/joystick.hpp>
@@ -298,23 +298,23 @@ OpenGlovesTrackingTask* trackingTask;
 #if FFB_ENABLED
 HandActuators handActuators = {
 #if FFB_THUMB_ENABLED
-    .thumb = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_THUMB),
+    .thumb = new SenseShift::Arduino::Output::ActuatorServo(PIN_FFB_THUMB),
 #endif
 
 #if FFB_INDEX_ENABLED
-    .index = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_INDEX),
+    .index = new SenseShift::Arduino::Output::ActuatorServo(PIN_FFB_INDEX),
 #endif
 
 #if FFB_MIDDLE_ENABLED
-    .middle = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_MIDDLE),
+    .middle = new SenseShift::Arduino::Output::ActuatorServo(PIN_FFB_MIDDLE),
 #endif
 
 #if FFB_RING_ENABLED
-    .ring = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_RING),
+    .ring = new SenseShift::Arduino::Output::ActuatorServo(PIN_FFB_RING),
 #endif
 
 #if FFB_PINKY_ENABLED
-    .pinky = new SenseShift::Arduino::Output::ServoActuator(PIN_FFB_PINKY),
+    .pinky = new SenseShift::Arduino::Output::ActuatorServo(PIN_FFB_PINKY),
 #endif
 };
 OpenGlovesForceFeedbackTask* ffbTask;

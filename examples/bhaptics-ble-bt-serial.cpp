@@ -34,7 +34,7 @@ void setupMode()
     // Configure PWM pins to their positions on the face
     auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      {new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25), new ActuatorPWM(26), new ActuatorPWM(27), new ActuatorPWM(14)},
       // clang-format on
     });
 

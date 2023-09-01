@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstring>
-#include <haptic_body.hpp>
+#include <senseshift/body/haptics/body.hpp>
 
 namespace SenseShift::BH {
     class Decoder {

@@ -1,0 +1,3 @@
+[submodule "lib/frozen"]
+	path = lib/frozen
+	url = git@github.com:senseshift/frozen.git

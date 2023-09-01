@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <haptics_interface.hpp>
+#include <senseshift/body/haptics/interface.hpp>
 
 namespace SenseShift::Body {
     namespace Hands {
