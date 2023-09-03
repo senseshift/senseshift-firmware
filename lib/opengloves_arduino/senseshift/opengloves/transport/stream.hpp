@@ -65,11 +65,8 @@ namespace SenseShift::OpenGloves {
     };
 
     class BluetoothSerialTransport : public IStreamTransport {
-      private:
-        std::string name;
-
       public:
-        BluetoothSerialTransport(BluetoothSerial& channel, std::string name) : IStreamTransport(&channel), name(name){};
+        BluetoothSerialTransport(BluetoothSerial& channel) : IStreamTransport(&channel){};
 
         void setup() override
         {
@@ -77,8 +74,6 @@ namespace SenseShift::OpenGloves {
             if (serial->isReady()) {
                 return;
             }
-
-            serial->begin(name.c_str());
         }
 
         bool isReady() override
