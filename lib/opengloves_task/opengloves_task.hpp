@@ -213,7 +213,7 @@ namespace OpenGloves {
                 // Delay until the next update.
                 auto elapsed = millis() - now;
 
-                log_i(
+                log_d(
                   "Update took %d ms, theoretical max rate is %dHz (target is %dHz)",
                   elapsed,
                   1000 / elapsed,

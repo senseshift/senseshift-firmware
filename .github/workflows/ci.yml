@@ -16,7 +16,7 @@ on:
 
 jobs:
   build-bhaptics:
-    name: Build ${{ matrix.target }} on ${{ matrix.os }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.serial_plotter_flag }} -D ${{ matrix.nimble_flag }}
+    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.serial_plotter_flag }} -D ${{ matrix.nimble_flag }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -135,7 +135,8 @@ jobs:
       - name: Change memory segments
         if: matrix.coverage
         run: |
-          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 289888/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+          sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
       - name: Build
         run: |
@@ -159,6 +160,7 @@ jobs:
           retention-days: 1
 
   build-opengloves:
+    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.comm_flag }} -D ${{ matrix.curl_calibration_flag }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -192,6 +194,10 @@ jobs:
           - os: ubuntu-latest
             target: indexer-csf
             comm_flag: COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BTSERIAL
+            coverage: true
+          - os: ubuntu-latest
+            target: indexer-csf
+            comm_flag: COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BLESERIAL
             coverage: true
 
     steps:
@@ -269,14 +275,23 @@ jobs:
       - name: Change memory segments
         if: matrix.coverage
         run: |
-          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 289888/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+          sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
       - name: Build
+        if: matrix.coverage == false
         run: |
           echo "::group::platformio.ini"
           cat platformio.ini
           echo "::endgroup::"
           pio run --environment ${{matrix.target}}
+      - name: Build (debug)
+        if: matrix.coverage
+        run: |
+          echo "::group::platformio.ini"
+          cat platformio.ini
+          echo "::endgroup::"
+          pio debug --environment ${{matrix.target}}
 
       - name: Upload firmware Artifact
         if: matrix.coverage == false
@@ -420,6 +435,7 @@ jobs:
 
   wokwi:
     needs:
+      - build-bhaptics
       - build-opengloves
       - test
     runs-on: ubuntu-latest
