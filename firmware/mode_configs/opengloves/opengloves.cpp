@@ -1,5 +1,4 @@
 #include <og_constants.hpp>
-#include <og_serial_communication.hpp>
 #include <opengloves_task.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
@@ -7,6 +6,7 @@
 #include <senseshift/calibration.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/joystick.hpp>
+#include <senseshift/opengloves/transport/stream.hpp>
 #include <senseshift/utility.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
@@ -146,6 +146,7 @@
     (FFB_THUMB_ENABLED || FFB_INDEX_ENABLED || FFB_MIDDLE_ENABLED || FFB_RING_ENABLED || FFB_PINKY_ENABLED)
 
 using namespace OpenGloves;
+using namespace SenseShift::OpenGloves;
 
 HandSensors handSensors = {
 #if FINGER_THUMB_SPLAY
@@ -323,15 +324,16 @@ OpenGlovesForceFeedbackTask* ffbTask;
 void setupMode()
 {
 #if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL
-    auto* communication = new SerialCommunication(SERIAL_PORT, SERIAL_BAUDRATE);
+    SERIAL_PORT.begin(SERIAL_BAUDRATE);
+    auto* communication = new StreamTransport(SERIAL_PORT);
 #elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL
 #ifdef BTSERIAL_NAME
     std::string name = BTSERIAL_NAME;
 #else
     char suffix[4];
     sprintf(suffix, "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
-    log_i("Generated Bluetooth suffix: %s", suffix);
     std::string name = BTSERIAL_PREFIX + std::string(suffix);
+    log_i("Generated Bluetooth name: %s", name.c_str());
 #endif
     BluetoothSerial* bt_serial = new BluetoothSerial();
     auto* communication = new BTSerialCommunication(*bt_serial, name);

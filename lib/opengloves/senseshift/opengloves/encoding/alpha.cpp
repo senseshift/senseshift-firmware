@@ -1,7 +1,10 @@
-#include "og_alpha_encoding.hpp"
+#include "senseshift/opengloves/encoding/alpha.hpp"
 
-namespace OpenGloves {
-    std::map<Command, uint16_t> AlphaEncodingService::splitCommands(std::string input_string)
+#include <string.h>
+
+namespace SenseShift::OpenGloves {
+    const std::map<AlphaEncodingService::Command, uint16_t> AlphaEncodingService::deserialize(const std::string& input_string
+    ) const
     {
         std::map<Command, uint16_t> commands;
 
@@ -54,4 +57,24 @@ namespace OpenGloves {
         Command command = it->second;
         commands[command] = number;
     }
-} // namespace OpenGloves
+
+    const std::string AlphaEncodingService::serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors
+    )
+    {
+        memset(this->writeBuffer, 0, 256);
+        this->writeBuffer[0] = '\0';
+
+        size_t offset = 0;
+
+        for (size_t i = 0; i < sensors.size(); i++) {
+            // The offset is the total charecters already added to the string.
+            offset += sensors[i]->encodeString(this->writeBuffer + offset);
+        }
+
+        // Add a newline and terminator to the end of the encoded string.
+        this->writeBuffer[offset++] = '\n';
+        this->writeBuffer[offset] = '\0';
+
+        return std::string(this->writeBuffer, offset);
+    }
+} // namespace SenseShift::OpenGloves
