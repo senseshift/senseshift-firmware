@@ -163,7 +163,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         auto* pSerial = &SERIAL_PORT;
         pSerial->begin(SERIAL_BAUDRATE);
         return new StreamTransport(pSerial);
-#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL // Bluetooth Serial
+#elif (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL) || (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth Serial
         std::string name;
 #ifdef BTSERIAL_NAME
         name = BTSERIAL_NAME;
@@ -174,9 +174,16 @@ namespace SenseShift::OpenGloves::AutoConfig {
 
         log_i("Generated Bluetooth name: %s", name.c_str());
 #endif
+
+#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL // Bluetooth Classic
         BluetoothSerial* pBtSerial = new BluetoothSerial();
         pBtSerial->begin(name.c_str());
         return new BluetoothSerialTransport(*pBtSerial);
+#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BLESERIAL // Bluetooth Low Energy
+        BLESerial* pBleSerial = new BLESerial();
+        pBleSerial->begin(name.c_str());
+        return new BLESerialTransport(*pBleSerial);
+#endif
 #else // Fallback
 #error "Unsupported communication type"
         return nullptr;

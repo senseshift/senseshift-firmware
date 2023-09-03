@@ -1,6 +1,7 @@
 #pragma once
 
 #include <BluetoothSerial.h>
+#include <BLESerial.hpp>
 #include <HardwareSerial.h>
 #include <Print.h>
 #include <WiFi.h>
@@ -25,7 +26,7 @@ namespace SenseShift::OpenGloves {
                 return 0;
             }
 
-            const auto written = this->channel->write(buffer);
+            const auto written = this->channel->write(buffer, length);
             this->channel->flush();
 
             return written;
@@ -68,18 +69,31 @@ namespace SenseShift::OpenGloves {
       public:
         BluetoothSerialTransport(BluetoothSerial& channel) : IStreamTransport(&channel){};
 
-        void setup() override
-        {
-            auto* serial = static_cast<BluetoothSerial*>(this->channel);
-            if (serial->isReady()) {
-                return;
-            }
-        }
-
         bool isReady() override
         {
             auto* serial = static_cast<BluetoothSerial*>(this->channel);
             return serial->isReady() && serial->hasClient();
+        }
+
+        virtual size_t send(const char* buffer, size_t length) override
+        {
+            auto written = this->channel->write(buffer, length);
+
+            // TODO: This is a hack to ensure the data is sent
+            delay(2);
+
+            return written;
+        }
+    };
+
+    class BLESerialTransport : public IStreamTransport {
+      public:
+        BLESerialTransport(BLESerial& channel) : IStreamTransport(&channel){};
+
+        bool isReady() override
+        {
+            auto* serial = static_cast<BLESerial*>(this->channel);
+            return serial->connected();
         }
     };
 

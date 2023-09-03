@@ -62,6 +62,9 @@ getOpenGlovesName() {
     elif [[ $flags =~ OPENGLOVES_COMM_BTSERIAL ]]; then
         echo "::debug::Bluetooth Serial is enabled, appending +bluetooth to the target"
         target="$target+bluetooth"
+    elif [[ $flags =~ OPENGLOVES_COMM_BLESERIAL ]]; then
+        echo "::debug::BLE Serial is enabled, appending +ble to the target"
+        target="$target+ble"
     fi
 
     for flag in "${@:2}"; do

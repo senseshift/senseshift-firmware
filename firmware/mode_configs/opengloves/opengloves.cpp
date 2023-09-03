@@ -206,22 +206,21 @@ void setupMode()
         .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
       }
     );
-
-#if FFB_ENABLED
-    ffbTask = new OpenGlovesForceFeedbackTask(
-      *communication,
-      handActuators,
-      UPDATE_RATE,
-      {
-        .name = "OpenGlovesForceFeedbackTask",
-        .stackDepth = 8192,
-        .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
-      }
-    );
-    ffbTask->begin();
-#endif
-
     trackingTask->begin();
+
+// #if FFB_ENABLED
+//     ffbTask = new OpenGlovesForceFeedbackTask(
+//       *communication,
+//       handActuators,
+//       UPDATE_RATE,
+//       {
+//         .name = "OpenGlovesForceFeedbackTask",
+//         .stackDepth = 8192,
+//         .priority = OPENGLOVES_FINGERS_TASK_PRIORITY,
+//       }
+//     );
+//     ffbTask->begin();
+// #endif
 }
 
 void loopMode()
