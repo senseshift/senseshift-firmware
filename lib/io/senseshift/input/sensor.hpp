@@ -108,4 +108,30 @@ namespace SenseShift::Input {
             return this->calibrator->calibrate(value);
         }
     };
+
+    template <typename _Tp>
+    class AverageSensor : public ISimpleSensor<_Tp>
+    {
+        static_assert(std::is_arithmetic<_Tp>::value, "AverageSensor only supports arithmetic types");
+
+      public:
+        AverageSensor(ISimpleSensor<_Tp>* sensor, size_t samples) : sensor(sensor), samples(samples){ }
+
+        void init() override { this->sensor->init(); };
+
+        _Tp getValue() override
+        {
+            // TODO: another type for sum?
+            double sum = 0;
+            for (size_t i = 0; i < this->samples; i++) {
+                sum += this->sensor->getValue();
+            }
+
+            return sum / this->samples;
+        }
+
+      private:
+        ISimpleSensor<_Tp>* sensor;
+        size_t samples;
+    };
 } // namespace SenseShift::Input
