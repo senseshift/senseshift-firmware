@@ -3,8 +3,8 @@
 #include <string.h>
 
 namespace SenseShift::OpenGloves {
-    const std::map<AlphaEncodingService::Command, uint16_t> AlphaEncodingService::deserialize(const std::string& input_string
-    ) const
+    const std::map<AlphaEncodingService::Command, uint16_t>
+      AlphaEncodingService::deserialize(const std::string& input_string) const
     {
         std::map<Command, uint16_t> commands;
 
@@ -58,8 +58,8 @@ namespace SenseShift::OpenGloves {
         commands[command] = number;
     }
 
-    const std::string AlphaEncodingService::serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors
-    )
+    const std::string
+      AlphaEncodingService::serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors)
     {
         memset(this->writeBuffer, 0, 256);
         this->writeBuffer[0] = '\0';

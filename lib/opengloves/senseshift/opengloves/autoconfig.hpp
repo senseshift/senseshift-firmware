@@ -75,10 +75,10 @@
         new curl_calib()                                                                                  \
       ),                                                                                                  \
       new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                                          \
-        new ::SenseShift::Input::AverageSensor<uint16_t>( \
-          new ::SenseShift::Arduino::Input::AnalogSensor<splay_invert>(splay_pin), \
-          5 \
-        ),                          \
+        new ::SenseShift::Input::AverageSensor<uint16_t>(                                                 \
+          new ::SenseShift::Arduino::Input::AnalogSensor<splay_invert>(splay_pin),                        \
+          5                                                                                               \
+        ),                                                                                                \
         new splay_calib()                                                                                 \
       ),                                                                                                  \
       type                                                                                                \
@@ -91,16 +91,16 @@
 #define JOYSTICK_ENABLED \
     (defined(PIN_JOYSTICK_X) && defined(PIN_JOYSTICK_Y) && (PIN_JOYSTICK_X != -1) && (PIN_JOYSTICK_Y != -1))
 
-#define JOYSTICK_CLASS(type, pin, invert, deadzone)                  \
-    StringEncodedMemoizedSensor<uint16_t>(                           \
-      new ::SenseShift::Input::JoystickAxisSensor<uint16_t>(         \
-        new ::SenseShift::Input::AverageSensor<uint16_t>(                \
-            new ::SenseShift::Arduino::Input::AnalogSensor<invert>(pin), \
-            5                                                            \
-        ),                                                               \
-        deadzone                                                     \
-      ),                                                             \
-      type                                                           \
+#define JOYSTICK_CLASS(type, pin, invert, deadzone)                    \
+    StringEncodedMemoizedSensor<uint16_t>(                             \
+      new ::SenseShift::Input::JoystickAxisSensor<uint16_t>(           \
+        new ::SenseShift::Input::AverageSensor<uint16_t>(              \
+          new ::SenseShift::Arduino::Input::AnalogSensor<invert>(pin), \
+          5                                                            \
+        ),                                                             \
+        deadzone                                                       \
+      ),                                                               \
+      type                                                             \
     )
 
 #pragma endregion
@@ -163,7 +163,8 @@ namespace SenseShift::OpenGloves::AutoConfig {
         auto* pSerial = &SERIAL_PORT;
         pSerial->begin(SERIAL_BAUDRATE);
         return new StreamTransport(pSerial);
-#elif (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL) || (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth Serial
+#elif (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL) \
+  || (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth Serial
         std::string name;
 #ifdef BTSERIAL_NAME
         name = BTSERIAL_NAME;
@@ -175,7 +176,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         log_i("Generated Bluetooth name: %s", name.c_str());
 #endif
 
-#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL // Bluetooth Classic
+#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL    // Bluetooth Classic
         BluetoothSerial* pBtSerial = new BluetoothSerial();
         pBtSerial->begin(name.c_str());
         return new BluetoothSerialTransport(*pBtSerial);

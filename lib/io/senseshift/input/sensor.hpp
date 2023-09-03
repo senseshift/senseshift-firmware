@@ -109,13 +109,12 @@ namespace SenseShift::Input {
         }
     };
 
-    template <typename _Tp>
-    class AverageSensor : public ISimpleSensor<_Tp>
-    {
+    template<typename _Tp>
+    class AverageSensor : public ISimpleSensor<_Tp> {
         static_assert(std::is_arithmetic<_Tp>::value, "AverageSensor only supports arithmetic types");
 
       public:
-        AverageSensor(ISimpleSensor<_Tp>* sensor, size_t samples) : sensor(sensor), samples(samples){ }
+        AverageSensor(ISimpleSensor<_Tp>* sensor, size_t samples) : sensor(sensor), samples(samples) {}
 
         void init() override { this->sensor->init(); };
 

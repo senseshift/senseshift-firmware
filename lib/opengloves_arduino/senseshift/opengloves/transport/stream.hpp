@@ -1,7 +1,7 @@
 #pragma once
 
-#include <BluetoothSerial.h>
 #include <BLESerial.hpp>
+#include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 #include <Print.h>
 #include <WiFi.h>

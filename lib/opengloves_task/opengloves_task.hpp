@@ -213,7 +213,12 @@ namespace OpenGloves {
                 // Delay until the next update.
                 auto elapsed = millis() - now;
 
-                log_i("Update took %d ms, theoretical max rate is %dHz (target is %dHz)", elapsed, 1000 / elapsed, 1000 / this->config.updateIntervalMs);
+                log_i(
+                  "Update took %d ms, theoretical max rate is %dHz (target is %dHz)",
+                  elapsed,
+                  1000 / elapsed,
+                  1000 / this->config.updateIntervalMs
+                );
 
                 if (elapsed < this->config.updateIntervalMs) {
                     delay(this->config.updateIntervalMs - elapsed);
