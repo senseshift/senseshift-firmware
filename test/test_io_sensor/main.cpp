@@ -5,10 +5,8 @@ using namespace SenseShift::Input;
 using namespace SenseShift::Calibration;
 
 class TestAnalogSensor : public ISimpleSensor<int> {
-  private:
-    int count = 0;
-
   public:
+    int count = 0;
     int setupCounter = 0;
 
     void init() override { this->setupCounter++; };
@@ -72,12 +70,52 @@ void test_calibrated_sensor(void)
     TEST_ASSERT_EQUAL_INT(1, calibrator->resetCounter);
 }
 
+void test_average_sensor(void)
+{
+    auto inner = new TestAnalogSensor();
+    auto sensor = new AverageSensor<int>(inner, 3);
+
+    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+    sensor->init();
+    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+    // TODO: mock inner sensor, to return more interesting values
+    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());  // (1 + 2 + 3) / 3 = 2
+    TEST_ASSERT_EQUAL_INT(5, sensor->getValue());  // (4 + 5 + 6) / 3 = 5
+    TEST_ASSERT_EQUAL_INT(8, sensor->getValue());  // (7 + 8 + 9) / 3 = 8
+    TEST_ASSERT_EQUAL_INT(11, sensor->getValue()); // (10 + 11 + 12) / 3 = 11
+
+    inner->count = 0;
+    sensor = new AverageSensor<int>(inner, 10);
+
+    TEST_ASSERT_EQUAL_INT(5, sensor->getValue()); // (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10) / 10 = 5
+}
+
+void test_static_median_sensor(void)
+{
+    auto inner = new TestAnalogSensor();
+    auto sensor = new StaticMedianSensor<int, 3>(inner);
+
+    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+    sensor->init();
+    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+    // lmao, literally the same as average sensor
+    // TODO: mock inner sensor, to return more interesting values
+    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());  // (1, 2, 3) = 2
+    TEST_ASSERT_EQUAL_INT(5, sensor->getValue());  // (4, 5, 6) = 5
+    TEST_ASSERT_EQUAL_INT(8, sensor->getValue());  // (7, 8, 9) = 8
+    TEST_ASSERT_EQUAL_INT(11, sensor->getValue()); // (10, 11, 12) = 11
+}
+
 int process(void)
 {
     UNITY_BEGIN();
 
     RUN_TEST(test_memoized_sensor);
     RUN_TEST(test_calibrated_sensor);
+    RUN_TEST(test_average_sensor);
+    RUN_TEST(test_static_median_sensor);
 
     return UNITY_END();
 }

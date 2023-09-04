@@ -48,16 +48,15 @@
 #define FINGER_MIDDLE_ENABLED (defined(PIN_FINGER_MIDDLE) && (PIN_FINGER_MIDDLE != -1))
 #define FINGER_RING_ENABLED (defined(PIN_FINGER_RING) && (PIN_FINGER_RING != -1))
 #define FINGER_PINKY_ENABLED (defined(PIN_FINGER_PINKY) && (PIN_FINGER_PINKY != -1))
-#define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                    \
-    FingerSensor(                                                                \
-      new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                 \
-        new ::SenseShift::Input::AverageSensor<uint16_t>(                        \
-          new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin), \
-          5                                                                      \
-        ),                                                                       \
-        new curl_calib()                                                         \
-      ),                                                                         \
-      type                                                                       \
+#define FINGER_CLASS(type, curl_pin, curl_invert, curl_calib)                   \
+    FingerSensor(                                                               \
+      new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                \
+        new ::SenseShift::Input::StaticMedianSensor<uint16_t, 5>(               \
+          new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin) \
+        ),                                                                      \
+        new curl_calib()                                                        \
+      ),                                                                        \
+      type                                                                      \
     )
 #define FINGER_THUMB_SPLAY (FINGER_THUMB_ENABLED && defined(PIN_FINGER_THUMB_SPLAY) && (PIN_FINGER_THUMB_SPLAY != -1))
 #define FINGER_INDEX_SPLAY (FINGER_INDEX_ENABLED && defined(PIN_FINGER_INDEX_SPLAY) && (PIN_FINGER_INDEX_SPLAY != -1))
@@ -68,16 +67,14 @@
 #define FINGER_SPLAY_CLASS(type, curl_pin, curl_invert, curl_calib, splay_pin, splay_invert, splay_calib) \
     FingerSensor(                                                                                         \
       new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                                          \
-        new ::SenseShift::Input::AverageSensor<uint16_t>(                                                 \
-          new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin),                          \
-          5                                                                                               \
+        new ::SenseShift::Input::StaticMedianSensor<uint16_t, 5>(                                         \
+          new ::SenseShift::Arduino::Input::AnalogSensor<curl_invert>(curl_pin)                           \
         ),                                                                                                \
         new curl_calib()                                                                                  \
       ),                                                                                                  \
       new ::SenseShift::Input::CalibratedSimpleSensor<uint16_t>(                                          \
-        new ::SenseShift::Input::AverageSensor<uint16_t>(                                                 \
-          new ::SenseShift::Arduino::Input::AnalogSensor<splay_invert>(splay_pin),                        \
-          5                                                                                               \
+        new ::SenseShift::Input::StaticMedianSensor<uint16_t, 5>(                                         \
+          new ::SenseShift::Arduino::Input::AnalogSensor<splay_invert>(splay_pin)                         \
         ),                                                                                                \
         new splay_calib()                                                                                 \
       ),                                                                                                  \
@@ -91,16 +88,15 @@
 #define JOYSTICK_ENABLED \
     (defined(PIN_JOYSTICK_X) && defined(PIN_JOYSTICK_Y) && (PIN_JOYSTICK_X != -1) && (PIN_JOYSTICK_Y != -1))
 
-#define JOYSTICK_CLASS(type, pin, invert, deadzone)                    \
-    StringEncodedMemoizedSensor<uint16_t>(                             \
-      new ::SenseShift::Input::JoystickAxisSensor<uint16_t>(           \
-        new ::SenseShift::Input::AverageSensor<uint16_t>(              \
-          new ::SenseShift::Arduino::Input::AnalogSensor<invert>(pin), \
-          5                                                            \
-        ),                                                             \
-        deadzone                                                       \
-      ),                                                               \
-      type                                                             \
+#define JOYSTICK_CLASS(type, pin, invert, deadzone)                   \
+    StringEncodedMemoizedSensor<uint16_t>(                            \
+      new ::SenseShift::Input::JoystickAxisSensor<uint16_t>(          \
+        new ::SenseShift::Input::StaticMedianSensor<uint16_t, 5>(     \
+          new ::SenseShift::Arduino::Input::AnalogSensor<invert>(pin) \
+        ),                                                            \
+        deadzone                                                      \
+      ),                                                              \
+      type                                                            \
     )
 
 #pragma endregion
