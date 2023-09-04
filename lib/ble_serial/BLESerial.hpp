@@ -8,52 +8,12 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 
+#include <algorithm>
+
+#include <senseshift/buffer.hpp>
+
 #define BLESERIAL_ATTRIBUTE_MAX_VALUE_LENGTH 20
 #define BLESERIAL_RECEIVE_BUFFER_SIZE 256
-
-template<typename _Tp, size_t N>
-class ByteRingBuffer {
-  public:
-    using ValueType = _Tp;
-
-    void add(ValueType value)
-    {
-        ringBuffer[newestIndex] = value;
-        newestIndex = (newestIndex + 1) % N;
-        length = min(length + 1, N);
-    }
-
-    int pop()
-    { // pops the oldest value off the ring buffer
-        if (length == 0) {
-            return -1;
-        }
-        ValueType result = ringBuffer[(N + newestIndex - length) % N];
-        length -= 1;
-        return result;
-    }
-
-    void clear()
-    {
-        newestIndex = 0;
-        length = 0;
-    }
-
-    int get(size_t index)
-    { // this.get(0) is the oldest value, this.get(this.getLength() - 1) is the newest value
-        if (index < 0 || index >= length) {
-            return -1;
-        }
-        return ringBuffer[(N + newestIndex - length + index) % N];
-    }
-
-    size_t getLength() { return length; }
-
-  private:
-    ValueType ringBuffer[N];
-    size_t newestIndex = 0;
-    size_t length = 0;
-};
 
 class BLESerialCharacteristicCallbacks;
 class BLESerialServerCallbacks;
@@ -80,6 +40,20 @@ class BLESerial : public Stream {
         if (this->m_pTxCharacteristic == nullptr || !this->connected()) {
             return 0;
         }
+        // uint16_t mtu = BLEDevice::getMTU();
+        // uint16_t packetSize = mtu > 3 ? mtu - 3 : 20;
+
+        // chunk the buffer into packets
+        // for (size_t i = 0; i < bufferSize; i += packetSize) {
+        //     auto chunkSize = static_cast<uint16_t>(std::min(static_cast<size_t>(packetSize), bufferSize - i));
+        //     this->m_pTxCharacteristic->setValue(const_cast<uint8_t*>(buffer + i), chunkSize);
+        //     this->flush();
+
+        //     // delay if not last packet
+        //     if (i + chunkSize < bufferSize) {
+        //         delay(10);
+        //     }
+        // }
 
         this->m_pTxCharacteristic->setValue(const_cast<uint8_t*>(buffer), bufferSize);
         this->flush();
@@ -131,7 +105,7 @@ class BLESerial : public Stream {
         }
 
         log_d("Creating BLE characteristics with UUIDs '%s' (RX) and '%s' (TX)", rxUuid, txUuid);
-        auto pRxCharacteristic = pService->createCharacteristic(rxUuid, BLECharacteristic::PROPERTY_WRITE);
+        auto pRxCharacteristic = pService->createCharacteristic(rxUuid, BLECharacteristic::PROPERTY_WRITE_NR);
         auto pTxCharacteristic =
           pService->createCharacteristic(txUuid, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
 
@@ -153,7 +127,7 @@ class BLESerial : public Stream {
     BLESerial(BLESerial const& other) = delete;      // disable copy constructor
     void operator=(BLESerial const& other) = delete; // disable assign constructor
 
-    ByteRingBuffer<uint8_t, BLESERIAL_RECEIVE_BUFFER_SIZE> m_receiveBuffer;
+    SenseShift::RingBuffer<uint8_t, BLESERIAL_RECEIVE_BUFFER_SIZE> m_receiveBuffer;
 
     BLEServer* m_pServer;
     BLECharacteristic* m_pRxCharacteristic;
