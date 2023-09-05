@@ -1,0 +1,34 @@
+{
+	// "name": "SenseShift",
+	"dockerFile": "Dockerfile",
+	"runArgs": [
+		"--privileged"
+	],
+	"forwardPorts": [
+		8008
+	],
+	"mounts": [
+		"source=/dev/,target=/dev/,type=bind,consistency=consistent"
+	],
+	"postAttachCommand": "sudo service udev restart",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"editor.formatOnSave": true,
+				"platformio-ide.useBuiltinPIOCore": false,
+				"platformio-ide.useBuiltinPython": false,
+				"platformio-ide.disablePIOHomeStartup": true,
+				"platformio-ide.pioHomeServerHttpPort": 8008
+			},
+			"extensions": [
+				"ms-vscode.cpptools",
+				"platformio.platformio-ide",
+				"xaver.clang-format",
+				"GitHub.copilot",
+				"GitHub.copilot-labs",
+				"GitHub.copilot-chat"
+			]
+		}
+	}
+}
