@@ -46,3 +46,6 @@ USER $USERNAME
 
 RUN python -m pip install --upgrade pip \
     && pip install --upgrade platformio
+
+RUN sudo wget -O /usr/local/bin/wokwi-cli https://github.com/wokwi/wokwi-cli/releases/latest/download/wokwi-cli-linuxstatic-x64 \
+    && sudo chmod +x /usr/local/bin/wokwi-cli

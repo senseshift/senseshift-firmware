@@ -1,0 +1,76 @@
+name: Test LucidGloves Prototype 3
+version: 1
+author: Leonid Meleshin
+
+steps:
+  - wait-serial: "A0B0C0D0E0F2047G2047"
+
+  # Press the 'A' button
+  - set-control:
+      part-id: btn1
+      control: pressed
+      value: 1
+  - wait-serial: 'A0B0C0D0E0F2047G2047J'
+
+  # Press the 'B' button
+  - set-control:
+      part-id: btn2
+      control: pressed
+      value: 1
+  - wait-serial: 'A0B0C0D0E0F2047G2047JK'
+
+  # Release the 'A' button
+  - set-control:
+      part-id: btn1
+      control: pressed
+      value: 0
+  - wait-serial: 'A0B0C0D0E0F2047G2047K'
+
+  # Release the 'B' button
+  - set-control:
+      part-id: btn2
+      control: pressed
+      value: 0
+  - wait-serial: 'A0B0C0D0E0F2047G2047'
+
+  # Curl Index finger
+  - set-control:
+      part-id: pot-index
+      control: position
+      value: 1
+  - wait-serial: 'A0B4095C0D0E0F2047G2047I' # I is for Trigger gesture
+
+  # Curl Thumb finger
+  - set-control:
+      part-id: pot-thumb
+      control: position
+      value: 1
+  - wait-serial: 'A4095B4095C0D0E0F2047G2047IM' # M is for Pinch gesture
+
+  # Curl Middle finger
+  - set-control:
+      part-id: pot-middle
+      control: position
+      value: 1
+  - wait-serial: 'A4095B4095C4095D0E0F2047G2047IM'
+
+  # Curl Ring finger
+  - set-control:
+      part-id: pot-ring
+      control: position
+      value: 1
+  - wait-serial: 'A4095B4095C4095D4095E0F2047G2047IM'
+
+  # Curl Pinky finger
+  - set-control:
+      part-id: pot-pinky
+      control: position
+      value: 1
+  - wait-serial: 'A4095B4095C4095D4095E4095F2047G2047ILM' # L is for the Grab gesture
+
+  # Release Thumb finger
+  - set-control:
+      part-id: pot-thumb
+      control: position
+      value: 0
+  - wait-serial: 'A0B4095C4095D4095E4095F2047G2047IL'

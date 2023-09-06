@@ -1,0 +1,314 @@
+{
+    "version": 1,
+    "author": "Leonid Meleshin",
+    "editor": "wokwi",
+    "parts": [
+        {
+            "type": "wokwi-esp32-devkit-v1",
+            "id": "esp",
+            "top": 110.3,
+            "left": 523,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-thumb",
+            "top": -87.7,
+            "left": -278.6,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-index",
+            "top": -87.7,
+            "left": -192.2,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-middle",
+            "top": -87.7,
+            "left": -105.8,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-ring",
+            "top": -87.7,
+            "left": -19.4,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-pinky",
+            "top": -87.7,
+            "left": 67,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-analog-joystick",
+            "id": "joystick1",
+            "top": -135,
+            "left": 149.4,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-pushbutton",
+            "id": "btn1",
+            "top": 6.2,
+            "left": 268.8,
+            "attrs": {
+                "color": "green",
+                "key": "a",
+                "bounce": "1",
+                "label": "A"
+            }
+        },
+        {
+            "type": "wokwi-pushbutton",
+            "id": "btn2",
+            "top": 6.2,
+            "left": 355.2,
+            "attrs": {
+                "color": "green",
+                "key": "b",
+                "bounce": "1",
+                "label": "B"
+            }
+        },
+        {
+            "type": "wokwi-gnd",
+            "id": "gnd1",
+            "top": 307.2,
+            "left": 729,
+            "attrs": {}
+        }
+    ],
+    "connections": [
+        [
+            "esp:TX0",
+            "$serialMonitor:RX",
+            "",
+            []
+        ],
+        [
+            "esp:RX0",
+            "$serialMonitor:TX",
+            "",
+            []
+        ],
+        [
+            "pot-thumb:VCC",
+            "pot-index:VCC",
+            "red",
+            [
+                "v28.8",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-index:VCC",
+            "pot-middle:VCC",
+            "red",
+            [
+                "v28.8",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-middle:VCC",
+            "pot-ring:VCC",
+            "red",
+            [
+                "v28.8",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-thumb:GND",
+            "pot-index:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-index:GND",
+            "pot-middle:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-middle:GND",
+            "pot-ring:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-ring:GND",
+            "pot-pinky:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "esp:VP",
+            "pot-pinky:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:VN",
+            "pot-ring:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D34",
+            "pot-middle:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D35",
+            "pot-index:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D32",
+            "pot-thumb:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "joystick1:GND",
+            "pot-pinky:GND",
+            "black",
+            [
+                "v38.4",
+                "h-124.8"
+            ]
+        ],
+        [
+            "esp:D33",
+            "joystick1:HORZ",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D25",
+            "joystick1:VERT",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D26",
+            "joystick1:SEL",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:GND.2",
+            "joystick1:GND",
+            "black",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:VIN",
+            "joystick1:VCC",
+            "red",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "pot-ring:VCC",
+            "pot-pinky:VCC",
+            "red",
+            [
+                "v28.8",
+                "h37.6"
+            ]
+        ],
+        [
+            "joystick1:VCC",
+            "pot-pinky:VCC",
+            "red",
+            [
+                "v28.8",
+                "h-38.4"
+            ]
+        ],
+        [
+            "btn1:2.r",
+            "esp:D27",
+            "green",
+            [
+                "h0.2",
+                "v249.8"
+            ]
+        ],
+        [
+            "btn2:2.r",
+            "esp:D14",
+            "green",
+            [
+                "h0.2",
+                "v259.4"
+            ]
+        ],
+        [
+            "btn1:1.r",
+            "btn2:1.l",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "joystick1:GND",
+            "btn1:1.l",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "esp:GND.1",
+            "gnd1:GND",
+            "black",
+            [
+                "h0"
+            ]
+        ]
+    ],
+    "dependencies": {}
+}

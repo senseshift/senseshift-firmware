@@ -10,7 +10,10 @@
 	"mounts": [
 		"source=/dev/,target=/dev/,type=bind,consistency=consistent"
 	],
-	"postAttachCommand": "sudo service udev restart",
+	"postAttachCommand": {
+		"submodules": ["git", "submodule", "update", "--recursive", "--init"],
+		"udev": ["sudo", "service", "udev", "restart"]
+	},
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -24,6 +27,7 @@
 			"extensions": [
 				"ms-vscode.cpptools",
 				"platformio.platformio-ide",
+				"Wokwi.wokwi-vscode",
 				"xaver.clang-format",
 				"GitHub.copilot",
 				"GitHub.copilot-labs",
