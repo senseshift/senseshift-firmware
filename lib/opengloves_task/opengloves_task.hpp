@@ -197,8 +197,9 @@ namespace OpenGloves {
                 }
 
                 // Send the sensor values.
-                auto command = this->encodingService.serialize(this->allSensors);
-                this->communication.send(command.c_str(), command.size());
+                char command[256];
+                size_t length = this->encodingService.serialize(this->allSensors, command);
+                this->communication.send(command, length);
 
                 // Check if the calibration has finished.
                 if (!(this->config.alwaysCalibrate) && calibrationStarted > 0 && (now - calibrationStarted) > CALIBRATION_DURATION) {
@@ -297,9 +298,8 @@ namespace OpenGloves {
                         continue;
                     }
 
-                    command.assign(commandBuffer, bytesRead);
-
-                    auto commands = this->encodingService.deserialize(command);
+                    std::map<::OpenGloves::Command, uint16_t> commands = {};
+                    this->encodingService.deserialize(commandBuffer, bytesRead, commands);
 
                     for (auto& [command, value] : commands) {
                         this->handleCommand(command, value);

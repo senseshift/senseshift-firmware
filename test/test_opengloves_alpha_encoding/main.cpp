@@ -94,7 +94,8 @@ void testSplitCommands(void)
     auto encoding_service = AlphaEncodingService();
 
     for (auto& [input_string, expected_commands] : input_strings) {
-        std::map<Command, uint16_t> commands = encoding_service.deserialize(input_string);
+        std::map<Command, uint16_t> commands = {};
+        encoding_service.deserialize(input_string.c_str(), input_string.length(), commands);
 
         TEST_ASSERT_EQUAL_size_t_MESSAGE(
           expected_commands.size(),

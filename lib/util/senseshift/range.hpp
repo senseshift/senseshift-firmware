@@ -5,7 +5,7 @@
 
 namespace SenseShift {
     template<typename _Tp>
-    constexpr _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max)
+    constexpr _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max) noexcept
     {
         static_assert(std::is_arithmetic<_Tp>::value, "Type must be arithmetic");
 
@@ -21,7 +21,7 @@ namespace SenseShift {
 
     // Same as the above, but both mins are 0.
     template<typename _Tp>
-    constexpr inline _Tp simpleMap(_Tp x, _Tp in_max, _Tp out_max)
+    constexpr inline _Tp simpleMap(_Tp x, _Tp in_max, _Tp out_max) noexcept
     {
         static_assert(std::is_arithmetic<_Tp>::value, "Type must be arithmetic");
 

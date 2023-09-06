@@ -3,14 +3,33 @@
 #include <string.h>
 
 namespace SenseShift::OpenGloves {
-    const std::map<AlphaEncodingService::Command, uint16_t>
-      AlphaEncodingService::deserialize(const std::string& input_string) const
+    size_t AlphaEncodingService::serialize(
+      const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors, char* buffer
+    ) const
     {
-        std::map<Command, uint16_t> commands;
+        buffer[0] = '\0';
+        size_t offset = 0;
+
+        for (size_t i = 0; i < sensors.size(); i++) {
+            auto* sensor = sensors[i];
+            offset += sensor->encodeString(buffer + offset);
+        }
+
+        buffer[offset++] = '\n';
+        buffer[offset] = '\0';
+
+        return offset;
+    }
+
+    bool AlphaEncodingService::deserialize(
+      const char* buffer, const size_t length, std::map<::OpenGloves::Command, uint16_t>& commands
+    ) const
+    {
+        std::string input_string(buffer, length);
 
         size_t start = 0; // Start of the current command
-        for (size_t i = 0; i < input_string.size(); i++) {
-            char ch = input_string[i];
+        for (size_t i = 0; i < input_string.length(); i++) {
+            const char ch = input_string[i];
 
             // Start a new command if the character is non-numeric or an opening parenthesis
             // and previous character is a numeric character
@@ -22,7 +41,7 @@ namespace SenseShift::OpenGloves {
 
         AlphaEncodingService::splitCommand(input_string, start, input_string.size(), commands);
 
-        return commands;
+        return true;
     }
 
     void AlphaEncodingService::splitCommand(
@@ -56,25 +75,5 @@ namespace SenseShift::OpenGloves {
         // Look up the Command enum value for the prefix in the commandMap
         Command command = it->second;
         commands[command] = number;
-    }
-
-    const std::string
-      AlphaEncodingService::serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors)
-    {
-        memset(this->writeBuffer, 0, 256);
-        this->writeBuffer[0] = '\0';
-
-        size_t offset = 0;
-
-        for (size_t i = 0; i < sensors.size(); i++) {
-            // The offset is the total charecters already added to the string.
-            offset += sensors[i]->encodeString(this->writeBuffer + offset);
-        }
-
-        // Add a newline and terminator to the end of the encoded string.
-        this->writeBuffer[offset++] = '\n';
-        this->writeBuffer[offset] = '\0';
-
-        return std::string(this->writeBuffer, offset);
     }
 } // namespace SenseShift::OpenGloves

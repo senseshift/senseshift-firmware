@@ -15,6 +15,8 @@
 #include <senseshift/logging.hpp>
 #include <senseshift/opengloves/interface.hpp>
 
+#define SENSESHIFT_OPENGLOVES_ALPHA_ENCODING_BUFFER_SIZE 256
+
 namespace SenseShift::OpenGloves {
     class AlphaEncodingService : public IEncoding {
         using Command = ::OpenGloves::Command;
@@ -36,16 +38,16 @@ namespace SenseShift::OpenGloves {
           // clang-format on
         });
 
-        AlphaEncodingService() : writeBuffer(new char[256]){};
+        AlphaEncodingService(){};
 
-        virtual const std::map<Command, uint16_t> deserialize(const std::string& buffer) const override;
+        virtual size_t serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors, char* buffer)
+          const override;
 
-        virtual const std::string serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors
-        ) override;
+        virtual bool deserialize(
+          const char* buffer, const size_t length, std::map<::OpenGloves::Command, uint16_t>& commands
+        ) const override;
 
       private:
-        char* writeBuffer;
-
         static void splitCommand(
           const std::string& input_string, size_t start, size_t end, std::map<Command, uint16_t>& commands
         );

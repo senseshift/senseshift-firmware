@@ -239,7 +239,7 @@ class BLESerialCharacteristicCallbacks : public BLECharacteristicCallbacks {
 
         std::string rxValue = pCharacteristic->getValue();
         for (int i = 0; i < rxValue.length(); i++) {
-            bleSerial->m_receiveBuffer.add(rxValue[i]);
+            bleSerial->m_receiveBuffer.push(rxValue[i]);
         }
     }
 

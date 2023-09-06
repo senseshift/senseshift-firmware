@@ -11,7 +11,7 @@ void test_ring_buffer(void)
 
     TEST_ASSERT_EQUAL_UINT8(0, buffer.getLength());
 
-    buffer.add('a'); // [] => [a]
+    buffer.push('a'); // [] => [a]
     TEST_ASSERT_EQUAL_UINT8(1, buffer.getLength());
     TEST_ASSERT_EQUAL_INT8('a', buffer.get(0));
     TEST_ASSERT_EQUAL_UINT8(-1, buffer.get(1));
@@ -22,11 +22,11 @@ void test_ring_buffer(void)
     TEST_ASSERT_EQUAL_UINT8(0, buffer.getLength());
 
     // add 5 values and check length
-    buffer.add('a'); // []           => [a]
-    buffer.add('b'); // [a]          => [a, b]
-    buffer.add('c'); // [a, b]       => [a, b, c]
-    buffer.add('d'); // [a, b, c]    => [a, b, c, d]
-    buffer.add('e'); // [a, b, c, d] => [a, b, c, d, e]
+    buffer.push('a'); // []           => [a]
+    buffer.push('b'); // [a]          => [a, b]
+    buffer.push('c'); // [a, b]       => [a, b, c]
+    buffer.push('d'); // [a, b, c]    => [a, b, c, d]
+    buffer.push('e'); // [a, b, c, d] => [a, b, c, d, e]
     TEST_ASSERT_EQUAL_UINT8(5, buffer.getLength());
 
     // check values
@@ -53,12 +53,12 @@ void test_ring_buffer(void)
     TEST_ASSERT_EQUAL_INT8(-1, buffer.get(3));
 
     // check overflow
-    buffer.add('c'); // []              => [c]
-    buffer.add('d'); // [c]             => [c, d]
-    buffer.add('e'); // [c, d]          => [c, d, e]
-    buffer.add('f'); // [c, d, e]       => [c, d, e, f]
-    buffer.add('g'); // [c, d, e, f]    => [c, d, e, f, g]
-    buffer.add('h'); // [c, d, e, f, g] => [d, e, f, g, h]
+    buffer.push('c'); // []              => [c]
+    buffer.push('d'); // [c]             => [c, d]
+    buffer.push('e'); // [c, d]          => [c, d, e]
+    buffer.push('f'); // [c, d, e]       => [c, d, e, f]
+    buffer.push('g'); // [c, d, e, f]    => [c, d, e, f, g]
+    buffer.push('h'); // [c, d, e, f, g] => [d, e, f, g, h]
 
     // Buffer must shift values to the left when it is full
     TEST_ASSERT_EQUAL_INT8('d', buffer.get(0));
@@ -77,11 +77,11 @@ void test_ring_buffer(void)
 
 void test_flat_buffer(void)
 {
-    auto buffer = FlatBuffer<char, 5>();
+    auto buffer = FixedSizeBuffer<char, 5>();
 
     TEST_ASSERT_EQUAL_UINT8(0, buffer.getLength());
 
-    buffer.add('a'); // [] => [a]
+    buffer.push('a'); // [] => [a]
     TEST_ASSERT_EQUAL_UINT8(1, buffer.getLength());
     TEST_ASSERT_EQUAL_INT8('a', buffer.get(0));
     TEST_ASSERT_EQUAL_UINT8(-1, buffer.get(1));
@@ -92,11 +92,11 @@ void test_flat_buffer(void)
     TEST_ASSERT_EQUAL_UINT8(0, buffer.getLength());
 
     // add 5 values and check length
-    buffer.add('a'); // []           => [a]
-    buffer.add('b'); // [a]          => [a, b]
-    buffer.add('c'); // [a, b]       => [a, b, c]
-    buffer.add('d'); // [a, b, c]    => [a, b, c, d]
-    buffer.add('e'); // [a, b, c, d] => [a, b, c, d, e]
+    buffer.push('a'); // []           => [a]
+    buffer.push('b'); // [a]          => [a, b]
+    buffer.push('c'); // [a, b]       => [a, b, c]
+    buffer.push('d'); // [a, b, c]    => [a, b, c, d]
+    buffer.push('e'); // [a, b, c, d] => [a, b, c, d, e]
     TEST_ASSERT_EQUAL_UINT8(5, buffer.getLength());
 
     // check values
@@ -123,12 +123,12 @@ void test_flat_buffer(void)
     TEST_ASSERT_EQUAL_INT8(-1, buffer.get(2));
 
     // check overflow
-    buffer.add('c'); // []              => [c]
-    buffer.add('d'); // [c]             => [c, d]
-    buffer.add('e'); // [c, d]          => [c, d, e]
-    buffer.add('f'); // [c, d, e]       => [c, d, e, f]
-    buffer.add('g'); // [c, d, e, f]    => [c, d, e, f, g]
-    buffer.add('h'); // [c, d, e, f, g] => [c, d, e, f, g]
+    buffer.push('c'); // []              => [c]
+    buffer.push('d'); // [c]             => [c, d]
+    buffer.push('e'); // [c, d]          => [c, d, e]
+    buffer.push('f'); // [c, d, e]       => [c, d, e, f]
+    buffer.push('g'); // [c, d, e, f]    => [c, d, e, f, g]
+    buffer.push('h'); // [c, d, e, f, g] => [c, d, e, f, g]
 
     // Buffer must not change values when it is full
     TEST_ASSERT_EQUAL_INT8('c', buffer.get(0));
