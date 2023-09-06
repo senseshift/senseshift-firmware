@@ -6,13 +6,13 @@ on:
       - master
       - develop
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   push:
     branches:
       - master
       - develop
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
 
 jobs:
   build-bhaptics:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
         target:
           - bhaptics_tactsuit_x16
           - bhaptics_tactsuit_x16_pca9685
@@ -32,10 +32,10 @@ jobs:
           - bhaptics_tactal
           - bhaptics_tactvisor
           - bhaptics_tactglove_right
-        battery_flag: [ SENSESHIFT_BATTERY_ENABLED=true ]
-        serial_plotter_flag: [ SENSESHIFT_SERIAL_PLOTTER=false ]
-        nimble_flag: [ SENSESHIFT_BLE_USE_NIMBLE=false ]
-        coverage: [ false ]
+        battery_flag: [SENSESHIFT_BATTERY_ENABLED=true]
+        serial_plotter_flag: [SENSESHIFT_SERIAL_PLOTTER=false]
+        nimble_flag: [SENSESHIFT_BLE_USE_NIMBLE=false]
+        coverage: [false]
 
         include:
           # Extra tests for x40, as it uses the most features
@@ -61,7 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Get firmware name
         id: firmware_name
@@ -120,7 +120,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install PlatformIO
         run: |
@@ -156,14 +156,14 @@ jobs:
         with:
           name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
           path: ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }}
-          retention-days: 5
+          retention-days: 1
 
   build-opengloves:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
         target:
           - lucidgloves-prototype3
           - lucidgloves-prototype4
@@ -174,7 +174,7 @@ jobs:
         comm_flag:
           - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_SERIAL
           - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BTSERIAL
-        coverage: [ false ]
+        coverage: [false]
 
         include:
           - os: ubuntu-latest
@@ -197,7 +197,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Get firmware name
         id: firmware_name
@@ -234,7 +234,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Enable coverage (non-macOS)
         if: runner.os != 'macOS' && matrix.coverage
@@ -278,6 +278,17 @@ jobs:
           echo "::endgroup::"
           pio run --environment ${{matrix.target}}
 
+      - name: Upload firmware Artifact
+        if: matrix.coverage == false
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.firmware_name.outputs.firmware }}
+          path: |
+            ./.pio/build/${{matrix.target}}/firmware.bin
+            ./.pio/build/${{matrix.target}}/firmware.elf
+          retention-days: 1
+          if-no-files-found: error
+
       - name: Collect initial coverage
         if: matrix.coverage
         run: |
@@ -290,7 +301,8 @@ jobs:
         with:
           name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
           path: ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }}
-          retention-days: 5
+          retention-days: 1
+          if-no-files-found: error
 
   test:
     runs-on: ubuntu-latest
@@ -303,7 +315,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
@@ -333,7 +345,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install PlatformIO
         run: |
@@ -398,7 +410,6 @@ jobs:
         with:
           name: coverage-report
           path: |
-            ./build/lcov/
             ./build/coverage/
           retention-days: 5
 
@@ -406,3 +417,36 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: ./build/lcov/lcov.info.cleaned
+
+  wokwi:
+    needs:
+      - build-opengloves
+      - test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        variant:
+          - lucidgloves-prototype3+serial
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract target
+        id: target_name
+        run: |
+          target=$(echo ${{ matrix.variant }} | cut -d'+' -f1)
+          echo "target=$target" >> $GITHUB_OUTPUT
+
+      - name: Download firmware artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.variant }}
+          path: ./.pio/build/${{ steps.target_name.outputs.target }}
+
+      - name: Run Wokwi scenario
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: ./.wokwi/${{ matrix.variant }}
+          scenario: "test.yaml"
