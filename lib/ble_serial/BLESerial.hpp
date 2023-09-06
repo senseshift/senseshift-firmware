@@ -40,20 +40,6 @@ class BLESerial : public Stream {
         if (this->m_pTxCharacteristic == nullptr || !this->connected()) {
             return 0;
         }
-        // uint16_t mtu = BLEDevice::getMTU();
-        // uint16_t packetSize = mtu > 3 ? mtu - 3 : 20;
-
-        // chunk the buffer into packets
-        // for (size_t i = 0; i < bufferSize; i += packetSize) {
-        //     auto chunkSize = static_cast<uint16_t>(std::min(static_cast<size_t>(packetSize), bufferSize - i));
-        //     this->m_pTxCharacteristic->setValue(const_cast<uint8_t*>(buffer + i), chunkSize);
-        //     this->flush();
-
-        //     // delay if not last packet
-        //     if (i + chunkSize < bufferSize) {
-        //         delay(10);
-        //     }
-        // }
 
         this->m_pTxCharacteristic->setValue(const_cast<uint8_t*>(buffer), bufferSize);
         this->flush();
@@ -75,22 +61,35 @@ class BLESerial : public Stream {
 
     virtual void flush(void) override { this->m_pTxCharacteristic->notify(true); }
 
+    /**
+     * Begin BLE serial. This will create and start BLE server, service and characteristics.
+     *
+     * @note This will manage the BLE server, service and characteristics. If you want to manage them yourself, use the
+     * other begin().
+     *
+     * @param deviceName Name of the BLE device
+     * @param serviceUuid UUID of the BLE service
+     * @param rxUuid UUID of the BLE characteristic for receiving data
+     * @param txUuid UUID of the BLE characteristic for transmitting data
+     */
     void begin(
       const char* deviceName,
       const char* serviceUuid = SERVICE_UUID,
       const char* rxUuid = RX_UUID,
       const char* txUuid = TX_UUID
-    )
-    {
-        // Create the BLE Device
-        log_d("Creating BLE device with name '%s'", deviceName);
-        BLEDevice::init(deviceName);
+    );
 
-        BLEServer* pServer = BLEDevice::createServer();
-
-        this->begin(pServer, serviceUuid, rxUuid, txUuid);
-    }
-
+    /**
+     * Begin BLE serial. This will create and start BLE service and characteristics.
+     *
+     * @note This will manage the BLE service and characteristics. If you want to manage them yourself, use the other
+     * begin().
+     *
+     * @param pServer BLE server instance
+     * @param serviceUuid UUID of the BLE service
+     * @param rxUuid UUID of the BLE characteristic for receiving data
+     * @param txUuid UUID of the BLE characteristic for transmitting data
+     */
     void begin(
       BLEServer* pServer,
       const char* serviceUuid = SERVICE_UUID,
@@ -98,30 +97,83 @@ class BLESerial : public Stream {
       const char* txUuid = TX_UUID
     )
     {
-        log_d("Creating BLE service with UUID '%s'", serviceUuid);
         BLEService* pService = pServer->getServiceByUUID(serviceUuid);
         if (pService == nullptr) {
+            log_d("Creating BLE service with UUID '%s'", serviceUuid);
             pService = pServer->createService(serviceUuid);
+        } else {
+            log_w("BLE service with UUID '%s' already exists", serviceUuid);
         }
 
-        log_d("Creating BLE characteristics with UUIDs '%s' (RX) and '%s' (TX)", rxUuid, txUuid);
-        auto pRxCharacteristic = pService->createCharacteristic(rxUuid, BLECharacteristic::PROPERTY_WRITE_NR);
-        auto pTxCharacteristic =
-          pService->createCharacteristic(txUuid, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+        // Store the service so we know if we're managing it
+        this->m_pService = pService;
 
-        this->begin(pServer, pRxCharacteristic, pTxCharacteristic);
+        this->begin(pService, rxUuid, txUuid);
 
         pService->start();
         log_d("Started BLE service");
-
-        BLEAdvertising* pAdvertising = pServer->getAdvertising();
-        pAdvertising->start();
-        log_d("Started BLE advertising");
     }
 
-    void begin(BLEServer* pServer, BLECharacteristic* pRxCharacteristic, BLECharacteristic* pTxCharacteristic);
+    /**
+     * Begin BLE serial. This will create and start BLE characteristics.
+     *
+     * @note If you want to create characteristics yourself, use the other begin().
+     *
+     * @param pService BLE service instance
+     * @param rxUuid UUID of the BLE characteristic for receiving data
+     * @param txUuid UUID of the BLE characteristic for transmitting data
+     */
+    void begin(BLEService* pService, const char* rxUuid = RX_UUID, const char* txUuid = TX_UUID)
+    {
+        auto pRxCharacteristic = pService->getCharacteristic(rxUuid);
+        if (pRxCharacteristic == nullptr) {
+            log_d("Creating BLE characteristic with UUIDs '%s' (RX)", rxUuid);
+            pRxCharacteristic = pService->createCharacteristic(rxUuid, BLECharacteristic::PROPERTY_WRITE_NR);
+        } else {
+            log_w("BLE characteristic with UUID '%s' (RX) already exists", rxUuid);
+        }
+
+        auto pTxCharacteristic = pService->getCharacteristic(txUuid);
+        if (pTxCharacteristic == nullptr) {
+            log_d("Creating BLE characteristic with UUIDs '%s' (TX)", txUuid);
+            pTxCharacteristic = pService->createCharacteristic(
+              txUuid,
+              BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
+            );
+        } else {
+            log_w("BLE characteristic with UUID '%s' (TX) already exists", txUuid);
+        }
+
+        this->begin(pRxCharacteristic, pTxCharacteristic);
+    }
+
+    /**
+     * Begin BLE serial. This will setup the BLE characteristics.
+     *
+     * @param pServer BLE server instance
+     * @param pRxCharacteristic BLE characteristic instance for receiving data
+     * @param pTxCharacteristic BLE characteristic instance for transmitting data
+     */
+    void begin(BLECharacteristic* pRxCharacteristic, BLECharacteristic* pTxCharacteristic);
+
+    void end()
+    {
+        if (this->m_pService != nullptr) {
+            this->m_pService->stop();
+        }
+
+        if (this->m_pServer != nullptr) {
+            this->m_pServer->getAdvertising()->stop();
+        }
+
+        this->m_pServer = nullptr;
+    }
 
     bool connected() { return m_pServer != nullptr && m_pServer->getConnectedCount() > 0; }
+
+    BLECharacteristic* getRxCharacteristic() { return m_pRxCharacteristic; }
+
+    BLECharacteristic* getTxCharacteristic() { return m_pTxCharacteristic; }
 
   private:
     BLESerial(BLESerial const& other) = delete;      // disable copy constructor
@@ -129,15 +181,40 @@ class BLESerial : public Stream {
 
     SenseShift::RingBuffer<uint8_t, BLESERIAL_RECEIVE_BUFFER_SIZE> m_receiveBuffer;
 
-    BLEServer* m_pServer;
-    BLECharacteristic* m_pRxCharacteristic;
-    BLECharacteristic* m_pTxCharacteristic;
+    /**
+     * BLE server instance
+     * @note This is only used if the BLESerial instance is managing the BLE server
+     */
+    BLEServer* m_pServer = nullptr;
+
+    /**
+     * BLE service instance
+     * @note This is only used if the BLESerial instance is managing the BLE service
+     */
+    BLEService* m_pService = nullptr;
+
+    /**
+     * BLE characteristic instance for receiving data
+     */
+    BLECharacteristic* m_pRxCharacteristic = nullptr;
+
+    /**
+     * BLE characteristic instance for transmitting data
+     */
+    BLECharacteristic* m_pTxCharacteristic = nullptr;
 };
 
 class BLESerialServerCallbacks : public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) override {}
+  public:
+    BLESerialServerCallbacks(BLESerial* bleSerial) : bleSerial(bleSerial) {}
 
-    void onDisconnect(BLEServer* pServer) override
+    void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override
+    {
+        uint16_t conn_id = param->connect.conn_id;
+        pServer->updatePeerMTU(conn_id, BLESERIAL_ATTRIBUTE_MAX_VALUE_LENGTH);
+    }
+
+    void onDisconnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override
     {
         auto* pAdvertising = pServer->getAdvertising();
         if (pAdvertising == nullptr) {
@@ -145,6 +222,9 @@ class BLESerialServerCallbacks : public BLEServerCallbacks {
         }
         pAdvertising->start();
     }
+
+  private:
+    BLESerial* bleSerial;
 };
 
 class BLESerialCharacteristicCallbacks : public BLECharacteristicCallbacks {
@@ -167,9 +247,29 @@ class BLESerialCharacteristicCallbacks : public BLECharacteristicCallbacks {
     BLESerial* bleSerial;
 };
 
-void BLESerial::begin(BLEServer* pServer, BLECharacteristic* pRxCharacteristic, BLECharacteristic* pTxCharacteristic)
+void BLESerial::begin(const char* deviceName, const char* serviceUuid, const char* rxUuid, const char* txUuid)
 {
+    // Create the BLE Device
+    log_d("Initializing BLE device with name '%s'", deviceName);
+    BLEDevice::init(deviceName);
+
+    log_d("Creating BLE server");
+    BLEServer* pServer = BLEDevice::createServer();
+    pServer->setCallbacks(new BLESerialServerCallbacks(this));
+
+    // Store the server so we know if we're managing it
     this->m_pServer = pServer;
+
+    this->begin(pServer, serviceUuid, rxUuid, txUuid);
+
+    BLEAdvertising* pAdvertising = pServer->getAdvertising();
+    pAdvertising->start();
+    log_d("Started BLE advertising");
+}
+
+void BLESerial::begin(BLECharacteristic* pRxCharacteristic, BLECharacteristic* pTxCharacteristic)
+{
+    // Store the characteristics so we know if we're managing them
     this->m_pRxCharacteristic = pRxCharacteristic;
     this->m_pTxCharacteristic = pTxCharacteristic;
 
