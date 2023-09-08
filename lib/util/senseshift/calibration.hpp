@@ -84,10 +84,7 @@ namespace SenseShift::Calibration {
     template<typename _Tp, _Tp sensor_max, _Tp driver_max_deviation, _Tp output_min, _Tp output_max>
     class CenterPointDeviationCalibrator : public ICalibrator<_Tp> {
       public:
-        CenterPointDeviationCalibrator() : range_min(sensor_max), range_max(0)
-        {
-#warning "CenterPointDeviationCalibrator is untested and may not work as expected."
-        }
+        CenterPointDeviationCalibrator() : range_min(sensor_max), range_max(0) {}
 
         void reset()
         {

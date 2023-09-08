@@ -72,7 +72,7 @@ namespace SenseShift {
         /**
          * @brief Get the value at the given index.
          *
-         * `get(0)` is the oldest value, `get(this.getLength() - 1)` is the newest value
+         * @example `get(0)` is the oldest value, `get(this.getLength() - 1)` is the newest value
          */
         ValueType get(size_t index) const override
         {
@@ -143,7 +143,7 @@ namespace SenseShift {
         /**
          * @brief Get the value at the given index.
          *
-         * `get(0)` is the oldest value, `get(this.getLength() - 1)` is the newest value
+         * @example `get(0)` is the oldest value, `get(this.getLength() - 1)` is the newest value
          */
         ValueType get(size_t index) const override
         {
