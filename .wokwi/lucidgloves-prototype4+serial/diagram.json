@@ -1,0 +1,485 @@
+{
+    "version": 1,
+    "author": "Leonid Meleshin",
+    "editor": "wokwi",
+    "parts": [
+        {
+            "type": "wokwi-esp32-devkit-v1",
+            "id": "esp",
+            "top": 110.3,
+            "left": 599.8,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-thumb",
+            "top": -87.7,
+            "left": -278.6,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-index",
+            "top": -87.7,
+            "left": -192.2,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-middle",
+            "top": -87.7,
+            "left": -105.8,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-ring",
+            "top": -87.7,
+            "left": -19.4,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-potentiometer",
+            "id": "pot-pinky",
+            "top": -87.7,
+            "left": 67,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-analog-joystick",
+            "id": "joystick1",
+            "top": -135,
+            "left": 149.4,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-pushbutton",
+            "id": "btn1",
+            "top": 6.2,
+            "left": 268.8,
+            "attrs": {
+                "color": "green",
+                "key": "a",
+                "bounce": "1",
+                "label": "A"
+            }
+        },
+        {
+            "type": "wokwi-pushbutton",
+            "id": "btn2",
+            "top": 6.2,
+            "left": 355.2,
+            "attrs": {
+                "color": "green",
+                "key": "b",
+                "bounce": "1",
+                "label": "B"
+            }
+        },
+        {
+            "type": "wokwi-pushbutton",
+            "id": "btn3",
+            "top": 6.2,
+            "left": 451.2,
+            "attrs": {
+                "color": "green"
+            }
+        },
+        {
+            "type": "wokwi-servo",
+            "id": "servo1",
+            "top": -30.8,
+            "left": 912,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-servo",
+            "id": "servo2",
+            "top": 103.6,
+            "left": 912,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-servo",
+            "id": "servo3",
+            "top": 238,
+            "left": 912,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-servo",
+            "id": "servo4",
+            "top": 372.4,
+            "left": 912,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-servo",
+            "id": "servo5",
+            "top": -165.2,
+            "left": 912,
+            "attrs": {}
+        }
+    ],
+    "connections": [
+        [
+            "esp:TX0",
+            "$serialMonitor:RX",
+            "",
+            []
+        ],
+        [
+            "esp:RX0",
+            "$serialMonitor:TX",
+            "",
+            []
+        ],
+        [
+            "pot-thumb:VCC",
+            "pot-index:VCC",
+            "red",
+            [
+                "v28.8",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-index:VCC",
+            "pot-middle:VCC",
+            "red",
+            [
+                "v28.8",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-middle:VCC",
+            "pot-ring:VCC",
+            "red",
+            [
+                "v28.8",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-thumb:GND",
+            "pot-index:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-index:GND",
+            "pot-middle:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-middle:GND",
+            "pot-ring:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "pot-ring:GND",
+            "pot-pinky:GND",
+            "black",
+            [
+                "v38.4",
+                "h76.8"
+            ]
+        ],
+        [
+            "esp:VP",
+            "pot-pinky:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:VN",
+            "pot-ring:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D34",
+            "pot-middle:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D35",
+            "pot-index:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D32",
+            "pot-thumb:SIG",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "joystick1:GND",
+            "pot-pinky:GND",
+            "black",
+            [
+                "v38.4",
+                "h-124.8"
+            ]
+        ],
+        [
+            "esp:D33",
+            "joystick1:HORZ",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D25",
+            "joystick1:VERT",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:D26",
+            "joystick1:SEL",
+            "green",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:GND.2",
+            "joystick1:GND",
+            "black",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "esp:VIN",
+            "joystick1:VCC",
+            "red",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "pot-ring:VCC",
+            "pot-pinky:VCC",
+            "red",
+            [
+                "v28.8",
+                "h37.6"
+            ]
+        ],
+        [
+            "joystick1:VCC",
+            "pot-pinky:VCC",
+            "red",
+            [
+                "v28.8",
+                "h-38.4"
+            ]
+        ],
+        [
+            "btn1:2.r",
+            "esp:D27",
+            "green",
+            [
+                "h0.2",
+                "v249.8"
+            ]
+        ],
+        [
+            "btn2:2.r",
+            "esp:D14",
+            "green",
+            [
+                "h0.2",
+                "v259.4"
+            ]
+        ],
+        [
+            "btn3:2.r",
+            "esp:D12",
+            "green",
+            [
+                "h0.2",
+                "v211.4"
+            ]
+        ],
+        [
+            "servo2:GND",
+            "servo3:GND",
+            "black",
+            [
+                "h-19.2",
+                "v134.4"
+            ]
+        ],
+        [
+            "servo3:GND",
+            "servo4:GND",
+            "black",
+            [
+                "h-19.2",
+                "v115.2"
+            ]
+        ],
+        [
+            "joystick1:GND",
+            "btn1:1.l",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "btn1:1.r",
+            "btn2:1.l",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "btn2:1.r",
+            "btn3:1.l",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "servo1:GND",
+            "servo2:GND",
+            "black",
+            [
+                "h-19.2",
+                "v96"
+            ]
+        ],
+        [
+            "servo1:GND",
+            "btn3:1.r",
+            "black",
+            [
+                "h0"
+            ]
+        ],
+        [
+            "servo1:V+",
+            "servo2:V+",
+            "red",
+            [
+                "h-28.8",
+                "v96.1"
+            ]
+        ],
+        [
+            "servo2:V+",
+            "servo3:V+",
+            "red",
+            [
+                "h-28.8",
+                "v86.5"
+            ]
+        ],
+        [
+            "servo3:V+",
+            "servo4:V+",
+            "red",
+            [
+                "h-28.8",
+                "v134.4"
+            ]
+        ],
+        [
+            "esp:D5",
+            "servo4:PWM",
+            "green",
+            [
+                "h38.1",
+                "v239.8"
+            ]
+        ],
+        [
+            "esp:D18",
+            "servo3:PWM",
+            "green",
+            [
+                "h57.3",
+                "v115"
+            ]
+        ],
+        [
+            "esp:D21",
+            "servo1:PWM",
+            "green",
+            [
+                "h38.1",
+                "v-135"
+            ]
+        ],
+        [
+            "esp:D19",
+            "servo2:PWM",
+            "green",
+            [
+                "h57.3",
+                "v-9.9"
+            ]
+        ],
+        [
+            "servo1:V+",
+            "servo5:V+",
+            "red",
+            [
+                "h-28.8",
+                "v-134.3"
+            ]
+        ],
+        [
+            "servo1:GND",
+            "servo5:GND",
+            "black",
+            [
+                "h-19.2",
+                "v-134.4"
+            ]
+        ],
+        [
+            "esp:TX2",
+            "servo5:PWM",
+            "green",
+            [
+                "h18.9",
+                "v-307.3"
+            ]
+        ]
+    ],
+    "dependencies": {}
+}

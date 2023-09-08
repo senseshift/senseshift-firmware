@@ -428,6 +428,7 @@ jobs:
       matrix:
         variant:
           - lucidgloves-prototype3+serial
+          - lucidgloves-prototype4+serial
 
     steps:
       - uses: actions/checkout@v3
