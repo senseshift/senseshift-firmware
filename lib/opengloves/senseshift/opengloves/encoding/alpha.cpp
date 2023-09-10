@@ -1,13 +1,35 @@
-#include "og_alpha_encoding.hpp"
+#include "senseshift/opengloves/encoding/alpha.hpp"
 
-namespace OpenGloves {
-    std::map<Command, uint16_t> AlphaEncodingService::splitCommands(std::string input_string)
+#include <string.h>
+
+namespace SenseShift::OpenGloves {
+    size_t AlphaEncodingService::serialize(
+      const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors, char* buffer
+    ) const
     {
-        std::map<Command, uint16_t> commands;
+        buffer[0] = '\0';
+        size_t offset = 0;
+
+        for (size_t i = 0; i < sensors.size(); i++) {
+            auto* sensor = sensors[i];
+            offset += sensor->encodeString(buffer + offset);
+        }
+
+        buffer[offset++] = '\n';
+        buffer[offset] = '\0';
+
+        return offset;
+    }
+
+    bool AlphaEncodingService::deserialize(
+      const char* buffer, const size_t length, std::map<::OpenGloves::Command, uint16_t>& commands
+    ) const
+    {
+        std::string input_string(buffer, length);
 
         size_t start = 0; // Start of the current command
-        for (size_t i = 0; i < input_string.size(); i++) {
-            char ch = input_string[i];
+        for (size_t i = 0; i < input_string.length(); i++) {
+            const char ch = input_string[i];
 
             // Start a new command if the character is non-numeric or an opening parenthesis
             // and previous character is a numeric character
@@ -19,7 +41,7 @@ namespace OpenGloves {
 
         AlphaEncodingService::splitCommand(input_string, start, input_string.size(), commands);
 
-        return commands;
+        return true;
     }
 
     void AlphaEncodingService::splitCommand(
@@ -54,4 +76,4 @@ namespace OpenGloves {
         Command command = it->second;
         commands[command] = number;
     }
-} // namespace OpenGloves
+} // namespace SenseShift::OpenGloves

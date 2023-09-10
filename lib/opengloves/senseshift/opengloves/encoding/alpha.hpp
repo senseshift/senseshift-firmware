@@ -13,9 +13,14 @@
 
 #include <og_protocol.hpp>
 #include <senseshift/logging.hpp>
+#include <senseshift/opengloves/interface.hpp>
 
-namespace OpenGloves {
-    class AlphaEncodingService {
+#define SENSESHIFT_OPENGLOVES_ALPHA_ENCODING_BUFFER_SIZE 256
+
+namespace SenseShift::OpenGloves {
+    class AlphaEncodingService : public IEncoding {
+        using Command = ::OpenGloves::Command;
+
       public:
         inline static constexpr frozen::string valueSymbols = "0123456789";
         inline static const auto commandMap = frozen::make_map<std::string, Command>({
@@ -33,15 +38,18 @@ namespace OpenGloves {
           // clang-format on
         });
 
-        AlphaEncodingService() = default;
+        AlphaEncodingService(){};
 
-        static std::map<Command, uint16_t> splitCommands(std::string input_string);
+        virtual size_t serialize(const std::vector<::OpenGloves::IStringEncodedMemoizedSensor*>& sensors, char* buffer)
+          const override;
+
+        virtual bool deserialize(
+          const char* buffer, const size_t length, std::map<::OpenGloves::Command, uint16_t>& commands
+        ) const override;
 
       private:
-        CommandCallback callback = nullptr;
-
         static void splitCommand(
           const std::string& input_string, size_t start, size_t end, std::map<Command, uint16_t>& commands
         );
     };
-} // namespace OpenGloves
+} // namespace SenseShift::OpenGloves

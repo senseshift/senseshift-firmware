@@ -68,9 +68,9 @@ steps:
           value: 1
     - wait-serial: "A4095B4095C4095D4095E4095F2047G2047ILM" # L is for the Grab gesture
 
-    # Release Thumb finger
-    - set-control:
-          part-id: pot-thumb
-          control: position
-          value: 0
-    - wait-serial: "A0B4095C4095D4095E4095F2047G2047IL"
+  # Partially Release Thumb finger
+  - set-control:
+      part-id: pot-thumb
+      control: position
+      value: 0.25
+  - wait-serial: 'A1024B4095C4095D4095E4095F2047G2047IL'

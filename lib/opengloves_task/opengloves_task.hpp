@@ -4,15 +4,15 @@
 
 #include <optional>
 
-#include <og_alpha_encoding.hpp>
 #include <og_ffb.hpp>
-#include <og_serial_communication.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
 #include <senseshift/calibration.hpp>
 #include <senseshift/freertos/task.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/joystick.hpp>
+#include <senseshift/opengloves/encoding/alpha.hpp>
+#include <senseshift/opengloves/interface.hpp>
 #include <senseshift/utility.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>
@@ -52,7 +52,7 @@ namespace OpenGloves {
          */
         OpenGlovesTrackingTask(
           OpenGlovesTrackingTaskConfig& config,
-          ICommunication& communication,
+          ::SenseShift::OpenGloves::ITransport& communication,
           HandSensors& fingers,
           std::vector<StringEncodedMemoizedSensor<bool>*>& buttons,
           std::vector<StringEncodedMemoizedSensor<uint16_t>*>& joysticks,
@@ -133,7 +133,10 @@ namespace OpenGloves {
         OpenGlovesTrackingTaskConfig& config;
 
         HandSensors& fingers;
-        ICommunication& communication;
+        ::SenseShift::OpenGloves::ITransport& communication;
+        ::SenseShift::OpenGloves::AlphaEncodingService encodingService =
+          ::SenseShift::OpenGloves::AlphaEncodingService();
+
         std::vector<StringEncodedMemoizedSensor<bool>*>& buttons;
         std::vector<StringEncodedMemoizedSensor<uint16_t>*>& joysticks;
         std::vector<IStringEncodedMemoizedSensor*>& otherSensors;
@@ -194,7 +197,9 @@ namespace OpenGloves {
                 }
 
                 // Send the sensor values.
-                this->communication.send(this->allSensors);
+                char command[256];
+                size_t length = this->encodingService.serialize(this->allSensors, command);
+                this->communication.send(command, length);
 
                 // Check if the calibration has finished.
                 if (!(this->config.alwaysCalibrate) && calibrationStarted > 0 && (now - calibrationStarted) > CALIBRATION_DURATION) {
@@ -208,6 +213,14 @@ namespace OpenGloves {
 
                 // Delay until the next update.
                 auto elapsed = millis() - now;
+
+                log_d(
+                  "Update took %d ms, theoretical max rate is %dHz (target is %dHz)",
+                  elapsed,
+                  1000 / elapsed,
+                  1000 / this->config.updateIntervalMs
+                );
+
                 if (elapsed < this->config.updateIntervalMs) {
                     delay(this->config.updateIntervalMs - elapsed);
                 }
@@ -220,7 +233,7 @@ namespace OpenGloves {
 
       public:
         OpenGlovesForceFeedbackTask(
-          ICommunication& communication,
+          ::SenseShift::OpenGloves::ITransport& communication,
           HandActuators& actuators,
           size_t updateRate,
           SenseShift::FreeRTOS::TaskConfig taskConfig
@@ -240,9 +253,11 @@ namespace OpenGloves {
         };
 
       private:
-        ICommunication& communication;
+        ::SenseShift::OpenGloves::ITransport& communication;
         HandActuators& actuators;
         size_t updateIntervalMs;
+        ::SenseShift::OpenGloves::AlphaEncodingService encodingService =
+          ::SenseShift::OpenGloves::AlphaEncodingService();
 
         void setup()
         {
@@ -278,14 +293,13 @@ namespace OpenGloves {
                 auto now = millis();
 
                 if (this->communication.hasData()) {
-                    auto bytesRead = this->communication.readCommand(commandBuffer, sizeof(commandBuffer));
+                    auto bytesRead = this->communication.read(commandBuffer, sizeof(commandBuffer));
                     if (bytesRead == 0) {
                         continue;
                     }
 
-                    command.assign(commandBuffer, bytesRead);
-
-                    auto commands = AlphaEncodingService::splitCommands(command);
+                    std::map<::OpenGloves::Command, uint16_t> commands = {};
+                    this->encodingService.deserialize(commandBuffer, bytesRead, commands);
 
                     for (auto& [command, value] : commands) {
                         this->handleCommand(command, value);

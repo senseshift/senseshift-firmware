@@ -82,7 +82,6 @@ namespace OpenGloves {
     size_t StringEncodedMemoizedSensor<FingerValue>::encodeString(char* buffer) const
     {
         size_t offset = 0;
-
         offset += snprintf(buffer + offset, 6, "%c%d", this->type, this->value.getTotalCurl());
 
         if (this->value.curl.size() > 1) {

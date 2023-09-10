@@ -35,6 +35,26 @@ void test_minmax_calibrator(void)
     TEST_ASSERT_EQUAL_UINT16(2048, calibrator->calibrate(4096));
 }
 
+void test_center_point_deviation_calibrator(void)
+{
+    CenterPointDeviationCalibrator<int, 100, 10, 0, 255> calibrator;
+
+    // Test reset function
+    calibrator.reset();
+
+    // Test update function
+    calibrator.update(50);
+    calibrator.update(75);
+    calibrator.update(25);
+
+    // Test calibrate function
+    TEST_ASSERT_EQUAL_INT(255, calibrator.calibrate(100));
+    TEST_ASSERT_EQUAL_INT(191, calibrator.calibrate(75));
+    TEST_ASSERT_EQUAL_INT(63, calibrator.calibrate(50));
+    TEST_ASSERT_EQUAL_INT(0, calibrator.calibrate(25));
+    TEST_ASSERT_EQUAL_INT(0, calibrator.calibrate(0));
+}
+
 void test_fixed_center_point_deviation_calibrator(void)
 {
     auto calibrator = new FixedCenterPointDeviationCalibrator<uint16_t, 512, 64, 0, 4096>();
@@ -91,6 +111,7 @@ int process(void)
     UNITY_BEGIN();
 
     RUN_TEST(test_minmax_calibrator);
+    RUN_TEST(test_center_point_deviation_calibrator);
     RUN_TEST(test_fixed_center_point_deviation_calibrator);
 
     return UNITY_END();

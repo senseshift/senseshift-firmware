@@ -22,6 +22,7 @@ RUN apt-get update \
     python3-venv \
     python3-distutils \
     python3-setuptools \
+    libpython2.7-dev \
     srecord \
     udev \
     xz-utils \
