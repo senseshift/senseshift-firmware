@@ -12,10 +12,16 @@
 	"mounts": [
 		"source=/dev/,target=/dev/,type=bind,consistency=consistent"
 	],
-	"postAttachCommand": {
-		"submodules": ["git", "submodule", "update", "--recursive", "--init"],
-		"udev": ["sudo", "service", "udev", "restart"]
+	"updateContentCommand": {
+		"submodule": "git submodule update --init --recursive",
+		"pio": "pio pkg install"
 	},
+	"postAttachCommand": [
+		"sudo",
+		"service",
+		"udev",
+		"restart"
+	],
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -29,27 +35,25 @@
 				"platformio-ide.pioHomeServerHttpPort": 8008,
 				"platformio-ide.autoOpenPlatformIOIniFile": false,
 				"files.exclude": {
-				  "**/.git": true,
-				  "**/.DS_Store": true
+					"**/.git": true,
+					"**/.DS_Store": true
 				},
 				"files.associations": {
-				  "**/.vscode/*.json": "jsonc"
+					"**/.vscode/*.json": "jsonc"
 				},
 				"C_Cpp.clang_format_path": "clang-format"
 			},
 			"extensions": [
 				"ms-vscode.cpptools",
 				"redhat.vscode-yaml",
-
 				"platformio.platformio-ide",
 				"Wokwi.wokwi-vscode",
-
 				"xaver.clang-format",
 				"editorconfig.editorconfig",
-
 				"GitHub.copilot",
 				"GitHub.copilot-labs",
-				"GitHub.copilot-chat"
+				"GitHub.copilot-chat",
+				"wakatime.vscode-wakatime"
 			]
 		}
 	}
