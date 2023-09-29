@@ -14,7 +14,7 @@ namespace SenseShift::Battery {
     /**
      * Abstract battery sensor
      */
-    typedef ::SenseShift::Input::ISimpleSensor<BatteryState> IBatterySensor;
+    using IBatterySensor = ::SenseShift::Input::ISimpleSensor<BatteryState>;
 
     class NaiveBatterySensor : public IBatterySensor {
       public:

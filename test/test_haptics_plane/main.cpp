@@ -16,7 +16,7 @@ class TestActuator : public IActuator<uint16_t> {
 
 void test_it_sets_up_actuators(void)
 {
-    VibroPlane::ActuatorMap_t outputs = {
+    VibroPlane::ActuatorMap outputs = {
         { { 0, 0 }, new TestActuator() },
         { { 0, 1 }, new TestActuator() },
         { { 1, 0 }, new TestActuator() },
@@ -39,7 +39,7 @@ void test_it_writes_to_correct_output(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane::ActuatorMap_t outputs = {
+    VibroPlane::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
@@ -64,7 +64,7 @@ void test_it_updates_state(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane::ActuatorMap_t outputs = {
+    VibroPlane::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
@@ -96,7 +96,7 @@ void test_closest_it_writes_to_correct_if_exact(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane_Closest::ActuatorMap_t outputs = {
+    VibroPlane_Closest::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
@@ -121,7 +121,7 @@ void test_closest_it_correctly_finds_closest(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane_Closest::ActuatorMap_t outputs = {
+    VibroPlane_Closest::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 64 }, actuator2 },
         { { 64, 0 }, actuator3 },
@@ -144,7 +144,7 @@ void test_closest_it_updates_state(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane_Closest::ActuatorMap_t outputs = {
+    VibroPlane_Closest::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 64 }, actuator2 },
         { { 64, 0 }, actuator3 },

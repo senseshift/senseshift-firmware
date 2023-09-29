@@ -21,8 +21,8 @@ SenseShift* app = &App;
 BluetoothSerial SerialBT;
 BluetoothSerial* btSerial = &SerialBT;
 
-static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-static const ::SenseShift::Body::Haptics::Position_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
+static const ::SenseShift::Body::Haptics::Position* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
 class BLECallbacks : public BHBLEConnectionCallbacks {
   public:

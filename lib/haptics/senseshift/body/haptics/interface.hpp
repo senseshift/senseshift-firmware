@@ -6,18 +6,18 @@
 #include <senseshift/math/point2.hpp>
 
 namespace SenseShift::Body::Haptics {
-    typedef std::uint8_t EffectIntex_t;
-    static const EffectIntex_t EFFECT_INVALID = 0xFF;
-    typedef enum class Effect : EffectIntex_t {
+    using EffectIntex = std::uint8_t;
+    static constexpr EffectIntex EFFECT_INVALID = 0xFF;
+    enum class Effect : EffectIntex {
         Invalid = EFFECT_INVALID,
         Vibro = 0x00,
         // TODO: thermal, etc.
         // Thermal = 0x01,
-    } Effect_t;
+    };
 
-    typedef std::uint8_t TargetIndex_t;
-    static const TargetIndex_t TARGET_INVALID = 0xFF;
-    typedef enum class Target : TargetIndex_t {
+    using TargetIndex = std::uint8_t;
+    static constexpr TargetIndex TARGET_INVALID = 0xFF;
+    enum class Target : TargetIndex {
         Invalid = TARGET_INVALID,
         ChestFront = 0x00,
         ChestBack = 0x01,
@@ -44,38 +44,34 @@ namespace SenseShift::Body::Haptics {
         HandRightDorsal, // Back
 
         // TODO: arms, legs, etc.
-    } Target_t;
+    };
 
-    typedef std::uint8_t Coordinate_t;
-    typedef ::SenseShift::Math::Point2<Coordinate_t> Position_t;
+    using Coordinate = std::uint8_t;
+    using Position = ::SenseShift::Math::Point2<Coordinate>;
 
     // Vibration intensity.
-    typedef struct VibroEffectData {
-        using Intensity_t = std::uint16_t;
-        inline static const Intensity_t INTENSITY_MIN = 0;
-        inline static const Intensity_t INTENSITY_MAX = 4095;
+    struct VibroEffectData {
+        using Intensity = std::uint16_t;
+        static constexpr Intensity INTENSITY_MIN = 0;
+        static constexpr Intensity INTENSITY_MAX = 4095;
 
-        Intensity_t intensity = 0;
+        Intensity intensity = 0;
 
         inline constexpr VibroEffectData() = default;
-        inline constexpr VibroEffectData(const Intensity_t intensity) : intensity(intensity) {}
+        inline constexpr VibroEffectData(const Intensity intensity) : intensity(intensity) {}
         inline constexpr VibroEffectData(const VibroEffectData& other) = default;
 
         inline constexpr operator std::uint16_t() const { return intensity; }
-    } VibroEffectData_t;
+    };
 
     // TODO: thermal, etc.
 
-    typedef std::variant<VibroEffectData_t
-                         // TODO: thermal, etc.
-                         // ThermalEffectData_t
-                         >
-      EffectData_t;
+    using EffectData = std::variant<VibroEffectData>;
 
-    typedef struct EffectRequest {
-        Effect_t effect = Effect::Invalid;
-        Target_t target = Target::Invalid;
-        Position_t position = Position_t(0, 0);
-        EffectData_t data;
-    } EffectRequest_t;
+    struct EffectRequest {
+        Effect effect = Effect::Invalid;
+        Target target = Target::Invalid;
+        Position position = Position(0, 0);
+        EffectData data;
+    };
 } // namespace SenseShift::Body::Haptics

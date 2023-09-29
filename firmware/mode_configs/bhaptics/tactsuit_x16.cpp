@@ -25,23 +25,23 @@ using namespace SenseShift::Body::Haptics;
 extern SenseShift::SenseShift App;
 SenseShift::SenseShift* app = &App;
 
-static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
-static const OutputLayout_t bhLayout[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;
+static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
+static const OutputLayout bhLayout[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;
 
 // Ouput indices, responsible for x40 => x16 grouping
-static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
+static constexpr size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
 static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
       // clang-format off
       { new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25), new ActuatorPWM(26) },
       { new ActuatorPWM(27), new ActuatorPWM(14), new ActuatorPWM(12), new ActuatorPWM(13) },
       // clang-format on
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
       // clang-format off
       { new ActuatorPWM(19), new ActuatorPWM(18), new ActuatorPWM(5), new ActuatorPWM(17) },
       { new ActuatorPWM(16), new ActuatorPWM(4), new ActuatorPWM(2), new ActuatorPWM(15)  },

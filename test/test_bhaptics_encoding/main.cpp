@@ -18,10 +18,10 @@ class TestActuator : public IActuator<uint16_t> {
 
 void test_layout_tactsuitx16(void)
 {
-    static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
-    static const OutputLayout_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX16;
+    static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
+    static const OutputLayout bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX16;
 
-    static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
+    static constexpr size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
     static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
 
     auto body = new HapticBody();
@@ -43,11 +43,11 @@ void test_layout_tactsuitx16(void)
     TestActuator* actuator14 = new TestActuator();
     TestActuator* actuator15 = new TestActuator();
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
       { actuator0, actuator1, actuator2, actuator3 },
       { actuator4, actuator5, actuator6, actuator7 },
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
       { actuator8, actuator9, actuator10, actuator11 },
       { actuator12, actuator13, actuator14, actuator15 },
     });
@@ -86,19 +86,19 @@ void test_layout_tactsuitx16(void)
 
 void test_layout_tactsuitx40(void)
 {
-    static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX40_SIZE;
-    static const OutputLayout_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
+    static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX40_SIZE;
+    static const OutputLayout bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
 
     auto body = new HapticBody();
 
-    std::vector<std::vector<VibroPlane::Actuator_t*>> frontMatrix = {
+    std::vector<std::vector<VibroPlane::Actuator*>> frontMatrix = {
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
-    std::vector<std::vector<VibroPlane::Actuator_t*>> backMatrix = {
+    std::vector<std::vector<VibroPlane::Actuator*>> backMatrix = {
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
@@ -106,8 +106,8 @@ void test_layout_tactsuitx40(void)
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>(frontMatrix);
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>(backMatrix);
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>(frontMatrix);
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>(backMatrix);
 
     auto frontPlane = new VibroPlane(frontOutputs);
     auto backPlane = new VibroPlane(backOutputs);
@@ -169,8 +169,8 @@ void test_layout_tactsuitx40(void)
 
 void test_layout_tactal(void)
 {
-    static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-    static const ::SenseShift::Body::Haptics::Position_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+    static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
+    static const ::SenseShift::Body::Haptics::Position bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
     auto body = new HapticBody();
 
@@ -181,7 +181,7 @@ void test_layout_tactal(void)
     TestActuator* actuator4 = new TestActuator();
     TestActuator* actuator5 = new TestActuator();
 
-    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
+    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
       { actuator0, actuator1, actuator2, actuator3, actuator4, actuator5 },
     });
     auto plane = new VibroPlane(outputs);

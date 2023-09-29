@@ -31,7 +31,7 @@ namespace OpenGloves {
         virtual uint16_t getCurl() = 0;
     };
 
-    typedef SenseShift::Input::ISimpleSensor<FingerValue> IFingerSensor;
+    using IFingerSensor = SenseShift::Input::ISimpleSensor<FingerValue>;
 
     class SimpleFingerSensor : public IFingerSensor, public ICurl {
       public:

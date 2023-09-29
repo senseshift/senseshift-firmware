@@ -96,10 +96,10 @@ namespace SenseShift::BH::BLE {
 
     class MotorCharCallbacks : public BLECharacteristicCallbacks {
       private:
-        Connection::MotorHandler_t motorTransformer;
+        Connection::MotorHandler motorTransformer;
 
       public:
-        MotorCharCallbacks(Connection::MotorHandler_t motorTransformer) : motorTransformer(motorTransformer) {}
+        MotorCharCallbacks(Connection::MotorHandler motorTransformer) : motorTransformer(motorTransformer) {}
 
         void onWrite(BLECharacteristic* pCharacteristic) override
         {
@@ -169,9 +169,9 @@ namespace SenseShift::BH::BLE {
               BH_BLE_SERVICE_MOTOR_CHAR_SERIAL_KEY_UUID,
               PROPERTY_READ | PROPERTY_WRITE
             );
-            uint8_t serialNumber[ConnectionConfig_t::SN_LENGTH];
-            memcpy(serialNumber, this->config.serialNumber, ConnectionConfig_t::SN_LENGTH);
-            serialNumberChar->setValue(serialNumber, ConnectionConfig_t::SN_LENGTH);
+            uint8_t serialNumber[ConnectionConfig::SN_LENGTH];
+            memcpy(serialNumber, this->config.serialNumber, ConnectionConfig::SN_LENGTH);
+            serialNumberChar->setValue(serialNumber, ConnectionConfig::SN_LENGTH);
             serialNumberChar->setCallbacks(new LogOutputCharCallbacks());
         }
 

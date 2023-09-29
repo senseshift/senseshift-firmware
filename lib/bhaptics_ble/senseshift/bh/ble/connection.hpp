@@ -16,13 +16,13 @@
 #endif
 
 namespace SenseShift::BH::BLE {
-    typedef struct ConnectionConfig {
+    struct ConnectionConfig {
         static constexpr size_t SN_LENGTH = 10;
 
         std::string deviceName;
         uint16_t appearance;
         uint8_t serialNumber[SN_LENGTH];
-    } ConnectionConfig_t;
+    };
 
     class ConnectionCallbacks {
       public:
@@ -32,9 +32,9 @@ namespace SenseShift::BH::BLE {
 
     class Connection final : public IEventListener {
       public:
-        typedef std::function<void(std::string&)> MotorHandler_t;
+        using MotorHandler = std::function<void(std::string&)>;
 
-        Connection(const ConnectionConfig_t& config, MotorHandler_t motorHandler, IEventDispatcher* eventDispatcher) :
+        Connection(const ConnectionConfig& config, MotorHandler motorHandler, IEventDispatcher* eventDispatcher) :
           config(config), motorHandler(motorHandler), eventDispatcher(eventDispatcher)
         {
             this->eventDispatcher->addEventListener(this);
@@ -67,8 +67,8 @@ namespace SenseShift::BH::BLE {
         };
 
       private:
-        const ConnectionConfig_t& config;
-        MotorHandler_t motorHandler;
+        const ConnectionConfig& config;
+        MotorHandler motorHandler;
         ::SenseShift::IEventDispatcher* eventDispatcher;
 
         BLEServer* bleServer = nullptr;
