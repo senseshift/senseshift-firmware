@@ -5,7 +5,7 @@
 #include <Arduino.h>
 
 namespace SenseShift::Arduino::Input {
-    typedef ::SenseShift::Input::ISimpleSensor<bool> IDigitalSensor;
+    using IDigitalSensor = ::SenseShift::Input::ISimpleSensor<bool>;
 
     template<bool invert = false>
     class DigitalSensor : public IDigitalSensor {

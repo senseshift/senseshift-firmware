@@ -25,13 +25,13 @@ using namespace SenseShift::Body::Haptics;
 extern SenseShift::SenseShift App;
 SenseShift::SenseShift* app = &App;
 
-static const size_t bhLayoutSize = BH_LAYOUT_TACTOSY2_SIZE;
-static const Position_t bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSY2;
+static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTOSY2_SIZE;
+static const Position bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSY2;
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the forearm
-    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator_t>({
+    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
       // clang-format off
       { new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25) },
       { new ActuatorPWM(26), new ActuatorPWM(27), new ActuatorPWM(14) },

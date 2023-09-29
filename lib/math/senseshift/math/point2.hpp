@@ -10,10 +10,10 @@ namespace SenseShift::Math {
           std::is_arithmetic<_Tp>::value, "::SenseShift::Math::Point2 only can be used with arithmetic types"
         );
 
-        typedef _Tp Value_t;
+        using Value = _Tp;
 
-        inline static const _Tp MIN = std::numeric_limits<_Tp>::min();
-        inline static const _Tp MAX = std::numeric_limits<_Tp>::max();
+        static constexpr _Tp MIN = std::numeric_limits<_Tp>::min();
+        static constexpr _Tp MAX = std::numeric_limits<_Tp>::max();
 
         _Tp x, y;
 
@@ -33,10 +33,10 @@ namespace SenseShift::Math {
         }
     };
 
-    typedef Point2<unsigned char> Point2b;
-    typedef Point2<double> Point2d;
-    typedef Point2<float> Point2f;
-    typedef Point2<int> Point2i;
-    typedef Point2<short> Point2s;
-    typedef Point2<unsigned short> Point2w;
+    using Point2b = Point2<unsigned char>;
+    using Point2d = Point2<double>;
+    using Point2f = Point2<float>;
+    using Point2i = Point2<int>;
+    using Point2s = Point2<short>;
+    using Point2w = Point2<unsigned short>;
 }; // namespace SenseShift::Math

@@ -2,7 +2,7 @@
 
 namespace SenseShift::Arduino {
     struct PlaneVisitor {
-        const SenseShift::Body::Haptics::Target_t target;
+        const SenseShift::Body::Haptics::Target target;
         HardwareSerial* serial;
 
         void operator()(const SenseShift::Body::Haptics::VibroPlane* plane) const

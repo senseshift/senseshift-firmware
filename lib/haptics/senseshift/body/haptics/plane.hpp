@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace SenseShift::Body::Haptics {
-    typedef std::set<Position_t> PositionSet_t;
+    using PositionSet = std::set<Position>;
 
     /**
      * Output "plane" (e.g. Chest, Palm, Finger, etc.)
@@ -20,35 +20,34 @@ namespace SenseShift::Body::Haptics {
      */
     template<typename _Tp, typename _Ta>
     class ActuativePlane {
-        static_assert(std::is_same<_Tp, VibroEffectData_t>());
+        static_assert(std::is_same<_Tp, VibroEffectData>());
 
       public:
-        using Value_t = _Tp;
-        using Actuator_t = _Ta;
+        using Value = _Tp;
+        using Actuator = _Ta;
 
-        typedef std::map<Position_t, Actuator_t*> ActuatorMap_t;
-        typedef std::map<Position_t, Value_t> PositionStateMap_t;
+        using ActuatorMap = std::map<Position, Actuator*>;
+        using PositionStateMap = std::map<Position, Value>;
 
         ActuativePlane() = default;
 
-        ActuativePlane(const ActuatorMap_t& actuators) { this->setActuators(actuators); }
+        ActuativePlane(const ActuatorMap& actuators) { this->setActuators(actuators); }
 
         void setup();
-        virtual void effect(const Position_t&, const Value_t&);
+        virtual void effect(const Position&, const Value&);
 
-        [[nodiscard]] const PositionSet_t* getAvailablePoints() const { return &points; }
-        [[nodiscard]] const PositionStateMap_t* getActuatorStates() const { return &states; }
+        [[nodiscard]] const PositionSet* getAvailablePoints() const { return &points; }
+        [[nodiscard]] const PositionStateMap* getActuatorStates() const { return &states; }
 
       private:
-        PositionSet_t points;
-        ActuatorMap_t actuators{};
-        PositionStateMap_t states{};
+        PositionSet points;
+        ActuatorMap actuators{};
+        PositionStateMap states{};
 
-        void setActuators(const ActuatorMap_t&);
+        void setActuators(const ActuatorMap&);
     };
 
-    typedef ActuativePlane<VibroEffectData_t, ::SenseShift::Output::IActuator<VibroEffectData_t::Intensity_t>>
-      VibroPlane;
+    using VibroPlane = ActuativePlane<VibroEffectData, ::SenseShift::Output::IActuator<VibroEffectData::Intensity>>;
 
     /**
      * Output plane, finds the closest actuator for the given point.
@@ -57,30 +56,30 @@ namespace SenseShift::Body::Haptics {
     template<typename _Tp, typename _Ta>
     class ActuativePlane_Closest : public ActuativePlane<_Tp, _Ta> {
       public:
-        typedef _Tp Value_t;
+        using Value = _Tp;
 
-        ActuativePlane_Closest(const typename ActuativePlane<_Tp, _Ta>::ActuatorMap_t& actuators) :
+        ActuativePlane_Closest(const typename ActuativePlane<_Tp, _Ta>::ActuatorMap& actuators) :
           ActuativePlane<_Tp, _Ta>(actuators)
         {
         }
 
-        void effect(const Position_t&, const Value_t&) override;
+        void effect(const Position&, const Value&) override;
 
       private:
-        [[nodiscard]] const Position_t& findClosestPoint(const PositionSet_t&, const Position_t&) const;
+        [[nodiscard]] const Position& findClosestPoint(const PositionSet&, const Position&) const;
     };
 
-    typedef ActuativePlane_Closest<VibroEffectData_t, ::SenseShift::Output::IActuator<VibroEffectData_t::Intensity_t>>
-      VibroPlane_Closest;
+    using VibroPlane_Closest =
+      ActuativePlane_Closest<VibroEffectData, ::SenseShift::Output::IActuator<VibroEffectData::Intensity>>;
 
     // TODO: configurable margin
     class PlaneMapper_Margin {
       public:
         template<typename _Tp>
-        [[nodiscard]] static constexpr inline std::map<Position_t, _Tp*>
+        [[nodiscard]] static constexpr inline std::map<Position, _Tp*>
           mapMatrixCoordinates(std::vector<std::vector<_Tp*>> map2d)
         {
-            std::map<Position_t, _Tp*> points{};
+            std::map<Position, _Tp*> points{};
 
             size_t y_size = map2d.size();
             size_t y_max = y_size - 1;
@@ -92,7 +91,7 @@ namespace SenseShift::Body::Haptics {
 
                 for (size_t x = 0; x < x_size; ++x) {
                     auto* wr = row.at(x);
-                    Position_t coord = PlaneMapper_Margin::mapPoint<Position_t::Value_t>(x, y, x_max, y_max);
+                    Position coord = PlaneMapper_Margin::mapPoint<Position::Value>(x, y, x_max, y_max);
 
                     points[coord] = wr;
                 }
@@ -109,11 +108,11 @@ namespace SenseShift::Body::Haptics {
         [[nodiscard]] static constexpr inline ::SenseShift::Math::Point2<_Tp>
           mapPoint(_Tp x, _Tp y, _Tp x_max, _Tp y_max)
         {
-            using Point_t = ::SenseShift::Math::Point2<_Tp>;
+            using Point = ::SenseShift::Math::Point2<_Tp>;
 
-            return Point_t(
-              ::SenseShift::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point_t::MIN, Point_t::MAX),
-              ::SenseShift::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point_t::MIN, Point_t::MAX)
+            return Point(
+              ::SenseShift::accurateMap<_Tp>(x + 1, 0, x_max + 2, Point::MIN, Point::MAX),
+              ::SenseShift::accurateMap<_Tp>(y + 1, 0, y_max + 2, Point::MIN, Point::MAX)
             );
         }
     };

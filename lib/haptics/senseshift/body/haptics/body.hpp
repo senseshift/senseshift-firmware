@@ -10,22 +10,22 @@
 namespace SenseShift::Body::Haptics {
     class HapticBody {
       public:
-        typedef std::variant<VibroPlane*> AuctiativePlane_t;
-        typedef std::multimap<Target_t, AuctiativePlane_t> PlaneTargetMap_t;
-        typedef std::map<Target_t, VibroPlane*> VibroTargetMap_t;
+        using AuctiativePlane = std::variant<VibroPlane*>;
+        using PlaneTargetMap = std::multimap<Target, AuctiativePlane>;
+        using VibroTargetMap = std::map<Target, VibroPlane*>;
 
         HapticBody(){};
 
         void setup();
 
-        void effect(const EffectRequest_t&);
+        void effect(const EffectRequest&);
 
-        void addTarget(const Target_t, VibroPlane* plane);
+        void addTarget(const Target, VibroPlane* plane);
 
-        [[nodiscard]] const PlaneTargetMap_t* getTargets() const { return &allTargets; }
+        [[nodiscard]] const PlaneTargetMap* getTargets() const { return &allTargets; }
 
       private:
-        PlaneTargetMap_t allTargets{};
-        VibroTargetMap_t vibroTargets{};
+        PlaneTargetMap allTargets{};
+        VibroTargetMap vibroTargets{};
     };
 } // namespace SenseShift::Body::Haptics

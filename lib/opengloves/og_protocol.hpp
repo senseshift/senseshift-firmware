@@ -57,8 +57,8 @@ namespace OpenGloves {
         virtual size_t readCommand(char* buffer, size_t length) = 0;
     };
 
-    typedef uint16_t CommandIndex_t;
-    typedef enum Command : CommandIndex_t {
+    using CommandIndex = uint16_t;
+    enum Command : CommandIndex {
         ThumbCurl,
         ThumbSplay,
 
@@ -73,7 +73,7 @@ namespace OpenGloves {
 
         PinkyCurl,
         PinkySplay,
-    } Command;
+    };
 
-    typedef std::function<void(Command, uint16_t)> CommandCallback;
+    using CommandCallback = std::function<void(Command, uint16_t)>;
 } // namespace OpenGloves
