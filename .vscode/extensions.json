@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ms-vscode.cpptools",
+        "redhat.vscode-yaml",
+        "platformio.platformio-ide",
+        "Wokwi.wokwi-vscode",
+        "xaver.clang-format",
+        "editorconfig.editorconfig",
+        "wakatime.vscode-wakatime"
+    ]
+}
