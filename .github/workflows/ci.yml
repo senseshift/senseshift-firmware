@@ -396,7 +396,10 @@ jobs:
             ./build/coverage/
           retention-days: 5
 
-      - uses: manarbenkraouda/lcov-reporter-action@v0.3.5.3
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./build/lcov/lcov.info.cleaned
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          files: ./build/lcov/lcov.info.cleaned
+          flags: unittests

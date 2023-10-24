@@ -9,6 +9,7 @@ Build your own DIY haptic vest, haptic gloves, and more!
 [![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%20Twitter&logo=twitter)](https://twitter.com/leon0399)
 
 [![PlatformIO CI](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/senseshift/senseshift-firmware/graph/badge.svg?token=8CEuP8vk0f)](https://codecov.io/gh/senseshift/senseshift-firmware)
 [![GitHub bug issues](https://img.shields.io/github/issues/senseshift/senseshift-firmware/bug?color=%23d73a4a)](https://github.com/senseshift/senseshift-firmware/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 
 [![GPL-3.0](https://img.shields.io/github/license/senseshift/senseshift-firmware)](/LICENSE)
