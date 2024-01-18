@@ -72,7 +72,7 @@ Please note that documentation is still work-in-progress.
 | :------------------------ | :-----------------------------------------------------------------: |
 | bHaptics Bluetooth LE     | ✅ (Android/Windows/Quest)                                           |
 | OpenGloves Alpha-encoding | ✅ (Serial/Bluetooth Serial)                                         |
-| ProTubeVR                 | Work in Progress (Bluetooth)                                       |
+| ProTubeVR                 | Work in Progress (Bluetooth)                                       | Work in Progress (Bluetooth)                                       | Work in Progress (Bluetooth)                                       |
 | SenseShift                | [RFC](https://github.com/senseshift/senseshift-firmware/issues/9)   |
 
 ## Supported devices
