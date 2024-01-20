@@ -1,12 +1,12 @@
-# SenseShift Firmware
+# SenseShift Firmware - Open-Source VR accessories
 
 This project is intended to let people build their own DIY haptic-feedback devices. Integrates into all existing games that work with bHaptics and OpenGloves.
 
 Build your own DIY haptic vest, haptic gloves, and more!
 
-[![Discord](https://img.shields.io/discord/966090258104062023?label=Discord&logo=discord)](https://discord.gg/YUtRKAqty2)
-[![Developer's Twitter](https://img.shields.io/twitter/follow/senseshiftio?color=%231DA1F2&label=Project%20Twitter&logo=twitter)](https://twitter.com/senseshiftio)
-[![Developer's Twitter](https://img.shields.io/twitter/follow/leon0399?color=%231DA1F2&label=Developer%20Twitter&logo=twitter)](https://twitter.com/leon0399)
+<b>Get involved: [Discord](https://discord.gg/YUtRKAqty2) • [Website](https://senseshift.io) • [Issues](https://github.com/senseshift/senseshift-firmware/issues) • [Twitter](https://twitter.com/senseshiftio)</b>
+
+[![Discord Widget](https://discord.com/api/guilds/966090258104062023/widget.png?style=banner2)](https://discord.gg/YUtRKAqty2)
 
 [![PlatformIO CI](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/senseshift/senseshift-firmware/graph/badge.svg?token=8CEuP8vk0f)](https://codecov.io/gh/senseshift/senseshift-firmware)
@@ -36,8 +36,8 @@ Please note that documentation is still work-in-progress.
 | :------------------- | :----------: |
 | ESP32-WROOM-32       | ✅            |
 | ESP32-WROVER         | ✅            |
-| ESP32-C3             | ❌            |
-| ESP32-S3             | ❌            |
+| ESP32-C3             | 🚧            |
+| ESP32-S3             | 🚧            |
 
 > **Note**  
 > Please, refer to [Documentation on MCUs](https://senseshift.github.io/docs/hardware/mcu) for more detailed info
@@ -72,6 +72,7 @@ Please note that documentation is still work-in-progress.
 | :------------------------ | :-----------------------------------------------------------------: |
 | bHaptics Bluetooth LE     | ✅ (Android/Windows/Quest)                                           |
 | OpenGloves Alpha-encoding | ✅ (Serial/Bluetooth Serial)                                         |
+| ProTubeVR                 | 🚧 (Bluetooth)                                                       |
 | SenseShift                | [RFC](https://github.com/senseshift/senseshift-firmware/issues/9)   |
 
 ## Supported devices
@@ -92,6 +93,10 @@ Please note that documentation is still work-in-progress.
 * [Code of Conduct](./CODE_OF_CONDUCT.md)
 * [Contributing Guidelines](./CONTRIBUTING.md)
 
+## Repo Activity
+
+![Repo Activity](https://repobeats.axiom.co/api/embed/578cddcaa2b3d076f11ac2e681289cf47276258f.svg "Repobeats analytics image")
+
 ## Credits
 
 * [LucasVRTech](https://github.com/lucas-vrtech) of the LucidGlove project
@@ -104,3 +109,5 @@ Please note that documentation is still work-in-progress.
 This firmware is licensed under [GPL-3.0](./LICENSE). Please see the [LICENSE](./LICENSE) file for details.
 
 SenseShift are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. SenseShift is not a bHaptics-approved software, nor is it associated with bHaptics.
+
+SenseShift are not affiliated with ProTubeVR. All brands and trademarks belong to their respective owners. SenseShift is not a ProTubeVR-approved software, nor is it associated with ProTubeVR.
