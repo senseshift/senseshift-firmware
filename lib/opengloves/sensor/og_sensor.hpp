@@ -33,27 +33,26 @@ namespace OpenGloves {
         StringEncodedMemoizedSensor(SenseShift::Input::ISimpleSensor<_Tp>* sensor, IEncodedInput::Type type) :
           IStringEncodedMemoizedSensor(type), SenseShift::Input::MemoizedSensor<_Tp>(sensor){};
 
-        void init() override { this->sensor->init(); }
+        void init() override { this->getSensor()->init(); }
 
-        void updateValue() override { this->value = this->sensor->getValue(); }
+        void updateValue() override { this->value = this->sensor_->getValue(); }
 
-        size_t getEncodedLength() const override;
+        [[nodiscard]] size_t getEncodedLength() const override;
 
-        size_t encodeString(char* buffer) const override;
+        size_t encodeString(char* buffer) override;
     };
 
     template<>
-    size_t StringEncodedMemoizedSensor<uint16_t>::getEncodedLength() const
+    inline size_t StringEncodedMemoizedSensor<uint16_t>::getEncodedLength() const
     {
         return 6;
     }
 
+    /// Format as "Axxxx", where A is the type and xxxxx is the value without leading zeros.
     template<>
-    size_t StringEncodedMemoizedSensor<uint16_t>::encodeString(char* buffer) const
+    inline size_t StringEncodedMemoizedSensor<uint16_t>::encodeString(char* buffer)
     {
-        // Format as "Axxxx", where A is the type and xxxxx is the value without
-        // leading zeros.
-        return snprintf(buffer, this->getEncodedLength(), "%c%d", this->getType(), this->value);
+        return snprintf(buffer, this->getEncodedLength(), "%c%d", this->getType(), this->getValue());
     }
 
     template<>
@@ -63,11 +62,14 @@ namespace OpenGloves {
     }
 
     template<>
-    size_t StringEncodedMemoizedSensor<bool>::encodeString(char* buffer) const
+    size_t StringEncodedMemoizedSensor<bool>::encodeString(char* buffer)
     {
+        const auto value = this->getValue();
+
         if (value) {
             buffer[0] = this->getType();
         }
+
         return value ? this->getEncodedLength() : 0;
     }
 
@@ -79,20 +81,20 @@ namespace OpenGloves {
     }
 
     template<>
-    size_t StringEncodedMemoizedSensor<FingerValue>::encodeString(char* buffer) const
+    size_t StringEncodedMemoizedSensor<FingerValue>::encodeString(char* buffer)
     {
         size_t offset = 0;
-        offset += snprintf(buffer + offset, 6, "%c%d", this->type, this->value.getTotalCurl());
+        offset += snprintf(buffer + offset, 6, "%c%d", this->type, this->getValue().getTotalCurl());
 
-        if (this->value.curl.size() > 1) {
-            for (size_t i = 0; i < this->value.curl.size(); i++) {
+        if (this->getValue().curl.size() > 1) {
+            for (size_t i = 0; i < this->getValue().curl.size(); i++) {
                 char knuckle = 'A' + i;
-                offset += snprintf(buffer + offset, 10, "(%cA%c)%d", this->type, knuckle, this->value.curl[i]);
+                offset += snprintf(buffer + offset, 10, "(%cA%c)%d", this->type, knuckle, this->getValue().curl[i]);
             }
         }
 
-        if (this->value.splay.has_value()) {
-            offset += snprintf(buffer + offset, 9, "(%cB)%d", this->type, this->value.splay.value());
+        if (this->getValue().splay.has_value()) {
+            offset += snprintf(buffer + offset, 9, "(%cB)%d", this->type, this->getValue().splay.value());
         }
 
         return offset;

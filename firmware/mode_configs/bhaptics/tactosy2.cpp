@@ -7,7 +7,7 @@
 #include "senseshift.h"
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/actuator/pwm.hpp>
+#include <senseshift/arduino/output/ledc.hpp>
 #include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
@@ -22,25 +22,24 @@ using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
-extern SenseShift::SenseShift App;
-SenseShift::SenseShift* app = &App;
+extern Application App;
+Application* app = &App;
 
-static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTOSY2_SIZE;
-static const Position bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSY2;
+static const std::array<Position, BH_LAYOUT_TACTOSY2_SIZE> bhLayout = { BH_LAYOUT_TACTOSY2 };
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the forearm
-    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      { new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25) },
-      { new ActuatorPWM(26), new ActuatorPWM(27), new ActuatorPWM(14) },
+      { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25) },
+      { new LedcOutput(26), new LedcOutput(27), new LedcOutput(14) },
       // clang-format on
     });
 
-    app->getHapticBody()->addTarget(Target::Accessory, new VibroPlane_Closest(forearmOutputs));
+    app->getVibroBody()->addTarget(Target::Accessory, new FloatPlane_Closest(forearmOutputs));
 
-    app->getHapticBody()->setup();
+    app->getVibroBody()->setup();
 
     auto* bhBleConnection = new BLE::Connection(
       {
@@ -49,7 +48,7 @@ void setupMode()
         .serialNumber = BH_SERIAL_NUMBER,
       },
       [](std::string& value) -> void {
-          Decoder::applyPlain(app->getHapticBody(), value, bhLayout, Effect::Vibro, Target::Accessory);
+          Decoder::applyPlain(app->getVibroBody(), value, bhLayout, Effect::Vibro, Target::Accessory);
       },
       app
     );

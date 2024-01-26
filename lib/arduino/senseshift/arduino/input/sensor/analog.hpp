@@ -5,28 +5,29 @@
 #include <Arduino.h>
 
 namespace SenseShift::Arduino::Input {
-    template<bool invert = false>
-    class AnalogSensor : public ::SenseShift::Input::ISimpleSensor<uint16_t> {
-      private:
-        uint8_t pin;
+    using IAnalogSensor = ::SenseShift::Input::ISimpleSensor<uint16_t>;
+
+    template<bool Invert = false>
+    class AnalogSensor : public IAnalogSensor {
+        uint8_t pin_;
 
       public:
-        AnalogSensor(uint8_t pin) : pin(pin) {}
+        AnalogSensor(const uint8_t pin) : pin_(pin) {}
 
-        void init() override { pinMode(this->pin, INPUT); };
+        void init() override { pinMode(this->pin_, INPUT); };
 
-        uint16_t getValue() override;
+        [[nodiscard]] auto getValue() -> uint16_t override;
     };
 
     template<>
-    uint16_t AnalogSensor<false>::getValue()
+    [[nodiscard]] inline auto AnalogSensor<false>::getValue() -> uint16_t
     {
-        return analogRead(this->pin);
+        return analogRead(this->pin_);
     }
 
     template<>
-    uint16_t AnalogSensor<true>::getValue()
+    [[nodiscard]] inline auto AnalogSensor<true>::getValue() -> uint16_t
     {
-        return ANALOG_MAX - analogRead(this->pin);
+        return ANALOG_MAX - analogRead(this->pin_);
     }
 } // namespace SenseShift::Arduino::Input

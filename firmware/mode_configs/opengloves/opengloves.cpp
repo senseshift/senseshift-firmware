@@ -1,7 +1,7 @@
 #include <og_constants.hpp>
 #include <opengloves_task.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/arduino/input/sensor/binary.hpp>
 #include <senseshift/arduino/output/actuator/servo.hpp>
 #include <senseshift/calibration.hpp>
 #include <senseshift/input/sensor.hpp>

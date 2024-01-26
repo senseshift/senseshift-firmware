@@ -6,7 +6,7 @@
 
 #include <og_ffb.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/arduino/input/sensor/binary.hpp>
 #include <senseshift/calibration.hpp>
 #include <senseshift/freertos/task.hpp>
 #include <senseshift/input/sensor.hpp>

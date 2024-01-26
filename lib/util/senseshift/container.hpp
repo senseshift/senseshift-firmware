@@ -12,7 +12,7 @@ namespace SenseShift {
      * @tparam _Tp The type of the value.
      */
     template<class _Cp, typename _Tp>
-    inline bool contains(_Cp&& c, _Tp val)
+    inline auto contains(const _Cp&& c, const _Tp val) -> bool
     {
         return std::find(std::begin(c), std::end(c), val) != std::end(c);
     };

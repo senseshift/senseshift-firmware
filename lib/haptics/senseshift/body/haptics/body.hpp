@@ -3,29 +3,42 @@
 #include "senseshift/body/haptics/interface.hpp"
 #include "senseshift/body/haptics/plane.hpp"
 
-#include <senseshift/utility.hpp>
-
 #include <map>
 
+#include <senseshift/output/output.hpp>
+
 namespace SenseShift::Body::Haptics {
-    class HapticBody {
+    /// Output body, contains all the output planes.
+    ///
+    /// \tparam Tc The type of the coordinate.
+    /// \tparam To The type of the output value.
+    template<typename Tc, typename To>
+    class OutputBody {
       public:
-        using AuctiativePlane = std::variant<VibroPlane*>;
-        using PlaneTargetMap = std::multimap<Target, AuctiativePlane>;
-        using VibroTargetMap = std::map<Target, VibroPlane*>;
+        /// The type of the output plane for the given target.
+        using Plane = OutputPlane<Tc, To>;
+        /// The type of the target to output plane map (e.g. Chest -> OutputPlane).
+        using TargetPlaneMap = std::map<Target, Plane*>;
 
-        HapticBody(){};
+        OutputBody() = default;
 
-        void setup();
+        void setup() {
+            for (auto& [target, plane] : this->targets_) {
+                plane->setup();
+            }
+        }
 
-        void effect(const EffectRequest&);
+        void addTarget(Target target, Plane* plane) {
+            this->targets_[target] = plane;
+        }
 
-        void addTarget(const Target, VibroPlane* plane);
+        void effect(const Target& target, const Position& pos, const typename Plane::Value& val);
 
-        [[nodiscard]] const PlaneTargetMap* getTargets() const { return &allTargets; }
+        [[nodiscard]] auto getTargets() const -> const TargetPlaneMap* { return &targets_; }
 
       private:
-        PlaneTargetMap allTargets{};
-        VibroTargetMap vibroTargets{};
+        TargetPlaneMap targets_{};
     };
+
+    using FloatBody = OutputBody<Position::Value, Output::FloatOutput::ValueType>;
 } // namespace SenseShift::Body::Haptics

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <senseshift/logging.hpp>
+#include <senseshift/core/logging.hpp>
 
 extern "C" void delay(uint32_t ms);
 

@@ -20,7 +20,7 @@ namespace SenseShift::Battery {
       public:
         NaiveBatterySensor(::SenseShift::Input::ISimpleSensor<uint16_t>* sensor) : sensor(sensor){};
 
-        BatteryState getValue() override
+        [[nodiscard]] auto getValue() -> BatteryState override
         {
             return { .level =
                        static_cast<uint8_t>(::SenseShift::simpleMap<uint16_t>(this->sensor->getValue(), 4095, 255)) };
@@ -28,7 +28,7 @@ namespace SenseShift::Battery {
         void init() override { this->sensor->init(); }
 
       private:
-        ::SenseShift::Input::ISimpleSensor<uint16_t>* sensor;
+        ISimpleSensor<uint16_t> * sensor;
     };
 
     class BatterySensor : public ::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState> {
@@ -40,7 +40,7 @@ namespace SenseShift::Battery {
         void tick() override
         {
             this->::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState>::tick();
-            this->eventDispatcher->postEvent(new ::SenseShift::Battery::BatteryLevelEvent(this->value));
+            this->eventDispatcher->postEvent(new ::SenseShift::Battery::BatteryLevelEvent(this->getValue()));
         }
 
       private:

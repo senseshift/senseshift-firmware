@@ -113,7 +113,7 @@
 #define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && defined(PIN_BUTTON_PINCH) && (PIN_BUTTON_PINCH != -1))
 
 #define BUTTON_CLASS(_type, _pin, _invert) \
-    StringEncodedMemoizedSensor<bool>(new ::SenseShift::Arduino::Input::DigitalSensor<_invert>(_pin), _type)
+    StringEncodedMemoizedSensor<bool>(new ::SenseShift::Arduino::Input::BinarySensor<_invert>(_pin), _type)
 
 #pragma endregion
 

@@ -1,30 +1,21 @@
 #include <cstdint>
 #include <type_traits>
 
-#include <senseshift/logging.hpp>
+#include <senseshift/core/logging.hpp>
+#include <senseshift/core/helpers.hpp>
 
 namespace SenseShift {
-    template<typename _Tp>
-    constexpr _Tp accurateMap(_Tp x, _Tp in_min, _Tp in_max, _Tp out_min, _Tp out_max) noexcept
+    /// Remap \p value from the range (\p min, \p max) to (\p min_out, \p max_out).
+    template<typename Tp>
+    constexpr auto accurateMap(Tp value, Tp min, Tp max, Tp min_out, Tp max_out) noexcept -> Tp
     {
-        static_assert(std::is_arithmetic<_Tp>::value, "Type must be arithmetic");
-
-        const _Tp run = in_max - in_min;
-        if (run == 0) {
-            log_e("map(): Invalid input range, min == max");
-            return (out_min + out_max) / 2;
-        }
-        const _Tp rise = out_max - out_min;
-        const _Tp delta = x - in_min;
-        return (delta * rise) / run + out_min;
+        return remap<Tp, Tp>(value, min, max, min_out, max_out);
     }
 
     // Same as the above, but both mins are 0.
-    template<typename _Tp>
-    constexpr inline _Tp simpleMap(_Tp x, _Tp in_max, _Tp out_max) noexcept
+    template<typename Tp>
+    constexpr auto simpleMap(Tp value, Tp in_max, Tp out_max) noexcept -> Tp
     {
-        static_assert(std::is_arithmetic<_Tp>::value, "Type must be arithmetic");
-
-        return x * out_max / in_max;
+        return remap_simple<Tp, Tp>(value, in_max, out_max);
     }
 } // namespace SenseShift

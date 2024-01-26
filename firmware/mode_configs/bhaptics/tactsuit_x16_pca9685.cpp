@@ -5,10 +5,7 @@
 #include <Wire.h>
 
 #include "senseshift.h"
-
-#include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/actuator/pca9685.hpp>
-#include <senseshift/battery/sensor.hpp>
+#include <senseshift/arduino/output/pca9685.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
@@ -22,41 +19,39 @@ using namespace SenseShift::Battery;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
-extern SenseShift::SenseShift App;
-SenseShift::SenseShift* app = &App;
+extern Application App;
+Application* app = &App;
 
-static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
-static const OutputLayout bhLayout[BH_LAYOUT_TACTSUITX16_SIZE] = BH_LAYOUT_TACTSUITX16;
+static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX16_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX16 };
 
 // Ouput indices, responsible for x40 => x16 grouping
-static constexpr size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
-static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
+static const std::array<std::uint8_t,BH_LAYOUT_TACTSUITX16_GROUPS_SIZE> layoutGroups = BH_LAYOUT_TACTSUITX16_GROUPS;
 
 void setupMode()
 {
     // Configure the PCA9685
-    auto pwm = new Adafruit_PWMServoDriver(0x40);
+    auto* pwm = new Adafruit_PWMServoDriver(0x40);
     pwm->begin();
     pwm->setPWMFreq(PWM_FREQUENCY);
 
     // Assign the pins on the configured PCA9685 to positions on the vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      { new ActuatorPCA9685(pwm, 0), new ActuatorPCA9685(pwm, 1), new ActuatorPCA9685(pwm, 2), new ActuatorPCA9685(pwm, 3) },
-      { new ActuatorPCA9685(pwm, 4), new ActuatorPCA9685(pwm, 5), new ActuatorPCA9685(pwm, 6), new ActuatorPCA9685(pwm, 7) },
+      { new PCA9685Output(pwm, 0), new PCA9685Output(pwm, 1), new PCA9685Output(pwm, 2), new PCA9685Output(pwm, 3) },
+      { new PCA9685Output(pwm, 4), new PCA9685Output(pwm, 5), new PCA9685Output(pwm, 6), new PCA9685Output(pwm, 7) },
       // clang-format on
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      { new ActuatorPCA9685(pwm, 8),  new ActuatorPCA9685(pwm, 9),  new ActuatorPCA9685(pwm, 10), new ActuatorPCA9685(pwm, 11) },
-      { new ActuatorPCA9685(pwm, 12), new ActuatorPCA9685(pwm, 13), new ActuatorPCA9685(pwm, 14), new ActuatorPCA9685(pwm, 15) },
+      { new PCA9685Output(pwm, 8),  new PCA9685Output(pwm, 9),  new PCA9685Output(pwm, 10), new PCA9685Output(pwm, 11) },
+      { new PCA9685Output(pwm, 12), new PCA9685Output(pwm, 13), new PCA9685Output(pwm, 14), new PCA9685Output(pwm, 15) },
       // clang-format on
     });
 
-    app->getHapticBody()->addTarget(Target::ChestFront, new VibroPlane_Closest(frontOutputs));
-    app->getHapticBody()->addTarget(Target::ChestBack, new VibroPlane_Closest(backOutputs));
+    app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane_Closest(frontOutputs));
+    app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane_Closest(backOutputs));
 
-    app->getHapticBody()->setup();
+    app->getVibroBody()->setup();
 
     auto* bhBleConnection = new BLE::Connection(
       {
@@ -65,7 +60,7 @@ void setupMode()
         .serialNumber = BH_SERIAL_NUMBER,
       },
       [](std::string& value) -> void {
-          Decoder::applyVestGrouped(app->getHapticBody(), value, bhLayout, layoutGroups);
+          Decoder::applyVestGrouped(app->getVibroBody(), value, bhLayout, layoutGroups);
       },
       app
     );

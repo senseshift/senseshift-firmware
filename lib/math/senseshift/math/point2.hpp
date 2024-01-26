@@ -1,33 +1,33 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
 #include <tuple>
+#include <type_traits>
 
 namespace SenseShift::Math {
-    template<typename _Tp>
+    template<typename Tp>
     struct Point2 {
-        static_assert(
-          std::is_arithmetic<_Tp>::value, "::SenseShift::Math::Point2 only can be used with arithmetic types"
-        );
+        static_assert(std::is_arithmetic_v<Tp>, "Point2 only can be used with arithmetic types");
 
-        using Value = _Tp;
+        using Value = Tp;
 
-        static constexpr _Tp MIN = std::numeric_limits<_Tp>::min();
-        static constexpr _Tp MAX = std::numeric_limits<_Tp>::max();
+        static constexpr Tp MIN = std::numeric_limits<Tp>::min();
+        static constexpr Tp MAX = std::numeric_limits<Tp>::max();
 
-        _Tp x, y;
+        Tp x, y;
 
-        constexpr Point2() : x((_Tp) 0), y((_Tp) 0){};
-        constexpr Point2(_Tp x, _Tp y) : x(x), y(y){};
-        constexpr Point2(const Point2<_Tp>& v) : x((_Tp) v.x), y((_Tp) v.y){};
+        constexpr Point2() : x(static_cast<Tp>(0)), y(static_cast<Tp>(0)){};
+        constexpr Point2(Tp x, Tp y) : x(x), y(y){};
+        constexpr Point2(const Point2<Tp>& v) : x((Tp) v.x), y((Tp) v.y){};
 
-        constexpr inline bool operator==(const Point2<_Tp>& rhs) const { return x == rhs.x && y == rhs.y; }
+        constexpr inline auto operator==(const Point2<Tp>& rhs) const -> bool { return x == rhs.x && y == rhs.y; }
 
-        constexpr inline bool operator!=(const Point2<_Tp>& rhs) const { return !(*this == rhs); }
+        constexpr inline auto operator!=(const Point2<Tp>& rhs) const -> bool { return !(*this == rhs); }
 
-        constexpr bool operator<(const Point2<_Tp>& rhs) const { return std::tie(x, y) < std::tie(rhs.x, rhs.y); }
+        constexpr auto operator<(const Point2<Tp>& rhs) const -> bool { return std::tie(x, y) < std::tie(rhs.x, rhs.y); }
 
-        constexpr float operator-(const Point2<_Tp>& rhs) const
+        constexpr auto operator-(const Point2<Tp>& rhs) const -> float
         {
             return std::sqrt(std::pow(x - rhs.x, 2) + std::pow(y - rhs.y, 2));
         }

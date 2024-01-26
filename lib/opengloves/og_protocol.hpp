@@ -38,7 +38,7 @@ namespace OpenGloves {
         IStringEncoded(Type type) : IEncodedInput(type){};
 
         virtual size_t getEncodedLength() const = 0;
-        virtual size_t encodeString(char* buffer) const = 0;
+        virtual size_t encodeString(char* buffer) = 0;
     };
 
     class IStringEncodedMemoizedSensor : public IStringEncoded {

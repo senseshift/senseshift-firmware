@@ -6,29 +6,31 @@ namespace SenseShift::Input {
     /**
      * Joystick axis sensor decorator
      */
-    template<typename _Tp>
-    class JoystickAxisSensor : public ISimpleSensor<_Tp> {
-      private:
-        ISimpleSensor<_Tp>* sensor;
-        float dead_zone;
+    template<typename Tp>
+    class JoystickAxisSensor : public ISimpleSensor<Tp> {
+    public:
+        using ValueType = Tp;
 
-        int filterDeadZone(int in)
-        {
-            // This function clamps the input to the center of the range if
-            // the value is within the threshold. This is to eliminate at-rest
-            // noise of the joystick.
-            int center = ANALOG_MAX / 2;
-            return abs(center - in) < dead_zone * ANALOG_MAX ? center : in;
+      private:
+        ISimpleSensor<ValueType>* sensor_;
+        float dead_zone_;
+
+        /// This function clamps the input to the center of the range if
+        /// the value is within the threshold. This is to eliminate at-rest
+        /// noise of the joystick.
+        [[nodiscard]] auto filterDeadZone(const int value_in) const -> ValueType {
+            constexpr ValueType center = ANALOG_MAX / 2;
+            return abs(center - value_in) < dead_zone_ * ANALOG_MAX ? center : value_in;
         }
 
       public:
-        JoystickAxisSensor(ISimpleSensor<_Tp>* sensor, float dead_zone) : sensor(sensor), dead_zone(dead_zone){};
+        JoystickAxisSensor(ISimpleSensor<Tp>* sensor, const float dead_zone) : sensor_(sensor), dead_zone_(dead_zone){};
 
-        void init() override { this->sensor->init(); };
+        void init() override { this->sensor_->init(); };
 
-        uint16_t getValue(void) override
+        [[nodiscard]] auto getValue() -> uint16_t override
         {
-            auto value = this->sensor->getValue();
+            auto value = this->sensor_->getValue();
             value = this->filterDeadZone(value);
             return value;
         }

@@ -6,9 +6,9 @@
 #include <senseshift/math/point2.hpp>
 
 namespace SenseShift::Body::Haptics {
-    using EffectIntex = std::uint8_t;
-    static constexpr EffectIntex EFFECT_INVALID = 0xFF;
-    enum class Effect : EffectIntex {
+    using EffectIndex = std::uint8_t;
+    static constexpr EffectIndex EFFECT_INVALID = 0xFF;
+    enum class Effect : EffectIndex {
         Invalid = EFFECT_INVALID,
         Vibro = 0x00,
         // TODO: thermal, etc.
@@ -47,31 +47,36 @@ namespace SenseShift::Body::Haptics {
     };
 
     using Coordinate = std::uint8_t;
-    using Position = ::SenseShift::Math::Point2<Coordinate>;
+    using Position = Math::Point2<Coordinate>;
 
-    // Vibration intensity.
-    struct VibroEffectData {
-        using Intensity = std::uint16_t;
-        static constexpr Intensity INTENSITY_MIN = 0;
-        static constexpr Intensity INTENSITY_MAX = 4095;
+    // Vibration intensity_.
+    class VibroEffectData {
+      public:
+        using Intensity = float;
 
-        Intensity intensity = 0;
+        static constexpr Intensity INTENSITY_MIN = 0.0F;
+        static constexpr Intensity INTENSITY_MAX = 1.0F;
 
-        inline constexpr VibroEffectData() = default;
-        inline constexpr VibroEffectData(const Intensity intensity) : intensity(intensity) {}
-        inline constexpr VibroEffectData(const VibroEffectData& other) = default;
+        constexpr VibroEffectData() = default;
+        constexpr explicit VibroEffectData(const Intensity intensity) : intensity_(intensity) {}
+        constexpr VibroEffectData(const VibroEffectData& other) = default;
 
-        inline constexpr operator std::uint16_t() const { return intensity; }
+        constexpr inline explicit operator float() const { return this->intensity_; }
+
+        [[nodiscard]] constexpr inline auto getIntensity() const -> Intensity { return intensity_; };
+
+      private:
+        Intensity intensity_ = 0;
     };
 
     // TODO: thermal, etc.
-
     using EffectData = std::variant<VibroEffectData>;
 
     struct EffectRequest {
         Effect effect = Effect::Invalid;
         Target target = Target::Invalid;
         Position position = Position(0, 0);
+
         EffectData data;
     };
 } // namespace SenseShift::Body::Haptics

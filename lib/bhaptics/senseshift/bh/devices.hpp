@@ -1,6 +1,11 @@
 #pragma once
 
+#include <array>
+#include <tuple>
+
 #include <hand_interface.hpp>
+
+#include <senseshift/body/haptics/plane.hpp>
 #include <senseshift/body/haptics/body.hpp>
 
 #pragma region BH_DEVICE_TACTSUITX40
@@ -18,8 +23,8 @@
 // X * Y for front and back
 #define BH_LAYOUT_TACTSUITX40_SIZE 40
 // clang-format off
-#define BH_LAYOUT_TACTSUITX40 {                                                \
-    /* Front, left part */                                                     \
+#define BH_LAYOUT_TACTSUITX40 {                                              \
+    /* Front, left part */                                                   \
     /*  0 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0) }, \
     /*  1 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 0) }, \
     /*  2 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 1) }, \
@@ -30,8 +35,8 @@
     /*  7 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 3) }, \
     /*  8 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 4) }, \
     /*  9 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 4) }, \
-                                                                               \
-    /* Back */                                                                 \
+                                                                             \
+    /* Back */                                                               \
     /* 11 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 0) },  \
     /* 11 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 0) },  \
     /* 12 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 1) },  \
@@ -42,7 +47,7 @@
     /* 17 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 3) },  \
     /* 18 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(0, 4) },  \
     /* 19 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(1, 4) },  \
-                                                                               \
+                                                                             \
     /* 20 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 0) },  \
     /* 21 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 0) },  \
     /* 22 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 1) },  \
@@ -53,8 +58,8 @@
     /* 27 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 3) },  \
     /* 28 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 4) },  \
     /* 29 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 4) },  \
-                                                                               \
-    /* Front, again... Now right part */                                       \
+                                                                             \
+    /* Front, again... Now right part */                                     \
     /* 30 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 0) }, \
     /* 31 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(3, 0) }, \
     /* 32 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX40_MAKE_POINT(2, 1) }, \
@@ -85,51 +90,51 @@
 // X16 suit uses the same packets structure as x40 suit and performs motor grouping in firmware
 #define BH_LAYOUT_TACTSUITX16_SIZE 40
 // clang-format off
-#define BH_LAYOUT_TACTSUITX16 {                                                         \
-    /* Front, left part */                                                              \
+#define BH_LAYOUT_TACTSUITX16 {                                                       \
+    /* Front, left part */                                                            \
     /*  0 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 0) }, /*  0 */ \
     /*  1 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 0) }, /*  1 */ \
     /*  2 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 0) }, /*  4 */ \
     /*  3 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 0) }, /*  5 */ \
-                                                                                        \
+                                                                                      \
     /*  4 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 1) }, /*  8 */ \
     /*  5 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 1) }, /*  9 */ \
     /*  6 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 1) }, /* 12 */ \
     /*  7 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 1) }, /* 13 */ \
     /*  8 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 1) }, /* 16 */ \
     /*  9 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 1) }, /* 17 */ \
-                                                                                        \
-    /* Back */                                                                          \
+                                                                                      \
+    /* Back */                                                                        \
     /* 10 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 0) }, /*  0 */  \
     /* 11 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 0) }, /*  1 */  \
     /* 12 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 0) }, /*  4 */  \
     /* 13 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 0) }, /*  5 */  \
-                                                                                        \
+                                                                                      \
     /* 14 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 1) }, /*  8 */  \
     /* 15 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 1) }, /*  9 */  \
     /* 16 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 1) }, /* 12 */  \
     /* 17 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 1) }, /* 13 */  \
     /* 18 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(0, 1) }, /* 16 */  \
     /* 19 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(1, 1) }, /* 17 */  \
-                                                                                        \
+                                                                                      \
     /* 20 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 0) }, /*  2 */  \
     /* 21 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 0) }, /*  3 */  \
     /* 22 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 0) }, /*  4 */  \
     /* 23 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 0) }, /*  7 */  \
-                                                                                        \
+                                                                                      \
     /* 24 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 1) }, /* 10 */  \
     /* 25 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 1) }, /* 11 */  \
     /* 26 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 1) }, /* 14 */  \
     /* 27 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 1) }, /* 15 */  \
     /* 28 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 1) }, /* 18 */  \
     /* 29 */ { Target::ChestBack, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 1) }, /* 19 */  \
-                                                                                        \
-    /* Front, again... Now right part */                                                \
+                                                                                      \
+    /* Front, again... Now right part */                                              \
     /* 30 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 0) }, /*  2 */ \
     /* 31 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 0) }, /*  3 */ \
     /* 32 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 0) }, /*  4 */ \
     /* 33 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 0) }, /*  7 */ \
-                                                                                        \
+                                                                                      \
     /* 34 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 1) }, /* 10 */ \
     /* 35 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(3, 1) }, /* 11 */ \
     /* 36 */ { Target::ChestFront, BH_LAYOUT_TACTSUITX16_MAKE_POINT(2, 1) }, /* 14 */ \
@@ -290,62 +295,64 @@ namespace SenseShift::BH {
 
     using HandSide = ::SenseShift::Body::Hands::HandSide;
 
-    using OutputLayout = std::tuple<Target, Position>;
+    using OutputLayout = std::tuple<::SenseShift::Body::Haptics::Target, SenseShift::Body::Haptics::Position>;
 
     // TactGlove Wrist motor position
     static constexpr const Position WRIST_MOTOR_POSITION(127, 191);
-    static constexpr const OutputLayout TactGloveLeftLayout[] = BH_LAYOUT_TACTGLOVE_LEFT;
-    static constexpr const OutputLayout TactGloveRightLayout[] = BH_LAYOUT_TACTGLOVE_RIGHT;
+    static constexpr const std::array<OutputLayout, BH_LAYOUT_TACTGLOVE_SIZE> TactGloveLeftLayout = { BH_LAYOUT_TACTGLOVE_LEFT };
+    static constexpr const std::array<OutputLayout, BH_LAYOUT_TACTGLOVE_SIZE> TactGloveRightLayout = { BH_LAYOUT_TACTGLOVE_RIGHT };
 
     inline void addTactGloveActuators(
-      HapticBody* hapticBody,
+      FloatBody* hapticBody,
       const HandSide side,
-      VibroPlane::Actuator* const thumbActuator,
-      VibroPlane::Actuator* const indexActuator,
-      VibroPlane::Actuator* const middleActuator,
-      VibroPlane::Actuator* const ringActuator,
-      VibroPlane::Actuator* const littleActuator,
-      VibroPlane::Actuator* const wristActuator
-    )
-    {
-        const OutputLayout(&layout)[6] = (side == HandSide::Left) ? TactGloveLeftLayout : TactGloveRightLayout;
+      FloatBody::Plane::Actuator* const thumb,
+      FloatBody::Plane::Actuator* const index,
+      FloatBody::Plane::Actuator* const middle,
+      FloatBody::Plane::Actuator* const ring,
+      FloatBody::Plane::Actuator* const little,
+      FloatBody::Plane::Actuator* const wrist
+    ) {
+        const auto& layout = (side == HandSide::Left) ? TactGloveLeftLayout : TactGloveRightLayout;
 
-        if (thumbActuator != nullptr) {
+        if (thumb != nullptr) {
             hapticBody->addTarget(
               std::get<0>(layout[0]),
-              new VibroPlane({ { std::get<1>(layout[0]), thumbActuator } })
+              new FloatPlane({ {std::get<1>(layout[0]), thumb } })
             );
         }
 
-        if (indexActuator != nullptr) {
+        if (index != nullptr) {
             hapticBody->addTarget(
               std::get<0>(layout[1]),
-              new VibroPlane({ { std::get<1>(layout[1]), indexActuator } })
+              new FloatPlane({ {std::get<1>(layout[1]), index } })
             );
         }
 
-        if (middleActuator != nullptr) {
+        if (middle != nullptr) {
             hapticBody->addTarget(
               std::get<0>(layout[2]),
-              new VibroPlane({ { std::get<1>(layout[2]), middleActuator } })
+              new FloatPlane({ {std::get<1>(layout[2]), middle } })
             );
         }
 
-        if (ringActuator != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[3]), new VibroPlane({ { std::get<1>(layout[3]), ringActuator } }));
+        if (ring != nullptr) {
+            hapticBody->addTarget(
+              std::get<0>(layout[3]),
+              new FloatPlane({ {std::get<1>(layout[3]), ring } })
+            );
         }
 
-        if (littleActuator != nullptr) {
+        if (little != nullptr) {
             hapticBody->addTarget(
               std::get<0>(layout[4]),
-              new VibroPlane({ { std::get<1>(layout[4]), littleActuator } })
+              new FloatPlane({ {std::get<1>(layout[4]), little } })
             );
         }
 
-        if (wristActuator != nullptr) {
+        if (wrist != nullptr) {
             hapticBody->addTarget(
               std::get<0>(layout[5]),
-              new VibroPlane({ { std::get<1>(layout[5]), wristActuator } })
+              new FloatPlane({ {std::get<1>(layout[5]), wrist } })
             );
         }
     }

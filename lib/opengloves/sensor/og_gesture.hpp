@@ -19,7 +19,7 @@ namespace OpenGloves {
 
         void init() override{};
 
-        bool getValue() override
+        [[nodiscard]] auto getValue() -> bool override
         {
             return this->index.getCurl() > this->threshold && this->middle.getCurl() > this->threshold
                    && this->ring.getCurl() > this->threshold && this->pinky.getCurl() > this->threshold;
@@ -36,7 +36,7 @@ namespace OpenGloves {
 
         void init() override{};
 
-        bool getValue() override { return this->index.getCurl() > this->threshold; }
+        [[nodiscard]] auto getValue() -> bool override { return this->index.getCurl() > this->threshold; }
     };
 
     class PinchGesture : public Gesture {
@@ -46,12 +46,12 @@ namespace OpenGloves {
         uint16_t threshold;
 
       public:
-        PinchGesture(ICurl& index, ICurl& thumb, uint16_t threshold) :
+        PinchGesture(ICurl& index, ICurl& thumb, const uint16_t threshold) :
           index(index), thumb(thumb), threshold(threshold){};
 
         void init() override{};
 
-        bool getValue() override
+        [[nodiscard]] auto getValue() -> bool override
         {
             return this->index.getCurl() > this->threshold && this->thumb.getCurl() > this->threshold;
         }

@@ -12,7 +12,7 @@
 #include <frozen/unordered_map.h>
 
 #include <og_protocol.hpp>
-#include <senseshift/logging.hpp>
+#include <senseshift/core/logging.hpp>
 #include <senseshift/opengloves/interface.hpp>
 
 #define SENSESHIFT_OPENGLOVES_ALPHA_ENCODING_BUFFER_SIZE 256

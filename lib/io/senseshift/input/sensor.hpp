@@ -3,8 +3,7 @@
 #include <type_traits>
 
 #include <senseshift/calibration.hpp>
-#include <senseshift/interface.hpp>
-#include <senseshift/logging.hpp>
+#include <senseshift/core/component.hpp>
 
 #if defined(__AVR__)
 #define ANALOG_MAX 1023
@@ -18,145 +17,154 @@
 #endif
 
 namespace SenseShift::Input {
-    /**
-     * Abstract hardware sensor (e.g. potentiometer, flex sensor, etc.)
-     * @tparam _Tp Type of the sensor value
-     */
-    template<typename _Tp>
-    struct ISimpleSensor : public virtual IInitializable {
-        using ValueType = _Tp;
+    /// Abstract hardware sensor (e.g. potentiometer, flex sensor, etc.)
+    /// \tparam Tp Type of the sensor value
+    template<typename Tp>
+    class ISimpleSensor : virtual public IInitializable {
+    public:
+        using ValueType = Tp;
 
-        /**
-         * Get the current sensor value
-         */
-        virtual ValueType getValue() = 0;
+        /// Get the current sensor value
+        [[nodiscard]] virtual auto getValue() -> ValueType = 0;
     };
 
-    template<typename _Tp>
-    struct ISensor : public virtual ISimpleSensor<_Tp>, ITickable {};
+    using IBinarySensor = ISimpleSensor<bool>;
 
-    /**
-     * Memoized sensor decorator
-     * @tparam _Tp Type of the sensor value
-     */
-    template<typename _Tp>
-    class MemoizedSensor : public ISensor<_Tp> {
-      protected:
-        ISimpleSensor<_Tp>* sensor;
-        _Tp value;
+    template<typename Tp>
+    class ISensor : virtual ISimpleSensor<Tp>, ITickable {};
 
+    /// Memoized sensor decorator. Stores the last read value and returns it on subsequent calls
+    /// \tparam Tp Type of the sensor value
+    template<typename Tp>
+    class MemoizedSensor : public ISensor<Tp> {
       public:
-        /**
-         * @param sensor Sensor to be decorated
-         */
-        MemoizedSensor(ISimpleSensor<_Tp>* sensor) : sensor(sensor){};
+        using ValueType = Tp;
+
+        /// \param sensor Sensor to be decorated
+        explicit MemoizedSensor(ISimpleSensor<ValueType>* sensor) : sensor_(sensor){}
 
         /**
          * Setup the sensor hardware
          */
-        void init() override { this->sensor->init(); };
+        void init() override { this->sensor_->init(); }
 
         /**
          * Read actual value from the hardware and memoize it
          */
-        void tick() override { this->value = this->sensor->getValue(); };
+        void tick() override { this->value_ = this->sensor_->getValue(); }
 
         /**
          * Get the current memoized value
          */
-        _Tp getValue() override { return this->value; };
+        [[nodiscard]] auto getValue() -> ValueType override { return this->value_; }
+
+    private:
+        ISimpleSensor<ValueType>* sensor_;
+        ValueType value_;
     };
 
-    template<typename _Tp>
-    class ICalibratedSimpleSensor : public ISimpleSensor<_Tp>, public Calibration::ICalibrated {};
+    template<typename Tp>
+    class ICalibratedSimpleSensor : public ISimpleSensor<Tp>, public Calibration::ICalibrated {};
 
-    /**
-     * Calibrated sensor decorator
-     *
-     * @tparam _Tp Type of the sensor value
-     */
-    template<typename _Tp>
-    class CalibratedSimpleSensor : public ICalibratedSimpleSensor<_Tp> {
+    /// Calibrated sensor decorator
+    /// \tparam Tp Type of the sensor value
+    template<typename Tp>
+    class CalibratedSimpleSensor : public ICalibratedSimpleSensor<Tp> {
       public:
-        /**
-         * @param sensor Sensor to be decorated
-         * @param calibrator ICalibrator algorithm to be used
-         */
-        CalibratedSimpleSensor(ISimpleSensor<_Tp>* sensor, Calibration::ICalibrator<_Tp>* calibrator) :
-          sensor(sensor), calibrator(calibrator){};
+        using ValueType = Tp;
 
-        void init() override { this->sensor->init(); };
-        _Tp getValue() override { return this->getCalibratedValue(); };
+        /// \param sensor Sensor to be decorated
+        /// \param calibrator ICalibrator algorithm to be used
+        CalibratedSimpleSensor(ISimpleSensor<ValueType>* sensor, Calibration::ICalibrator<ValueType>* calibrator) :
+          sensor_(sensor), calibrator_(calibrator){};
 
-        void resetCalibration() override { this->calibrator->reset(); };
-        void enableCalibration() override { calibrating = true; }
-        void disableCalibration() override { calibrating = false; }
+        void init() override { this->sensor_->init(); };
+        [[nodiscard]] auto getValue() -> ValueType override { return this->getCalibratedValue(); };
+
+        void resetCalibration() override { this->calibrator_->reset(); };
+        void enableCalibration() override { is_calibrating_ = true; }
+        void disableCalibration() override { is_calibrating_ = false; }
 
       protected:
-        ISimpleSensor<_Tp>* sensor;
-        Calibration::ICalibrator<_Tp>* calibrator;
-        bool calibrating = false;
-
-        _Tp getCalibratedValue()
+        [[nodiscard]] auto getCalibratedValue() -> ValueType
         {
-            auto value = this->sensor->getValue();
+            auto value = this->sensor_->getValue();
 
-            if (this->calibrating) {
-                this->calibrator->update(value);
+            if (this->is_calibrating_) {
+                this->calibrator_->update(value);
             }
 
-            return this->calibrator->calibrate(value);
+            return this->calibrator_->calibrate(value);
         }
+
+    private:
+        ISimpleSensor<ValueType>* sensor_;
+        Calibration::ICalibrator<ValueType>* calibrator_;
+        bool is_calibrating_ = false;
     };
 
-    template<typename _Tp>
-    class AverageSensor : public ISimpleSensor<_Tp> {
-        static_assert(std::is_arithmetic<_Tp>::value, "AverageSensor only supports arithmetic types");
+    /// A sensor that returns the average value of N samples.
+    /// \tparam Tp Type of the sensor value
+    template<typename Tp>
+    class AverageSensor : public ISimpleSensor<Tp> {
+        static_assert(std::is_arithmetic_v<Tp>, "AverageSensor only supports arithmetic types");
 
       public:
-        AverageSensor(ISimpleSensor<_Tp>* sensor, size_t samples) : sensor(sensor), samples(samples) {}
+        using ValueType = Tp;
 
-        void init() override { this->sensor->init(); };
+        /// \param sensor Sensor to be decorated
+        /// \param samples Number of samples to be used
+        AverageSensor(ISimpleSensor<ValueType>* sensor, const size_t samples) : sensor_(sensor), samples_(samples) {}
 
-        _Tp getValue() override
+        void init() override { this->sensor_->init(); };
+
+        [[nodiscard]] auto getValue() const -> ValueType override
         {
             // TODO: another type for sum?
             double sum = 0;
-            for (size_t i = 0; i < this->samples; i++) {
-                sum += this->sensor->getValue();
+            for (size_t i = 0; i < this->samples_; i++) {
+                sum += this->sensor_->getValue();
             }
 
-            return sum / this->samples;
+            return sum / this->samples_;
         }
 
       private:
-        ISimpleSensor<_Tp>* sensor;
-        size_t samples;
+        ISimpleSensor<ValueType>* sensor_;
+        size_t samples_;
     };
 
-    template<typename _Tp, size_t _Samples>
-    class StaticMedianSensor : public ISimpleSensor<_Tp> {
-        static_assert(std::is_arithmetic<_Tp>::value, "StaticMedianSensor only supports arithmetic types");
-        static_assert(_Samples % 2 == 1, "StaticMedianSensor only supports odd sample sizes");
+    /// A sensor that returns the median value of N samples.
+    /// \tparam Tp Type of the sensor value
+    /// \tparam NumSamples Number of samples to be used
+    template<typename Tp, size_t NumSamples>
+    class StaticMedianSensor : public ISimpleSensor<Tp> {
+        static_assert(std::is_arithmetic_v<Tp>, "StaticMedianSensor only supports arithmetic types");
+        static_assert(NumSamples % 2 == 1, "StaticMedianSensor only supports odd sample sizes");
 
       public:
-        StaticMedianSensor(ISimpleSensor<_Tp>* sensor) : sensor(sensor) {}
+        using ValueType = Tp;
 
-        void init() override { this->sensor->init(); };
+        explicit StaticMedianSensor(ISimpleSensor<ValueType>* sensor) : sensor_(sensor) {}
 
-        _Tp getValue() override
+        void init() override { this->sensor_->init(); };
+
+        [[nodiscard]] auto getValue() -> ValueType override
         {
-            for (size_t i = 0; i < _Samples; i++) {
-                this->values[i] = this->sensor->getValue();
+            for (size_t i = 0; i < NumSamples; i++) {
+                this->values_[i] = this->sensor_->getValue();
             }
 
-            std::sort(this->values, this->values + _Samples);
+            std::sort(this->values_.begin(), this->values_.end());
 
-            return this->values[_Samples / 2];
+            return this->values_[NumSamples / 2];
         }
 
       private:
-        _Tp values[_Samples];
-        ISimpleSensor<_Tp>* sensor;
+        /// Buffer to store the last N samples.
+        /// We are using a static array to avoid dynamic allocation
+        std::array<ValueType, NumSamples> values_;
+
+        ISimpleSensor<Tp>* sensor_;
     };
 } // namespace SenseShift::Input
