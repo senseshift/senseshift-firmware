@@ -32,12 +32,12 @@ namespace SenseShift::FreeRTOS::Input {
         }
     };
 
-    template<typename _Tp>
-    class TaskedSensor : public SensorUpdateTask, public ::SenseShift::Input::ISimpleSensor<_Tp> {
+    template<typename Tp>
+    class TaskedSensor : public SensorUpdateTask, public ::SenseShift::Input::ISimpleSensor<Tp> {
         friend class SensorUpdateTask;
 
       private:
-        using Sensor = ::SenseShift::Input::MemoizedSensor<_Tp>;
+        using Sensor = ::SenseShift::Input::MemoizedSensor<Tp>;
 
       public:
         TaskedSensor(Sensor* sensor, std::uint32_t updateDelay, TaskConfig taskConfig) :
@@ -51,7 +51,7 @@ namespace SenseShift::FreeRTOS::Input {
 
         void init() override { this->sensor->init(); };
 
-        _Tp getValue() override { return this->sensor->getValue(); };
+        Tp getValue() override { return this->sensor->getValue(); };
 
       private:
         Sensor* sensor;

@@ -4,12 +4,13 @@
 
 namespace SenseShift::Output {
     template<typename Tp>
-    class Output : public IInitializable {
+    class IOutput : public IInitializable {
     public:
         using ValueType = Tp;
 
         virtual void writeState(ValueType value) = 0;
     };
 
-    using FloatOutput = Output<float>;
+    using IBinaryOutput = IOutput<bool>;
+    using IFloatOutput = IOutput<float>;
 } // namespace SenseShift::Output

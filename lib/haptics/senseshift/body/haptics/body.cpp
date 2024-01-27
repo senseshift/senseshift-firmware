@@ -19,5 +19,5 @@ namespace SenseShift::Body::Haptics {
         find->second->effect(pos, val);
     }
 
-    template class OutputBody<Position::Value, Output::FloatOutput::ValueType>;
+    template class OutputBody<Position::Value, Output::IFloatOutput::ValueType>;
 } // namespace SenseShift::Body::Haptics

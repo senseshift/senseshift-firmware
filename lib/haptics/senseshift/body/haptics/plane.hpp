@@ -28,7 +28,7 @@ namespace SenseShift::Body::Haptics {
         /// The type of the output value (e.g. float) for the plane.
         using Value = To;
         /// The type of the actuator for the plane.
-        using Actuator = Output::Output<Value>;
+        using Actuator = Output::IOutput<Value>;
 
         using ActuatorMap = std::map<Position, Actuator*>;
         using PositionStateMap = std::map<Position, Value>;
@@ -73,8 +73,8 @@ namespace SenseShift::Body::Haptics {
         [[nodiscard]] static auto findClosestPoint(const PositionSet&, const Position&) -> const Position&;
     };
 
-    using FloatPlane = OutputPlane<Position::Value, Output::FloatOutput::ValueType>;
-    using FloatPlane_Closest = OutputPlane_Closest<Position::Value, Output::FloatOutput::ValueType>;
+    using FloatPlane = OutputPlane<Position::Value, Output::IFloatOutput::ValueType>;
+    using FloatPlane_Closest = OutputPlane_Closest<Position::Value, Output::IFloatOutput::ValueType>;
 
     // TODO: configurable margin
     class PlaneMapper_Margin {

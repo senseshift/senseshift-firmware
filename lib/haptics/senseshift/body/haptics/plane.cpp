@@ -77,6 +77,6 @@ namespace SenseShift::Body::Haptics {
         return nearest->second;
     }
 
-    template class OutputPlane<Position::Value, Output::FloatOutput::ValueType>;
-    template class OutputPlane_Closest<Position::Value, Output::FloatOutput::ValueType>;
+    template class OutputPlane<Position::Value, Output::IFloatOutput::ValueType>;
+    template class OutputPlane_Closest<Position::Value, Output::IFloatOutput::ValueType>;
 } // namespace SenseShift::Body::Haptics

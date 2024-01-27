@@ -8,7 +8,7 @@
 
 namespace SenseShift::Arduino::Output {
     /// Arduino analog output
-    class AnalogOutput : public ::SenseShift::Output::FloatOutput {
+    class AnalogOutput : public ::SenseShift::Output::IFloatOutput {
       public:
         static inline constexpr std::uint16_t MAX_INTENSITY = 255;
 
@@ -20,7 +20,8 @@ namespace SenseShift::Arduino::Output {
         }
 
         void writeState(const float value) override {
-            analogWrite(this->pin_, value * MAX_INTENSITY);
+            const auto duty = static_cast<int>(value * MAX_INTENSITY);
+            analogWrite(this->pin_, duty);
         }
 
       private:

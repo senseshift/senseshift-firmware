@@ -21,7 +21,7 @@ namespace SenseShift::Input {
     /// \tparam Tp Type of the sensor value
     template<typename Tp>
     class ISimpleSensor : virtual public IInitializable {
-    public:
+      public:
         using ValueType = Tp;
 
         /// Get the current sensor value
@@ -29,9 +29,10 @@ namespace SenseShift::Input {
     };
 
     using IBinarySensor = ISimpleSensor<bool>;
+    using IFloatSensor = ISimpleSensor<float>;
 
     template<typename Tp>
-    class ISensor : virtual ISimpleSensor<Tp>, ITickable {};
+    class ISensor : public virtual ISimpleSensor<Tp>, public ITickable {};
 
     /// Memoized sensor decorator. Stores the last read value and returns it on subsequent calls
     /// \tparam Tp Type of the sensor value

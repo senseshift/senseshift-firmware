@@ -11,7 +11,7 @@ namespace SenseShift::Arduino::Output {
     static const char *const TAG = "output.ledc";
 
     /// Arduino analog output
-    class LedcOutput : public ::SenseShift::Output::FloatOutput {
+    class LedcOutput : public ::SenseShift::Output::IFloatOutput {
     public:
         explicit LedcOutput(
           const std::uint8_t pin,

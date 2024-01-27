@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "senseshift/battery.hpp"
 
 #include <senseshift/freertos/task.hpp>
@@ -18,17 +20,19 @@ namespace SenseShift::Battery {
 
     class NaiveBatterySensor : public IBatterySensor {
       public:
-        NaiveBatterySensor(::SenseShift::Input::ISimpleSensor<uint16_t>* sensor) : sensor(sensor){};
+        explicit NaiveBatterySensor(::SenseShift::Input::IFloatSensor* sensor) : sensor(sensor){};
 
         [[nodiscard]] auto getValue() -> BatteryState override
         {
-            return { .level =
-                       static_cast<uint8_t>(::SenseShift::simpleMap<uint16_t>(this->sensor->getValue(), 4095, 255)) };
+            const auto level = static_cast<std::uint8_t>(this->sensor->getValue() * BatteryState::MAX_LEVEL);
+
+            return { .level = level};
         };
+
         void init() override { this->sensor->init(); }
 
       private:
-        ISimpleSensor<uint16_t> * sensor;
+        ::SenseShift::Input::IFloatSensor* sensor;
     };
 
     class BatterySensor : public ::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState> {

@@ -10,7 +10,7 @@
 #include <Wire.h>
 
 namespace SenseShift::Arduino::Output {
-    class PCA9685Output : public ::SenseShift::Output::FloatOutput {
+    class PCA9685Output : public ::SenseShift::Output::IFloatOutput {
       public:
         static inline constexpr std::uint16_t MAX_INTENSITY = 4095;
 
@@ -20,12 +20,10 @@ namespace SenseShift::Arduino::Output {
             this->driver_->begin();
         }
 
-        void writeState(const ValueType intensity) override
+        void writeState(const ValueType value) override
         {
-            this->driver_->setPin(
-                this->channel_,
-                intensity * MAX_INTENSITY
-            );
+            const auto duty = static_cast<std::uint16_t>(value * MAX_INTENSITY);
+            this->driver_->setPin(this->channel_, duty);
         }
 
       private:

@@ -60,6 +60,7 @@ namespace SenseShift::Battery {
     });
 
     struct BatteryState {
+        static constexpr std::uint8_t MAX_LEVEL = 255;
         uint8_t level;
     };
 

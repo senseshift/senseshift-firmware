@@ -5,7 +5,10 @@
 #include <Wire.h>
 
 #include "senseshift.h"
+
+#include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/output/pca9685.hpp>
+#include <senseshift/battery/sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>

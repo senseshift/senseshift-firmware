@@ -8,7 +8,7 @@
 #include <senseshift/output/output.hpp>
 
 namespace SenseShift::Body::Haptics {
-    /// Output body, contains all the output planes.
+    /// IOutput body, contains all the output planes.
     ///
     /// \tparam Tc The type of the coordinate.
     /// \tparam To The type of the output value.
@@ -40,5 +40,5 @@ namespace SenseShift::Body::Haptics {
         TargetPlaneMap targets_{};
     };
 
-    using FloatBody = OutputBody<Position::Value, Output::FloatOutput::ValueType>;
+    using FloatBody = OutputBody<Position::Value, Output::IFloatOutput::ValueType>;
 } // namespace SenseShift::Body::Haptics

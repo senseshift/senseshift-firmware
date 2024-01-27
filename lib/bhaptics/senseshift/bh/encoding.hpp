@@ -207,7 +207,8 @@ namespace SenseShift::BH {
       private:
         static auto effectDataFromByte(const uint8_t byte, const uint8_t maxValue = 100) -> VibroEffectData
         {
-            return VibroEffectData(byte / maxValue);
+            const auto value = static_cast<float>(byte) / static_cast<float>(maxValue);
+            return VibroEffectData(value);
         }
     };
 } // namespace SenseShift::BH
