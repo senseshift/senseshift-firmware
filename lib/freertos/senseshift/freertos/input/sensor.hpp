@@ -6,54 +6,36 @@
 #include <cstdint>
 
 namespace SenseShift::FreeRTOS::Input {
-    /**
-     * Sensor update task
-     */
-    class SensorUpdateTask : public Task<SensorUpdateTask> {
-        friend class Task<SensorUpdateTask>;
-
-      private:
-        using Sensor = ::SenseShift::ITickable;
+    /// Sensor update task
+    template<typename Sensor>
+    class SensorUpdateTask : public Task<SensorUpdateTask<Sensor>> {
+        static_assert(std::is_same_v<decltype(&Sensor::init), void (Sensor::*)()>);
+        static_assert(std::is_same_v<decltype(&Sensor::tick), void (Sensor::*)()>);
 
       public:
         SensorUpdateTask(Sensor* sensor, std::uint32_t updateDelay, TaskConfig taskConfig) :
-          Task<SensorUpdateTask>(taskConfig), updateDelay(updateDelay){};
-
-      protected:
-        Sensor* sensor;
-        std::uint32_t updateDelay;
-
-        void run()
-        {
-            while (true) {
-                this->sensor->tick();
-                ::delay(this->updateDelay);
-            }
-        }
-    };
-
-    template<typename Tp>
-    class TaskedSensor : public SensorUpdateTask, public ::SenseShift::Input::ISimpleSensor<Tp> {
-        friend class SensorUpdateTask;
-
-      private:
-        using Sensor = ::SenseShift::Input::MemoizedSensor<Tp>;
-
-      public:
-        TaskedSensor(Sensor* sensor, std::uint32_t updateDelay, TaskConfig taskConfig) :
-          SensorUpdateTask(sensor, updateDelay, taskConfig), sensor(sensor){};
-
-        void begin() override
-        {
-            this->init();
-            SensorUpdateTask::begin();
+          Task<SensorUpdateTask>(taskConfig), sensor_(sensor), updateDelay_(updateDelay) {
+            log_i("creating SensorUpdateTask: %s", taskConfig.name);
         };
 
-        void init() override { this->sensor->init(); };
+        void begin() override {
+            this->sensor_->init();
+            this->Task<SensorUpdateTask>::begin();
+        }
 
-        Tp getValue() override { return this->sensor->getValue(); };
+      protected:
+        [[noreturn]] void run()
+        {
+            while (true) {
+                this->sensor_->tick();
+                delay(this->updateDelay_);
+            }
+        }
 
       private:
-        Sensor* sensor;
+        friend class Task<SensorUpdateTask>;
+
+        Sensor* sensor_;
+        std::uint32_t updateDelay_;
     };
 } // namespace SenseShift::FreeRTOS::Input

@@ -1,20 +1,14 @@
 #pragma once
 
 #include <type_traits>
+#include <vector>
+#include <optional>
 
-#include <senseshift/calibration.hpp>
+#include "senseshift/input/filter.hpp"
+#include "senseshift/input/calibration.hpp"
+
 #include <senseshift/core/component.hpp>
-
-#if defined(__AVR__)
-#define ANALOG_MAX 1023
-#elif defined(ESP32)
-#define ANALOG_MAX 4095
-#elif !defined(ANALOG_MAX)
-#warning "This board doesn't have an auto ANALOG_MAX assignment, please set it manually"
-#define ANALOG_MAX static_assert(false, "ANALOG_MAX is not defined")
-// Uncomment and set as needed (only touch if you know what you are doing)
-// #define ANALOG_MAX 4095
-#endif
+#include <senseshift/core/helpers.hpp>
 
 namespace SenseShift::Input {
     /// Abstract hardware sensor (e.g. potentiometer, flex sensor, etc.)
@@ -24,148 +18,219 @@ namespace SenseShift::Input {
       public:
         using ValueType = Tp;
 
-        /// Get the current sensor value
+        explicit ISimpleSensor() = default;
+
+        /// Get the current sensor value.
         [[nodiscard]] virtual auto getValue() -> ValueType = 0;
     };
 
-    using IBinarySensor = ISimpleSensor<bool>;
-    using IFloatSensor = ISimpleSensor<float>;
+    using IBinarySimpleSensor = ISimpleSensor<bool>;
+    using IFloatSimpleSensor = ISimpleSensor<float>;
 
     template<typename Tp>
-    class ISensor : public virtual ISimpleSensor<Tp>, public ITickable {};
+    class ISensor : public virtual ISimpleSensor<Tp>, public ICalibrated {};
 
-    /// Memoized sensor decorator. Stores the last read value and returns it on subsequent calls
-    /// \tparam Tp Type of the sensor value
     template<typename Tp>
-    class MemoizedSensor : public ISensor<Tp> {
+    class Sensor : public ISensor<Tp> {
       public:
         using ValueType = Tp;
+        using CallbackManagerType = CallbackManager<void(ValueType)>;
+        using CallbackType = typename CallbackManagerType::CallbackType;
 
-        /// \param sensor Sensor to be decorated
-        explicit MemoizedSensor(ISimpleSensor<ValueType>* sensor) : sensor_(sensor){}
+        explicit Sensor() = default;
 
-        /**
-         * Setup the sensor hardware
-         */
-        void init() override { this->sensor_->init(); }
+        /// Appends a filter to the sensor's filter chain.
+        ///
+        /// \param filter The filter to add.
+        ///
+        /// \see addFilters for adding multiple filters.
+        void addFilter(IFilter<ValueType>* filter) { this->filters_.push_back(filter); }
 
-        /**
-         * Read actual value from the hardware and memoize it
-         */
-        void tick() override { this->value_ = this->sensor_->getValue(); }
+        /// Adds multiple filters to the sensor's filter chain. Appends to the end of the chain.
+        ///
+        /// \param filters The chain of filters to add.
+        ///
+        /// \example
+        /// \code
+        /// sensor->addFilters({
+        ///     new MinMaxFilter(0.1f, 0.9f),
+        ///     new CenterDeadzoneFilter(0.1f),
+        /// });
+        /// \endcode
+        void addFilters(std::vector<IFilter<ValueType>*> filters) {
+            this->filters_.insert(this->filters_.end(), filters.begin(), filters.end());
+        }
 
-        /**
-         * Get the current memoized value
-         */
-        [[nodiscard]] auto getValue() -> ValueType override { return this->value_; }
+        /// Replaces the sensor's filter chain with the given filters.
+        ///
+        /// \param filters New filter chain.
+        ///
+        /// \example
+        /// \code
+        /// sensor->setFilters({
+        ///     new MinMaxFilter(0.1f, 0.9f),
+        ///     new CenterDeadzoneFilter(0.1f),
+        /// });
+        /// \endcode
+        void setFilters(std::vector<IFilter<ValueType>*> filters) { this->filters_ = filters; }
 
-    private:
-        ISimpleSensor<ValueType>* sensor_;
-        ValueType value_;
-    };
+        /// Removes everything from the sensor's filter chain.
+        void clearFilters() { this->filters_.clear(); }
 
-    template<typename Tp>
-    class ICalibratedSimpleSensor : public ISimpleSensor<Tp>, public Calibration::ICalibrated {};
+        void setCalibrator(ICalibrator<ValueType>* calibrator) { this->calibrator_ = calibrator; }
 
-    /// Calibrated sensor decorator
-    /// \tparam Tp Type of the sensor value
-    template<typename Tp>
-    class CalibratedSimpleSensor : public ICalibratedSimpleSensor<Tp> {
-      public:
-        using ValueType = Tp;
+        void clearCalibrator() { this->calibrator_ = std::nullopt; }
 
-        /// \param sensor Sensor to be decorated
-        /// \param calibrator ICalibrator algorithm to be used
-        CalibratedSimpleSensor(ISimpleSensor<ValueType>* sensor, Calibration::ICalibrator<ValueType>* calibrator) :
-          sensor_(sensor), calibrator_(calibrator){};
+        void startCalibration() override { this->is_calibrating_ = true; }
 
-        void init() override { this->sensor_->init(); };
-        [[nodiscard]] auto getValue() -> ValueType override { return this->getCalibratedValue(); };
+        void stopCalibration() override { this->is_calibrating_ = false; }
 
-        void resetCalibration() override { this->calibrator_->reset(); };
-        void enableCalibration() override { is_calibrating_ = true; }
-        void disableCalibration() override { is_calibrating_ = false; }
+        void reselCalibration() override {
+            if (this->calibrator_.has_value()) {
+                this->calibrator_.value()->reset();
+            }
+        }
+
+        void addValueCallback(CallbackType &&callback) { this->callback_.add(std::move(callback)); }
+
+        void addRawValueCallback(CallbackType &&callback) { this->raw_callback_.add(std::move(callback)); }
+
+        void init() override { }
+
+        /// Publish the given state to the sensor.
+        ///
+        /// Firstly, the given state will be assigned to the sensor's raw_value_.
+        /// Then, the raw_value_ will be passed through the sensor's filter chain.
+        /// Finally, the filtered value will be assigned to the sensor's .value_.
+        ///
+        /// \param rawValue The new .raw_value_.
+        void publishState(ValueType rawValue) {
+            this->raw_value_ = rawValue;
+            this->raw_callback_.call(this->raw_value_);
+
+            this->value_ = this->applyFilters(rawValue);
+            this->callback_.call(this->value_);
+        }
+
+        /// Get the current sensor .value_.
+        [[nodiscard]] auto getValue() -> ValueType override {
+            return this->value_;
+        }
+
+        /// Get the current raw sensor .raw_value_.
+        [[nodiscard]] auto getRawValue() -> ValueType {
+            return this->raw_value_;
+        }
 
       protected:
-        [[nodiscard]] auto getCalibratedValue() -> ValueType
-        {
-            auto value = this->sensor_->getValue();
-
-            if (this->is_calibrating_) {
-                this->calibrator_->update(value);
+        /// Apply current filters to value.
+        [[nodiscard]] auto applyFilters(ValueType value) -> ValueType {
+            /// Apply filters
+            for (auto filter : this->filters_) {
+                value = filter->filter(this, value);
             }
 
-            return this->calibrator_->calibrate(value);
+            /// Apply calibration
+            if (this->calibrator_.has_value()) {
+                if (this->is_calibrating_) {
+                    this->calibrator_.value()->update(value);
+                }
+
+                value = this->calibrator_.value()->calibrate(value);
+            }
+
+            return value;
         }
 
-    private:
-        ISimpleSensor<ValueType>* sensor_;
-        Calibration::ICalibrator<ValueType>* calibrator_;
+      private:
+        friend class IFilter<ValueType>;
+        friend class ICalibrator<ValueType>;
+
+        /// The sensor's filter chain.
+        std::vector<IFilter<ValueType>*> filters_ = std::vector<IFilter<ValueType>*>();
+
         bool is_calibrating_ = false;
+        std::optional<ICalibrator<ValueType>*> calibrator_ = std::nullopt;
+
+        ValueType raw_value_;
+        ValueType value_;
+
+        /// Storage for raw state callbacks.
+        CallbackManagerType raw_callback_;
+        /// Storage for filtered state callbacks.
+        CallbackManagerType callback_;
     };
 
-    /// A sensor that returns the average value of N samples.
-    /// \tparam Tp Type of the sensor value
+    using FloatSensor = Sensor<float>;
+    using BinarySensor = Sensor<bool>;
+
     template<typename Tp>
-    class AverageSensor : public ISimpleSensor<Tp> {
-        static_assert(std::is_arithmetic_v<Tp>, "AverageSensor only supports arithmetic types");
-
+    class SimpleSensorDecorator : public Sensor<Tp>, public ITickable
+    {
       public:
         using ValueType = Tp;
+        using SourceType = ISimpleSensor<ValueType>;
 
-        /// \param sensor Sensor to be decorated
-        /// \param samples Number of samples to be used
-        AverageSensor(ISimpleSensor<ValueType>* sensor, const size_t samples) : sensor_(sensor), samples_(samples) {}
+        explicit SimpleSensorDecorator(SourceType* source) : source_(source) {}
 
-        void init() override { this->sensor_->init(); };
+        void init() override {
+            this->source_->init();
+        }
 
-        [[nodiscard]] auto getValue() const -> ValueType override
-        {
-            // TODO: another type for sum?
-            double sum = 0;
-            for (size_t i = 0; i < this->samples_; i++) {
-                sum += this->sensor_->getValue();
-            }
+        void tick() override {
+            this->updateValue();
+        }
 
-            return sum / this->samples_;
+        auto updateValue() -> ValueType {
+            auto const raw_value = this->readRawValue();
+            this->publishState(raw_value);
+
+            LOG_D("decorator.simple", " raw_value=%f, value=%f", raw_value, this->getValue());
+
+            return this->getValue();
+        }
+
+        [[nodiscard]] auto readRawValue() -> ValueType {
+            return this->source_->getValue();
         }
 
       private:
-        ISimpleSensor<ValueType>* sensor_;
-        size_t samples_;
+        SourceType* source_;
     };
 
-    /// A sensor that returns the median value of N samples.
-    /// \tparam Tp Type of the sensor value
-    /// \tparam NumSamples Number of samples to be used
-    template<typename Tp, size_t NumSamples>
-    class StaticMedianSensor : public ISimpleSensor<Tp> {
-        static_assert(std::is_arithmetic_v<Tp>, "StaticMedianSensor only supports arithmetic types");
-        static_assert(NumSamples % 2 == 1, "StaticMedianSensor only supports odd sample sizes");
+//    template<typename Tp>
+//    class SensorDecorator : public Sensor<Tp>
+//    {
+//      public:
+//        using ValueType = Tp;
+//        using SourceType = Sensor<ValueType>;
+//
+//        explicit SensorDecorator(SourceType* source) : source_(source) {}
+//
+//        void init() override {
+//            this->source_->init();
+//            this->source_->addValueCallback([this](ValueType value) {
+//                this->publishState(value);
+//            });
+//        }
+//
+//        void startCalibration() override {
+//            this->source_->startCalibration();
+//        }
+//
+//        void stopCalibration() override {
+//            this->source_->stopCalibration();
+//        }
+//
+//        void reselCalibration() override {
+//            this->source_->reselCalibration();
+//        }
+//
+//      private:
+//        SourceType* source_;
+//    };
 
-      public:
-        using ValueType = Tp;
-
-        explicit StaticMedianSensor(ISimpleSensor<ValueType>* sensor) : sensor_(sensor) {}
-
-        void init() override { this->sensor_->init(); };
-
-        [[nodiscard]] auto getValue() -> ValueType override
-        {
-            for (size_t i = 0; i < NumSamples; i++) {
-                this->values_[i] = this->sensor_->getValue();
-            }
-
-            std::sort(this->values_.begin(), this->values_.end());
-
-            return this->values_[NumSamples / 2];
-        }
-
-      private:
-        /// Buffer to store the last N samples.
-        /// We are using a static array to avoid dynamic allocation
-        std::array<ValueType, NumSamples> values_;
-
-        ISimpleSensor<Tp>* sensor_;
-    };
+    namespace _private {
+        class TheFloatSensor : public Sensor<float> { };
+    }
 } // namespace SenseShift::Input

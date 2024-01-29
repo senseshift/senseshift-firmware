@@ -39,11 +39,9 @@ namespace SenseShift::FreeRTOS {
         friend class Task;
 
       public:
-        Task(const char* name, uint32_t stackDepth, UBaseType_t priority, const BaseType_t coreId = tskNO_AFFINITY)
-        {
-            this->taskConfig = { name, stackDepth, priority, coreId };
+        explicit Task(TaskConfig& config) : taskConfig(config) {
+            log_i("creating SensorUpdateTask: %s", taskConfig.name);
         };
-        Task(TaskConfig& config) : taskConfig(config){};
         virtual ~Task()
         {
             if (taskHandle) {
@@ -56,15 +54,16 @@ namespace SenseShift::FreeRTOS {
         virtual void begin()
         {
             BaseType_t result = xTaskCreateUniversal(
-              taskFunction,                // pvTaskCode
-              this->taskConfig.name,       // pcName
-              this->taskConfig.stackDepth, // usStackDepth
-              this,                        // pvParameters
-              this->taskConfig.priority,   // uxPriority
-              &taskHandle,                 // pvCreatedTask
-              this->taskConfig.coreId      // xCoreID
+              taskFunction,                //< pvTaskCode
+              this->taskConfig.name,       //< pcName
+              this->taskConfig.stackDepth, //< usStackDepth
+              this,                        //< pvParameters
+              this->taskConfig.priority,   //< uxPriority
+              &taskHandle,                 //< pvCreatedTask
+              this->taskConfig.coreId      //< xCoreID
             );
 
+            log_i("Created task %s, result %i", this->taskConfig.name, result);
             assert("Failed to create task" && result == pdPASS);
             if (!taskHandle) {
                 log_e("Failed to create task %s", this->taskConfig.name);

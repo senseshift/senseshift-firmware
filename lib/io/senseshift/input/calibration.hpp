@@ -5,35 +5,31 @@
 
 #pragma once
 
-#include <senseshift/utility.hpp>
+#include "senseshift/utility.hpp"
 
-namespace SenseShift::Calibration {
+namespace SenseShift::Input {
     struct ICalibrated {
-        virtual void resetCalibration() = 0;
-        virtual void enableCalibration() = 0;
-        virtual void disableCalibration() = 0;
-    };
-
-    class Calibrated : public virtual ICalibrated {
-        bool calibrate_ = false;
-
-      public:
-        void resetCalibration() override = 0;
-        void enableCalibration() override { calibrate_ = true; }
-        void disableCalibration() override { calibrate_ = false; }
+        virtual void startCalibration() = 0;
+        virtual void stopCalibration() = 0;
+        virtual void reselCalibration() = 0;
     };
 
     template<typename Tp>
     struct ICalibrator {
-        static_assert(std::is_arithmetic_v<Tp>, "ICalibrator only can be used with arithmetic types");
-
+        /// Reset the calibration.
         virtual void reset() = 0;
+
+        /// Update the calibration with a new input value.
         virtual void update(Tp input) = 0;
-        virtual auto calibrate(Tp input) const -> Tp = 0;
+
+        /// Calibrate the input value.
+        [[nodiscard]] virtual auto calibrate(Tp input) const -> Tp = 0;
     };
 
     template<typename Tp, Tp output_min, Tp output_max>
     class MinMaxCalibrator : public ICalibrator<Tp> {
+        static_assert(std::is_arithmetic_v<Tp>, "MinMaxCalibrator only can be used with arithmetic types");
+
       public:
         using ValueType = Tp;
 
@@ -83,6 +79,8 @@ namespace SenseShift::Calibration {
 
     template<typename Tp, Tp sensor_max, Tp driver_max_deviation, Tp output_min, Tp output_max>
     class CenterPointDeviationCalibrator : public ICalibrator<Tp> {
+        static_assert(std::is_arithmetic_v<Tp>, "CenterPointDeviationCalibrator only can be used with arithmetic types");
+
       public:
         using ValueType = Tp;
 
@@ -104,7 +102,7 @@ namespace SenseShift::Calibration {
         }
 
         auto calibrate(ValueType input) const -> ValueType override {
-            // Find the center point of the sensor so we know how much we have deviated from it.
+            // Find the center point of the sensor, so we know how much we have deviated from it.
             Tp center = (range_min + range_max) / 2.0F;
 
             // Map the input to the sensor range of motion.
@@ -130,6 +128,8 @@ namespace SenseShift::Calibration {
 
     template<typename Tp, Tp sensor_max, Tp driver_max_deviation, Tp output_min, Tp output_max>
     class FixedCenterPointDeviationCalibrator : public ICalibrator<Tp> {
+        static_assert(std::is_arithmetic_v<Tp>, "FixedCenterPointDeviationCalibrator only can be used with arithmetic types");
+
       public:
         using ValueType = Tp;
 
@@ -137,7 +137,7 @@ namespace SenseShift::Calibration {
         void update(ValueType input) override {}
 
         auto calibrate(ValueType input) const -> ValueType override {
-            // Find the center point of the sensor so we know how much we have deviated from it.
+            // Find the center point of the sensor, so we know how much we have deviated from it.
             Tp center = sensor_max / 2.0F;
 
             // Map the input to the sensor range of motion.
@@ -156,4 +156,4 @@ namespace SenseShift::Calibration {
             );
         }
     };
-} // namespace SenseShift::Calibration
+} // namespace SenseShift::Input

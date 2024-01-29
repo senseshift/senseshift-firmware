@@ -13,41 +13,47 @@
 #endif
 
 namespace SenseShift::Battery {
-    /**
-     * Abstract battery sensor
-     */
-    using IBatterySensor = ::SenseShift::Input::ISimpleSensor<BatteryState>;
+    /// Abstract battery sensor
+    using IBatterySensor = ::SenseShift::Input::Sensor<BatteryState>;
 
-    class NaiveBatterySensor : public IBatterySensor {
+    /// Interpolate voltage according to a lookup table.
+    template<typename Container>
+    class LookupTableInterpolateBatterySensor : public IBatterySensor {
+        static_assert(std::is_same_v<typename Container::key_type, typename BatteryState::VoltageType>);
+        static_assert(std::is_same_v<typename Container::mapped_type, float>);
+
       public:
-        explicit NaiveBatterySensor(::SenseShift::Input::IFloatSensor* sensor) : sensor(sensor){};
+        using VoltageType = typename BatteryState::VoltageType;
+        using VoltageSource = ::SenseShift::Input::Sensor<VoltageType>;
 
-        [[nodiscard]] auto getValue() -> BatteryState override
-        {
-            const auto level = static_cast<std::uint8_t>(this->sensor->getValue() * BatteryState::MAX_LEVEL);
+        LookupTableInterpolateBatterySensor(
+          VoltageSource* voltage_source,
+          Container* lookup_table
+        ) : IBatterySensor(), voltage_source_(voltage_source), lookup_table_(lookup_table) {}
 
-            return { .level = level};
-        };
+        void init() override {
+            this->voltage_source_->init();
+            this->voltage_source_->addValueCallback([this](VoltageType voltage) {
+                // Current level in % (0.0 - 1.0)
+                auto level = this->lookupInterpolateLevel(voltage);
 
-        void init() override { this->sensor->init(); }
+                LOG_D("battery.sensor", "voltage=%f, level=%f", voltage, level);
 
-      private:
-        ::SenseShift::Input::IFloatSensor* sensor;
-    };
+                const BatteryState value = {
+                  .level = static_cast<typename BatteryState::LevelType>(level * BatteryState::MAX_LEVEL),
+                };
 
-    class BatterySensor : public ::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState> {
-      public:
-        BatterySensor(::SenseShift::Battery::IBatterySensor* sensor, ::SenseShift::IEventDispatcher* eventDispatcher) :
-          ::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState>(sensor),
-          eventDispatcher(eventDispatcher){};
+                this->publishState(value);
+            });
+        }
 
-        void tick() override
-        {
-            this->::SenseShift::Input::MemoizedSensor<::SenseShift::Battery::BatteryState>::tick();
-            this->eventDispatcher->postEvent(new ::SenseShift::Battery::BatteryLevelEvent(this->getValue()));
+      protected:
+        [[nodiscard]] auto lookupInterpolateLevel(VoltageType voltage) -> float {
+            return ::SenseShift::lookup_interpolate<VoltageType, float, Container>(*this->lookup_table_, voltage);
         }
 
       private:
-        ::SenseShift::IEventDispatcher* eventDispatcher;
+        VoltageSource* voltage_source_;
+        Container* lookup_table_;
     };
 } // namespace SenseShift::Battery

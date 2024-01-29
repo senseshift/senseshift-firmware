@@ -1,4 +1,4 @@
-#include <senseshift/calibration.hpp>
+#include "senseshift/input/calibration.hpp"
 #include <unity.h>
 
 using namespace SenseShift::Calibration;

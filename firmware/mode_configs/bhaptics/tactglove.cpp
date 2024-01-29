@@ -16,6 +16,7 @@
 #include <senseshift/utility.hpp>
 
 using namespace SenseShift;
+using namespace SenseShift::Input;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
 using namespace SenseShift::FreeRTOS::Input;
@@ -62,12 +63,26 @@ void setupMode()
     bhBleConnection->begin();
 
 #if defined(SENSESHIFT_BATTERY_ENABLED) && SENSESHIFT_BATTERY_ENABLED == true
-    auto* battery = new TaskedSensor<BatteryState>(
-      new BatterySensor(new NaiveBatterySensor(new AnalogSensor(36)), app),
-      SENSESHIFT_BATTERY_SAMPLE_RATE,
-      { "ADC Battery", 4096, SENSESHIFT_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
+    auto* batteryVoltageSensor = new SimpleSensorDecorator(new AnalogSimpleSensor(36));
+    batteryVoltageSensor->addFilters({
+        new MultiplyFilter(3.3F), // Convert to raw pin voltage
+        new VoltageDividerFilter(27000.0F, 100000.0F), // Convert to voltage divider voltage
+    });
+    auto* batteryTask = new SensorUpdateTask<SimpleSensorDecorator<float>>(
+            batteryVoltageSensor,
+            SENSESHIFT_BATTERY_SAMPLE_RATE,
+            { "ADC Battery", 4096, SENSESHIFT_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
-    battery->begin();
+    batteryTask->begin();
+
+    auto* batterySensor = new LookupTableInterpolateBatterySensor<const frozen::map<float, float, 21>>(
+      batteryVoltageSensor,
+      &VoltageMap::LiPO_1S_42
+    );
+    batterySensor->addValueCallback([](BatteryState value) -> void {
+        app->postEvent(new BatteryLevelEvent(value));
+    });
+    batterySensor->init();
 #endif
 }
 
