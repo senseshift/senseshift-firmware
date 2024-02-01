@@ -7,7 +7,7 @@
 
 #include "senseshift/utility.hpp"
 
-namespace SenseShift::Input {
+namespace SenseShift::Input::Calibration {
     struct ICalibrated {
         virtual void startCalibration() = 0;
         virtual void stopCalibration() = 0;
@@ -26,18 +26,18 @@ namespace SenseShift::Input {
         [[nodiscard]] virtual auto calibrate(Tp input) const -> Tp = 0;
     };
 
-    template<typename Tp, Tp output_min, Tp output_max>
+    template<typename Tp>
     class MinMaxCalibrator : public ICalibrator<Tp> {
         static_assert(std::is_arithmetic_v<Tp>, "MinMaxCalibrator only can be used with arithmetic types");
 
       public:
         using ValueType = Tp;
 
-        MinMaxCalibrator() : value_min_(output_max), value_max_(output_min) {}
+        MinMaxCalibrator(ValueType output_min, ValueType output_max) : output_min_(output_min), output_max_(output_max), value_min_(output_max), value_max_(output_min) {}
 
         void reset() override {
-            value_min_ = output_max;
-            value_max_ = output_min;
+            value_min_ = output_max_;
+            value_max_ = output_min_;
         }
 
         void update(ValueType input) override {
@@ -54,25 +54,27 @@ namespace SenseShift::Input {
             // This means we haven't had any calibration data yet.
             // Return a neutral value right in the middle of the output range.
             if (value_min_ > value_max_) {
-                return (output_min + output_max) / 2.0F;
+                return (output_min_ + output_max_) / 2.0F;
             }
 
             if (input <= value_min_) {
-                return output_min;
+                return output_min_;
             }
 
             if (input >= value_max_) {
-                return output_max;
+                return output_max_;
             }
 
             // Map the input range to the output range.
-            ValueType output = ::SenseShift::remap<ValueType, ValueType>(input, value_min_, value_max_, output_min, output_max);
+            ValueType output = ::SenseShift::remap<ValueType, ValueType>(input, value_min_, value_max_, output_min_, output_max_);
 
             // Lock the range to the output.
-            return std::clamp(output, output_min, output_max);
+            return std::clamp(output, output_min_, output_max_);
         }
 
       private:
+        const ValueType output_min_;
+        const ValueType output_max_;
         ValueType value_min_;
         ValueType value_max_;
     };

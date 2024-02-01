@@ -2,22 +2,31 @@
 #include <unity.h>
 
 using namespace SenseShift::Input;
-using namespace SenseShift::Calibration;
 
-class TestAnalogSensor : public ISimpleSensor<int> {
+class TestAnalogCountingSensor : public ISimpleSensor<int> {
   public:
     int count = 0;
     int setupCounter = 0;
 
     void init() override { this->setupCounter++; };
 
-    int getValue() override { return ++this->count; };
+    auto getValue() -> int override { return ++this->count; };
+};
+
+class TestAnalogSensor : public ISimpleSensor<int> {
+public:
+    int value = 0;
+    int setupCounter = 0;
+
+    void init() override { this->setupCounter++; };
+
+    auto getValue() -> int override { return this->value; };
 };
 
 void test_memoized_sensor(void)
 {
-    auto inner = new TestAnalogSensor();
-    auto sensor = new MemoizedSensor<int>(inner);
+    auto inner = new TestAnalogCountingSensor();
+    auto sensor = new SimpleSensorDecorator(inner);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
     sensor->init();
@@ -32,7 +41,7 @@ void test_memoized_sensor(void)
     TEST_ASSERT_EQUAL_INT(1, sensor->getValue());
 }
 
-class DummyCalibrator : public ICalibrator<int> {
+class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<int> {
   public:
     uint8_t resetCounter = 0;
     int calibrated = 0;
@@ -48,64 +57,53 @@ class DummyCalibrator : public ICalibrator<int> {
 
 void test_calibrated_sensor(void)
 {
-    auto inner = new TestAnalogSensor();
+    auto inner = new TestAnalogCountingSensor();
     auto calibrator = new DummyCalibrator();
-    auto sensor = new CalibratedSimpleSensor<int>(inner, calibrator);
+
+    auto sensor = new SimpleSensorDecorator(inner);
+    sensor->setCalibrator(calibrator);
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
     sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
     calibrator->update(-1);
+    sensor->tick();
     TEST_ASSERT_EQUAL_INT(-1, sensor->getValue());
 
-    sensor->enableCalibration();
+    sensor->startCalibration();
+    sensor->tick();
     TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
 
-    sensor->disableCalibration();
+    sensor->stopCalibration();
+    sensor->tick();
     TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
 
-    sensor->resetCalibration();
+    sensor->reselCalibration();
+    sensor->tick();
     TEST_ASSERT_EQUAL_INT(0, sensor->getValue());
     TEST_ASSERT_EQUAL_INT(1, calibrator->resetCounter);
 }
 
-void test_average_sensor(void)
+void test_sensor_filter_multiply(void)
 {
     auto inner = new TestAnalogSensor();
-    auto sensor = new AverageSensor<int>(inner, 3);
+    auto sensor = new SimpleSensorDecorator(inner);
+    sensor->addFilters({
+      new ::SenseShift::Input::Filter::MultiplyFilter(2)
+    });
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
     sensor->init();
     TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
 
-    // TODO: mock inner sensor, to return more interesting values
-    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());  // (1 + 2 + 3) / 3 = 2
-    TEST_ASSERT_EQUAL_INT(5, sensor->getValue());  // (4 + 5 + 6) / 3 = 5
-    TEST_ASSERT_EQUAL_INT(8, sensor->getValue());  // (7 + 8 + 9) / 3 = 8
-    TEST_ASSERT_EQUAL_INT(11, sensor->getValue()); // (10 + 11 + 12) / 3 = 11
+    inner->value = 1;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
 
-    inner->count = 0;
-    sensor = new AverageSensor<int>(inner, 10);
-
-    TEST_ASSERT_EQUAL_INT(5, sensor->getValue()); // (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10) / 10 = 5
-}
-
-void test_static_median_sensor(void)
-{
-    auto inner = new TestAnalogSensor();
-    auto sensor = new StaticMedianSensor<int, 3>(inner);
-
-    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->init();
-    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
-
-    // lmao, literally the same as average sensor
-    // TODO: mock inner sensor, to return more interesting values
-    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());  // (1, 2, 3) = 2
-    TEST_ASSERT_EQUAL_INT(5, sensor->getValue());  // (4, 5, 6) = 5
-    TEST_ASSERT_EQUAL_INT(8, sensor->getValue());  // (7, 8, 9) = 8
-    TEST_ASSERT_EQUAL_INT(11, sensor->getValue()); // (10, 11, 12) = 11
+    inner->value = 16;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_INT(32, sensor->getValue());
 }
 
 int process(void)
@@ -114,8 +112,7 @@ int process(void)
 
     RUN_TEST(test_memoized_sensor);
     RUN_TEST(test_calibrated_sensor);
-    RUN_TEST(test_average_sensor);
-    RUN_TEST(test_static_median_sensor);
+    RUN_TEST(test_sensor_filter_multiply);
 
     return UNITY_END();
 }

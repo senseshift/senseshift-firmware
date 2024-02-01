@@ -32,6 +32,11 @@ namespace SenseShift {
         static_assert(std::is_arithmetic_v<Tp>, "Type must be arithmetic");
         static_assert(std::is_arithmetic_v<Up>, "Type must be arithmetic");
 
+        if (max <= min) {
+            LOG_E("util.remap", "Invalid input range, min <= max");
+            return (min_out + max_out) / 2;
+        }
+
         return (value - min) * (max_out - min_out) / (max - min) + min_out;
     }
 

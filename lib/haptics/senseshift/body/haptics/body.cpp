@@ -10,13 +10,13 @@ namespace SenseShift::Body::Haptics {
     template<typename Tp, typename Ta>
     void OutputBody<Tp, Ta>::effect(const Target& target, const Position& pos, const typename Plane::Value& val)
     {
-        auto find = this->targets_.find(target);
-        if (find == this->targets_.end()) {
+        auto plane = this->getTarget(target);
+        if (!plane.has_value()) {
             LOG_W(TAG, "No target found for effect: %d", target);
             return;
         }
 
-        find->second->effect(pos, val);
+        plane.value()->effect(pos, val);
     }
 
     template class OutputBody<Position::Value, Output::IFloatOutput::ValueType>;

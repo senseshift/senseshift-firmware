@@ -4,27 +4,27 @@
 using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::Output;
 
-class TestActuator : public IActuator<uint16_t> {
+class TestActuator : public IOutput<float> {
   public:
     bool isSetup = false;
-    uint16_t intensity = 0;
+    float intensity = 0;
 
-    TestActuator() : IActuator<uint16_t>() {}
-    void setup() override { this->isSetup = true; }
-    void writeOutput(uint16_t intensity) override { this->intensity = intensity; }
+    TestActuator() : IFloatOutput() {}
+    void init() override { this->isSetup = true; }
+    void writeState(float newIntensity) override { this->intensity = newIntensity; }
 };
 
 void test_it_sets_up_planes(void)
 {
-    auto body = new HapticBody();
+    auto body = new FloatBody();
 
-    VibroPlane::ActuatorMap outputs = {
+    FloatPlane::ActuatorMap outputs = {
         { { 0, 0 }, new TestActuator() },
         { { 0, 1 }, new TestActuator() },
         { { 1, 0 }, new TestActuator() },
         { { 1, 1 }, new TestActuator() },
     };
-    auto plane = new VibroPlane(outputs);
+    auto plane = new FloatPlane(outputs);
 
     body->addTarget(Target::ChestFront, plane);
     body->setup();
@@ -34,14 +34,14 @@ void test_it_sets_up_planes(void)
     }
 }
 
-void test_it_handles_effect__vibro(void)
+void test_it_handles_effect(void)
 {
     auto actuator1 = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    auto body = new HapticBody();
+    auto body = new FloatBody();
 
-    auto plane = new VibroPlane({
+    auto plane = new FloatPlane({
       { { 0, 0 }, actuator1 },
       { { 0, 1 }, actuator2 },
       { { 1, 0 }, actuator3 },
@@ -50,35 +50,17 @@ void test_it_handles_effect__vibro(void)
 
     body->addTarget(Target::ChestFront, plane);
 
-    body->effect({
-      .effect = Effect::Vibro,
-      .target = Target::ChestFront,
-      .position = { 0, 0 },
-      .data = (VibroEffectData) 64,
-    });
-    body->effect({
-      .effect = Effect::Vibro,
-      .target = Target::ChestFront,
-      .position = { 0, 1 },
-      .data = (VibroEffectData) 128,
-    });
-    body->effect({
-      .effect = Effect::Vibro,
-      .target = Target::ChestFront,
-      .position = { 1, 0 },
-      .data = (VibroEffectData) 192,
-    });
-    body->effect({
-      .effect = Effect::Vibro,
-      .target = Target::ChestFront,
-      .position = { 1, 1 },
-      .data = (VibroEffectData) 255,
-    });
+    TEST_ASSERT_TRUE(body->getTarget(Target::ChestFront).has_value());
 
-    TEST_ASSERT_EQUAL(64, actuator1->intensity);
-    TEST_ASSERT_EQUAL(128, actuator2->intensity);
-    TEST_ASSERT_EQUAL(192, actuator3->intensity);
-    TEST_ASSERT_EQUAL(255, actuator4->intensity);
+    body->effect(Target::ChestFront, { 0, 0 }, 0.25F);
+    body->effect(Target::ChestFront, { 0, 1 }, 0.5F);
+    body->effect(Target::ChestFront, { 1, 0 }, 0.75F);
+    body->effect(Target::ChestFront, { 1, 1 }, 1.0F);
+
+    TEST_ASSERT_EQUAL_FLOAT(0.25F, actuator1->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.5F, actuator2->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.75F, actuator3->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(1.0F, actuator4->intensity);
 }
 
 int process(void)
@@ -86,7 +68,7 @@ int process(void)
     UNITY_BEGIN();
 
     RUN_TEST(test_it_sets_up_planes);
-    RUN_TEST(test_it_handles_effect__vibro);
+    RUN_TEST(test_it_handles_effect);
 
     return UNITY_END();
 }

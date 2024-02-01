@@ -29,6 +29,7 @@ namespace SenseShift::FreeRTOS::Input {
             while (true) {
                 this->sensor_->tick();
                 delay(this->updateDelay_);
+                // log_i("high watermark %d", uxTaskGetStackHighWaterMark(NULL));
             }
         }
 

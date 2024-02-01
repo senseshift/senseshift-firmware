@@ -22,7 +22,7 @@ namespace SenseShift::Body::Haptics {
         ChestFront = 0x00,
         ChestBack = 0x01,
 
-        // Legacy backword compatibility
+        // Legacy backward compatibility
         Accessory [[deprecated]] = 0x02,
 
         FaceFront,

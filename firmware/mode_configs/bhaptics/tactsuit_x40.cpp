@@ -17,6 +17,7 @@
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
+using namespace SenseShift::Input::Filter;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
 using namespace SenseShift::FreeRTOS::Input;

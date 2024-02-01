@@ -11,10 +11,16 @@
 #include <vector>
 
 #include <senseshift/core/helpers.hpp>
+#include <senseshift/core/logging.hpp>
 
-namespace SenseShift::Input {
+namespace SenseShift::Input::Filter {
     template<typename Tp>
-    class ISimpleSensor;
+    class ISimpleSensor {
+      public:
+        using ValueType = Tp;
+
+        virtual auto getValue() -> ValueType = 0;
+    };
 
     template<typename Tp>
     class Sensor;
@@ -164,34 +170,42 @@ namespace SenseShift::Input {
         std::size_t size_;
     };
 
-    template<std::size_t N, typename Tp, typename Sensor>
+    template<typename Tp, typename Sensor>
     class SampleMedianFilter : public IFilter<Tp> {
-        static_assert(N % 2 == 1, "SampleMedianFilter only supports odd sample sizes");
         static_assert(std::is_same_v<typename Sensor::ValueType, Tp>, "Sensor type must match filter type");
-        static_assert(std::is_same_v<decltype(&Sensor::readRawValue), void (Sensor::*)()>, "Can only use sensors with readRawValue()");
+        // static_assert(std::is_same_v<decltype(&Sensor::readRawValue), Tp (Sensor::*)()>, "Can only use sensors with readRawValue()");
 
       public:
-        explicit SampleMedianFilter() = default;
+        explicit SampleMedianFilter(std::size_t size_) : size_(size_) {
+            // allocate the array
+            this->values = new Tp[size_];
+        };
 
         auto filter(ISimpleSensor<Tp>* sensor, Tp value) -> Tp override
         {
-            this->values = { value };
+            if (sensor == nullptr) {
+                LOG_E("filter.sampling_median", "Source sensor is null");
+                return value;
+            }
+
+            this->values[0] = value;
 
             // Read the acc_ from the sensor N-1 times and put them in the array.
             // We read it N-1 times because we already have the first acc_.
             for (std::size_t i = 1; i <= this->size_ - 1; i++) {
-                this->values[i] = sensor->readRawValue();
+                this->values[i] = sensor->getValue();
             }
 
             // Sort the array.
-            std::sort(this->values.begin(), this->values.end());
+            std::sort(this->values, this->values + this->size_);
 
             // Return the median of the values.
             return this->values[this->size_ / 2];
         }
 
       private:
-        std::array<Tp, N> values_;
+        std::size_t size_;
+        Tp* values;
     };
 
     template<typename Tp>

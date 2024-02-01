@@ -1,4 +1,4 @@
-#include <sensor/og_gesture.hpp>
+#include <senseshift/body/hands/gestures/grab.hpp>
 #include <unity.h>
 
 using namespace OpenGloves;

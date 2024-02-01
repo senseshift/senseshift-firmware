@@ -6,25 +6,28 @@ using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::Output;
 
-class TestActuator : public IActuator<uint16_t> {
+class TestActuator : public IOutput<float> {
   public:
     bool isSetup = false;
-    uint16_t intensity = 0;
+    float intensity = 0;
 
-    TestActuator() : IActuator<uint16_t>() {}
-    void setup() override { this->isSetup = true; }
-    void writeOutput(uint16_t intensity) override { this->intensity = intensity; }
+    TestActuator() : IFloatOutput() {}
+    void init() override { this->isSetup = true; }
+    void writeState(float newIntensity) override { this->intensity = newIntensity; }
 };
+
+#define ASSERT_EQUAL_FLOAT_ROUNDED(expected, actual, precision)                 \
+    TEST_ASSERT_EQUAL_FLOAT(                                                    \
+      std::round(expected * std::pow(10, precision)) / std::pow(10, precision), \
+      std::round(actual * std::pow(10, precision)) / std::pow(10, precision)    \
+    )
 
 void test_layout_tactsuitx16(void)
 {
-    static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
-    static const OutputLayout bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX16;
+    static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX16_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX16 };
+    static const std::array<std::uint8_t,BH_LAYOUT_TACTSUITX16_GROUPS_SIZE> layoutGroups = BH_LAYOUT_TACTSUITX16_GROUPS;
 
-    static constexpr size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
-    static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
-
-    auto body = new HapticBody();
+    auto body = new FloatBody();
 
     TestActuator* actuator0 = new TestActuator();
     TestActuator* actuator1 = new TestActuator();
@@ -43,62 +46,61 @@ void test_layout_tactsuitx16(void)
     TestActuator* actuator14 = new TestActuator();
     TestActuator* actuator15 = new TestActuator();
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       { actuator0, actuator1, actuator2, actuator3 },
       { actuator4, actuator5, actuator6, actuator7 },
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       { actuator8, actuator9, actuator10, actuator11 },
       { actuator12, actuator13, actuator14, actuator15 },
     });
 
-    auto frontPlane = new VibroPlane(frontOutputs);
-    auto backPlane = new VibroPlane(backOutputs);
+    auto frontPlane = new FloatPlane(frontOutputs);
+    auto backPlane = new FloatPlane(backOutputs);
 
     body->addTarget(Target::ChestFront, frontPlane);
     body->addTarget(Target::ChestBack, backPlane);
     // body->setup();
 
-    const uint8_t values[] = {
+    const std::array<uint8_t, 20> values = {
         0x01, 0x00, 0x23, 0x00, 0x00, 0x45, 0x00, 0x67, 0x00, 0x00,
         0x89, 0x00, 0xab, 0x00, 0x00, 0xcd, 0x00, 0xef, 0x00, 0x00,
     };
 
     Decoder::applyVestGrouped(body, values, bhLayout, layoutGroups);
-    TEST_ASSERT_EQUAL_INT(0, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(273, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(3276, actuator2->intensity);
-    TEST_ASSERT_EQUAL_INT(3549, actuator3->intensity);
-    TEST_ASSERT_EQUAL_INT(546, actuator4->intensity);
-    TEST_ASSERT_EQUAL_INT(819, actuator5->intensity);
-    TEST_ASSERT_EQUAL_INT(3822, actuator6->intensity);
-    TEST_ASSERT_EQUAL_INT(4095, actuator7->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuator0->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(273.0F/4095.0F, actuator1->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3276.0F/4095.0F, actuator2->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3549.0F/4095.0F, actuator3->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(546.0F/4095.0F, actuator4->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(819.0F/4095.0F, actuator5->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3822.0F/4095.0F, actuator6->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(4095.0F/4095.0F, actuator7->intensity, 2);
 
-    TEST_ASSERT_EQUAL_INT(1092, actuator8->intensity);
-    TEST_ASSERT_EQUAL_INT(1365, actuator9->intensity);
-    TEST_ASSERT_EQUAL_INT(2184, actuator10->intensity);
-    TEST_ASSERT_EQUAL_INT(2457, actuator11->intensity);
-    TEST_ASSERT_EQUAL_INT(1638, actuator12->intensity);
-    TEST_ASSERT_EQUAL_INT(1911, actuator13->intensity);
-    TEST_ASSERT_EQUAL_INT(2730, actuator14->intensity);
-    TEST_ASSERT_EQUAL_INT(3003, actuator15->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1092.0F/4095.0F, actuator8->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1365.0F/4095.0F, actuator9->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2184.0F/4095.0F, actuator10->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2457.0F/4095.0F, actuator11->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1638.0F/4095.0F, actuator12->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1911.0F/4095.0F, actuator13->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2730.0F/4095.0F, actuator14->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3003.0F/4095.0F, actuator15->intensity, 2);
 }
 
 void test_layout_tactsuitx40(void)
 {
-    static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX40_SIZE;
-    static const OutputLayout bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
+    static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX40_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX40 };
 
-    auto body = new HapticBody();
+    auto body = new FloatBody();
 
-    std::vector<std::vector<VibroPlane::Actuator*>> frontMatrix = {
+    std::vector<std::vector<FloatPlane::Actuator*>> frontMatrix = {
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
-    std::vector<std::vector<VibroPlane::Actuator*>> backMatrix = {
+    std::vector<std::vector<FloatPlane::Actuator*>> backMatrix = {
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
@@ -106,11 +108,11 @@ void test_layout_tactsuitx40(void)
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>(frontMatrix);
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>(backMatrix);
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>(frontMatrix);
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>(backMatrix);
 
-    auto frontPlane = new VibroPlane(frontOutputs);
-    auto backPlane = new VibroPlane(backOutputs);
+    auto frontPlane = new FloatPlane(frontOutputs);
+    auto backPlane = new FloatPlane(backOutputs);
 
     body->addTarget(Target::ChestFront, frontPlane);
     body->addTarget(Target::ChestBack, backPlane);
@@ -124,55 +126,54 @@ void test_layout_tactsuitx40(void)
       },
       bhLayout
     );
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[0][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(273, static_cast<TestActuator*>(frontMatrix[0][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[0][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[0][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(546, static_cast<TestActuator*>(frontMatrix[1][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(819, static_cast<TestActuator*>(frontMatrix[1][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[1][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[1][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(1092, static_cast<TestActuator*>(frontMatrix[2][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(1365, static_cast<TestActuator*>(frontMatrix[2][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[2][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[2][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(1638, static_cast<TestActuator*>(frontMatrix[3][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(1911, static_cast<TestActuator*>(frontMatrix[3][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[3][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[3][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(2184, static_cast<TestActuator*>(frontMatrix[4][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(2457, static_cast<TestActuator*>(frontMatrix[4][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[4][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(frontMatrix[4][3])->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[0][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(273.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[0][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[0][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[0][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(546.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[1][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(819.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[1][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[1][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[1][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1092.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[2][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1365.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[2][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[2][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[2][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1638.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[3][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1911.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[3][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[3][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[3][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2184.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[4][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2457.0F/4095.0F, static_cast<TestActuator*>(frontMatrix[4][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[4][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(frontMatrix[4][3])->intensity, 2);
 
-    TEST_ASSERT_EQUAL_INT(2730, static_cast<TestActuator*>(backMatrix[0][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(3003, static_cast<TestActuator*>(backMatrix[0][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[0][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[0][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(3276, static_cast<TestActuator*>(backMatrix[1][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(3549, static_cast<TestActuator*>(backMatrix[1][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[1][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[1][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(3822, static_cast<TestActuator*>(backMatrix[2][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(4095, static_cast<TestActuator*>(backMatrix[2][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[2][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[2][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[3][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[3][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[3][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[3][3])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[4][0])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[4][1])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[4][2])->intensity);
-    TEST_ASSERT_EQUAL_INT(0, static_cast<TestActuator*>(backMatrix[4][3])->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2730.0F/4095.0F, static_cast<TestActuator*>(backMatrix[0][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3003.0F/4095.0F, static_cast<TestActuator*>(backMatrix[0][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[0][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[0][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3276.0F/4095.0F, static_cast<TestActuator*>(backMatrix[1][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3549.0F/4095.0F, static_cast<TestActuator*>(backMatrix[1][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[1][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[1][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3822.0F/4095.0F, static_cast<TestActuator*>(backMatrix[2][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(4095.0F/4095.0F, static_cast<TestActuator*>(backMatrix[2][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[2][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[2][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[3][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[3][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[3][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[3][3])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[4][0])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[4][1])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[4][2])->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, static_cast<TestActuator*>(backMatrix[4][3])->intensity, 2);
 }
 
 void test_layout_tactal(void)
 {
-    static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-    static const ::SenseShift::Body::Haptics::Position bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+    static const std::array<Position, BH_LAYOUT_TACTAL_SIZE> bhLayout = { BH_LAYOUT_TACTAL };
 
-    auto body = new HapticBody();
+    auto body = new FloatBody();
 
     TestActuator* actuator0 = new TestActuator();
     TestActuator* actuator1 = new TestActuator();
@@ -181,28 +182,28 @@ void test_layout_tactal(void)
     TestActuator* actuator4 = new TestActuator();
     TestActuator* actuator5 = new TestActuator();
 
-    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       { actuator0, actuator1, actuator2, actuator3, actuator4, actuator5 },
     });
-    auto plane = new VibroPlane(outputs);
+    auto plane = new FloatPlane(outputs);
 
     body->addTarget(Target::FaceFront, plane);
 
     Decoder::applyPlain(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout, Effect::Vibro, Target::FaceFront);
-    TEST_ASSERT_EQUAL_INT(4095, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuator2->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuator3->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuator4->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuator5->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1.0F, actuator0->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuator1->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuator2->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuator3->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuator4->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuator5->intensity, 2);
 
     Decoder::applyPlain(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout, Effect::Vibro, Target::FaceFront);
-    TEST_ASSERT_EQUAL_INT(655, actuator0->intensity);
-    TEST_ASSERT_EQUAL_INT(1310, actuator1->intensity);
-    TEST_ASSERT_EQUAL_INT(1965, actuator2->intensity);
-    TEST_ASSERT_EQUAL_INT(2620, actuator3->intensity);
-    TEST_ASSERT_EQUAL_INT(3276, actuator4->intensity);
-    TEST_ASSERT_EQUAL_INT(3931, actuator5->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0.16F, actuator0->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1310.0F/4095.0F, actuator1->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1965.0F/4095.0F, actuator2->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2620.0F/4095.0F, actuator3->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3276.0F/4095.0F, actuator4->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3931.0F/4095.0F, actuator5->intensity, 2);
 }
 
 void test_layout_tactglove(void)
@@ -214,7 +215,7 @@ void test_layout_tactglove(void)
     TestActuator* actuatorLittle = new TestActuator();
     TestActuator* actuatorWrist = new TestActuator();
 
-    auto body = new HapticBody();
+    auto body = new FloatBody();
     const auto& bhLayout = TactGloveLeftLayout;
 
     addTactGloveActuators(
@@ -229,20 +230,20 @@ void test_layout_tactglove(void)
     );
 
     Decoder::applyPlain(body, { 0x64, 0x00, 0x00, 0x00, 0x00, 0x00 }, bhLayout, Effect::Vibro);
-    TEST_ASSERT_EQUAL_INT(4095, actuatorThumb->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuatorIndex->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuatorMiddle->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuatorRing->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuatorLittle->intensity);
-    TEST_ASSERT_EQUAL_INT(0, actuatorWrist->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(4095.0F/4095.0F, actuatorThumb->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuatorIndex->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuatorMiddle->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuatorRing->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuatorLittle->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(0, actuatorWrist->intensity, 2);
 
     Decoder::applyPlain(body, { 0x10, 0x20, 0x30, 0x40, 0x50, 0x60 }, bhLayout, Effect::Vibro);
-    TEST_ASSERT_EQUAL_INT(655, actuatorThumb->intensity);
-    TEST_ASSERT_EQUAL_INT(1310, actuatorIndex->intensity);
-    TEST_ASSERT_EQUAL_INT(1965, actuatorMiddle->intensity);
-    TEST_ASSERT_EQUAL_INT(2620, actuatorRing->intensity);
-    TEST_ASSERT_EQUAL_INT(3276, actuatorLittle->intensity);
-    TEST_ASSERT_EQUAL_INT(3931, actuatorWrist->intensity);
+    ASSERT_EQUAL_FLOAT_ROUNDED(655.0F/4095.0F, actuatorThumb->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1310.0F/4095.0F, actuatorIndex->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(1965.0F/4095.0F, actuatorMiddle->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(2620.0F/4095.0F, actuatorRing->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3276.0F/4095.0F, actuatorLittle->intensity, 2);
+    ASSERT_EQUAL_FLOAT_ROUNDED(3931.0F/4095.0F, actuatorWrist->intensity, 2);
 }
 
 int process(void)

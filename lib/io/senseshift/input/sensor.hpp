@@ -10,6 +10,12 @@
 #include <senseshift/core/component.hpp>
 #include <senseshift/core/helpers.hpp>
 
+#define SS_SUBSENSOR_INIT(SENSOR, ATTACH_CALLBACK, CALLBACK) \
+    (SENSOR)->init();                                        \
+    if (ATTACH_CALLBACK) {                                   \
+        (SENSOR)->addValueCallback(CALLBACK);                \
+    }
+
 namespace SenseShift::Input {
     /// Abstract hardware sensor (e.g. potentiometer, flex sensor, etc.)
     /// \tparam Tp Type of the sensor value
@@ -28,7 +34,7 @@ namespace SenseShift::Input {
     using IFloatSimpleSensor = ISimpleSensor<float>;
 
     template<typename Tp>
-    class ISensor : public virtual ISimpleSensor<Tp>, public ICalibrated {};
+    class ISensor : public virtual ISimpleSensor<Tp>, public Calibration::ICalibrated {};
 
     template<typename Tp>
     class Sensor : public ISensor<Tp> {
@@ -44,7 +50,7 @@ namespace SenseShift::Input {
         /// \param filter The filter to add.
         ///
         /// \see addFilters for adding multiple filters.
-        void addFilter(IFilter<ValueType>* filter) { this->filters_.push_back(filter); }
+        void addFilter(Filter::IFilter<ValueType>* filter) { this->filters_.push_back(filter); }
 
         /// Adds multiple filters to the sensor's filter chain. Appends to the end of the chain.
         ///
@@ -57,7 +63,7 @@ namespace SenseShift::Input {
         ///     new CenterDeadzoneFilter(0.1f),
         /// });
         /// \endcode
-        void addFilters(std::vector<IFilter<ValueType>*> filters) {
+        void addFilters(std::vector<Filter::IFilter<ValueType>*> filters) {
             this->filters_.insert(this->filters_.end(), filters.begin(), filters.end());
         }
 
@@ -72,12 +78,12 @@ namespace SenseShift::Input {
         ///     new CenterDeadzoneFilter(0.1f),
         /// });
         /// \endcode
-        void setFilters(std::vector<IFilter<ValueType>*> filters) { this->filters_ = filters; }
+        void setFilters(std::vector<Filter::IFilter<ValueType>*> filters) { this->filters_ = filters; }
 
         /// Removes everything from the sensor's filter chain.
         void clearFilters() { this->filters_.clear(); }
 
-        void setCalibrator(ICalibrator<ValueType>* calibrator) { this->calibrator_ = calibrator; }
+        void setCalibrator(Calibration::ICalibrator<ValueType>* calibrator) { this->calibrator_ = calibrator; }
 
         void clearCalibrator() { this->calibrator_ = std::nullopt; }
 
@@ -91,9 +97,9 @@ namespace SenseShift::Input {
             }
         }
 
-        void addValueCallback(CallbackType &&callback) { this->callback_.add(std::move(callback)); }
+        void addValueCallback(CallbackType &&callback) { this->callbacks_.add(std::move(callback)); }
 
-        void addRawValueCallback(CallbackType &&callback) { this->raw_callback_.add(std::move(callback)); }
+        void addRawValueCallback(CallbackType &&callback) { this->raw_callbacks_.add(std::move(callback)); }
 
         void init() override { }
 
@@ -106,10 +112,10 @@ namespace SenseShift::Input {
         /// \param rawValue The new .raw_value_.
         void publishState(ValueType rawValue) {
             this->raw_value_ = rawValue;
-            this->raw_callback_.call(this->raw_value_);
+            this->raw_callbacks_.call(this->raw_value_);
 
             this->value_ = this->applyFilters(rawValue);
-            this->callback_.call(this->value_);
+            this->callbacks_.call(this->value_);
         }
 
         /// Get the current sensor .value_.
@@ -125,11 +131,6 @@ namespace SenseShift::Input {
       protected:
         /// Apply current filters to value.
         [[nodiscard]] auto applyFilters(ValueType value) -> ValueType {
-            /// Apply filters
-            for (auto filter : this->filters_) {
-                value = filter->filter(this, value);
-            }
-
             /// Apply calibration
             if (this->calibrator_.has_value()) {
                 if (this->is_calibrating_) {
@@ -139,26 +140,31 @@ namespace SenseShift::Input {
                 value = this->calibrator_.value()->calibrate(value);
             }
 
+            /// Apply filters
+            for (auto filter : this->filters_) {
+                value = filter->filter(nullptr, value);
+            }
+
             return value;
         }
 
       private:
-        friend class IFilter<ValueType>;
-        friend class ICalibrator<ValueType>;
+        friend class Filter::IFilter<ValueType>;
+        friend class Calibration::ICalibrator<ValueType>;
 
         /// The sensor's filter chain.
-        std::vector<IFilter<ValueType>*> filters_ = std::vector<IFilter<ValueType>*>();
+        std::vector<Filter::IFilter<ValueType>*> filters_ = std::vector<Filter::IFilter<ValueType>*>();
 
         bool is_calibrating_ = false;
-        std::optional<ICalibrator<ValueType>*> calibrator_ = std::nullopt;
+        std::optional<Calibration::ICalibrator<ValueType>*> calibrator_ = std::nullopt;
 
         ValueType raw_value_;
         ValueType value_;
 
         /// Storage for raw state callbacks.
-        CallbackManagerType raw_callback_;
+        CallbackManagerType raw_callbacks_;
         /// Storage for filtered state callbacks.
-        CallbackManagerType callback_;
+        CallbackManagerType callbacks_;
     };
 
     using FloatSensor = Sensor<float>;
@@ -193,6 +199,8 @@ namespace SenseShift::Input {
         [[nodiscard]] auto readRawValue() -> ValueType {
             return this->source_->getValue();
         }
+
+      protected:
 
       private:
         SourceType* source_;
@@ -229,6 +237,37 @@ namespace SenseShift::Input {
 //      private:
 //        SourceType* source_;
 //    };
+
+    class AnalogThresholdSensor : public BinarySensor, ITickable {
+      public:
+        explicit AnalogThresholdSensor(
+          ::SenseShift::Input::FloatSensor* index,
+          float threshold = 0.5F,
+          bool attach_callbacks = false
+        ) : index_(index), threshold_(threshold), attach_callbacks_(attach_callbacks) {}
+
+        void init() override {
+            SS_SUBSENSOR_INIT(this->index_, this->attach_callbacks_, [this](float /*value*/) {
+                this->recalculateState();
+            });
+        }
+
+        void tick() override {
+            if (this->attach_callbacks_) {
+                LOG_E("sensor.analog_threshold", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");
+            }
+            this->recalculateState();
+        }
+
+        void recalculateState() {
+            return this->publishState(this->index_->getValue() > this->threshold_);
+        }
+
+      private:
+        ::SenseShift::Input::FloatSensor* index_;
+        float threshold_;
+        bool attach_callbacks_ = false;
+    };
 
     namespace _private {
         class TheFloatSensor : public Sensor<float> { };

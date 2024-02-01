@@ -4,6 +4,7 @@
 #include "senseshift/body/haptics/plane.hpp"
 
 #include <map>
+#include <optional>
 
 #include <senseshift/output/output.hpp>
 
@@ -30,6 +31,15 @@ namespace SenseShift::Body::Haptics {
 
         void addTarget(Target target, Plane* plane) {
             this->targets_[target] = plane;
+        }
+
+        auto getTarget(Target target) -> std::optional<Plane*> {
+            auto find = this->targets_.find(target);
+            if (find == this->targets_.end()) {
+                return std::nullopt;
+            }
+
+            return find->second;
         }
 
         void effect(const Target& target, const Position& pos, const typename Plane::Value& val);
