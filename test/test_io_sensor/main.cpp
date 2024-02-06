@@ -1,4 +1,5 @@
 #include <senseshift/input/sensor.hpp>
+#include <senseshift/input/analog_threshold.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;
@@ -106,6 +107,37 @@ void test_sensor_filter_multiply(void)
     TEST_ASSERT_EQUAL_INT(32, sensor->getValue());
 }
 
+void test_sensor_analog_threshold(void)
+{
+    auto inner = new TestAnalogSensor();
+    auto source = new SimpleSensorDecorator(inner);
+    auto sensor = new AnalogThresholdSensor(source, 120, 80, true);
+
+    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+    sensor->init();
+    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+    // 100 is below the threshold, so the sensor should be off
+    inner->value = 100;
+    source->tick();
+    TEST_ASSERT_FALSE(sensor->getValue());
+
+    // 130 is above the threshold, so the sensor should be on
+    inner->value = 130;
+    source->tick();
+    TEST_ASSERT_TRUE(sensor->getValue());
+
+    // 90 is below the upper threshold, but above the lower threshold, so the sensor should stay on due to hysteresis
+    inner->value = 90;
+    source->tick();
+    TEST_ASSERT_TRUE(sensor->getValue());
+
+    // 70 is below the lower threshold, so the sensor should be off
+    inner->value = 70;
+    source->tick();
+    TEST_ASSERT_FALSE(sensor->getValue());
+}
+
 int process(void)
 {
     UNITY_BEGIN();
@@ -113,6 +145,7 @@ int process(void)
     RUN_TEST(test_memoized_sensor);
     RUN_TEST(test_calibrated_sensor);
     RUN_TEST(test_sensor_filter_multiply);
+    RUN_TEST(test_sensor_analog_threshold);
 
     return UNITY_END();
 }

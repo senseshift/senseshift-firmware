@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <senseshift/core/logging.hpp>
+
 namespace SenseShift {
     /// Linearly interpolate between \p start and \p end by \p completion (between 0 and 1).
     template<typename Tp>
@@ -26,7 +28,7 @@ namespace SenseShift {
     /// \param max_out The maximum value of the output range.
     ///
     /// \return The remapped value.
-    template<typename Tp, typename Up>
+    template<typename Tp, typename Up = Tp>
     constexpr auto remap(Up value, Up min, Up max, Tp min_out, Tp max_out) -> Tp
     {
         static_assert(std::is_arithmetic_v<Tp>, "Type must be arithmetic");
@@ -52,7 +54,7 @@ namespace SenseShift {
     /// \return The remapped value.
     ///
     /// \note This is a simplified version of remap() where the minimum values are 0.
-    template<typename Tp, typename Up>
+    template<typename Tp, typename Up = Tp>
     constexpr auto remap_simple(Up value, Up max, Tp max_out) noexcept -> Tp
     {
         static_assert(std::is_arithmetic_v<Up>, "Type must be arithmetic");

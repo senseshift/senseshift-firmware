@@ -3,7 +3,7 @@
 #include <array>
 #include <tuple>
 
-#include <hand_interface.hpp>
+#include "senseshift/body/hands/hands_interface.hpp"
 
 #include <senseshift/body/haptics/plane.hpp>
 #include <senseshift/body/haptics/body.hpp>

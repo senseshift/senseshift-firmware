@@ -238,37 +238,6 @@ namespace SenseShift::Input {
 //        SourceType* source_;
 //    };
 
-    class AnalogThresholdSensor : public BinarySensor, ITickable {
-      public:
-        explicit AnalogThresholdSensor(
-          ::SenseShift::Input::FloatSensor* index,
-          float threshold = 0.5F,
-          bool attach_callbacks = false
-        ) : index_(index), threshold_(threshold), attach_callbacks_(attach_callbacks) {}
-
-        void init() override {
-            SS_SUBSENSOR_INIT(this->index_, this->attach_callbacks_, [this](float /*value*/) {
-                this->recalculateState();
-            });
-        }
-
-        void tick() override {
-            if (this->attach_callbacks_) {
-                LOG_E("sensor.analog_threshold", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");
-            }
-            this->recalculateState();
-        }
-
-        void recalculateState() {
-            return this->publishState(this->index_->getValue() > this->threshold_);
-        }
-
-      private:
-        ::SenseShift::Input::FloatSensor* index_;
-        float threshold_;
-        bool attach_callbacks_ = false;
-    };
-
     namespace _private {
         class TheFloatSensor : public Sensor<float> { };
     }
