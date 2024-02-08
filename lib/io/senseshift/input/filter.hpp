@@ -38,10 +38,7 @@ namespace SenseShift::Input::Filter {
       public:
         explicit AddFilter(Tp offset) : offset_(offset){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
-        {
-            return value + this->offset_;
-        }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value + this->offset_; }
 
       private:
         Tp offset_;
@@ -66,10 +63,7 @@ namespace SenseShift::Input::Filter {
       public:
         explicit SubtractFilter(Tp offset) : offset_(offset){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
-        {
-            return value - this->offset_;
-        }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value - this->offset_; }
 
       private:
         Tp offset_;
@@ -80,12 +74,9 @@ namespace SenseShift::Input::Filter {
       public:
         explicit MultiplyFilter(Tp factor) : factor_(factor){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
-        {
-            return value * this->factor_;
-        }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value * this->factor_; }
 
-    private:
+      private:
         Tp factor_;
     };
 
@@ -131,12 +122,9 @@ namespace SenseShift::Input::Filter {
       public:
         using Lambda = std::function<Tp(Tp)>;
 
-        explicit LambdaFilter(Lambda filter) : filter_(std::move(filter)) {};
+        explicit LambdaFilter(Lambda filter) : filter_(std::move(filter)){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
-        {
-            return this->filter_(value);
-        }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return this->filter_(value); }
 
       private:
         Lambda filter_;
@@ -147,7 +135,10 @@ namespace SenseShift::Input::Filter {
     class SampleAverageFilter : public IFilter<Tp> {
         static_assert(std::is_arithmetic_v<Tp>, "SampleAverageFilter only supports arithmetic types");
         static_assert(std::is_same_v<typename Sensor::ValueType, Tp>, "Sensor type must match filter type");
-        static_assert(std::is_same_v<decltype(&Sensor::readRawValue), void (Sensor::*)()>, "Can only use sensors with readRawValue()");
+        static_assert(
+          std::is_same_v<decltype(&Sensor::readRawValue), void (Sensor::*)()>,
+          "Can only use sensors with readRawValue()"
+        );
 
       public:
         explicit SampleAverageFilter(std::size_t size) : size_(size){};
@@ -173,10 +164,12 @@ namespace SenseShift::Input::Filter {
     template<typename Tp, typename Sensor>
     class SampleMedianFilter : public IFilter<Tp> {
         static_assert(std::is_same_v<typename Sensor::ValueType, Tp>, "Sensor type must match filter type");
-        // static_assert(std::is_same_v<decltype(&Sensor::readRawValue), Tp (Sensor::*)()>, "Can only use sensors with readRawValue()");
+        // static_assert(std::is_same_v<decltype(&Sensor::readRawValue), Tp (Sensor::*)()>, "Can only use sensors with
+        // readRawValue()");
 
       public:
-        explicit SampleMedianFilter(std::size_t size_) : size_(size_) {
+        explicit SampleMedianFilter(std::size_t size_) : size_(size_)
+        {
             // allocate the array
             this->values = new Tp[size_];
         };
@@ -213,7 +206,7 @@ namespace SenseShift::Input::Filter {
         static_assert(std::is_arithmetic_v<Tp>, "SlidingWindowAverageFilter only supports arithmetic types");
 
       public:
-        explicit SlidingWindowMovingAverageFilter(size_t window_size) : window_size_(window_size) { };
+        explicit SlidingWindowMovingAverageFilter(size_t window_size) : window_size_(window_size){};
 
         auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
         {
@@ -244,7 +237,7 @@ namespace SenseShift::Input::Filter {
         static_assert(std::is_arithmetic_v<Tp>, "ExponentialMovingAverageFilter only supports arithmetic types");
 
       public:
-        explicit ExponentialMovingAverageFilter(float alpha) : alpha_(alpha) { };
+        explicit ExponentialMovingAverageFilter(float alpha) : alpha_(alpha){};
 
         auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
         {
@@ -260,8 +253,7 @@ namespace SenseShift::Input::Filter {
 
     /// Deadzone filter. Clamps acc_ to center if it is within the deadzone.
     /// Usually used to filter out noise in the joystick.
-    class CenterDeadzoneFilter : public IFilter<float>
-    {
+    class CenterDeadzoneFilter : public IFilter<float> {
       public:
         explicit CenterDeadzoneFilter(float deadzone) : deadzone_(deadzone){};
 
@@ -271,28 +263,31 @@ namespace SenseShift::Input::Filter {
             return deviation < deadzone_ ? CENTER : value;
         }
 
-    private:
+      private:
         static constexpr float CENTER = 0.5F;
 
         float deadzone_;
     };
 
+    /// Interpolates the value from the lookup table.
+    /// Can be used to determine battery level from the voltage.
+    ///
+    /// \tparam Tp Type of the lookup table values.
     /// \tparam Container Type of the lookup table container.
-    template <typename Tp, typename Container>
-    class LookupTableInterpolationFilter : public IFilter<Tp>
-    {
+    template<typename Tp, typename Container>
+    class LookupTableInterpolationFilter : public IFilter<Tp> {
         static_assert(std::is_same_v<typename Container::value_type, Tp>);
         static_assert(std::is_arithmetic_v<Tp>, "LookupTableInterpolationFilter only supports arithmetic types");
 
       public:
-        explicit LookupTableInterpolationFilter(Container const& lookup_table) : lookup_table_(lookup_table) {};
+        explicit LookupTableInterpolationFilter(Container const& lookup_table) : lookup_table_(lookup_table){};
 
         auto filter(ISimpleSensor<float>* /*sensor*/, Tp value) -> Tp override
         {
-            return SenseShift::lookup_interpolate<Tp, Container>(this->lookup_table_, value);
+            return SenseShift::lookup_table_interpolate<Tp, Container>(this->lookup_table_, value);
         }
 
       private:
         Container const& lookup_table_;
     };
-} // namespace SenseShift::Input
+} // namespace SenseShift::Input::Filter

@@ -39,8 +39,9 @@ namespace SenseShift::FreeRTOS {
         friend class Task;
 
       public:
-        explicit Task(TaskConfig& config) : taskConfig(config) {
-            log_i("creating SensorUpdateTask: %s", taskConfig.name);
+        explicit Task(TaskConfig& config) : taskConfig(config)
+        {
+            log_i("creating ComponentUpdateTask: %s", taskConfig.name);
         };
         virtual ~Task()
         {
@@ -83,17 +84,17 @@ namespace SenseShift::FreeRTOS {
             uxArraySize = uxTaskGetSystemState(pxTaskStatusArray, uxArraySize, NULL);
             for (UBaseType_t i = 0; i < uxArraySize; i++) {
                 log_i(
-                        "Task: %s\n\tStack High Watermark: %d\n\tState: %d\n",
-                        pxTaskStatusArray[i].pcTaskName,
-                        pxTaskStatusArray[i].usStackHighWaterMark,
-                        pxTaskStatusArray[i].eCurrentState
+                  "Task: %s\n\tStack High Watermark: %d\n\tState: %d\n",
+                  pxTaskStatusArray[i].pcTaskName,
+                  pxTaskStatusArray[i].usStackHighWaterMark,
+                  pxTaskStatusArray[i].eCurrentState
                 );
 
                 if (pxTaskStatusArray[i].usStackHighWaterMark < 20) {
                     log_w(
-                            "Warning: Task %s has low stack space, only %dB awailable!",
-                            pxTaskStatusArray[i].pcTaskName,
-                            pxTaskStatusArray[i].usStackHighWaterMark * 4
+                      "Warning: Task %s has low stack space, only %dB awailable!",
+                      pxTaskStatusArray[i].pcTaskName,
+                      pxTaskStatusArray[i].usStackHighWaterMark * 4
                     );
                 }
             }
@@ -109,5 +110,40 @@ namespace SenseShift::FreeRTOS {
             _Tp* task = static_cast<_Tp*>(params);
             task->run();
         }
+    };
+
+    template<typename Tp>
+    class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
+        static_assert(std::is_same_v<decltype(&Tp::init), void (Tp::*)()>);
+        static_assert(std::is_same_v<decltype(&Tp::tick), void (Tp::*)()>);
+
+      public:
+        ComponentUpdateTask(Tp* component, std::uint32_t updateDelay, TaskConfig taskConfig) :
+          Task<ComponentUpdateTask>(taskConfig), component_(component), updateDelay_(updateDelay)
+        {
+            log_i("creating ComponentUpdateTask: %s", taskConfig.name);
+        };
+
+        void begin() override
+        {
+            this->component_->init();
+            this->Task<ComponentUpdateTask>::begin();
+        }
+
+      protected:
+        [[noreturn]] void run()
+        {
+            while (true) {
+                this->component_->tick();
+                delay(this->updateDelay_);
+                // log_i("high watermark %d", uxTaskGetStackHighWaterMark(NULL));
+            }
+        }
+
+      private:
+        friend class Task<ComponentUpdateTask>;
+
+        Tp* component_;
+        std::uint32_t updateDelay_;
     };
 } // namespace SenseShift::FreeRTOS

@@ -26,12 +26,13 @@ namespace SenseShift::Battery {
         using VoltageType = typename BatteryState::VoltageType;
         using VoltageSource = ::SenseShift::Input::Sensor<VoltageType>;
 
-        LookupTableInterpolateBatterySensor(
-          VoltageSource* voltage_source,
-          Container* lookup_table
-        ) : IBatterySensor(), voltage_source_(voltage_source), lookup_table_(lookup_table) {}
+        LookupTableInterpolateBatterySensor(VoltageSource* voltage_source, Container* lookup_table) :
+          IBatterySensor(), voltage_source_(voltage_source), lookup_table_(lookup_table)
+        {
+        }
 
-        void init() override {
+        void init() override
+        {
             this->voltage_source_->init();
             this->voltage_source_->addValueCallback([this](VoltageType voltage) {
                 // Current level in % (0.0 - 1.0)
@@ -40,7 +41,7 @@ namespace SenseShift::Battery {
                 LOG_D("battery.sensor", "voltage=%f, level=%f", voltage, level);
 
                 const BatteryState value = {
-                  .level = static_cast<typename BatteryState::LevelType>(level * BatteryState::MAX_LEVEL),
+                    .level = static_cast<typename BatteryState::LevelType>(level * BatteryState::MAX_LEVEL),
                 };
 
                 this->publishState(value);
@@ -48,8 +49,9 @@ namespace SenseShift::Battery {
         }
 
       protected:
-        [[nodiscard]] auto lookupInterpolateLevel(VoltageType voltage) -> float {
-            return ::SenseShift::lookup_interpolate<VoltageType, float, Container>(*this->lookup_table_, voltage);
+        [[nodiscard]] auto lookupInterpolateLevel(VoltageType voltage) -> float
+        {
+            return ::SenseShift::lookup_table_interpolate<VoltageType, float, Container>(*this->lookup_table_, voltage);
         }
 
       private:
