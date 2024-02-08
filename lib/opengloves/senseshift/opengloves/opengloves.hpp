@@ -15,4 +15,6 @@ namespace SenseShift::OpenGloves {
         virtual auto hasData() -> bool = 0;
         virtual auto read(char* buffer, size_t length) -> size_t = 0;
     };
+
+    using InputSensors = og::InputPeripheral<::SenseShift::Input::FloatSensor*, ::SenseShift::Input::BinarySensor*>;
 } // namespace SenseShift::OpenGloves

@@ -33,18 +33,20 @@ namespace og {
         DeviceType_LucidGloves,
     };
 
-    union InputFingerCurlData {
-        std::array<float, 4> curl; // NOLINT(*-magic-numbers): I'm sure our finger aren't changing anytime soon
+    template<typename Tf = float>
+    union InputFingerCurl {
+        std::array<Tf, 4> curl; // NOLINT(*-magic-numbers): I'm sure our finger aren't changing anytime soon
         struct {
-            float curl_total;
-            float curl_joint1;
-            float curl_joint2;
-            float curl_joint3;
+            Tf curl_total;
+            Tf curl_joint1;
+            Tf curl_joint2;
+            Tf curl_joint3;
         };
     };
+    using InputFingerCurlData = InputFingerCurl<float>;
 
     template<typename Tp>
-    union InputFingerData {
+    union InputFinger {
         std::array<Tp, 5> fingers; // NOLINT(*-magic-numbers): We aren't going to grow any new fingers soon tbh
         struct {
             Tp thumb;
@@ -58,49 +60,58 @@ namespace og {
             };
         };
     };
+    using InputFingerData = InputFinger<float>;
 
-    struct InputJoystickData {
-        float x, y;
-        bool press;
+    template<typename Tf = float, typename Tb = bool>
+    struct InputJoystick {
+        Tf x, y;
+        Tb press;
     };
+    using InputJoystickData = InputJoystick<float, bool>;
 
-    struct InputButtonData {
-        bool press;
+    template<typename Tb = bool>
+    struct InputButton {
+        Tb press;
         // bool touch;
     };
+    using InputButtonData = InputButton<bool>;
 
-    struct InputAnalogButtonData : InputButtonData {
-        float value;
+    template<typename Tf = float, typename Tb = bool>
+    struct InputAnalogButton : InputButton<Tb> {
+        Tf value;
     };
+    using InputAnalogButtonData = InputAnalogButton<float, bool>;
 
     /// Input data structure.
     ///
     /// I know, it is not the prettiest one, but we need this type of punning to efficiently encode/decode the data
-    struct InputPeripheralData {
-        InputFingerData<InputFingerCurlData> curl;
-        InputFingerData<float> splay;
+    template<typename Tf = float, typename Tb = bool>
+    struct InputPeripheral {
+        InputFinger<InputFingerCurl<Tf>> curl;
+        InputFinger<Tf> splay;
 
-        InputJoystickData joystick;
+        InputJoystick<Tf, Tb> joystick;
 
         union {
-            std::array<InputButtonData, 4> buttons;
+            std::array<InputButton<Tb>, 4> buttons;
             struct {
-                InputButtonData button_a;
-                InputButtonData button_b;
-                InputButtonData button_menu;
-                InputButtonData button_calibrate;
-                InputButtonData pinch;
+                InputButton<Tb> button_a;
+                InputButton<Tb> button_b;
+                InputButton<Tb> button_menu;
+                InputButton<Tb> button_calibrate;
+                InputButton<Tb> pinch;
             };
         };
 
         union {
-            std::array<InputAnalogButtonData, 2> analog_buttons;
+            std::array<InputAnalogButton<Tf, Tb>, 2> analog_buttons;
             struct {
-                InputAnalogButtonData trigger;
-                InputAnalogButtonData grab;
+                InputAnalogButton<Tf, Tb> trigger;
+                InputAnalogButton<Tf, Tb> grab;
             };
         };
     };
+    using InputPeripheralData = InputPeripheral<float, bool>;
 
     struct InputInfoData {
         Hand hand;
@@ -109,15 +120,16 @@ namespace og {
         unsigned int firmware_version;
     };
 
-    using Input = std::variant<InputInfoData, InputPeripheralData>;
+    using InputData = std::variant<InputInfoData, InputPeripheralData>;
 
     class Output {};
 
     class IEncoder {
       public:
-        [[nodiscard]] virtual auto encode_input(const Input& input, char* buffer, size_t length) const -> size_t = 0;
+        [[nodiscard]] virtual auto encode_input(const InputData& input, char* buffer, size_t length) const
+          -> size_t = 0;
 
-        [[nodiscard]] auto encode_input(const Input& input) const -> std::string
+        [[nodiscard]] auto encode_input(const InputData& input) const -> std::string
         {
             std::string buffer;
             buffer.resize(OG_BUFFER_SIZE);
@@ -300,9 +312,15 @@ namespace og {
             { Command::GestureTrigger_Value, "P" }, // Analog trigger button/gesture
 
             { Command::Info, "Z" },
+#ifdef OG_USE_FROZEN
+            { Command::Info_FirmwareVersion, frozen::string(INFO_FIRMWARE_VERSION_KEY) },
+            { Command::Info_DeviceType, frozen::string(INFO_DEVICE_TYPE_KEY) },
+            { Command::Info_Hand, frozen::string(INFO_HAND_KEY) },
+#else
             { Command::Info_FirmwareVersion, INFO_FIRMWARE_VERSION_KEY },
             { Command::Info_DeviceType, INFO_DEVICE_TYPE_KEY },
             { Command::Info_Hand, INFO_HAND_KEY },
+#endif
           });
 
         /// Alpha keys for fingers.
@@ -318,13 +336,18 @@ namespace og {
         /// Alpha keys for finger curl joints. Top level is the finger, second level is the joint.
         /// The top level <b>MUST</b> be in the same order as the `InputFingerData` struct.
         /// Second level array <b>MUST</b> be in the same order as the `InputFingerCurlData` struct.
-        inline static const std::array<std::array<std::string, 4>, 5> FINGER_CURL_JOINT_ALPHA_KEY = { {
-          { "A", "(AAB)", "(AAC)", "(AAD)" }, // Thumb (total, joint1, joint2, joint3)
-          { "B", "(BAB)", "(BAC)", "(BAD)" }, // Index (total, joint1, joint2, joint3)
-          { "C", "(CAB)", "(CAC)", "(CAD)" }, // Middle (total, joint1, joint2, joint3)
-          { "D", "(DAB)", "(DAC)", "(DAD)" }, // Ring (total, joint1, joint2, joint3)
-          { "E", "(EAB)", "(EAC)", "(EAD)" }, // Pinky (total, joint1, joint2, joint3)
-        } };
+#ifdef OG_USE_FROZEN
+        inline static constexpr const std::array<std::array<frozen::string, 4>, 5> FINGER_CURL_JOINT_ALPHA_KEY =
+#else
+        inline static const std::array<std::array<std::string, 4>, 5> FINGER_CURL_JOINT_ALPHA_KEY =
+#endif
+          { {
+            { "A", "(AAB)", "(AAC)", "(AAD)" }, // Thumb (total, joint1, joint2, joint3)
+            { "B", "(BAB)", "(BAC)", "(BAD)" }, // Index (total, joint1, joint2, joint3)
+            { "C", "(CAB)", "(CAC)", "(CAD)" }, // Middle (total, joint1, joint2, joint3)
+            { "D", "(DAB)", "(DAC)", "(DAD)" }, // Ring (total, joint1, joint2, joint3)
+            { "E", "(EAB)", "(EAC)", "(EAD)" }, // Pinky (total, joint1, joint2, joint3)
+          } };
 
         /// Alpha keys for buttons.
         /// <b>MUST</b> be in the same order as the `InputPeripheralData` struct.
@@ -343,8 +366,8 @@ namespace og {
           'I', // Grab
         } };
 
-        auto encode_input(const Input& input, char* buffer, size_t length) const -> size_t override;
+        [[nodiscard]] auto encode_input(const InputData& input, char* buffer, size_t length) const -> size_t override;
 
-        auto parse_output(const char* data, size_t length) const -> Output override;
+        [[nodiscard]] auto parse_output(const char* data, size_t length) const -> Output override;
     };
 } // namespace og

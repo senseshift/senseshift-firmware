@@ -4,15 +4,12 @@
 
 #include <optional>
 
-#include <og_ffb.hpp>
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/input/sensor/binary.hpp>
-#include <senseshift/calibration.hpp>
+#include <senseshift/arduino/input/sensor/digital.hpp>
 #include <senseshift/freertos/task.hpp>
 #include <senseshift/input/sensor.hpp>
-#include <senseshift/input/sensor/joystick.hpp>
 #include <senseshift/opengloves/encoding/alpha.hpp>
-#include <senseshift/opengloves/interface.hpp>
+#include <senseshift/opengloves/opengloves.hpp>
 #include <senseshift/utility.hpp>
 #include <sensor/og_finger.hpp>
 #include <sensor/og_gesture.hpp>

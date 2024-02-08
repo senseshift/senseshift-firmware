@@ -2,12 +2,13 @@
 
 #include <senseshift/core/component.hpp>
 #include <senseshift/input/sensor.hpp>
+#include <senseshift/input/analog_threshold.hpp>
 
 namespace SenseShift::Body::Hands::Input {
     using Gesture = ::SenseShift::Input::BinarySensor;
 
     /// An alias for semantic consistency.
-    using TriggerGesture = ::SenseShift::Input::AnalogThresholdSensor;
+    using TriggerGesture = ::SenseShift::Input::AnalogThresholdSensor<float>;
 
     class GrabGesture : public Gesture, ITickable {
       public:

@@ -1,7 +1,8 @@
 #pragma once
 
+#include <senseshift/body/haptics/interface.hpp>
+
 #include <cstdint>
-#include "senseshift/body/haptics/interface.hpp"
 
 namespace SenseShift::Body {
     namespace Hands {
@@ -21,5 +22,5 @@ namespace SenseShift::Body {
             /// Distal phalanx of the volar surface of the any finger.
             static constexpr const ::SenseShift::Body::Haptics::Position FINGERTIP_POSITION(127, 16);
         } // namespace Haptics
-    }     // namespace Hands
+    } // namespace Hands
 } // namespace SenseShift::Body

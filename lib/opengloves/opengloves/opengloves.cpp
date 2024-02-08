@@ -6,7 +6,7 @@
 
 namespace og {
 
-    auto AlphaEncoder::encode_input(const Input& input, char* buffer, size_t length) const -> size_t
+    auto AlphaEncoder::encode_input(const InputData& input, char* buffer, size_t length) const -> size_t
     {
         if (std::holds_alternative<InputInfoData>(input)) {
             const auto& info = std::get<InputInfoData>(input);

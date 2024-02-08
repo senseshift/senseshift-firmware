@@ -1,18 +1,17 @@
 #pragma once
 
+#include <senseshift/buffer.hpp>
+
 #include <BLESerial.hpp>
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 #include <Print.h>
 #include <WiFi.h>
 
-#include <og_protocol.hpp>
-#include <senseshift/opengloves/interface.hpp>
+#include <senseshift/opengloves/opengloves.hpp>
 
 namespace SenseShift::OpenGloves {
     class IStreamTransport : public ITransport {
-        using IStringEncodedMemoizedSensor = ::OpenGloves::IStringEncodedMemoizedSensor;
-
       protected:
         Stream* channel;
         char* buffer = new char[256];
@@ -57,7 +56,7 @@ namespace SenseShift::OpenGloves {
         StreamTransport(Stream& channel) : IStreamTransport(&channel){};
         StreamTransport(Stream* channel) : IStreamTransport(channel){};
 
-        void setup() override { this->mReady = true; }
+        void init() override { this->mReady = true; }
 
         bool isReady() override { return this->channel != nullptr && this->mReady; }
 
@@ -101,7 +100,7 @@ namespace SenseShift::OpenGloves {
       public:
         WiFiSerialTransport(WiFiServer& server) : IStreamTransport(nullptr), m_server(server){};
 
-        void setup() override
+        void init() override
         {
             auto* client = static_cast<WiFiClient*>(this->channel);
             if (client != nullptr) {
