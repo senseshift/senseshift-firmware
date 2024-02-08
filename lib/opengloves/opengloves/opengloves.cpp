@@ -1,8 +1,23 @@
 #include "opengloves/opengloves.hpp"
 
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <variant>
+
+#ifdef OG_ENCODE_FAST
+template<typename Tp = int, typename Tu = float>
+auto ifloor(Tu x) -> Tp
+{
+    return (Tp) x - (x < (Tp) x);
+}
+
+template<typename Tp = int, typename Tu = float>
+auto iceil(Tu x) -> Tp
+{
+    return (Tp) x + (x > (Tp) x);
+}
+#endif
 
 namespace og {
 
@@ -32,52 +47,84 @@ namespace og {
             const auto peripheral = std::get<InputPeripheralData>(input);
             auto written = 0;
 
-            const auto& curl = peripheral.curl.fingers;
+            const auto& curls = peripheral.curl.fingers;
+            const auto& splays = peripheral.splay.fingers;
 #ifdef OG_ENCODE_FAST
-            for (auto i = 0; i < curl.size(); i++) {
-                const auto& finger = curl[i];
+            for (auto i = 0; i < curls.size(); i++) {
+                const auto& finger = curls[i];
                 const auto& finger_curl = finger.curl_total;
-
-                written +=
-                  snprintf(buffer + written, length - written, "%c%.0f", 'A' + i, finger_curl * MAX_ANALOG_VALUE);
-            }
-#else
-            for (auto i = 0; i < curl.size(); i++) {
-                const auto& finger = curl[i];
-                const auto& joints = finger.curl;
-
-                for (auto j = 0; j < joints.size(); j++) {
-                    const auto& joint = joints[j];
-
-                    // skip if joint is 0.0, except total_curl (it is probably not enabled)
-                    if (joint == 0.0F && j != 0) {
-                        continue;
-                    }
-
-                    const auto& jointKey = AlphaEncoder::FINGER_CURL_JOINT_ALPHA_KEY[i][j];
-
-                    written +=
-                      snprintf(buffer + written, length - written, "%s%.0f", jointKey.data(), joint * MAX_ANALOG_VALUE);
-                }
-            }
-
-            const auto& splay = peripheral.splay.fingers;
-            for (auto i = 0; i < splay.size(); i++) {
-                const auto& finger = splay[i];
-
-                if (finger == 0.0F) {
-                    continue;
-                }
 
                 written += snprintf(
                   buffer + written,
                   length - written,
-                  "(%cB)%.0f",
-                  AlphaEncoder::FINGER_ALPHA_KEY[i],
-                  finger * MAX_ANALOG_VALUE
+                  "%c%u",
+                  'A' + i,
+                  ifloor<std::uint8_t, float>(finger_curl * MAX_ANALOG_VALUE)
                 );
             }
+#else
+            for (auto i = 0; i < curls.size(); i++) {
+                const auto& finger_curl = curls[i];
+                const auto& finger_splay = splays[i];
+                const auto finger_alpha_key = 'A' + i;
+
+                written += snprintf(
+                  buffer + written,
+                  length - written,
+                  "%c%.0f",
+                  finger_alpha_key,
+                  std::floor(finger_curl.curl_total * MAX_ANALOG_VALUE)
+                );
+
+                if (finger_splay > 0.0F) {
+                    written += snprintf(
+                      buffer + written,
+                      length - written,
+                      "(%cB)%.0f",
+                      finger_alpha_key,
+                      std::floor(finger_splay * MAX_ANALOG_VALUE)
+                    );
+                }
+
+                const auto& joints = finger_curl.curl;
+                for (auto j = 1; j < joints.size(); j++) {
+                    const auto& joint = joints[j];
+                    const auto joint_alpha_key = 'A' + j;
+
+                    if (joint == 0.0F) {
+                        continue;
+                    }
+
+                    written += snprintf(
+                      buffer + written,
+                      length - written,
+                      "(%cA%c)%.0f",
+                      finger_alpha_key,
+                      joint_alpha_key,
+                      std::floor(joint * MAX_ANALOG_VALUE)
+                    );
+                }
+            }
 #endif
+            if (peripheral.joystick.x != 0.0F) {
+                written += snprintf(
+                  buffer + written,
+                  length - written,
+                  "F%.0f",
+                  std::floor(peripheral.joystick.x * MAX_ANALOG_VALUE)
+                );
+            }
+            if (peripheral.joystick.y != 0.0F) {
+                written += snprintf(
+                  buffer + written,
+                  length - written,
+                  "G%.0f",
+                  std::floor(peripheral.joystick.y * MAX_ANALOG_VALUE)
+                );
+            }
+            if (peripheral.joystick.press) {
+                written += snprintf(buffer + written, length - written, "H");
+            }
 
             const auto& buttons = peripheral.buttons;
             for (auto i = 0; i < buttons.size(); i++) {

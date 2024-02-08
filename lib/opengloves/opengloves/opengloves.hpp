@@ -231,7 +231,7 @@ namespace og {
         inline static constexpr const char* INFO_DEVICE_TYPE_KEY = "(ZG)";
         inline static constexpr const char* INFO_HAND_KEY = "(ZH)";
 
-        inline static constexpr const uint16_t MAX_ANALOG_VALUE = 4096;
+        inline static constexpr const uint16_t MAX_ANALOG_VALUE = 4095;
 
 #ifdef OG_USE_FROZEN
         inline static constexpr const auto ALPHA_KEYS_TO_COMMAND = frozen::make_map<frozen::string, Command>

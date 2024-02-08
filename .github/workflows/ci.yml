@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
         target:
           - bhaptics_tactsuit_x16
           - bhaptics_tactsuit_x16_pca9685
@@ -32,10 +32,10 @@ jobs:
           - bhaptics_tactal
           - bhaptics_tactvisor
           - bhaptics_tactglove_right
-        battery_flag: [SENSESHIFT_BATTERY_ENABLED=true]
-        serial_plotter_flag: [SENSESHIFT_SERIAL_PLOTTER=false]
-        nimble_flag: [SENSESHIFT_BLE_USE_NIMBLE=false]
-        coverage: [false]
+        battery_flag: [ SENSESHIFT_BATTERY_ENABLED=true ]
+        serial_plotter_flag: [ SENSESHIFT_SERIAL_PLOTTER=false ]
+        nimble_flag: [ SENSESHIFT_BLE_USE_NIMBLE=false ]
+        coverage: [ false ]
 
         include:
           # Extra tests for x40, as it uses the most features
@@ -165,7 +165,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
         target:
           - lucidgloves-prototype3
           - lucidgloves-prototype4
@@ -176,20 +176,20 @@ jobs:
         comm_flag:
           - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_SERIAL
           - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BTSERIAL
-        coverage: [false]
+        coverage: [ false ]
 
         include:
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::MinMaxCalibrator<float>()"
             coverage: true
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::CenterPointDeviationCalibrator<float>(0.66F, 0.005F)"
             coverage: true
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::FixedCenterPointDeviationCalibrator<float>(0.66F, 0.005F)"
             coverage: true
           - os: ubuntu-latest
             target: indexer-csf
