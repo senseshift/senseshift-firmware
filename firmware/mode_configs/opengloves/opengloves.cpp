@@ -122,7 +122,7 @@ void setupMode()
 #endif
 
 #if GESTURE_TRIGGER_ENABLED
-    auto* trigger = new AnalogThresholdSensor(index_curl_sensor, GESTURE_TRIGGER_THRESHOLD);
+    auto* trigger = new TriggerGesture(index_curl_sensor, GESTURE_TRIGGER_THRESHOLD);
     input_sensors.trigger.press = trigger;
 #elif BUTTON_TRIGGER_ENABLED
     auto trigger = new BUTTON_CLASS(PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT);
