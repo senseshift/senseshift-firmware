@@ -5,7 +5,7 @@
 
 namespace SenseShift::Input {
     template<typename Tp = float>
-    class AnalogThresholdSensor : public BinarySensor, ITickable {
+    class AnalogThresholdSensor : public BinarySensor {
       public:
         /// Analog threshold sensor with hysteresis.
         ///

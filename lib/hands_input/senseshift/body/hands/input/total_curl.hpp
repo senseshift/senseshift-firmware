@@ -8,7 +8,7 @@
 #include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Body::Hands::Input {
-    class TotalCurl : public ::SenseShift::Input::FloatSensor, public ::SenseShift::ITickable {
+    class TotalCurl : public ::SenseShift::Input::FloatSensor {
       public:
         /// \param joints The joints to calculate the total curl from.
         /// \param attach_callbacks Whether to attach callbacks to the joints to update the total curl when they update.

@@ -20,7 +20,7 @@ namespace SenseShift::Input {
     /// Abstract hardware sensor (e.g. potentiometer, flex sensor, etc.)
     /// \tparam Tp Type of the sensor value
     template<typename Tp>
-    class ISimpleSensor : virtual public IInitializable {
+    class ISimpleSensor : public virtual IInitializable {
       public:
         using ValueType = Tp;
 
@@ -37,7 +37,7 @@ namespace SenseShift::Input {
     class ISensor : public virtual ISimpleSensor<Tp>, public Calibration::ICalibrated {};
 
     template<typename Tp>
-    class Sensor : public ISensor<Tp> {
+    class Sensor : public ISensor<Tp>, public Component {
       public:
         using ValueType = Tp;
         using CallbackManagerType = CallbackManager<void(ValueType)>;
@@ -173,7 +173,7 @@ namespace SenseShift::Input {
     using BinarySensor = Sensor<bool>;
 
     template<typename Tp>
-    class SimpleSensorDecorator : public Sensor<Tp>, public ITickable {
+    class SimpleSensorDecorator : public Sensor<Tp> {
       public:
         using ValueType = Tp;
         using SourceType = ISimpleSensor<ValueType>;

@@ -1,18 +1,31 @@
 #pragma once
 
+#define SS_INIT_NOT_NULL(ptr) \
+    if ((ptr) != nullptr) {   \
+        (ptr)->init();        \
+    }
+#define SS_TICK_NOT_NULL(ptr) \
+    if ((ptr) != nullptr) {   \
+        (ptr)->tick();        \
+    }
+
 namespace SenseShift {
     class IInitializable {
-    public:
+      public:
+        virtual ~IInitializable() = default;
+
         virtual void init() = 0;
     };
 
     class ITickable {
-    public:
+      public:
+        virtual ~ITickable() = default;
+
         virtual void tick() = 0;
     };
 
-    class Component : public IInitializable, public ITickable {
-    public:
+    class Component : public virtual IInitializable, public virtual ITickable {
+      public:
         /// @brief Initialize the component.
         ///
         /// Where the component's initialization should happen.
@@ -30,4 +43,3 @@ namespace SenseShift {
         void tick() override {}
     };
 } // namespace SenseShift
-

@@ -112,7 +112,7 @@ namespace SenseShift::FreeRTOS {
         }
     };
 
-    template<typename Tp>
+    template<typename Tp = Component>
     class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
         static_assert(std::is_same_v<decltype(&Tp::init), void (Tp::*)()>);
         static_assert(std::is_same_v<decltype(&Tp::tick), void (Tp::*)()>);

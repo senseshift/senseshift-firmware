@@ -7,6 +7,8 @@
 #include <senseshift/input/filter.hpp>
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/opengloves/autoconfig.hpp>
+#include <senseshift/opengloves/opengloves.hpp>
+#include <senseshift/opengloves/opengloves_task.hpp>
 #include <senseshift/utility.hpp>
 
 using namespace ::SenseShift::Input;
@@ -150,6 +152,21 @@ void setupMode()
 #elif BUTTON_PINCH_ENABLED
     auto* pinch = new BUTTON_CLASS(PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT);
 #endif
+
+    OpenGlovesTrackingComponent::Config const tracking_config(2000, false);
+    auto* opengloves_tracking =
+      new OpenGlovesTrackingComponent(tracking_config, input_sensors, new StreamTransport(Serial));
+
+    auto* opengloves_tracking_task = new ::SenseShift::FreeRTOS::ComponentUpdateTask<OpenGlovesTrackingComponent>(
+      opengloves_tracking,
+      1000 / 60,
+      {
+        .name = "OpenGlovesSensorTask",
+        .stackDepth = 8192,
+        .priority = 1,
+      }
+    );
+    opengloves_tracking_task->begin();
 }
 
 void loopMode()

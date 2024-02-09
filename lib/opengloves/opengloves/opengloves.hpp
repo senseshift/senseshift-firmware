@@ -38,7 +38,7 @@ namespace og {
         std::array<Tf, 4> curl; // NOLINT(*-magic-numbers): I'm sure our finger aren't changing anytime soon
         union {
             Tf curl_total;
-            
+
             struct {
                 Tf curl_joint0;
                 Tf curl_joint1;
@@ -146,18 +146,18 @@ namespace og {
 
         [[nodiscard]] virtual auto parse_output(const char* data, size_t length) const -> Output = 0;
 
-        [[nodiscard]] auto parse_output(const std::vector<char>& data) const -> Output
+        [[nodiscard]] inline auto parse_output(const std::vector<char>& data) const -> Output
         {
             return this->parse_output(data.data(), data.size());
         }
 
-        [[nodiscard]] auto parse_output(const std::string& data) const -> Output
+        [[nodiscard]] inline auto parse_output(const std::string& data) const -> Output
         {
             return this->parse_output(data.data(), data.length());
         }
 
 #ifdef ARDUINO
-        [[nodiscard]] auto parse_output(const String& data) const -> Output
+        [[nodiscard]] inline auto parse_output(const String& data) const -> Output
         {
             return this->parse_output(data.c_str(), data.length());
         }
