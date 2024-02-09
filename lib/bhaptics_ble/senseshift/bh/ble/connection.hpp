@@ -1,6 +1,7 @@
 #pragma once
 
-#include <senseshift/battery.hpp>
+#include "senseshift/battery/battery.hpp"
+#include "senseshift/core/helpers.hpp"
 #include <senseshift/bh/ble/constants.hpp>
 #include <senseshift/bh/constants.hpp>
 #include <senseshift/events.hpp>
@@ -44,9 +45,9 @@ namespace SenseShift::BH::BLE {
         void handleEvent(const IEvent* event) const override
         {
             if (event->eventName == OH_EVENT_BATTERY_LEVEL) {
-                uint16_t level = simpleMap<uint8_t>(
+                uint16_t level = remap_simple<std::uint8_t, std::uint8_t>(
                   static_cast<const ::SenseShift::Battery::BatteryLevelEvent*>(event)->state.level,
-                  255,
+                  ::SenseShift::Battery::BatteryState::MAX_LEVEL,
                   100
                 );
 

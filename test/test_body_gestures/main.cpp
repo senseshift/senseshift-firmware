@@ -10,14 +10,13 @@ void test_gesture_trigger(void)
     float threshold = 0.5f;
     auto* index = new FloatSensor();
 
-    auto* gesture = new TriggerGesture(index, threshold);
+    auto* gesture = new TriggerGesture(index, threshold, true);
+    gesture->init();
 
     index->publishState(0.4f);
-    gesture->tick();
     TEST_ASSERT_FALSE(gesture->getValue());
 
     index->publishState(0.6f);
-    gesture->tick();
     TEST_ASSERT_TRUE(gesture->getValue());
 }
 
@@ -37,25 +36,23 @@ void test_gesture_grab(void)
         .ring = ring,
         .pinky = pinky,
       },
-      threshold
+      threshold,
+      true
     );
+    gesture->init();
 
     TEST_ASSERT_FALSE(gesture->getValue());
 
     index->publishState(0.6);
-    gesture->tick();
     TEST_ASSERT_FALSE(gesture->getValue());
 
     middle->publishState(0.6);
-    gesture->tick();
     TEST_ASSERT_FALSE(gesture->getValue());
 
     ring->publishState(0.6);
-    gesture->tick();
     TEST_ASSERT_FALSE(gesture->getValue());
 
     pinky->publishState(0.6);
-    gesture->tick();
     TEST_ASSERT_TRUE(gesture->getValue());
 }
 
@@ -66,16 +63,15 @@ void test_gesture_pinch(void)
     auto* thumb = new FloatSensor();
     auto* index = new FloatSensor();
 
-    auto* gesture = new PinchGesture({ .thumb = thumb, .index = index }, threshold);
+    auto* gesture = new PinchGesture({ .thumb = thumb, .index = index }, threshold, true);
+    gesture->init();
 
     TEST_ASSERT_FALSE(gesture->getValue());
 
     thumb->publishState(0.6f);
-    gesture->tick();
     TEST_ASSERT_FALSE(gesture->getValue());
 
     index->publishState(0.6f);
-    gesture->tick();
     TEST_ASSERT_TRUE(gesture->getValue());
 }
 

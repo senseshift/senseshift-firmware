@@ -2,7 +2,7 @@
 
 #include "config/all.h"
 
-#include <senseshift/battery/sensor.hpp>
+#include "senseshift/battery/input/battery_sensor.hpp"
 #include <senseshift/body/haptics/body.hpp>
 #include <senseshift/events.hpp>
 
@@ -21,6 +21,6 @@ namespace SenseShift {
       private:
         std::vector<const IEventListener*> event_listeners_{};
         Body::Haptics::FloatBody* vibro_body_;
-        Battery::IBatterySensor* battery_ = nullptr;
+        Battery::Input::IBatterySensor* battery_ = nullptr;
     };
 } // namespace SenseShift

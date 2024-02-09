@@ -36,11 +36,15 @@ namespace og {
     template<typename Tf = float>
     union InputFingerCurl {
         std::array<Tf, 4> curl; // NOLINT(*-magic-numbers): I'm sure our finger aren't changing anytime soon
-        struct {
+        union {
             Tf curl_total;
-            Tf curl_joint1;
-            Tf curl_joint2;
-            Tf curl_joint3;
+            
+            struct {
+                Tf curl_joint0;
+                Tf curl_joint1;
+                Tf curl_joint2;
+                Tf curl_joint3;
+            };
         };
     };
     using InputFingerCurlData = InputFingerCurl<float>;
@@ -77,7 +81,7 @@ namespace og {
     using InputButtonData = InputButton<bool>;
 
     template<typename Tf = float, typename Tb = bool>
-    struct InputAnalogButton : InputButton<Tb> {
+    struct InputAnalogButton : public InputButton<Tb> {
         Tf value;
     };
     using InputAnalogButtonData = InputAnalogButton<float, bool>;
@@ -93,7 +97,7 @@ namespace og {
         InputJoystick<Tf, Tb> joystick;
 
         union {
-            std::array<InputButton<Tb>, 4> buttons;
+            std::array<InputButton<Tb>, 5> buttons;
             struct {
                 InputButton<Tb> button_a;
                 InputButton<Tb> button_b;

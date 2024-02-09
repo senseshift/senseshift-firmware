@@ -2,17 +2,12 @@
 
 #include <cstdint>
 
-#include "senseshift/battery.hpp"
+#include "senseshift/battery/battery.hpp"
 
-#include <senseshift/freertos/task.hpp>
-#include <senseshift/input/sensor.hpp>
-#include <senseshift/utility.hpp>
+#include "senseshift/core/helpers.hpp"
+#include "senseshift/input/sensor.hpp"
 
-#ifndef SENSESHIFT_BATTERY_TASK_PRIORITY
-#define SENSESHIFT_BATTERY_TASK_PRIORITY 1
-#endif
-
-namespace SenseShift::Battery {
+namespace SenseShift::Battery::Input {
     /// Abstract battery sensor
     using IBatterySensor = ::SenseShift::Input::Sensor<BatteryState>;
 
@@ -58,4 +53,4 @@ namespace SenseShift::Battery {
         VoltageSource* voltage_source_;
         Container* lookup_table_;
     };
-} // namespace SenseShift::Battery
+} // namespace SenseShift::Battery::Input

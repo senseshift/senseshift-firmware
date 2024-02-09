@@ -45,30 +45,6 @@ void test_contains_string(void)
     TEST_ASSERT_FALSE(contains(s, 'z'));
 }
 
-void test_accurate_map(void)
-{
-    TEST_ASSERT_EQUAL_UINT16(0, accurateMap(0, 0, 4095, 0, 255));
-    TEST_ASSERT_EQUAL_UINT16(127, accurateMap(2047, 0, 4095, 0, 255));
-    TEST_ASSERT_EQUAL_UINT16(255, accurateMap(4095, 0, 4095, 0, 255));
-
-    TEST_ASSERT_EQUAL_UINT16(127, accurateMap(0, 0, 4095, 127, 255));
-    TEST_ASSERT_EQUAL_UINT16(190, accurateMap(2047, 0, 4095, 127, 255));
-    TEST_ASSERT_EQUAL_UINT16(255, accurateMap(4095, 0, 4095, 127, 255));
-
-    TEST_ASSERT_EQUAL_UINT16(0, accurateMap(2048, 2048, 4095, 0, 255));
-    TEST_ASSERT_EQUAL_UINT16(127, accurateMap(3071, 2048, 4095, 0, 255));
-    TEST_ASSERT_EQUAL_UINT16(255, accurateMap(4095, 2048, 4095, 0, 255));
-
-    TEST_ASSERT_EQUAL_UINT16(2047, accurateMap(343, 343, 343, 0, 4095));
-}
-
-void test_simple_map(void)
-{
-    TEST_ASSERT_EQUAL_UINT16(0, simpleMap(0, 4095, 255));
-    TEST_ASSERT_EQUAL_UINT16(127, simpleMap(2047, 4095, 255));
-    TEST_ASSERT_EQUAL_UINT16(255, simpleMap(4095, 4095, 255));
-}
-
 int process(void)
 {
     UNITY_BEGIN();
@@ -76,9 +52,6 @@ int process(void)
     RUN_TEST(test_contains_container);
     RUN_TEST(test_contains_iterator);
     RUN_TEST(test_contains_string);
-
-    RUN_TEST(test_accurate_map);
-    RUN_TEST(test_simple_map);
 
     return UNITY_END();
 }

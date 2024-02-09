@@ -150,8 +150,7 @@ namespace SenseShift::Input::Calibration {
             Tp center = (this->range_min_ + this->range_max_) / 2.0F;
 
             // Map the input to the sensor range of motion.
-            int output =
-              ::SenseShift::accurateMap<Tp>(input, this->output_min_, this->output_max_, 0, this->sensor_max_);
+            int output = ::SenseShift::remap<Tp>(input, this->output_min_, this->output_max_, 0, this->sensor_max_);
 
             // Find the deviation from the center and clamp it to the maximum that the driver supports.
             output = std::clamp<int>(output - center, -(this->driver_max_deviation_), this->driver_max_deviation_);

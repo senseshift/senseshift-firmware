@@ -88,6 +88,28 @@ void test_encode_input_peripherals(void)
         },
         {
           InputPeripheralData({
+            .curl = {
+              .thumb = {
+                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
+              },
+              .index = {
+                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
+              },
+              .middle = {
+                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
+              },
+              .ring = {
+                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
+              },
+              .pinky = {
+                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
+              },
+            },
+          }),
+          "A1023(AAB)2047(AAC)3071(AAD)4095B1023(BAB)2047(BAC)3071(BAD)4095C1023(CAB)2047(CAC)3071(CAD)4095D1023(DAB)2047(DAC)3071(DAD)4095E1023(EAB)2047(EAC)3071(EAD)4095\n",
+        },
+        {
+          InputPeripheralData({
             .joystick = {
               .x = 0.5,
               .y = 0.5,
@@ -97,10 +119,18 @@ void test_encode_input_peripherals(void)
           "A0B0C0D0E0F2047G2047H\n"
         },
         {
-          InputPeripheralData({
-            .buttons = { true, false, false, true },
-          }),
+          InputPeripheralData{
+            .button_a = { .press = true },
+            .button_calibrate = { .press = true },
+          },
           "A0B0C0D0E0JO\n"
+        },
+        {
+          InputPeripheralData{
+            .pinch = { true },
+            .grab = { true },
+          },
+          "A0B0C0D0E0MI\n"
         },
         {
           InputPeripheralData({
