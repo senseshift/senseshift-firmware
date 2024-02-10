@@ -134,7 +134,7 @@ void test_encode_input_peripherals(void)
             .pinch = { true },
             .grab = { true },
           },
-          "A0B0C0D0E0MI\n"
+          "A0B0C0D0E0ML\n"
         },
         {
           InputPeripheralData({

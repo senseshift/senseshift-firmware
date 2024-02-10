@@ -371,8 +371,8 @@ namespace og {
         /// Alpha keys for analog buttons.
         /// <b>MUST</b> be in the same order as the `InputPeripheralData` struct.
         inline static constexpr const std::array<unsigned char, 2> ANALOG_BUTTON_ALPHA_KEY = { {
-          'P', // Trigger
-          'I', // Grab
+          'I', // Trigger
+          'L', // Grab
         } };
 
         [[nodiscard]] auto encode_input(const InputData& input, char* buffer, size_t length) const -> size_t override;
