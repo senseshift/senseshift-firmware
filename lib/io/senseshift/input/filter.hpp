@@ -242,9 +242,6 @@ namespace SenseShift::Input::Filter {
       public:
         explicit ExponentialMovingAverageFilter(float alpha) : alpha_(alpha){};
 
-        template<typename U = Tp, std::enable_if_t<std::is_same_v<U, float>, int> = 0>
-        explicit ExponentialMovingAverageFilter(float alpha) : alpha_(alpha), acc_(std::nanf){};
-
         auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
         {
             if (this->is_first_) {

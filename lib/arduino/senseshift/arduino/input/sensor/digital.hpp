@@ -18,12 +18,14 @@ namespace SenseShift::Arduino::Input {
     };
 
     template<>
-    [[nodiscard]] inline auto DigitalSimpleSensor<false>::getValue() -> bool {
+    [[nodiscard]] inline auto DigitalSimpleSensor<false>::getValue() -> bool
+    {
         return digitalRead(this->pin_) == LOW;
     }
 
     template<>
-    [[nodiscard]] inline auto DigitalSimpleSensor<true>::getValue() -> bool {
+    [[nodiscard]] inline auto DigitalSimpleSensor<true>::getValue() -> bool
+    {
         return digitalRead(this->pin_) == HIGH;
     }
 } // namespace SenseShift::Arduino::Input

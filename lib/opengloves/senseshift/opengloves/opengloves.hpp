@@ -75,7 +75,7 @@ namespace SenseShift::OpenGloves {
 
         auto collectData() -> og::InputPeripheralData
         {
-            og::InputPeripheralData data;
+            og::InputPeripheralData data{};
 
             const auto& curls = this->curl.fingers;
             const auto& splays = this->splay.fingers;

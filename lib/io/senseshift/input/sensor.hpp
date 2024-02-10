@@ -45,6 +45,12 @@ namespace SenseShift::Input {
 
         explicit Sensor() = default;
 
+        template<typename U = Tp, std::enable_if_t<std::is_same_v<U, float>, int> = 0>
+        explicit Sensor(float value = 0.0f) : raw_value_(value)
+        {
+            this->value_ = this->applyFilters(value);
+        }
+
         /// Appends a filter to the sensor's filter chain.
         ///
         /// \param filter The filter to add.

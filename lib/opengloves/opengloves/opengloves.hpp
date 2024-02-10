@@ -35,10 +35,15 @@ namespace og {
 
     template<typename Tf = float>
     union InputFingerCurl {
+        /// Access the curl as an array.
         std::array<Tf, 4> curl; // NOLINT(*-magic-numbers): I'm sure our finger aren't changing anytime soon
+
         union {
+            /// The total curl of the finger.
+            /// Only use it if you do not use per-joint tracking.
             Tf curl_total;
 
+            /// Access the individual curl joints.
             struct {
                 Tf curl_joint0;
                 Tf curl_joint1;

@@ -1,5 +1,5 @@
-#include <senseshift/input/sensor.hpp>
 #include <senseshift/input/analog_threshold.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;
@@ -15,7 +15,7 @@ class TestAnalogCountingSensor : public ISimpleSensor<int> {
 };
 
 class TestAnalogSensor : public ISimpleSensor<int> {
-public:
+  public:
     int value = 0;
     int setupCounter = 0;
 
@@ -42,57 +42,56 @@ void test_memoized_sensor(void)
     TEST_ASSERT_EQUAL_INT(1, sensor->getValue());
 }
 
-class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<int> {
+class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<float> {
   public:
     uint8_t resetCounter = 0;
-    int calibrated = 0;
+    float calibrated = 0.0f;
 
     void reset() override
     {
         this->resetCounter++;
-        this->calibrated = 0;
+        this->calibrated = 0.0f;
     };
-    void update(int input) override { this->calibrated = input; };
-    int calibrate(int input) const override { return calibrated; };
+    void update(float input) override { this->calibrated = input; };
+    float calibrate(float input) const override { return calibrated; };
 };
 
 void test_calibrated_sensor(void)
 {
-    auto inner = new TestAnalogCountingSensor();
+    auto inner = new FloatSensor();
     auto calibrator = new DummyCalibrator();
 
     auto sensor = new SimpleSensorDecorator(inner);
     sensor->setCalibrator(calibrator);
 
-    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
-    sensor->init();
-    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+    calibrator->update(-1.0f);
+    sensor->publishState(0.0f);
+    TEST_ASSERT_EQUAL_FLOAT(-1.0f, sensor->getValue());
 
-    calibrator->update(-1);
-    sensor->tick();
-    TEST_ASSERT_EQUAL_INT(-1, sensor->getValue());
+    sensor->publishState(100.0f);
+    TEST_ASSERT_EQUAL_FLOAT(-1.0f, sensor->getValue());
+
+    calibrator->update(2.0f);
+    sensor->publishState(102.0f);
+    TEST_ASSERT_EQUAL_FLOAT(2.0f, sensor->getValue());
 
     sensor->startCalibration();
-    sensor->tick();
-    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
+    sensor->publishState(200.0f);
+    TEST_ASSERT_EQUAL_FLOAT(200.0f, sensor->getValue());
+
+    sensor->publishState(202.0f);
+    TEST_ASSERT_EQUAL_FLOAT(202.0f, sensor->getValue());
 
     sensor->stopCalibration();
-    sensor->tick();
-    TEST_ASSERT_EQUAL_INT(2, sensor->getValue());
-
-    sensor->reselCalibration();
-    sensor->tick();
-    TEST_ASSERT_EQUAL_INT(0, sensor->getValue());
-    TEST_ASSERT_EQUAL_INT(1, calibrator->resetCounter);
+    sensor->publishState(300.0f);
+    TEST_ASSERT_EQUAL_FLOAT(202.0f, sensor->getValue());
 }
 
 void test_sensor_filter_multiply(void)
 {
     auto inner = new TestAnalogSensor();
     auto sensor = new SimpleSensorDecorator(inner);
-    sensor->addFilters({
-      new ::SenseShift::Input::Filter::MultiplyFilter(2)
-    });
+    sensor->addFilters({ new ::SenseShift::Input::Filter::MultiplyFilter(2) });
 
     TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
     sensor->init();

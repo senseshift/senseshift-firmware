@@ -153,7 +153,8 @@ void setupMode()
     auto* pinch = new BUTTON_CLASS(PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT);
 #endif
 
-    OpenGlovesTrackingComponent::Config const tracking_config(2000, false);
+    Serial.begin(115200);
+    OpenGlovesTrackingComponent::Config tracking_config(2000, true);
     auto* opengloves_tracking =
       new OpenGlovesTrackingComponent(tracking_config, input_sensors, new StreamTransport(Serial));
 

@@ -59,7 +59,7 @@ namespace og {
                   length - written,
                   "%c%u",
                   'A' + i,
-                  ifloor<std::uint8_t, float>(finger_curl * MAX_ANALOG_VALUE)
+                  ifloor<std::uint16_t, float>(finger_curl * MAX_ANALOG_VALUE)
                 );
             }
 #else

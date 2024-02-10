@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 
+#include <array>
 #include <cstddef>
 #include <optional>
 
@@ -14,6 +15,11 @@
 #include "senseshift/utility.hpp"
 #include <opengloves/opengloves.hpp>
 #include <utility>
+
+#define SS_START_CALIBRATION_NOT_NULL(ptr) \
+    if ((ptr) != nullptr) {                \
+        (ptr)->startCalibration();         \
+    }
 
 namespace SenseShift::OpenGloves {
     class OpenGlovesTrackingComponent : public SenseShift::Component {
@@ -32,8 +38,8 @@ namespace SenseShift::OpenGloves {
             }
         };
 
-        OpenGlovesTrackingComponent(Config config, InputSensors& input_sensors, ITransport* communication) :
-          config(config), input_sensors_(std::move(input_sensors)), communication_(communication)
+        OpenGlovesTrackingComponent(Config& config, InputSensors& input_sensors, ITransport* communication) :
+          config_(config), input_sensors_(std::move(input_sensors)), communication_(communication)
         {
             this->encoder_ = new og::AlphaEncoder();
         }
@@ -42,19 +48,51 @@ namespace SenseShift::OpenGloves {
         {
             this->communication_->init();
             this->input_sensors_.init();
+
+            if (this->config_.always_calibrate_) {
+                this->startCalibration();
+            }
         }
 
         void tick() override
         {
+            this->input_sensors_.tick();
             const auto data = this->input_sensors_.collectData();
+            const auto length = this->encoder_->encode_input(data, buffer.data(), buffer.size());
+            this->communication_->send(buffer.data(), length);
+        }
 
-            char buffer[256];
-            this->encoder_->encode_input(data, buffer, sizeof(buffer));
-            this->communication_->send(buffer, sizeof(buffer));
+      protected:
+        void startCalibration()
+        {
+            for (auto& finger_curl : this->input_sensors_.curl.fingers) {
+                for (auto& joint_sensor : finger_curl.curl) {
+                    SS_START_CALIBRATION_NOT_NULL(joint_sensor);
+                }
+            }
+
+            for (auto& finger_splay : this->input_sensors_.splay.fingers) {
+                SS_START_CALIBRATION_NOT_NULL(finger_splay);
+            }
+
+            SS_START_CALIBRATION_NOT_NULL(this->input_sensors_.joystick.x);
+            SS_START_CALIBRATION_NOT_NULL(this->input_sensors_.joystick.y);
+            SS_START_CALIBRATION_NOT_NULL(this->input_sensors_.joystick.press);
+
+            for (auto& button : this->input_sensors_.buttons) {
+                SS_START_CALIBRATION_NOT_NULL(button.press);
+            }
+
+            for (auto& analog_button : this->input_sensors_.analog_buttons) {
+                SS_START_CALIBRATION_NOT_NULL(analog_button.press);
+                SS_START_CALIBRATION_NOT_NULL(analog_button.value);
+            }
         }
 
       private:
-        Config& config;
+        std::array<char, 256> buffer;
+
+        Config& config_;
         InputSensors input_sensors_;
         ITransport* communication_;
         og::IEncoder* encoder_;
