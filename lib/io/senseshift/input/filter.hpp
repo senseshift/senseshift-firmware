@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <deque>
@@ -34,17 +35,6 @@ namespace SenseShift::Input::Filter {
     };
 
     template<typename Tp>
-    class AddFilter : public IFilter<Tp> {
-      public:
-        explicit AddFilter(Tp offset) : offset_(offset){};
-
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value + this->offset_; }
-
-      private:
-        Tp offset_;
-    };
-
-    template<typename Tp>
     class IFiltered {
       public:
         using ValueType = Tp;
@@ -56,6 +46,17 @@ namespace SenseShift::Input::Filter {
         virtual void setFilters(std::vector<IFilter<ValueType>*> filters) = 0;
 
         void clearFilters() = 0;
+    };
+
+    template<typename Tp>
+    class AddFilter : public IFilter<Tp> {
+      public:
+        explicit AddFilter(Tp offset) : offset_(offset){};
+
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value + this->offset_; }
+
+      private:
+        Tp offset_;
     };
 
     template<typename Tp>
@@ -82,6 +83,8 @@ namespace SenseShift::Input::Filter {
 
     class VoltageDividerFilter : public MultiplyFilter<float> {
       public:
+        /// Calculates the original voltage from the voltage divider.
+        ///
         /// \param r1 The resistance in Ohms of the first resistor in the voltage divider.
         /// Example: 27000.0F.
         /// \param r2 The resistance in Ohms of the second resistor in the voltage divider.
@@ -91,7 +94,7 @@ namespace SenseShift::Input::Filter {
         /// \code
         /// new VoltageDividerFilter(27000.0F, 100000.0F);
         /// \endcode
-        explicit VoltageDividerFilter(float r1, float r2) : MultiplyFilter<float>(r2 / (r1 + r2)){};
+        explicit VoltageDividerFilter(float r1, float r2) : MultiplyFilter<float>((r1 + r2) / r2){};
     };
 
     template<typename Tp>
@@ -220,7 +223,7 @@ namespace SenseShift::Input::Filter {
 
       private:
         std::size_t window_size_;
-        std::deque<Tp> values_;
+        std::deque<Tp> queue_;
 
         [[nodiscard]] auto getAverage() const -> Tp
         {
@@ -239,14 +242,24 @@ namespace SenseShift::Input::Filter {
       public:
         explicit ExponentialMovingAverageFilter(float alpha) : alpha_(alpha){};
 
+        template<typename U = Tp, std::enable_if_t<std::is_same_v<U, float>, int> = 0>
+        explicit ExponentialMovingAverageFilter(float alpha) : alpha_(alpha), acc_(std::nanf){};
+
         auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
         {
-            this->acc_ = this->alpha_ * value + (1 - this->alpha_) * this->acc_;
+            if (this->is_first_) {
+                this->is_first_ = false;
 
+                this->acc_ = value;
+                return this->acc_;
+            }
+
+            this->acc_ = (this->alpha_ * value) + ((1 - this->alpha_) * this->acc_);
             return this->acc_;
         }
 
       private:
+        bool is_first_ = true;
         float alpha_;
         Tp acc_;
     };
@@ -255,16 +268,16 @@ namespace SenseShift::Input::Filter {
     /// Usually used to filter out noise in the joystick.
     class CenterDeadzoneFilter : public IFilter<float> {
       public:
-        explicit CenterDeadzoneFilter(float deadzone) : deadzone_(deadzone){};
+        explicit CenterDeadzoneFilter(float deadzone, float center = 0.5f) : deadzone_(deadzone), center_(center){};
 
         auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
         {
-            float const deviation = std::abs(CENTER - value);
-            return deviation < deadzone_ ? CENTER : value;
+            float const deviation = std::abs(value - this->center_);
+            return deviation < deadzone_ ? this->center_ : value;
         }
 
       private:
-        static constexpr float CENTER = 0.5F;
+        const float center_;
 
         float deadzone_;
     };

@@ -9,6 +9,10 @@ void test_encode_input_peripherals(void)
 
     const std::vector<std::tuple<InputPeripheralData, std::string>> cases = {
         {
+          InputPeripheralData{},
+          "A0B0C0D0E0\n",
+        },
+        {
             InputPeripheralData({
                 .curl = {
                     .thumb = {
