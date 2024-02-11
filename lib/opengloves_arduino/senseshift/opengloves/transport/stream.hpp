@@ -74,6 +74,8 @@ namespace SenseShift::OpenGloves {
             return serial->isReady() && serial->hasClient();
         }
 
+        void init() override {}
+
         virtual size_t send(const char* buffer, size_t length) override
         {
             auto written = this->channel->write(buffer, length);
@@ -88,6 +90,8 @@ namespace SenseShift::OpenGloves {
     class BLESerialTransport : public IStreamTransport {
       public:
         BLESerialTransport(BLESerial& channel) : IStreamTransport(&channel){};
+
+        void init() override {}
 
         bool isReady() override
         {

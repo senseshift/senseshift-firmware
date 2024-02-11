@@ -133,10 +133,20 @@ namespace SenseShift::FreeRTOS {
       protected:
         [[noreturn]] void run()
         {
+            auto now = millis();
+            auto targetHz = 1000 / this->updateDelay_;
+
             while (true) {
+                now = millis();
+
                 this->component_->tick();
-                delay(this->updateDelay_);
-                // log_i("high watermark %d", uxTaskGetStackHighWaterMark(NULL));
+
+                const auto elapsed = millis() - now;
+
+                log_d("T: %d, Fmax: %dHz, Ft: %dHz", elapsed, 1000 / elapsed, targetHz);
+                if (elapsed < this->updateDelay_) {
+                    delay(this->updateDelay_ - elapsed);
+                }
             }
         }
 

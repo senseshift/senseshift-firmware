@@ -15,10 +15,11 @@
 #include "senseshift/utility.hpp"
 #include <opengloves/opengloves.hpp>
 #include <utility>
+#include <vector>
 
-#define SS_START_CALIBRATION_NOT_NULL(ptr) \
-    if ((ptr) != nullptr) {                \
-        (ptr)->startCalibration();         \
+#define SS_ADD_CALIBRATOR_NOT_NULL(PTR, STORAGE) \
+    if ((PTR) != nullptr) {                      \
+        STORAGE.push_back(PTR);                  \
     }
 
 namespace SenseShift::OpenGloves {
@@ -42,6 +43,29 @@ namespace SenseShift::OpenGloves {
           config_(config), input_sensors_(std::move(input_sensors)), communication_(communication)
         {
             this->encoder_ = new og::AlphaEncoder();
+
+            for (auto& finger_curl : this->input_sensors_.curl.fingers) {
+                for (auto& joint_sensor : finger_curl.curl) {
+                    SS_ADD_CALIBRATOR_NOT_NULL(joint_sensor, this->calibrated_inputs_);
+                }
+            }
+
+            for (auto& finger_splay : this->input_sensors_.splay.fingers) {
+                SS_ADD_CALIBRATOR_NOT_NULL(finger_splay, this->calibrated_inputs_);
+            }
+
+            SS_ADD_CALIBRATOR_NOT_NULL(this->input_sensors_.joystick.x, this->calibrated_inputs_);
+            SS_ADD_CALIBRATOR_NOT_NULL(this->input_sensors_.joystick.y, this->calibrated_inputs_);
+            SS_ADD_CALIBRATOR_NOT_NULL(this->input_sensors_.joystick.press, this->calibrated_inputs_);
+
+            for (auto& button : this->input_sensors_.buttons) {
+                SS_ADD_CALIBRATOR_NOT_NULL(button.press, this->calibrated_inputs_);
+            }
+
+            for (auto& analog_button : this->input_sensors_.analog_buttons) {
+                SS_ADD_CALIBRATOR_NOT_NULL(analog_button.press, this->calibrated_inputs_);
+                SS_ADD_CALIBRATOR_NOT_NULL(analog_button.value, this->calibrated_inputs_);
+            }
         }
 
         void init() override
@@ -49,48 +73,74 @@ namespace SenseShift::OpenGloves {
             this->communication_->init();
             this->input_sensors_.init();
 
-            if (this->config_.always_calibrate_) {
+            // If the calibration button is not present, start calibration immediately.
+            if (this->config_.always_calibrate_ || this->input_sensors_.button_calibrate.press == nullptr) {
                 this->startCalibration();
             }
         }
 
         void tick() override
         {
+            // const auto start = millis();
+
+            // auto now = millis();
             this->input_sensors_.tick();
+            // const auto tickTime = millis() - now;
+
+            // now = millis();
             const auto data = this->input_sensors_.collectData();
+            // const auto collectTime = millis() - now;
+
+            if (data.button_calibrate.press) {
+                this->startCalibration();
+            }
+
+            // now = millis();
             const auto length = this->encoder_->encode_input(data, buffer.data(), buffer.size());
+            // const auto encodeTime = millis() - now;
+
+            // now = millis();
             this->communication_->send(buffer.data(), length);
+            // const auto sendTime = millis() - now;
+
+            if (!this->config_.always_calibrate_ && (millis() - this->calibration_start_time_) > this->config_.calibration_duration_ms_) {
+                this->stopCalibration();
+            }
+
+            // log_d(
+            //   "total: %d, tick: %d, collect: %d, encode: %d, send: %d",
+            //   millis() - start,
+            //   tickTime,
+            //   collectTime,
+            //   encodeTime,
+            //   sendTime
+            // );
         }
 
       protected:
         void startCalibration()
         {
-            for (auto& finger_curl : this->input_sensors_.curl.fingers) {
-                for (auto& joint_sensor : finger_curl.curl) {
-                    SS_START_CALIBRATION_NOT_NULL(joint_sensor);
-                }
+            log_i("Starting calibration");
+            for (auto& calibrated_input : this->calibrated_inputs_) {
+                calibrated_input->reselCalibration();
+                calibrated_input->startCalibration();
             }
+            this->calibration_start_time_ = millis();
+        }
 
-            for (auto& finger_splay : this->input_sensors_.splay.fingers) {
-                SS_START_CALIBRATION_NOT_NULL(finger_splay);
-            }
-
-            SS_START_CALIBRATION_NOT_NULL(this->input_sensors_.joystick.x);
-            SS_START_CALIBRATION_NOT_NULL(this->input_sensors_.joystick.y);
-            SS_START_CALIBRATION_NOT_NULL(this->input_sensors_.joystick.press);
-
-            for (auto& button : this->input_sensors_.buttons) {
-                SS_START_CALIBRATION_NOT_NULL(button.press);
-            }
-
-            for (auto& analog_button : this->input_sensors_.analog_buttons) {
-                SS_START_CALIBRATION_NOT_NULL(analog_button.press);
-                SS_START_CALIBRATION_NOT_NULL(analog_button.value);
+        void stopCalibration()
+        {
+            log_i("Stopping calibration");
+            for (auto& calibrated_input : this->calibrated_inputs_) {
+                calibrated_input->stopCalibration();
             }
         }
 
       private:
         std::array<char, 256> buffer;
+
+        unsigned long long calibration_start_time_;
+        std::vector<::SenseShift::Input::Calibration::ICalibrated*> calibrated_inputs_;
 
         Config& config_;
         InputSensors input_sensors_;

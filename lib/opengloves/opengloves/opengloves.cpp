@@ -5,21 +5,42 @@
 #include <cstdio>
 #include <variant>
 
-#ifdef OG_ENCODE_FAST
-template<typename Tp = int, typename Tu = float>
-auto ifloor(Tu x) -> Tp
-{
-    return (Tp) x - (x < (Tp) x);
-}
-
-template<typename Tp = int, typename Tu = float>
-auto iceil(Tu x) -> Tp
-{
-    return (Tp) x + (x > (Tp) x);
-}
-#endif
-
 namespace og {
+
+#ifdef OG_ENCODE_FASTER
+    inline auto ifloor(float x) -> int
+    {
+        union Cast {
+            double d;
+            long l;
+        };
+        volatile Cast c;
+        c.d = d + 6755399441055743.5;
+        return c.l;
+    }
+#elifdef OG_ENCODE_FAST
+    /// Source: https://stackoverflow.com/questions/429632/429812#429812
+    inline int float2int(double d)
+    {
+        union Cast {
+            double d;
+            long l;
+        };
+        volatile Cast c;
+        c.d = d + 6755399441055744;
+        return c.l;
+    }
+
+    inline auto ifloor(float x) -> int
+    {
+        return float2int(x) - (x < float2int(x));
+    }
+#else
+    inline auto ifloor(float x) -> int
+    {
+        return static_cast<int>(std::floor(x));
+    }
+#endif
 
     auto AlphaEncoder::encode_input(const InputData& input, char* buffer, size_t length) const -> size_t
     {
@@ -54,13 +75,8 @@ namespace og {
                 const auto& finger = curls[i];
                 const auto& finger_curl = finger.curl_total;
 
-                written += snprintf(
-                  buffer + written,
-                  length - written,
-                  "%c%u",
-                  'A' + i,
-                  ifloor<std::uint16_t, float>(finger_curl * MAX_ANALOG_VALUE)
-                );
+                written +=
+                  snprintf(buffer + written, length - written, "%c%u", 'A' + i, ifloor(finger_curl * MAX_ANALOG_VALUE));
             }
 #else
             for (auto i = 0; i < curls.size(); i++) {
@@ -71,18 +87,18 @@ namespace og {
                 written += snprintf(
                   buffer + written,
                   length - written,
-                  "%c%.0f",
+                  "%c%u",
                   finger_alpha_key,
-                  std::floor(finger_curl.curl_total * MAX_ANALOG_VALUE)
+                  ifloor(finger_curl.curl_total * MAX_ANALOG_VALUE)
                 );
 
                 if (finger_splay > 0.0F) {
                     written += snprintf(
                       buffer + written,
                       length - written,
-                      "(%cB)%.0f",
+                      "(%cB)%u",
                       finger_alpha_key,
-                      std::floor(finger_splay * MAX_ANALOG_VALUE)
+                      ifloor(finger_splay * MAX_ANALOG_VALUE)
                     );
                 }
 
@@ -98,29 +114,21 @@ namespace og {
                     written += snprintf(
                       buffer + written,
                       length - written,
-                      "(%cA%c)%.0f",
+                      "(%cA%c)%u",
                       finger_alpha_key,
                       joint_alpha_key,
-                      std::floor(joint * MAX_ANALOG_VALUE)
+                      ifloor(joint * MAX_ANALOG_VALUE)
                     );
                 }
             }
 #endif
             if (peripheral.joystick.x != 0.0F) {
-                written += snprintf(
-                  buffer + written,
-                  length - written,
-                  "F%.0f",
-                  std::floor(peripheral.joystick.x * MAX_ANALOG_VALUE)
-                );
+                written +=
+                  snprintf(buffer + written, length - written, "F%u", ifloor(peripheral.joystick.x * MAX_ANALOG_VALUE));
             }
             if (peripheral.joystick.y != 0.0F) {
-                written += snprintf(
-                  buffer + written,
-                  length - written,
-                  "G%.0f",
-                  std::floor(peripheral.joystick.y * MAX_ANALOG_VALUE)
-                );
+                written +=
+                  snprintf(buffer + written, length - written, "G%u", ifloor(peripheral.joystick.y * MAX_ANALOG_VALUE));
             }
             if (peripheral.joystick.press) {
                 written += snprintf(buffer + written, length - written, "H");
