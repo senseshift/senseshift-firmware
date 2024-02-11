@@ -173,11 +173,66 @@ void test_encode_input_peripherals(void)
     }
 }
 
+void test_decode_output_ffb(void)
+{
+    const IEncoder* encoder = new AlphaEncoder();
+
+    std::map<std::string, OutputForceFeedbackData> cases = {
+        {
+          "A0B0C0D0E0\n",
+          OutputForceFeedbackData{
+            .thumb = 0.0f,
+            .index = 0.0f,
+            .middle = 0.0f,
+            .ring = 0.0f,
+            .pinky = 0.0f,
+          },
+        },
+        {
+          "A0\n",
+          OutputForceFeedbackData{
+            .thumb = 0.0f,
+            .index = 0.0f,
+            .middle = 0.0f,
+            .ring = 0.0f,
+            .pinky = 0.0f,
+          },
+        },
+        {
+          "A819B1638C2457D3276E4095\n",
+          OutputForceFeedbackData{
+            .thumb = 0.2f,
+            .index = 0.4f,
+            .middle = 0.6f,
+            .ring = 0.8f,
+            .pinky = 1.0f,
+          },
+        },
+        {
+          "A4095B4095C4095D4095E4095\n",
+          OutputForceFeedbackData{
+            .thumb = 1.0f,
+            .index = 1.0f,
+            .middle = 1.0f,
+            .ring = 1.0f,
+            .pinky = 1.0f,
+          },
+        },
+    };
+
+    for (const auto& [data, expected] : cases) {
+        const auto decoded = encoder->decode_output(data.c_str(), data.size());
+        TEST_ASSERT_TRUE(std::holds_alternative<OutputForceFeedbackData>(decoded));
+        TEST_ASSERT_TRUE(std::get<OutputForceFeedbackData>(decoded) == expected);
+    }
+}
+
 int process(void)
 {
     UNITY_BEGIN();
 
     RUN_TEST(test_encode_input_peripherals);
+    RUN_TEST(test_decode_output_ffb);
 
     return UNITY_END();
 }

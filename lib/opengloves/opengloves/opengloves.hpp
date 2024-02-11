@@ -51,6 +51,12 @@ namespace og {
                 Tf curl_joint3;
             };
         };
+
+        auto operator==(const InputFingerCurl& other) const -> bool
+        {
+            return this->curl_joint0 == other.curl_joint0 && this->curl_joint1 == other.curl_joint1
+                   && this->curl_joint2 == other.curl_joint2 && this->curl_joint3 == other.curl_joint3;
+        }
     };
     using InputFingerCurlData = InputFingerCurl<float>;
 
@@ -68,6 +74,12 @@ namespace og {
                 Tp little;
             };
         };
+
+        auto operator==(const InputFinger& other) const -> bool
+        {
+            return this->thumb == other.thumb && this->index == other.index && this->middle == other.middle
+                   && this->ring == other.ring && this->pinky == other.pinky;
+        }
     };
     using InputFingerData = InputFinger<float>;
 
@@ -131,7 +143,27 @@ namespace og {
 
     using InputData = std::variant<InputInfoData, InputPeripheralData>;
 
-    class Output {};
+    template<typename Tf = float, typename Tb = bool>
+    using OutputForceFeedback = InputFinger<Tf>;
+    using OutputForceFeedbackData = OutputForceFeedback<float, bool>;
+
+    template<typename Tf = float, typename Tb = bool>
+    struct OutputHaptics {
+        Tf frequency;
+        Tf duration;
+        Tf amplitude;
+
+        auto operator==(const OutputHaptics& other) const -> bool
+        {
+            return frequency == other.frequency && duration == other.duration && amplitude == other.amplitude;
+        }
+    };
+    using OutputHapticsData = OutputHaptics<float, bool>;
+
+    class OutputInvalid {
+        auto operator==(const OutputInvalid& /*unused*/) const -> bool { return true; }
+    };
+    using OutputData = std::variant<OutputInvalid, OutputForceFeedbackData, OutputHapticsData>;
 
     class IEncoder {
       public:
@@ -149,22 +181,22 @@ namespace og {
             return buffer;
         }
 
-        [[nodiscard]] virtual auto parse_output(const char* data, size_t length) const -> Output = 0;
+        [[nodiscard]] virtual auto decode_output(const char* data, size_t length) const -> OutputData = 0;
 
-        [[nodiscard]] inline auto parse_output(const std::vector<char>& data) const -> Output
+        [[nodiscard]] inline auto decode_output(const std::vector<char>& data) const -> OutputData
         {
-            return this->parse_output(data.data(), data.size());
+            return this->decode_output(data.data(), data.size());
         }
 
-        [[nodiscard]] inline auto parse_output(const std::string& data) const -> Output
+        [[nodiscard]] inline auto decode_output(const std::string& data) const -> OutputData
         {
-            return this->parse_output(data.data(), data.length());
+            return this->decode_output(data.data(), data.length());
         }
 
 #ifdef ARDUINO
-        [[nodiscard]] inline auto parse_output(const String& data) const -> Output
+        [[nodiscard]] inline auto decode_output(const String& data) const -> OutputData
         {
-            return this->parse_output(data.c_str(), data.length());
+            return this->decode_output(data.c_str(), data.length());
         }
 #endif // ARDUINO
     };
@@ -377,6 +409,11 @@ namespace og {
 
         [[nodiscard]] auto encode_input(const InputData& input, char* buffer, size_t length) const -> size_t override;
 
-        [[nodiscard]] auto parse_output(const char* data, size_t length) const -> Output override;
+        [[nodiscard]] auto decode_output(const char* data, size_t length) const -> OutputData override;
+
+      protected:
+        [[nodiscard]] auto split_to_map(const char* data, size_t length) const -> std::map<std::string, std::string>;
+        void split_command(const char* data, size_t start, size_t length, std::map<std::string, std::string>& commands)
+          const;
     };
 } // namespace og

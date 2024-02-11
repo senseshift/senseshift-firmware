@@ -1,8 +1,10 @@
 #include "opengloves/opengloves.hpp"
 
+#include <cctype>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <string>
 #include <variant>
 
 namespace og {
@@ -161,8 +163,105 @@ namespace og {
         return 0;
     }
 
-    auto AlphaEncoder::parse_output(const char* data, size_t length) const -> Output
+    auto AlphaEncoder::decode_output(const char* data, size_t length) const -> OutputData
     {
-        return {};
+        if (length == 0) {
+            return OutputInvalid{};
+        }
+
+        const auto commands = split_to_map(data, length);
+        if (commands.empty()) {
+            return OutputInvalid{};
+        }
+
+        // We assume all commands are for ffb, if there is any ffb command
+        const auto& thumb_curl = commands.find("A");
+        if (thumb_curl != commands.end()) {
+            OutputForceFeedbackData ffb{};
+
+            ffb.thumb = std::stof(thumb_curl->second) / MAX_ANALOG_VALUE;
+
+            const auto& index_curl = commands.find("B");
+            if (index_curl != commands.end()) {
+                ffb.index = std::stof(index_curl->second) / MAX_ANALOG_VALUE;
+            }
+
+            const auto& middle_curl = commands.find("C");
+            if (middle_curl != commands.end()) {
+                ffb.middle = std::stof(middle_curl->second) / MAX_ANALOG_VALUE;
+            }
+
+            const auto& ring_curl = commands.find("D");
+            if (ring_curl != commands.end()) {
+                ffb.ring = std::stof(ring_curl->second) / MAX_ANALOG_VALUE;
+            }
+
+            const auto& pinky_curl = commands.find("E");
+            if (pinky_curl != commands.end()) {
+                ffb.pinky = std::stof(pinky_curl->second) / MAX_ANALOG_VALUE;
+            }
+
+            return ffb;
+        }
+
+        // const auto& haptics_frequency = commands.find("F");
+        // if (haptics_frequency != commands.end()) {
+        //     OutputHaptics haptics{};
+        //     return haptics;
+        // }
+
+        return OutputInvalid{};
+    }
+
+    /// Splits the input data into a map of commands and their respective values.
+    ///
+    /// Example: `A100(AB)200B300(BB)400C500\n` -> `{"A": "100", "(AB)": "200", "B": "300", "(BB)": "400", "C": "500"}`
+    auto AlphaEncoder::split_to_map(const char* data, size_t length) const -> std::map<std::string, std::string>
+    {
+        std::map<std::string, std::string> result{};
+
+        // Start at the beginning of the data
+        size_t command_start = 0;
+        for (size_t i = 0; i < length; i++) {
+            const auto& current_char = data[i];
+
+            // Start a new command if the character is non-numeric or an opening parenthesis
+            // and previous character is a numeric character
+            const bool is_command_start = ((isdigit(current_char)) == 0) || current_char == '(';
+            const bool prev_is_digit = isdigit(data[i - 1]) != 0;
+            if (is_command_start && i > 0 && prev_is_digit) {
+                split_command(data, command_start, i, result);
+                command_start = i;
+            }
+        }
+
+        // Add the last command
+        split_command(data, command_start, length, result);
+
+        return result;
+    }
+
+    void AlphaEncoder::split_command(
+      const char* data, size_t start, size_t length, std::map<std::string, std::string>& commands
+    ) const
+    {
+        const std::string current_command = std::string(data + start, length - start);
+
+        if (current_command.empty()) {
+            return;
+        }
+
+        const size_t split_index = current_command.find_first_of("0123456789");
+
+        // If there is no numeric value, the command is empty (likely a binary command)
+        if (split_index == std::string::npos) {
+            commands[current_command] = "";
+            return;
+        }
+
+        const std::string command = current_command.substr(0, split_index);
+        const std::string value = current_command.substr(split_index, current_command.length() - split_index);
+
+        commands[command] = value;
     }
 } // namespace og
