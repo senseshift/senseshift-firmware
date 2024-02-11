@@ -45,28 +45,28 @@ steps:
           part-id: pot-thumb
           control: position
           value: 1
-    - wait-serial: "A4095B4095C0D0E0F2047G2047IM" # M is for Pinch gesture
+    - wait-serial: "A4095B4095C0D0E0F2047G2047MI" # M is for Pinch gesture
 
     # Curl Middle finger
     - set-control:
           part-id: pot-middle
           control: position
           value: 1
-    - wait-serial: "A4095B4095C4095D0E0F2047G2047IM"
+    - wait-serial: "A4095B4095C4095D0E0F2047G2047MI"
 
     # Curl Ring finger
     - set-control:
           part-id: pot-ring
           control: position
           value: 1
-    - wait-serial: "A4095B4095C4095D4095E0F2047G2047IM"
+    - wait-serial: "A4095B4095C4095D4095E0F2047G2047MI"
 
     # Curl Pinky finger
     - set-control:
           part-id: pot-pinky
           control: position
           value: 1
-    - wait-serial: "A4095B4095C4095D4095E4095F2047G2047ILM" # L is for the Grab gesture
+    - wait-serial: "A4095B4095C4095D4095E4095F2047G2047MIL" # L is for the Grab gesture
 
     # Partially Release Thumb finger
     - set-control:
