@@ -5,7 +5,7 @@
 namespace SenseShift::Output {
     template<typename Tp>
     class IOutput : public IInitializable {
-    public:
+      public:
         using ValueType = Tp;
 
         virtual void writeState(ValueType value) = 0;

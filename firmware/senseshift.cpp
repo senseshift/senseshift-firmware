@@ -9,11 +9,11 @@
 #include <senseshift/core/logging.hpp>
 
 namespace SenseShift {
-    static const char *const TAG = "application";
+    static const char* const TAG = "application";
 
     Application::Application()
     {
-        this->vibro_body_ = new Body::Haptics::FloatBody ();
+        this->vibro_body_ = new Body::Haptics::FloatBody();
     }
 
     void Application::postEvent(const IEvent* event)

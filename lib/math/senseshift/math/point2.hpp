@@ -25,7 +25,10 @@ namespace SenseShift::Math {
 
         constexpr inline auto operator!=(const Point2<Tp>& rhs) const -> bool { return !(*this == rhs); }
 
-        constexpr auto operator<(const Point2<Tp>& rhs) const -> bool { return std::tie(x, y) < std::tie(rhs.x, rhs.y); }
+        constexpr auto operator<(const Point2<Tp>& rhs) const -> bool
+        {
+            return std::tie(x, y) < std::tie(rhs.x, rhs.y);
+        }
 
         constexpr auto operator-(const Point2<Tp>& rhs) const -> float
         {

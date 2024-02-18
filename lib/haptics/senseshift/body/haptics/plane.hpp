@@ -7,9 +7,9 @@
 #include <set>
 #include <vector>
 
+#include <senseshift/math/point2.hpp>
 #include <senseshift/output/output.hpp>
 #include <senseshift/utility.hpp>
-#include <senseshift/math/point2.hpp>
 
 namespace SenseShift::Body::Haptics {
     /// Output "plane" (e.g. Chest, Palm, Finger, etc.).
@@ -59,17 +59,18 @@ namespace SenseShift::Body::Haptics {
     /// \tparam To The type of the output value.
     template<typename Tc, typename To>
     class OutputPlane_Closest : public OutputPlane<Tc, To> {
-    public:
+      public:
         using Value = To;
         using PositionSet = typename OutputPlane<Tc, To>::PositionSet;
 
-        explicit OutputPlane_Closest(const typename OutputPlane<Tc, To>::ActuatorMap& actuators) : OutputPlane<Tc, To>(actuators)
+        explicit OutputPlane_Closest(const typename OutputPlane<Tc, To>::ActuatorMap& actuators) :
+          OutputPlane<Tc, To>(actuators)
         {
         }
 
         void effect(const Position&, const Value&) override;
 
-    private:
+      private:
         [[nodiscard]] static auto findClosestPoint(const PositionSet&, const Position&) -> const Position&;
     };
 
@@ -79,10 +80,10 @@ namespace SenseShift::Body::Haptics {
     // TODO: configurable margin
     class PlaneMapper_Margin {
       public:
-
         /// Maps a 2D matrix into a 1D (coord, object) map.
         template<typename Tp>
-        [[nodiscard]] static constexpr auto mapMatrixCoordinates(std::vector<std::vector<Tp*>> map2d) -> std::map<Position, Tp*>
+        [[nodiscard]] static constexpr auto mapMatrixCoordinates(std::vector<std::vector<Tp*>> map2d)
+          -> std::map<Position, Tp*>
         {
             std::map<Position, Tp*> points{};
 

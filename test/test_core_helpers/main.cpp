@@ -1,8 +1,8 @@
 #include <senseshift/core/helpers.hpp>
 #include <unity.h>
 
-#include <map>
 #include <cstdint>
+#include <map>
 
 using namespace SenseShift;
 

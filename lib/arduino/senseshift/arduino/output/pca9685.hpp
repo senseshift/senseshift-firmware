@@ -16,9 +16,7 @@ namespace SenseShift::Arduino::Output {
 
         PCA9685Output(Adafruit_PWMServoDriver* driver, const std::uint8_t num) : driver_(driver), channel_(num){};
 
-        void init() override {
-            this->driver_->begin();
-        }
+        void init() override { this->driver_->begin(); }
 
         void writeState(const ValueType value) override
         {

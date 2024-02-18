@@ -23,17 +23,17 @@ namespace SenseShift::Body::Haptics {
 
         OutputBody() = default;
 
-        void setup() {
+        void setup()
+        {
             for (auto& [target, plane] : this->targets_) {
                 plane->setup();
             }
         }
 
-        void addTarget(Target target, Plane* plane) {
-            this->targets_[target] = plane;
-        }
+        void addTarget(Target target, Plane* plane) { this->targets_[target] = plane; }
 
-        auto getTarget(Target target) -> std::optional<Plane*> {
+        auto getTarget(Target target) -> std::optional<Plane*>
+        {
             auto find = this->targets_.find(target);
             if (find == this->targets_.end()) {
                 return std::nullopt;

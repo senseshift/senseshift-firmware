@@ -7,8 +7,8 @@
 #include <string>
 #include <tuple>
 
-#include <senseshift/body/haptics/interface.hpp>
 #include <senseshift/body/haptics/body.hpp>
+#include <senseshift/body/haptics/interface.hpp>
 
 namespace SenseShift::BH {
     class Decoder {
@@ -30,26 +30,21 @@ namespace SenseShift::BH {
           const std::array<std::uint8_t, N>& value,
           const std::array<OutputLayout, N>& layout,
           const Effect effect
-        ) {
+        )
+        {
             for (size_t i = 0; i < N; i++) {
                 const auto [target, position] = layout[i];
                 const std::uint8_t byte = value[i];
 
-                output->effect(
-                  target,
-                  position,
-                  static_cast<FloatBody::Plane::Value>(effectDataFromByte(byte))
-                );
+                output->effect(target, position, static_cast<FloatBody::Plane::Value>(effectDataFromByte(byte)));
             }
         }
 
         template<size_t N>
         static void applyPlain(
-          FloatBody* output,
-          std::string& value,
-          const std::array<OutputLayout, N>& layout,
-          const Effect effect
-        ) {
+          FloatBody* output, std::string& value, const std::array<OutputLayout, N>& layout, const Effect effect
+        )
+        {
             std::array<std::uint8_t, N> buf{};
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
             std::memcpy(buf.data(), value.c_str(), copyLength);
@@ -67,16 +62,13 @@ namespace SenseShift::BH {
           const std::array<Position, N>& layout,
           const Effect effect,
           const Target target
-        ) {
+        )
+        {
             for (size_t i = 0; i < N; i++) {
                 const auto position = layout[i];
                 const uint8_t byte = value[i];
 
-                output->effect(
-                  target,
-                  position,
-                  static_cast<FloatBody::Plane::Value>(effectDataFromByte(byte))
-                );
+                output->effect(target, position, static_cast<FloatBody::Plane::Value>(effectDataFromByte(byte)));
             }
         }
 
@@ -87,7 +79,8 @@ namespace SenseShift::BH {
           const std::array<Position, N>& layout,
           const Effect effect,
           const Target target
-        ) {
+        )
+        {
             std::array<std::uint8_t, N> buf{};
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
             std::memcpy(buf.data(), value.c_str(), copyLength);
@@ -102,7 +95,8 @@ namespace SenseShift::BH {
           FloatBody* output,
           const std::array<uint8_t, VEST_PAYLOAD_SIZE>& value,
           const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout
-        ) {
+        )
+        {
             for (size_t i = 0; i < VEST_PAYLOAD_SIZE; i++) {
                 const std::uint8_t byte = value[i];
                 const size_t actIndex = i * 2;
@@ -120,11 +114,9 @@ namespace SenseShift::BH {
             }
         }
 
-        static void applyVest(
-          FloatBody* output,
-          std::string& value,
-          const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout
-        ) {
+        static void
+          applyVest(FloatBody* output, std::string& value, const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout)
+        {
             std::array<std::uint8_t, VEST_PAYLOAD_SIZE> buf{};
             const size_t copyLength = std::min(value.size(), sizeof(buf));
             std::memcpy(buf.data(), value.c_str(), copyLength);
@@ -141,7 +133,8 @@ namespace SenseShift::BH {
           const std::array<std::uint8_t, VEST_PAYLOAD_SIZE>& value,
           const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout,
           const std::array<std::uint8_t, N>& layoutGroups
-        ) {
+        )
+        {
             std::array<std::uint8_t, VEST_LAYOUT_SIZE> result{};
 
             // Unpack values
@@ -182,11 +175,8 @@ namespace SenseShift::BH {
                 const auto target = std::get<0>(layout[i]);
                 const auto position = std::get<1>(layout[i]);
 
-                output->effect(
-                  target,
-                  position,
-                  static_cast<FloatBody::Plane::Value>(effectDataFromByte(result[i], 15))
-                );
+                output
+                  ->effect(target, position, static_cast<FloatBody::Plane::Value>(effectDataFromByte(result[i], 15)));
             }
         }
 
@@ -196,7 +186,8 @@ namespace SenseShift::BH {
           std::string& value,
           const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout,
           const std::array<std::uint8_t, N>& layoutGroups
-        ) {
+        )
+        {
             std::array<std::uint8_t, VEST_PAYLOAD_SIZE> buf{};
             const size_t copyLength = std::min(value.size(), sizeof(buf));
             std::memcpy(buf.data(), value.c_str(), copyLength);

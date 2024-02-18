@@ -4,11 +4,11 @@
 #include <algorithm>
 #include <map>
 
-#include <senseshift/output/output.hpp>
 #include <senseshift/core/logging.hpp>
+#include <senseshift/output/output.hpp>
 
 namespace SenseShift::Body::Haptics {
-    static const char *const TAG = "haptic.plane";
+    static const char* const TAG = "haptic.plane";
 
     template<typename Tc, typename To>
     void OutputPlane<Tc, To>::setActuators(const ActuatorMap& actuators)
@@ -58,7 +58,8 @@ namespace SenseShift::Body::Haptics {
     }
 
     template<typename Tc, typename To>
-    [[nodiscard]] auto OutputPlane_Closest<Tc, To>::findClosestPoint(const PositionSet& pts, const Position& target) -> const Position&
+    [[nodiscard]] auto OutputPlane_Closest<Tc, To>::findClosestPoint(const PositionSet& pts, const Position& target)
+      -> const Position&
     {
         // check if exact point exists
         const auto find = pts.find(target);
@@ -69,7 +70,7 @@ namespace SenseShift::Body::Haptics {
         // find the closest point by square distance
         std::multimap<float, Position> distance_map = {};
         for (const auto& point : pts) {
-            distance_map.insert({(target - point), point });
+            distance_map.insert({ (target - point), point });
         }
 
         const auto nearest = std::min_element(distance_map.begin(), distance_map.end());
