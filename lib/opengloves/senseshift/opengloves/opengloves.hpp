@@ -1,12 +1,15 @@
 #pragma once
 
 #include <cstddef>
-#include <cstdint>
-#include <map>
-#include <optional>
-#include <string>
+#include <set>
+#include <variant>
+#include <vector>
 
 #include <opengloves/opengloves.hpp>
+
+#include <senseshift/core/component.hpp>
+#include <senseshift/input/sensor.hpp>
+#include <senseshift/output/output.hpp>
 
 namespace SenseShift::OpenGloves {
     class ITransport : public IInitializable {
@@ -19,18 +22,27 @@ namespace SenseShift::OpenGloves {
     using FloatSensor = ::SenseShift::Input::FloatSensor;
     using BinarySensor = ::SenseShift::Input::BinarySensor;
 
-    class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*>, public Component {
+    class InputSensors :
+      public og::InputPeripheral<FloatSensor*, BinarySensor*>,
+      public Component,
+      public ::SenseShift::Input::Calibration::ICalibrated {
       public:
         void init() override
         {
             for (auto& finger_curl : this->curl.fingers) {
                 for (auto& joint_sensor : finger_curl.curl) {
-                    SS_INIT_NOT_NULL(joint_sensor);
+                    if (joint_sensor != nullptr) {
+                        joint_sensor->init();
+                        this->calibrated_inputs_.insert(joint_sensor);
+                    }
                 }
             }
 
             for (auto& finger_splay : this->splay.fingers) {
-                SS_INIT_NOT_NULL(finger_splay);
+                if (finger_splay != nullptr) {
+                    finger_splay->init();
+                    this->calibrated_inputs_.insert(finger_splay);
+                }
             }
 
             SS_INIT_NOT_NULL(this->joystick.x);
@@ -123,6 +135,59 @@ namespace SenseShift::OpenGloves {
             }
 
             return data;
+        }
+
+        void reselCalibration() override
+        {
+            for (const auto& calibrated_input : this->calibrated_inputs_) {
+                calibrated_input->reselCalibration();
+            }
+        }
+
+        void startCalibration() override
+        {
+            for (const auto& calibrated_input : this->calibrated_inputs_) {
+                calibrated_input->startCalibration();
+            }
+        }
+
+        void stopCalibration() override
+        {
+            for (const auto& calibrated_input : this->calibrated_inputs_) {
+                calibrated_input->stopCalibration();
+            }
+        }
+
+      private:
+        std::set<FloatSensor*> calibrated_inputs_{};
+    };
+
+    using FloatOutput = ::SenseShift::Output::IFloatOutput;
+
+    class OutputWriters : public IInitializable {
+      public:
+        og::OutputForceFeedback<FloatOutput*, void*> ffb;
+
+        void init() override
+        {
+            for (auto& finger : this->ffb.fingers) {
+                if (finger != nullptr) {
+                    finger->init();
+                }
+            }
+        }
+
+        void apply(const og::OutputData& data)
+        {
+            if (std::holds_alternative<og::OutputForceFeedbackData>(data)) {
+                const auto& ffb_data = std::get<og::OutputForceFeedbackData>(data);
+                for (auto i = 0; i < this->ffb.fingers.size(); i++) {
+                    auto* finger = this->ffb.fingers[i];
+                    if (finger != nullptr) {
+                        finger->writeState(ffb_data.fingers[i]);
+                    }
+                }
+            }
         }
     };
 } // namespace SenseShift::OpenGloves

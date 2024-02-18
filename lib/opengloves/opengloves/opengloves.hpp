@@ -114,7 +114,10 @@ namespace og {
         InputJoystick<Tf, Tb> joystick;
 
         union {
-            std::array<InputButton<Tb>, 5> buttons;
+            /// Buttons as array.
+            /// <b>MUST</b> be the same length as the struct below
+            std::array<InputButton<Tb>, 5> buttons; // NOLINT(*-magic-numbers) We keep it here for clarity
+
             struct {
                 InputButton<Tb> button_a;
                 InputButton<Tb> button_b;

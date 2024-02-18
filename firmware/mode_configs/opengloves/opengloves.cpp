@@ -2,6 +2,7 @@
 #include "senseshift/body/hands/input/total_curl.hpp"
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/body/hands/input/gesture.hpp>
 #include <senseshift/input/calibration.hpp>
 #include <senseshift/input/filter.hpp>
@@ -13,10 +14,15 @@
 
 using namespace ::SenseShift::Input;
 using namespace ::SenseShift::Arduino::Input;
+using namespace ::SenseShift::Arduino::Output;
 using namespace ::SenseShift::Body::Hands::Input;
 using namespace ::SenseShift::OpenGloves;
 
 InputSensors input_sensors;
+
+#ifdef FFB_ENABLED
+OutputWriters output_writers;
+#endif
 
 void setupMode()
 {
@@ -154,19 +160,62 @@ void setupMode()
 #endif
 
     auto* communication = AutoConfig::setupTransport();
+    auto* encoding = new og::AlphaEncoder();
     OpenGlovesTrackingComponent::Config tracking_config(CALIBRATION_DURATION, CALIBRATION_ALWAYS_CALIBRATE);
-    auto* opengloves_tracking = new OpenGlovesTrackingComponent(tracking_config, input_sensors, communication);
+    auto* opengloves_tracking =
+      new OpenGlovesTrackingComponent(tracking_config, input_sensors, communication, encoding);
 
     auto* opengloves_tracking_task = new ::SenseShift::FreeRTOS::ComponentUpdateTask<OpenGlovesTrackingComponent>(
       opengloves_tracking,
       1000 / UPDATE_RATE,
       {
-        .name = "OpenGlovesSensorTask",
+        .name = "OG_TRACKING",
         .stackDepth = 8192,
         .priority = 1,
       }
     );
     opengloves_tracking_task->begin();
+
+#if FFB_ENABLED
+
+#if FFB_THUMB_ENABLED
+    auto* thumb_ffb_output = new ServoOutput(PIN_FFB_THUMB);
+    output_writers.ffb.thumb = thumb_ffb_output;
+#endif
+
+#if FFB_INDEX_ENABLED
+    auto* index_ffb_output = new ServoOutput(PIN_FFB_INDEX);
+    output_writers.ffb.index = index_ffb_output;
+#endif
+
+#if FFB_MIDDLE_ENABLED
+    auto* middle_ffb_output = new ServoOutput(PIN_FFB_MIDDLE);
+    output_writers.ffb.middle = middle_ffb_output;
+#endif
+
+#if FFB_RING_ENABLED
+    auto* ring_ffb_output = new ServoOutput(PIN_FFB_RING);
+    output_writers.ffb.ring = ring_ffb_output;
+#endif
+
+#if FFB_PINKY_ENABLED
+    auto* pinky_ffb_output = new ServoOutput(PIN_FFB_PINKY);
+    output_writers.ffb.pinky = pinky_ffb_output;
+#endif
+
+    auto* og_ffb = new OpenGlovesForceFeedbackComponent(output_writers, communication, encoding);
+
+    auto* og_ffb_task = new ::SenseShift::FreeRTOS::ComponentUpdateTask<OpenGlovesForceFeedbackComponent>(
+      og_ffb,
+      1000 / UPDATE_RATE,
+      {
+        .name = "OG_FFB",
+        .stackDepth = 8192,
+        .priority = 1,
+      }
+    );
+    og_ffb_task->begin();
+#endif
 }
 
 void loopMode()

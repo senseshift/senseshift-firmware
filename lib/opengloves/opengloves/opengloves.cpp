@@ -10,7 +10,7 @@
 namespace og {
 
 #ifdef OG_ENCODE_FASTER
-    inline auto ifloor(float x) -> int
+    inline auto ifloor(float d) -> int
     {
         union Cast {
             double d;
@@ -176,27 +176,32 @@ namespace og {
 
         // We assume all commands are for ffb, if there is any ffb command
         const auto& thumb_curl = commands.find("A");
-        if (thumb_curl != commands.end()) {
+        const auto& index_curl = commands.find("B");
+        const auto& middle_curl = commands.find("C");
+        const auto& ring_curl = commands.find("D");
+        const auto& pinky_curl = commands.find("E");
+
+        if (thumb_curl != commands.end() || index_curl != commands.end() || middle_curl != commands.end() ||
+            ring_curl != commands.end() || pinky_curl != commands.end()
+        ) {
             OutputForceFeedbackData ffb{};
 
-            ffb.thumb = std::stof(thumb_curl->second) / MAX_ANALOG_VALUE;
+            if (thumb_curl != commands.end()) {
+                ffb.thumb = std::stof(thumb_curl->second) / MAX_ANALOG_VALUE;
+            }
 
-            const auto& index_curl = commands.find("B");
             if (index_curl != commands.end()) {
                 ffb.index = std::stof(index_curl->second) / MAX_ANALOG_VALUE;
             }
 
-            const auto& middle_curl = commands.find("C");
             if (middle_curl != commands.end()) {
                 ffb.middle = std::stof(middle_curl->second) / MAX_ANALOG_VALUE;
             }
 
-            const auto& ring_curl = commands.find("D");
             if (ring_curl != commands.end()) {
                 ffb.ring = std::stof(ring_curl->second) / MAX_ANALOG_VALUE;
             }
 
-            const auto& pinky_curl = commands.find("E");
             if (pinky_curl != commands.end()) {
                 ffb.pinky = std::stof(pinky_curl->second) / MAX_ANALOG_VALUE;
             }

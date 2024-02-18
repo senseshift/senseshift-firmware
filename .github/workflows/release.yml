@@ -132,8 +132,8 @@ jobs:
           - indexer-cs
           - indexer-csf
         comm_flag:
-          - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_SERIAL
-          - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL
+          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
+          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
     steps:
       - uses: actions/checkout@v3
         with:

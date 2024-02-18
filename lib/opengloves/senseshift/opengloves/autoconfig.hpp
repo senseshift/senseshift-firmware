@@ -1,5 +1,6 @@
 #pragma once
 
+#include <senseshift/opengloves/constants.hpp>
 #include <senseshift/opengloves/opengloves.hpp>
 
 #ifdef ARDUINO
@@ -8,8 +9,8 @@
 
 #pragma region Communication
 
-#ifndef OPENGLOVES_COMMUNCATION
-#define OPENGLOVES_COMMUNCATION OPENGLOVES_COMM_SERIAL
+#ifndef OPENGLOVES_COMMUNICATION
+#define OPENGLOVES_COMMUNICATION OPENGLOVES_COMM_SERIAL
 #endif
 
 #ifndef SERIAL_PORT
@@ -182,14 +183,14 @@ namespace SenseShift::OpenGloves::AutoConfig {
     /**
      * Setup the transport for the OpenGloves interface.
      */
-    [[nodiscard]] ITransport* setupTransport(void)
+    [[nodiscard]] auto setupTransport() -> ITransport*
     {
-#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_SERIAL // Serial
+#if OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_SERIAL // Serial
         auto* pSerial = &SERIAL_PORT;
         pSerial->begin(SERIAL_BAUDRATE);
         return new StreamTransport(pSerial);
-#elif (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL) \
-  || (OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth Serial
+#elif (OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BTSERIAL) \
+  || (OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth Serial
         std::string name;
 #ifdef BTSERIAL_NAME
         name = BTSERIAL_NAME;
@@ -201,11 +202,11 @@ namespace SenseShift::OpenGloves::AutoConfig {
         log_i("Generated Bluetooth name: %s", name.c_str());
 #endif
 
-#if OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BTSERIAL    // Bluetooth Classic
+#if OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BTSERIAL    // Bluetooth Classic
         BluetoothSerial* pBtSerial = new BluetoothSerial();
         pBtSerial->begin(name.c_str());
         return new BluetoothSerialTransport(*pBtSerial);
-#elif OPENGLOVES_COMMUNCATION == OPENGLOVES_COMM_BLESERIAL // Bluetooth Low Energy
+#elif OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BLESERIAL // Bluetooth Low Energy
         BLESerial* pBleSerial = new BLESerial();
         pBleSerial->begin(name.c_str());
         return new BLESerialTransport(*pBleSerial);
