@@ -4,22 +4,21 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "senseshift.h"
+#include <senseshift.h>
 
-#include "senseshift/battery/input/battery_sensor.hpp"
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/output/pca9685.hpp>
+#include <senseshift/battery/input/battery_sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/input/sensor.hpp>
+#include <senseshift/freertos/task.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
 using namespace SenseShift::Input::Filter;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::Battery::Input;
 using namespace SenseShift::BH;
