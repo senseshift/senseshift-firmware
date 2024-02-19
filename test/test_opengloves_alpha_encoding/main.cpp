@@ -7,169 +7,135 @@ void test_encode_input_peripherals(void)
 {
     const IEncoder* encoder = new AlphaEncoder();
 
+    const auto defaultEmpty = InputPeripheralData();
+
+    auto halfCurl = InputPeripheralData();
+    halfCurl.curl = {
+        .thumb = { .curl_total = 0.5 },
+        .index = { .curl_total = 0.5 },
+        .middle = { .curl_total = 0.5 },
+        .ring = { .curl_total = 0.5 },
+        .pinky = { .curl_total = 0.5 },
+    };
+
+    auto zeroCurl = InputPeripheralData();
+    zeroCurl.curl = {
+        .thumb = { .curl_total = 0.0 },
+        .index = { .curl_total = 0.0 },
+        .middle = { .curl_total = 0.0 },
+        .ring = { .curl_total = 0.0 },
+        .pinky = { .curl_total = 0.0 },
+    };
+
+    auto fullCurl = InputPeripheralData();
+    fullCurl.curl = {
+        .thumb = { .curl_total = 1.0 },
+        .index = { .curl_total = 1.0 },
+        .middle = { .curl_total = 1.0 },
+        .ring = { .curl_total = 1.0 },
+        .pinky = { .curl_total = 1.0 },
+    };
+
+    auto halfSplay = InputPeripheralData();
+    halfSplay.splay = {
+        .thumb = 0.5,
+        .index = 0.5,
+        .middle = 0.5,
+        .ring = 0.5,
+        .pinky = 0.5,
+    };
+
+    auto increasingJoints = InputPeripheralData();
+    increasingJoints.curl = {
+        .thumb = { .curl = { 0.25f, 0.5f, 0.75f, 1.0f } },
+        .index = { .curl = { 0.25f, 0.5f, 0.75f, 1.0f } },
+        .middle = { .curl = { 0.25f, 0.5f, 0.75f, 1.0f } },
+        .ring = { .curl = { 0.25f, 0.5f, 0.75f, 1.0f } },
+        .pinky = { .curl = { 0.25f, 0.5f, 0.75f, 1.0f } },
+    };
+
+    auto joystick = InputPeripheralData();
+    joystick.joystick = {
+        .x = 0.5,
+        .y = 0.5,
+        .press = true,
+    };
+
+    auto buttons = InputPeripheralData();
+    buttons.button_a = { .press = true };
+    buttons.button_calibrate = { .press = true };
+
+    auto gesture = InputPeripheralData();
+    gesture.pinch = { true };
+    gesture.grab = { true };
+
+    auto halfCurlSplay = InputPeripheralData(halfCurl);
+    halfCurlSplay.curl = {
+        .thumb = { .curl_total = 0.5 },
+        .index = { .curl_total = 0.5 },
+        .middle = { .curl_total = 0.5 },
+        .ring = { .curl_total = 0.5 },
+        .pinky = { .curl_total = 0.5 },
+    };
+    halfCurlSplay.splay = {
+        .thumb = 0.5,
+        .index = 0.5,
+        .middle = 0.5,
+        .ring = 0.5,
+        .pinky = 0.5,
+    };
+
     const std::vector<std::tuple<InputPeripheralData, std::string>> cases = {
         {
-          InputPeripheralData{},
+          defaultEmpty,
           "A0B0C0D0E0\n",
         },
         {
-            InputPeripheralData({
-                .curl = {
-                    .thumb = {
-                        .curl_total = 0.5,
-                    },
-                    .index = {
-                        .curl_total = 0.5,
-                    },
-                    .middle = {
-                        .curl_total = 0.5,
-                    },
-                    .ring = {
-                        .curl_total = 0.5,
-                    },
-                    .pinky = {
-                        .curl_total = 0.5,
-                    },
-                },
-            }),
-            "A2047B2047C2047D2047E2047\n",
+          halfCurl,
+          "A2047B2047C2047D2047E2047\n",
         },
         {
-            InputPeripheralData({
-                .curl = {
-                    .thumb = {
-                        .curl_total = 0.0,
-                    },
-                    .index = {
-                        .curl_total = 0.0,
-                    },
-                    .middle = {
-                        .curl_total = 0.0,
-                    },
-                    .ring = {
-                        .curl_total = 0.0,
-                    },
-                    .pinky = {
-                        .curl_total = 0.0,
-                    },
-                },
-            }),
-            "A0B0C0D0E0\n",
+          zeroCurl,
+          "A0B0C0D0E0\n",
         },
         {
-            InputPeripheralData({
-                .curl = {
-                    .thumb = {
-                        .curl_total = 1.0,
-                    },
-                    .index = {
-                        .curl_total = 1.0,
-                    },
-                    .middle = {
-                        .curl_total = 1.0,
-                    },
-                    .ring = {
-                        .curl_total = 1.0,
-                    },
-                    .pinky = {
-                        .curl_total = 1.0,
-                    },
-                },
-            }),
-            "A4095B4095C4095D4095E4095\n",
+          fullCurl,
+          "A4095B4095C4095D4095E4095\n",
         },
         {
-          InputPeripheralData({
-                .splay = {
-                    .thumb = 0.5,
-                    .index = 0.5,
-                    .middle = 0.5,
-                    .ring = 0.5,
-                    .pinky = 0.5,
-                },
-            }),
-            "A0(AB)2047B0(BB)2047C0(CB)2047D0(DB)2047E0(EB)2047\n",
+          halfSplay,
+          "A0(AB)2047B0(BB)2047C0(CB)2047D0(DB)2047E0(EB)2047\n",
         },
         {
-          InputPeripheralData({
-            .curl = {
-              .thumb = {
-                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
-              },
-              .index = {
-                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
-              },
-              .middle = {
-                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
-              },
-              .ring = {
-                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
-              },
-              .pinky = {
-                .curl = { 0.25f, 0.5f, 0.75f, 1.0f },
-              },
-            },
-          }),
+          increasingJoints,
           "A1023(AAB)2047(AAC)3071(AAD)4095B1023(BAB)2047(BAC)3071(BAD)4095C1023(CAB)2047(CAC)3071(CAD)4095D1023(DAB)2047(DAC)3071(DAD)4095E1023(EAB)2047(EAC)3071(EAD)4095\n",
         },
         {
-          InputPeripheralData({
-            .joystick = {
-              .x = 0.5,
-              .y = 0.5,
-              .press = true,
-            },
-          }),
-          "A0B0C0D0E0F2047G2047H\n"
+          joystick,
+          "A0B0C0D0E0F2047G2047H\n",
         },
         {
-          InputPeripheralData{
-            .button_a = { .press = true },
-            .button_calibrate = { .press = true },
-          },
-          "A0B0C0D0E0JO\n"
+          buttons,
+          "A0B0C0D0E0JO\n",
         },
         {
-          InputPeripheralData{
-            .pinch = { true },
-            .grab = { true },
-          },
-          "A0B0C0D0E0ML\n"
+          gesture,
+          "A0B0C0D0E0ML\n",
         },
         {
-          InputPeripheralData({
-                .curl = {
-                    .thumb = {
-                        .curl_total = 0.5,
-                    },
-                    .index = {
-                        .curl_total = 0.5,
-                    },
-                    .middle = {
-                        .curl_total = 0.5,
-                    },
-                    .ring = {
-                        .curl_total = 0.5,
-                    },
-                    .pinky = {
-                        .curl_total = 0.5,
-                    },
-                },
-                .splay = {
-                    .thumb = 0.5,
-                    .index = 0.5,
-                    .middle = 0.5,
-                    .ring = 0.5,
-                    .pinky = 0.5,
-                },
-          }),
+          halfCurlSplay,
           "A2047(AB)2047B2047(BB)2047C2047(CB)2047D2047(DB)2047E2047(EB)2047\n",
         }
     };
 
-    for (const auto& [data, expected] : cases) {
+    for (auto i = 0; i < cases.size(); i++) {
+        const auto [data, expected] = cases[i];
         const auto encoded = encoder->encode_input(data);
-        TEST_ASSERT_EQUAL_STRING(expected.c_str(), encoded.c_str());
+        TEST_ASSERT_EQUAL_STRING_MESSAGE(
+          expected.c_str(),
+          encoded.c_str(),
+          ("Failed case " + std::to_string(i)).c_str()
+        );
     }
 }
 

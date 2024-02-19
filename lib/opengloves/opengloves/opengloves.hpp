@@ -3,8 +3,10 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <initializer_list>
 #include <map>
 #include <string>
+#include <type_traits>
 #include <variant>
 #include <vector>
 
@@ -108,6 +110,44 @@ namespace og {
     /// I know, it is not the prettiest one, but we need this type of punning to efficiently encode/decode the data
     template<typename Tf = float, typename Tb = bool>
     struct InputPeripheral {
+        template<
+          typename U = Tf,
+          typename V = Tb,
+          std::enable_if_t<std::is_floating_point_v<U> && std::is_same_v<V, bool>, bool> = true>
+        InputPeripheral()
+        {
+            this->curl.fingers = { {
+              { 0.0F, 0.0F, 0.0F, 0.0F },
+              { 0.0F, 0.0F, 0.0F, 0.0F },
+              { 0.0F, 0.0F, 0.0F, 0.0F },
+              { 0.0F, 0.0F, 0.0F, 0.0F },
+              { 0.0F, 0.0F, 0.0F, 0.0F },
+            } };
+            this->splay.fingers = { 0.0F, 0.0F, 0.0F, 0.0F, 0.0F };
+            this->joystick = { 0.0F, 0.0F, false };
+            this->buttons = { { false, false, false, false, false } };
+            this->analog_buttons = { { { false, 0.0F }, { false, 0.0F } } };
+        }
+
+        template<
+          typename U = Tf,
+          typename V = Tb,
+          std::enable_if_t<std::is_pointer_v<U> && std::is_pointer_v<V>, bool> = true>
+        InputPeripheral()
+        {
+            this->curl.fingers = { {
+              { nullptr, nullptr, nullptr, nullptr },
+              { nullptr, nullptr, nullptr, nullptr },
+              { nullptr, nullptr, nullptr, nullptr },
+              { nullptr, nullptr, nullptr, nullptr },
+              { nullptr, nullptr, nullptr, nullptr },
+            } };
+            this->splay.fingers = { nullptr, nullptr, nullptr, nullptr, nullptr };
+            this->joystick = { nullptr, nullptr, nullptr };
+            this->buttons = { { nullptr, nullptr, nullptr, nullptr, nullptr } };
+            this->analog_buttons = { { { nullptr, nullptr }, { nullptr, nullptr } } };
+        }
+
         InputFinger<InputFingerCurl<Tf>> curl;
         InputFinger<Tf> splay;
 
