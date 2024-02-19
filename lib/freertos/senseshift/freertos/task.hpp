@@ -1,10 +1,15 @@
 #pragma once
 
+#include <cstdint>
+#include <type_traits>
+
+#include <senseshift/core/component.hpp>
 #include <senseshift/core/logging.hpp>
 
 extern "C" void delay(uint32_t ms);
 
 #if defined(ESP32)
+#include <Arduino.h>
 #include <freertos/FreeRTOS.h> // Include the base FreeRTOS definitions.
 #include <freertos/task.h>     // Include the task definitions.
 
