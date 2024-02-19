@@ -1,3 +1,0 @@
-[submodule "lib/frozen"]
-	path = lib/frozen
-	url = https://github.com/senseshift/frozen.git
