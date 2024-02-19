@@ -16,7 +16,7 @@ on:
 
 jobs:
   build-bhaptics:
-    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.serial_plotter_flag }} -D ${{ matrix.nimble_flag }}
+    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.nimble_flag }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,7 +33,6 @@ jobs:
           - bhaptics_tactvisor
           - bhaptics_tactglove_right
         battery_flag: [ SENSESHIFT_BATTERY_ENABLED=true ]
-        serial_plotter_flag: [ SENSESHIFT_SERIAL_PLOTTER=false ]
         nimble_flag: [ SENSESHIFT_BLE_USE_NIMBLE=false ]
         coverage: [ false ]
 
@@ -43,19 +42,16 @@ jobs:
             os: ubuntu-latest
             coverage: true
             battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-            serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=true
             nimble_flag: SENSESHIFT_BLE_USE_NIMBLE=true
           # - target: bhaptics_tactsuit_x40
           #   os: ubuntu-latest
           #   coverage: true
           #   battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-          #   serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=true
           #   nimble_flag: SENSESHIFT_BLE_USE_NIMBLE=false
           - target: bhaptics_tactsuit_x40
             os: ubuntu-latest
             coverage: false
             battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-            serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=false
             nimble_flag: SENSESHIFT_BLE_USE_NIMBLE=true
 
     steps:
@@ -66,7 +62,7 @@ jobs:
       - name: Get firmware name
         id: firmware_name
         run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.serial_plotter_flag }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
 
       - name: Enable coverage (non-macOS)
         if: runner.os != 'macOS' && matrix.coverage
@@ -81,13 +77,11 @@ jobs:
         if: runner.os != 'macOS'
         run: |
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
       - name: Update build flags (macOS)
         if: runner.os == 'macOS'
         run: |
           sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
           sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
 
       - name: Speedup package installation
