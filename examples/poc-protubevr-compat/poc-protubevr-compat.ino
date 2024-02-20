@@ -6,8 +6,12 @@
 #define PIN_KICK 33
 #define CHA_KICK 2
 
-const int freq = 60;
 const int resolution = 8;
+const int maxOutput = (1 << resolution) - 1;
+
+const int rumbleFreq = 8000;
+const int kickFreq = 60;
+const int minKick = (maxOutput / 4) * 3;
 
 constexpr inline const bool checkSN(const uint32_t sn) {
   return (sn % 48991) % 521 == 0;
@@ -32,7 +36,7 @@ constexpr inline _Tp simpleMap(_Tp x, _Tp in_max, _Tp out_max) {
 }
 
 void btCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
-  Serial.printf("BT Callback: %d\n", event);
+  // Serial.printf("BT Callback: %d\n", event);
 }
 
 void setup() {
@@ -55,10 +59,10 @@ void setup() {
   pinMode(PIN_RUMBLE, OUTPUT);
   pinMode(PIN_KICK, OUTPUT);
 
-  ledcSetup(CHA_RUMBLE, freq, resolution);
+  ledcSetup(CHA_RUMBLE, rumbleFreq, resolution);
   ledcAttachPin(PIN_RUMBLE, CHA_RUMBLE);
 
-  ledcSetup(CHA_KICK, freq, resolution);
+  ledcSetup(CHA_KICK, kickFreq, resolution);
   ledcAttachPin(PIN_KICK, CHA_KICK);
 
   SerialBT.register_callback(btCallback);
@@ -88,21 +92,22 @@ void loop() {
   switch (payload[1]) {
     case MAGIC:
       if (payload[2] == CHANNEL_KICK) {
-        uint16_t val = simpleMap<uint16_t>(payload[3], 255, 1 << resolution);
-        Serial.printf(" - kick %03u", val);
-        if (val == 0) {
-          delay(100);
-        }
+        const auto receivedVal = payload[3];
+        uint16_t val = receivedVal == 0 ? 0 : 255;
+        Serial.printf(" - kick %03u\n", val);
+        // if (val == 0) {
+        //   delay(100);
+        // }
         ledcWrite(CHA_KICK, val);
       } else if (payload[2] == CHANNEL_RUMBLE) {
-        uint16_t val = simpleMap<uint16_t>(payload[3], 255, 1 << resolution);
+        uint16_t val = simpleMap<uint16_t>(payload[3], 255, maxOutput);
         ledcWrite(CHA_RUMBLE, val);
-        Serial.printf(" - rumble %03u", val);
-      } else Serial.print(" - unknown effect");
+        Serial.printf(" - rumble %03u\n", val);
+      } else Serial.print(" - unknown effect\n");
       break;
     default:
       Serial.println(" !!! Unknown 2nd value, not MAGIC");
       break;
   }
-  Serial.println();
+        delay(5);
 }
