@@ -1,33 +1,23 @@
 #include "senseshift/body/haptics/body.hpp"
+#include "senseshift/body/haptics/interface.hpp"
 
-#include <senseshift/logging.hpp>
+#include <senseshift/core/logging.hpp>
+#include <senseshift/output/output.hpp>
 
 namespace SenseShift::Body::Haptics {
-    void HapticBody::setup()
+    static const char* const TAG = "haptic.body";
+
+    template<typename Tp, typename Ta>
+    void OutputBody<Tp, Ta>::effect(const Target& target, const Position& pos, const typename Plane::Value& val)
     {
-        for (auto& [target, plane] : this->vibroTargets) {
-            plane->setup();
+        auto plane = this->getTarget(target);
+        if (!plane.has_value()) {
+            LOG_W(TAG, "No target found for effect: %d", target);
+            return;
         }
+
+        plane.value()->effect(pos, val);
     }
 
-    void HapticBody::effect(const EffectRequest& effect)
-    {
-        if (effect.effect == Effect::Vibro && std::holds_alternative<VibroEffectData>(effect.data)) {
-            auto it = this->vibroTargets.find(effect.target);
-            if (it == this->vibroTargets.end()) {
-                log_w("No target found for effect: %d", effect.target);
-                return;
-            }
-
-            it->second->effect(effect.position, std::get<VibroEffectData>(effect.data));
-        } else {
-            log_w("Non-supported effect type: %d", effect.effect);
-        }
-    }
-
-    void HapticBody::addTarget(const Target target, VibroPlane* plane)
-    {
-        this->vibroTargets[target] = plane;
-        this->allTargets.insert({ target, plane });
-    }
+    template class OutputBody<Position::Value, Output::IFloatOutput::ValueType>;
 } // namespace SenseShift::Body::Haptics

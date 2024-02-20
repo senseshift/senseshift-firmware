@@ -42,7 +42,7 @@ class BLESerial : public Stream {
         }
 
         this->m_pTxCharacteristic->setValue(const_cast<uint8_t*>(buffer), bufferSize);
-        this->flush();
+        // this->flush();
 
         return bufferSize;
     }
@@ -54,7 +54,7 @@ class BLESerial : public Stream {
         }
 
         this->m_pTxCharacteristic->setValue(&byte, 1);
-        this->flush();
+        // this->flush();
 
         return 1;
     }

@@ -4,26 +4,26 @@
 using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::Output;
 
-class TestActuator : public IActuator<uint16_t> {
+class TestActuator : public IOutput<float> {
   public:
     bool isSetup = false;
-    uint16_t intensity = 0;
+    float intensity = 0;
 
-    TestActuator() : IActuator<uint16_t>() {}
-    void setup() override { this->isSetup = true; }
-    void writeOutput(uint16_t intensity) override { this->intensity = intensity; }
+    TestActuator() : IFloatOutput() {}
+    void init() override { this->isSetup = true; }
+    void writeState(float newIntensity) override { this->intensity = newIntensity; }
 };
 
 void test_it_sets_up_actuators(void)
 {
-    VibroPlane::ActuatorMap outputs = {
+    FloatPlane::ActuatorMap outputs = {
         { { 0, 0 }, new TestActuator() },
         { { 0, 1 }, new TestActuator() },
         { { 1, 0 }, new TestActuator() },
         { { 1, 1 }, new TestActuator() },
     };
 
-    auto plane = new VibroPlane(outputs);
+    auto plane = new FloatPlane(outputs);
     plane->setup();
 
     TEST_ASSERT_EQUAL(outputs.size(), plane->getAvailablePoints()->size());
@@ -39,24 +39,24 @@ void test_it_writes_to_correct_output(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane::ActuatorMap outputs = {
+    FloatPlane::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
         { { 1, 1 }, actuator4 },
     };
 
-    auto plane = new VibroPlane(outputs);
+    auto plane = new FloatPlane(outputs);
 
-    plane->effect({ 0, 0 }, 64);
-    plane->effect({ 0, 1 }, 128);
-    plane->effect({ 1, 0 }, 192);
-    plane->effect({ 1, 1 }, 255);
+    plane->effect({ 0, 0 }, 0.25F);
+    plane->effect({ 0, 1 }, 0.5F);
+    plane->effect({ 1, 0 }, 0.75F);
+    plane->effect({ 1, 1 }, 1.0F);
 
-    TEST_ASSERT_EQUAL_UINT8(64, actuator->intensity);
-    TEST_ASSERT_EQUAL_UINT8(128, actuator2->intensity);
-    TEST_ASSERT_EQUAL_UINT8(192, actuator3->intensity);
-    TEST_ASSERT_EQUAL_UINT8(255, actuator4->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.25F, actuator->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.5F, actuator2->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.75F, actuator3->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(1.0F, actuator4->intensity);
 }
 
 void test_it_updates_state(void)
@@ -64,31 +64,31 @@ void test_it_updates_state(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane::ActuatorMap outputs = {
+    FloatPlane::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
         { { 1, 1 }, actuator4 },
     };
 
-    auto plane = new VibroPlane(outputs);
+    auto plane = new FloatPlane(outputs);
 
-    plane->effect({ 0, 0 }, 64);
-    plane->effect({ 0, 1 }, 128);
-    plane->effect({ 1, 0 }, 192);
-    plane->effect({ 1, 1 }, 255);
+    plane->effect({ 0, 0 }, 0.25F);
+    plane->effect({ 0, 1 }, 0.5F);
+    plane->effect({ 1, 0 }, 0.75F);
+    plane->effect({ 1, 1 }, 1.0F);
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 0 }) > 0);
-    TEST_ASSERT_EQUAL_UINT8(64, plane->getActuatorStates()->at({ 0, 0 }));
+    TEST_ASSERT_EQUAL_FLOAT(0.25F, plane->getActuatorStates()->at({ 0, 0 }));
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 1 }) > 0);
-    TEST_ASSERT_EQUAL_UINT8(128, plane->getActuatorStates()->at({ 0, 1 }));
+    TEST_ASSERT_EQUAL_FLOAT(0.5F, plane->getActuatorStates()->at({ 0, 1 }));
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 1, 0 }) > 0);
-    TEST_ASSERT_EQUAL_UINT8(192, plane->getActuatorStates()->at({ 1, 0 }));
+    TEST_ASSERT_EQUAL_FLOAT(0.75F, plane->getActuatorStates()->at({ 1, 0 }));
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 1, 1 }) > 0);
-    TEST_ASSERT_EQUAL_UINT8(255, plane->getActuatorStates()->at({ 1, 1 }));
+    TEST_ASSERT_EQUAL_FLOAT(1.0F, plane->getActuatorStates()->at({ 1, 1 }));
 }
 
 void test_closest_it_writes_to_correct_if_exact(void)
@@ -96,24 +96,24 @@ void test_closest_it_writes_to_correct_if_exact(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane_Closest::ActuatorMap outputs = {
+    FloatPlane_Closest::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 1 }, actuator2 },
         { { 1, 0 }, actuator3 },
         { { 1, 1 }, actuator4 },
     };
 
-    auto plane = new VibroPlane_Closest(outputs);
+    auto plane = new FloatPlane_Closest(outputs);
 
-    plane->effect({ 0, 0 }, 1);
-    plane->effect({ 0, 1 }, 2);
-    plane->effect({ 1, 0 }, 3);
-    plane->effect({ 1, 1 }, 4);
+    plane->effect({ 0, 0 }, 0.25F);
+    plane->effect({ 0, 1 }, 0.5F);
+    plane->effect({ 1, 0 }, 0.75F);
+    plane->effect({ 1, 1 }, 1.0F);
 
-    TEST_ASSERT_EQUAL(1, actuator->intensity);
-    TEST_ASSERT_EQUAL(2, actuator2->intensity);
-    TEST_ASSERT_EQUAL(3, actuator3->intensity);
-    TEST_ASSERT_EQUAL(4, actuator4->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.25F, actuator->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.5F, actuator2->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.75F, actuator3->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(1.0F, actuator4->intensity);
 }
 
 void test_closest_it_correctly_finds_closest(void)
@@ -121,22 +121,22 @@ void test_closest_it_correctly_finds_closest(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane_Closest::ActuatorMap outputs = {
+    FloatPlane_Closest::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 64 }, actuator2 },
         { { 64, 0 }, actuator3 },
         { { 64, 64 }, actuator4 },
     };
 
-    auto plane = new VibroPlane_Closest(outputs);
+    auto plane = new FloatPlane_Closest(outputs);
 
-    plane->effect({ 16, 16 }, 16);
-    plane->effect({ 65, 65 }, 65);
+    plane->effect({ 16, 16 }, 0.25F);
+    plane->effect({ 65, 65 }, 0.5F);
 
-    TEST_ASSERT_EQUAL(16, actuator->intensity);
-    TEST_ASSERT_EQUAL(0, actuator2->intensity);
-    TEST_ASSERT_EQUAL(0, actuator3->intensity);
-    TEST_ASSERT_EQUAL(65, actuator4->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.25F, actuator->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0, actuator2->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0, actuator3->intensity);
+    TEST_ASSERT_EQUAL_FLOAT(0.5F, actuator4->intensity);
 }
 
 void test_closest_it_updates_state(void)
@@ -144,29 +144,29 @@ void test_closest_it_updates_state(void)
     auto actuator = new TestActuator(), actuator2 = new TestActuator(), actuator3 = new TestActuator(),
          actuator4 = new TestActuator();
 
-    VibroPlane_Closest::ActuatorMap outputs = {
+    FloatPlane_Closest::ActuatorMap outputs = {
         { { 0, 0 }, actuator },
         { { 0, 64 }, actuator2 },
         { { 64, 0 }, actuator3 },
         { { 64, 64 }, actuator4 },
     };
 
-    auto plane = new VibroPlane_Closest(outputs);
+    auto plane = new FloatPlane_Closest(outputs);
 
-    plane->effect({ 16, 16 }, 16);
-    plane->effect({ 65, 65 }, 65);
+    plane->effect({ 16, 16 }, 0.25F);
+    plane->effect({ 65, 65 }, 0.5F);
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 0 }) > 0);
-    TEST_ASSERT_EQUAL(16, plane->getActuatorStates()->at({ 0, 0 }));
+    TEST_ASSERT_EQUAL_FLOAT(0.25F, plane->getActuatorStates()->at({ 0, 0 }));
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 0, 64 }) > 0);
-    TEST_ASSERT_EQUAL(0, plane->getActuatorStates()->at({ 0, 64 }));
+    TEST_ASSERT_EQUAL_FLOAT(0, plane->getActuatorStates()->at({ 0, 64 }));
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 64, 0 }) > 0);
-    TEST_ASSERT_EQUAL(0, plane->getActuatorStates()->at({ 64, 0 }));
+    TEST_ASSERT_EQUAL_FLOAT(0, plane->getActuatorStates()->at({ 64, 0 }));
 
     TEST_ASSERT_TRUE(plane->getActuatorStates()->count({ 64, 64 }) > 0);
-    TEST_ASSERT_EQUAL(65, plane->getActuatorStates()->at({ 64, 64 }));
+    TEST_ASSERT_EQUAL_FLOAT(0.5F, plane->getActuatorStates()->at({ 64, 64 }));
 }
 
 void test_plain_mapper_margin_map_points(void)

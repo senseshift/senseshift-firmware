@@ -5,30 +5,27 @@
 #include <Arduino.h>
 
 namespace SenseShift::Arduino::Input {
-    using IDigitalSensor = ::SenseShift::Input::ISimpleSensor<bool>;
-
-    template<bool invert = false>
-    class DigitalSensor : public IDigitalSensor {
-      private:
-        uint8_t pin;
+    template<bool Invert = false>
+    class DigitalSimpleSensor : public ::SenseShift::Input::IBinarySimpleSensor {
+        uint8_t pin_;
 
       public:
-        DigitalSensor(uint8_t pin) : pin(pin) {}
+        DigitalSimpleSensor(const uint8_t pin) : pin_(pin) {}
 
-        void init() override { pinMode(this->pin, INPUT_PULLUP); };
+        void init() override { pinMode(this->pin_, INPUT_PULLUP); };
 
-        bool getValue() override;
+        [[nodiscard]] auto getValue() -> bool override;
     };
 
     template<>
-    bool DigitalSensor<false>::getValue()
+    [[nodiscard]] inline auto DigitalSimpleSensor<false>::getValue() -> bool
     {
-        return digitalRead(this->pin) == LOW;
+        return digitalRead(this->pin_) == LOW;
     }
 
     template<>
-    bool DigitalSensor<true>::getValue()
+    [[nodiscard]] inline auto DigitalSimpleSensor<true>::getValue() -> bool
     {
-        return digitalRead(this->pin) == HIGH;
+        return digitalRead(this->pin_) == HIGH;
     }
 } // namespace SenseShift::Arduino::Input

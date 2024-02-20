@@ -18,11 +18,6 @@ getBhapticsName() {
         target="$target+battery"
     fi
 
-    if [[ $flags =~ SENSESHIFT_SERIAL_PLOTTER=true ]]; then
-        echo "::debug::Serial Plotter is enabled, appending +serialplotter to the target"
-        target="$target+serialplotter"
-    fi
-
     echo "firmware=$target"
     if [[ -n "$GITHUB_ACTIONS" ]]; then
         echo "firmware=$target" >> "$GITHUB_OUTPUT"

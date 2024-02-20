@@ -1,26 +1,27 @@
 #pragma once
 
+#include <array>
+
+#include <senseshift/buffer.hpp>
+
 #include <BLESerial.hpp>
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 #include <Print.h>
 #include <WiFi.h>
 
-#include <og_protocol.hpp>
-#include <senseshift/opengloves/interface.hpp>
+#include <senseshift/opengloves/opengloves.hpp>
 
 namespace SenseShift::OpenGloves {
     class IStreamTransport : public ITransport {
-        using IStringEncodedMemoizedSensor = ::OpenGloves::IStringEncodedMemoizedSensor;
-
       protected:
         Stream* channel;
-        char* buffer = new char[256];
+        std::array<char, 256> buffer_{};
 
       public:
         IStreamTransport(Stream* channel) : channel(channel){};
 
-        size_t send(const char* buffer, size_t length) override
+        auto send(const char* buffer, size_t length) -> size_t override
         {
             if (!this->isReady()) {
                 return 0;
@@ -32,17 +33,17 @@ namespace SenseShift::OpenGloves {
             return written;
         }
 
-        virtual bool isReady() = 0;
+        virtual auto isReady() -> bool = 0;
 
-        virtual bool hasData() override
+        auto hasData() -> bool override
         {
             return this->isReady() && this->channel != nullptr && this->channel->available() > 0;
         }
 
-        virtual size_t read(char* buffer, size_t length)
+        auto read(char* buffer, size_t length) -> size_t override
         {
             if (!this->hasData()) {
-                return false;
+                return 0U;
             }
 
             size_t bytesRead = this->channel->readBytesUntil('\n', buffer, length);
@@ -54,12 +55,12 @@ namespace SenseShift::OpenGloves {
 
     class StreamTransport : public IStreamTransport {
       public:
-        StreamTransport(Stream& channel) : IStreamTransport(&channel){};
-        StreamTransport(Stream* channel) : IStreamTransport(channel){};
+        explicit StreamTransport(Stream& channel) : IStreamTransport(&channel){};
+        explicit StreamTransport(Stream* channel) : IStreamTransport(channel){};
 
-        void setup() override { this->mReady = true; }
+        void init() override { this->mReady = true; }
 
-        bool isReady() override { return this->channel != nullptr && this->mReady; }
+        auto isReady() -> bool override { return this->channel != nullptr && this->mReady; }
 
       private:
         bool mReady = false;
@@ -67,15 +68,17 @@ namespace SenseShift::OpenGloves {
 
     class BluetoothSerialTransport : public IStreamTransport {
       public:
-        BluetoothSerialTransport(BluetoothSerial& channel) : IStreamTransport(&channel){};
+        explicit BluetoothSerialTransport(BluetoothSerial& channel) : IStreamTransport(&channel){};
 
-        bool isReady() override
+        auto isReady() -> bool override
         {
             auto* serial = static_cast<BluetoothSerial*>(this->channel);
             return serial->isReady() && serial->hasClient();
         }
 
-        virtual size_t send(const char* buffer, size_t length) override
+        void init() override {}
+
+        auto send(const char* buffer, size_t length) -> size_t override
         {
             auto written = this->channel->write(buffer, length);
 
@@ -88,9 +91,11 @@ namespace SenseShift::OpenGloves {
 
     class BLESerialTransport : public IStreamTransport {
       public:
-        BLESerialTransport(BLESerial& channel) : IStreamTransport(&channel){};
+        explicit BLESerialTransport(BLESerial& channel) : IStreamTransport(&channel){};
 
-        bool isReady() override
+        void init() override {}
+
+        auto isReady() -> bool override
         {
             auto* serial = static_cast<BLESerial*>(this->channel);
             return serial->connected();
@@ -101,11 +106,11 @@ namespace SenseShift::OpenGloves {
       public:
         WiFiSerialTransport(WiFiServer& server) : IStreamTransport(nullptr), m_server(server){};
 
-        void setup() override
+        void init() override
         {
             auto* client = static_cast<WiFiClient*>(this->channel);
             if (client != nullptr) {
-                if (client->connected()) {
+                if (client->connected() != 0U) {
                     return;
                 }
             }
@@ -114,14 +119,14 @@ namespace SenseShift::OpenGloves {
             this->channel = new WiFiClient(this->m_server.available());
         }
 
-        bool isReady() override
+        auto isReady() -> bool override
         {
             if (this->channel == nullptr) {
                 return false;
             }
 
             auto* client = static_cast<WiFiClient*>(this->channel);
-            return client->connected();
+            return client->connected() != 0U;
         }
 
       private:

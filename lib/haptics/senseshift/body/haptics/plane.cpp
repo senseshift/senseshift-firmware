@@ -1,78 +1,83 @@
 #include "senseshift/body/haptics/plane.hpp"
+#include "senseshift/body/haptics/interface.hpp"
 
 #include <algorithm>
-#include <cmath>
-#include <senseshift/logging.hpp>
+#include <map>
+
+#include <senseshift/core/logging.hpp>
+#include <senseshift/output/output.hpp>
 
 namespace SenseShift::Body::Haptics {
-    template<typename _Tp, typename _Ta>
-    void ActuativePlane<_Tp, _Ta>::setActuators(const ActuatorMap& actuators)
+    static const char* const TAG = "haptic.plane";
+
+    template<typename Tc, typename To>
+    void OutputPlane<Tc, To>::setActuators(const ActuatorMap& actuators)
     {
-        this->actuators.clear();
+        this->actuators_.clear();
         for (const auto& [point, actuator] : actuators) {
-            this->actuators[point] = actuator;
+            this->actuators_[point] = actuator;
         }
 
-        this->points.clear();
+        this->points_.clear();
         for (const auto& [point, _] : actuators) {
-            this->points.insert(point);
+            this->points_.insert(point);
         }
 
-        this->states.clear();
+        this->states_.clear();
         for (const auto& [point, _] : actuators) {
-            this->states[point] = 0;
+            this->states_[point] = static_cast<Value>(0);
         }
     }
 
-    template<typename _Tp, typename _Ta>
-    void ActuativePlane<_Tp, _Ta>::setup()
+    template<typename Tc, typename To>
+    void OutputPlane<Tc, To>::setup()
     {
-        for (const auto& [point, actuator] : this->actuators) {
-            actuator->setup();
+        for (const auto& [point, actuator] : this->actuators_) {
+            actuator->init();
         }
     }
 
-    template<typename _Tp, typename _Ta>
-    void ActuativePlane<_Tp, _Ta>::effect(const Position& pos, const Value& val)
+    template<typename Tc, typename To>
+    void OutputPlane<Tc, To>::effect(const Position& pos, const Value& val)
     {
-        auto it = this->actuators.find(pos);
-        if (it == this->actuators.end()) {
-            log_w("No actuator for point (%u, %u)", pos.x, pos.y);
+        auto find = this->actuators_.find(pos);
+        if (find == this->actuators_.end()) {
+            LOG_W(TAG, "No actuator for point (%u, %u)", pos.x, pos.y);
             return;
         }
 
-        it->second->writeOutput(val);
-        this->states[pos] = val;
+        find->second->writeState(val);
+        this->states_[pos] = val;
     }
 
-    template<typename _Tp, typename _Ta>
-    void ActuativePlane_Closest<_Tp, _Ta>::effect(const Position& pos, const Value& val)
+    template<typename Tc, typename To>
+    void OutputPlane_Closest<Tc, To>::effect(const Position& pos, const Value& val)
     {
         auto& closest = this->findClosestPoint(*this->getAvailablePoints(), pos);
-        ActuativePlane<_Tp, _Ta>::effect(closest, val);
+        OutputPlane<Tc, To>::effect(closest, val);
     }
 
-    template<typename _Tp, typename _Ta>
-    const Position&
-      ActuativePlane_Closest<_Tp, _Ta>::findClosestPoint(const PositionSet& pts, const Position& target) const
+    template<typename Tc, typename To>
+    [[nodiscard]] auto OutputPlane_Closest<Tc, To>::findClosestPoint(const PositionSet& pts, const Position& target)
+      -> const Position&
     {
         // check if exact point exists
-        auto it = pts.find(target);
-        if (it != pts.end()) {
-            return *it;
+        const auto find = pts.find(target);
+        if (find != pts.end()) {
+            return *find;
         }
 
-        // find closest point by square distance
-        std::multimap<float, Position> mp = {};
-        for (const auto& _p : pts) {
-            mp.insert({ (target - _p), _p });
+        // find the closest point by square distance
+        std::multimap<float, Position> distance_map = {};
+        for (const auto& point : pts) {
+            distance_map.insert({ (target - point), point });
         }
 
-        auto nearest = std::min_element(mp.begin(), mp.end());
+        const auto nearest = std::min_element(distance_map.begin(), distance_map.end());
 
         return nearest->second;
     }
 
-    template class ActuativePlane<VibroEffectData, ::SenseShift::Output::IActuator<VibroEffectData::Intensity>>;
-    template class ActuativePlane_Closest<VibroEffectData, ::SenseShift::Output::IActuator<VibroEffectData::Intensity>>;
+    template class OutputPlane<Position::Value, Output::IFloatOutput::ValueType>;
+    template class OutputPlane_Closest<Position::Value, Output::IFloatOutput::ValueType>;
 } // namespace SenseShift::Body::Haptics

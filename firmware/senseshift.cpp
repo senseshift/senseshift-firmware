@@ -6,27 +6,29 @@
 #include <Arduino.h>
 #endif
 
-#include <senseshift/logging.hpp>
+#include <senseshift/core/logging.hpp>
 
 namespace SenseShift {
-    SenseShift::SenseShift()
+    static const char* const TAG = "application";
+
+    Application::Application()
     {
-        this->pHapticBody = new Body::Haptics::HapticBody();
+        this->vibro_body_ = new Body::Haptics::FloatBody();
     }
 
-    void SenseShift::postEvent(const IEvent* event)
+    void Application::postEvent(const IEvent* event)
     {
-        log_i("Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
+        LOG_I(TAG, "Event dispatched at %u: %s (%p)", millis(), event->eventName.c_str(), event);
 
-        for (auto* listener : this->eventListeners) {
+        for (const auto* listener : this->event_listeners_) {
             listener->handleEvent(event);
         }
 
         delete event;
     }
 
-    void SenseShift::addEventListener(const IEventListener* listener)
+    void Application::addEventListener(const IEventListener* listener)
     {
-        this->eventListeners.push_back(listener);
+        this->event_listeners_.push_back(listener);
     }
 } // namespace SenseShift

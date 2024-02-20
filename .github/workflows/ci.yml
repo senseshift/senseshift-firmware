@@ -16,12 +16,12 @@ on:
 
 jobs:
   build-bhaptics:
-    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.serial_plotter_flag }} -D ${{ matrix.nimble_flag }}
+    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.nimble_flag }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
         target:
           - bhaptics_tactsuit_x16
           - bhaptics_tactsuit_x16_pca9685
@@ -32,10 +32,9 @@ jobs:
           - bhaptics_tactal
           - bhaptics_tactvisor
           - bhaptics_tactglove_right
-        battery_flag: [SENSESHIFT_BATTERY_ENABLED=true]
-        serial_plotter_flag: [SENSESHIFT_SERIAL_PLOTTER=false]
-        nimble_flag: [SENSESHIFT_BLE_USE_NIMBLE=false]
-        coverage: [false]
+        battery_flag: [ SENSESHIFT_BATTERY_ENABLED=true ]
+        nimble_flag: [ SENSESHIFT_BLE_USE_NIMBLE=false ]
+        coverage: [ false ]
 
         include:
           # Extra tests for x40, as it uses the most features
@@ -43,19 +42,16 @@ jobs:
             os: ubuntu-latest
             coverage: true
             battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-            serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=true
             nimble_flag: SENSESHIFT_BLE_USE_NIMBLE=true
           # - target: bhaptics_tactsuit_x40
           #   os: ubuntu-latest
           #   coverage: true
           #   battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-          #   serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=true
           #   nimble_flag: SENSESHIFT_BLE_USE_NIMBLE=false
           - target: bhaptics_tactsuit_x40
             os: ubuntu-latest
             coverage: false
             battery_flag: SENSESHIFT_BATTERY_ENABLED=true
-            serial_plotter_flag: SENSESHIFT_SERIAL_PLOTTER=false
             nimble_flag: SENSESHIFT_BLE_USE_NIMBLE=true
 
     steps:
@@ -66,7 +62,7 @@ jobs:
       - name: Get firmware name
         id: firmware_name
         run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.serial_plotter_flag }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
 
       - name: Enable coverage (non-macOS)
         if: runner.os != 'macOS' && matrix.coverage
@@ -81,13 +77,11 @@ jobs:
         if: runner.os != 'macOS'
         run: |
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
       - name: Update build flags (macOS)
         if: runner.os == 'macOS'
         run: |
           sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.serial_plotter_flag }}/' platformio.ini
           sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
 
       - name: Speedup package installation
@@ -165,7 +159,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
         target:
           - lucidgloves-prototype3
           - lucidgloves-prototype4
@@ -176,20 +170,20 @@ jobs:
         comm_flag:
           - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_SERIAL
           - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BTSERIAL
-        coverage: [false]
+        coverage: [ false ]
 
         include:
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::MinMaxCalibrator<uint16_t, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::MinMaxCalibrator<float>()"
             coverage: true
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::CenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::CenterPointDeviationCalibrator<float>(0.66F, 0.005F)"
             coverage: true
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            curl_calibration_flag: CALIBRATION_CURL="::SenseShift::Calibration::FixedCenterPointDeviationCalibrator<uint16_t, 20, 270, 0, ANALOG_MAX>"
+            curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::FixedCenterPointDeviationCalibrator<float>(0.66F, 0.005F)"
             coverage: true
           - os: ubuntu-latest
             target: indexer-csf

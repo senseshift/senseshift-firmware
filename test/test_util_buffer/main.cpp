@@ -1,4 +1,3 @@
-#include <senseshift/utility.hpp>
 #include <unity.h>
 
 #include <senseshift/buffer.hpp>

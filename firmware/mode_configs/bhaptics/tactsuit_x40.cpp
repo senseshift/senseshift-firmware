@@ -4,30 +4,31 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "senseshift.h"
+#include <senseshift.h>
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/actuator/pca9685.hpp>
-#include <senseshift/arduino/output/actuator/pwm.hpp>
-#include <senseshift/battery/sensor.hpp>
+#include <senseshift/arduino/output/ledc.hpp>
+#include <senseshift/arduino/output/pca9685.hpp>
+#include <senseshift/battery/input/battery_sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/input/sensor.hpp>
+#include <senseshift/freertos/task.hpp>
 
 using namespace SenseShift;
+using namespace SenseShift::Input;
+using namespace SenseShift::Input::Filter;
 using namespace SenseShift::Arduino::Output;
 using namespace SenseShift::Arduino::Input;
-using namespace SenseShift::FreeRTOS::Input;
 using namespace SenseShift::Battery;
+using namespace SenseShift::Battery::Input;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
-extern SenseShift::SenseShift App;
-SenseShift::SenseShift* app = &App;
+extern Application App;
+Application* app = &App;
 
-static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTSUITX40_SIZE;
-static const OutputLayout bhLayout[bhLayoutSize] = BH_LAYOUT_TACTSUITX40;
+static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX40_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX40 };
 
 void setupMode()
 {
@@ -42,29 +43,29 @@ void setupMode()
 
     // Assign the pins on the configured PCA9685s and PWM pins to locations on the
     // vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      { new ActuatorPCA9685(pwm0, 0),  new ActuatorPCA9685(pwm0, 1),  new ActuatorPCA9685(pwm0, 2),  new ActuatorPCA9685(pwm0, 3)  },
-      { new ActuatorPCA9685(pwm0, 4),  new ActuatorPCA9685(pwm0, 5),  new ActuatorPCA9685(pwm0, 6),  new ActuatorPCA9685(pwm0, 7)  },
-      { new ActuatorPCA9685(pwm0, 8),  new ActuatorPCA9685(pwm0, 9),  new ActuatorPCA9685(pwm0, 10), new ActuatorPCA9685(pwm0, 11) },
-      { new ActuatorPCA9685(pwm0, 12), new ActuatorPCA9685(pwm0, 13), new ActuatorPCA9685(pwm0, 14), new ActuatorPCA9685(pwm0, 15) },
-      { new ActuatorPWM(32),           new ActuatorPWM(33),           new ActuatorPWM(25),           new ActuatorPWM(26)           },
+      { new PCA9685Output(pwm0, 0),  new PCA9685Output(pwm0, 1),  new PCA9685Output(pwm0, 2),  new PCA9685Output(pwm0, 3)  },
+      { new PCA9685Output(pwm0, 4),  new PCA9685Output(pwm0, 5),  new PCA9685Output(pwm0, 6),  new PCA9685Output(pwm0, 7)  },
+      { new PCA9685Output(pwm0, 8),  new PCA9685Output(pwm0, 9),  new PCA9685Output(pwm0, 10), new PCA9685Output(pwm0, 11) },
+      { new PCA9685Output(pwm0, 12), new PCA9685Output(pwm0, 13), new PCA9685Output(pwm0, 14), new PCA9685Output(pwm0, 15) },
+      { new LedcOutput(32),          new LedcOutput(33),          new LedcOutput(25),          new LedcOutput(26)          },
       // clang-format on
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<VibroPlane::Actuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      { new ActuatorPCA9685(pwm1, 0),  new ActuatorPCA9685(pwm1, 1),  new ActuatorPCA9685(pwm1, 2),  new ActuatorPCA9685(pwm1, 3)  },
-      { new ActuatorPCA9685(pwm1, 4),  new ActuatorPCA9685(pwm1, 5),  new ActuatorPCA9685(pwm1, 6),  new ActuatorPCA9685(pwm1, 7)  },
-      { new ActuatorPCA9685(pwm1, 8),  new ActuatorPCA9685(pwm1, 9),  new ActuatorPCA9685(pwm1, 10), new ActuatorPCA9685(pwm1, 11) },
-      { new ActuatorPCA9685(pwm1, 12), new ActuatorPCA9685(pwm1, 13), new ActuatorPCA9685(pwm1, 14), new ActuatorPCA9685(pwm1, 15) },
-      { new ActuatorPWM(27),           new ActuatorPWM(14),           new ActuatorPWM(12),           new ActuatorPWM(13)           },
+      { new PCA9685Output(pwm1, 0),  new PCA9685Output(pwm1, 1),  new PCA9685Output(pwm1, 2),  new PCA9685Output(pwm1, 3)  },
+      { new PCA9685Output(pwm1, 4),  new PCA9685Output(pwm1, 5),  new PCA9685Output(pwm1, 6),  new PCA9685Output(pwm1, 7)  },
+      { new PCA9685Output(pwm1, 8),  new PCA9685Output(pwm1, 9),  new PCA9685Output(pwm1, 10), new PCA9685Output(pwm1, 11) },
+      { new PCA9685Output(pwm1, 12), new PCA9685Output(pwm1, 13), new PCA9685Output(pwm1, 14), new PCA9685Output(pwm1, 15) },
+      { new LedcOutput(27),          new LedcOutput(14),          new LedcOutput(12),          new LedcOutput(13)          },
       // clang-format on
     });
 
-    app->getHapticBody()->addTarget(Target::ChestFront, new VibroPlane_Closest(frontOutputs));
-    app->getHapticBody()->addTarget(Target::ChestBack, new VibroPlane_Closest(backOutputs));
+    app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane_Closest(frontOutputs));
+    app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane_Closest(backOutputs));
 
-    app->getHapticBody()->setup();
+    app->getVibroBody()->setup();
 
     auto* bhBleConnection = new BLE::Connection(
       {
@@ -73,19 +74,33 @@ void setupMode()
         .serialNumber = BH_SERIAL_NUMBER,
       },
       [](std::string& value) -> void {
-          Decoder::applyVest(app->getHapticBody(), value, bhLayout);
+          Decoder::applyVest(app->getVibroBody(), value, bhLayout);
       },
       app
     );
     bhBleConnection->begin();
 
 #if defined(SENSESHIFT_BATTERY_ENABLED) && SENSESHIFT_BATTERY_ENABLED == true
-    auto* battery = new TaskedSensor<BatteryState>(
-      new BatterySensor(new NaiveBatterySensor(new AnalogSensor(36)), app),
+    auto* batteryVoltageSensor = new SimpleSensorDecorator(new AnalogSimpleSensor(36));
+    batteryVoltageSensor->addFilters({
+      new MultiplyFilter(3.3F),                      // Convert to raw pin voltage
+      new VoltageDividerFilter(27000.0F, 100000.0F), // Convert to voltage divider voltage
+    });
+    auto* batteryTask = new ::SenseShift::FreeRTOS::ComponentUpdateTask<SimpleSensorDecorator<float>>(
+      batteryVoltageSensor,
       SENSESHIFT_BATTERY_SAMPLE_RATE,
       { "ADC Battery", 4096, SENSESHIFT_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
-    battery->begin();
+    batteryTask->begin();
+
+    auto* batterySensor = new LookupTableInterpolateBatterySensor<const frozen::map<float, float, 21>>(
+      batteryVoltageSensor,
+      &VoltageMap::LiPO_1S_42
+    );
+    batterySensor->addValueCallback([](BatteryState value) -> void {
+        app->postEvent(new BatteryLevelEvent(value));
+    });
+    batterySensor->init();
 #endif
 }
 

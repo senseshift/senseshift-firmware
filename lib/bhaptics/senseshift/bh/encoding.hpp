@@ -1,19 +1,23 @@
 #pragma once
 
+#include <algorithm>
+#include <array>
+#include <cstdint>
 #include <cstring>
+#include <string>
+#include <tuple>
+
 #include <senseshift/body/haptics/body.hpp>
+#include <senseshift/body/haptics/interface.hpp>
 
 namespace SenseShift::BH {
     class Decoder {
       public:
         using VibroEffectData = ::SenseShift::Body::Haptics::VibroEffectData;
-        using EffectData = ::SenseShift::Body::Haptics::EffectData;
 
         using Effect = ::SenseShift::Body::Haptics::Effect;
         using Target = ::SenseShift::Body::Haptics::Target;
         using Position = ::SenseShift::Body::Haptics::Position;
-
-        using HapticBody = ::SenseShift::Body::Haptics::HapticBody;
 
         using OutputLayout = std::tuple<Target, Position>;
 
@@ -22,29 +26,28 @@ namespace SenseShift::BH {
 
         template<size_t N>
         static void applyPlain(
-          HapticBody* output, const uint8_t (&value)[N], const OutputLayout (&layout)[N], const Effect effect
+          FloatBody* output,
+          const std::array<std::uint8_t, N>& value,
+          const std::array<OutputLayout, N>& layout,
+          const Effect effect
         )
         {
             for (size_t i = 0; i < N; i++) {
                 const auto [target, position] = layout[i];
-                const uint8_t byte = value[i];
+                const std::uint8_t byte = value[i];
 
-                output->effect({
-                  .effect = effect,
-                  .target = target,
-                  .position = position,
-                  .data = effectDataFromByte(effect, byte),
-                });
+                output->effect(target, position, static_cast<FloatBody::Plane::Value>(effectDataFromByte(byte)));
             }
         }
 
         template<size_t N>
-        static void
-          applyPlain(HapticBody* output, std::string& value, const OutputLayout (&layout)[N], const Effect effect)
+        static void applyPlain(
+          FloatBody* output, std::string& value, const std::array<OutputLayout, N>& layout, const Effect effect
+        )
         {
-            std::uint8_t buf[N];
+            std::array<std::uint8_t, N> buf{};
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
-            std::memcpy(buf, value.c_str(), copyLength);
+            std::memcpy(buf.data(), value.c_str(), copyLength);
 
             applyPlain(output, buf, layout, effect);
         }
@@ -54,9 +57,9 @@ namespace SenseShift::BH {
          */
         template<size_t N>
         static void applyPlain(
-          HapticBody* output,
-          const uint8_t (&value)[N],
-          const Position (&layout)[N],
+          FloatBody* output,
+          const std::array<std::uint8_t, N>& value,
+          const std::array<Position, N>& layout,
           const Effect effect,
           const Target target
         )
@@ -65,23 +68,22 @@ namespace SenseShift::BH {
                 const auto position = layout[i];
                 const uint8_t byte = value[i];
 
-                output->effect({
-                  .effect = effect,
-                  .target = target,
-                  .position = position,
-                  .data = effectDataFromByte(effect, byte),
-                });
+                output->effect(target, position, static_cast<FloatBody::Plane::Value>(effectDataFromByte(byte)));
             }
         }
 
         template<size_t N>
         static void applyPlain(
-          HapticBody* output, std::string& value, const Position (&layout)[N], const Effect effect, const Target target
+          FloatBody* output,
+          std::string& value,
+          const std::array<Position, N>& layout,
+          const Effect effect,
+          const Target target
         )
         {
-            std::uint8_t buf[N];
+            std::array<std::uint8_t, N> buf{};
             std::size_t copyLength = std::min(value.size(), sizeof(buf));
-            std::memcpy(buf, value.c_str(), copyLength);
+            std::memcpy(buf.data(), value.c_str(), copyLength);
 
             applyPlain(output, buf, layout, effect, target);
         }
@@ -90,32 +92,34 @@ namespace SenseShift::BH {
          * Apply vest-encoded data to the output.
          */
         static void applyVest(
-          HapticBody* output, const uint8_t (&value)[VEST_PAYLOAD_SIZE], const OutputLayout (&layout)[VEST_LAYOUT_SIZE]
+          FloatBody* output,
+          const std::array<uint8_t, VEST_PAYLOAD_SIZE>& value,
+          const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout
         )
         {
             for (size_t i = 0; i < VEST_PAYLOAD_SIZE; i++) {
-                uint8_t byte = value[i];
-                uint actIndex = i * 2;
-                output->effect({
-                  .effect = Effect::Vibro,
-                  .target = std::get<0>(layout[actIndex]),
-                  .position = std::get<1>(layout[actIndex]),
-                  .data = effectDataFromByte(Effect::Vibro, ((byte >> 4) & 0xf), 15),
-                });
-                output->effect({
-                  .effect = Effect::Vibro,
-                  .target = std::get<0>(layout[actIndex + 1]),
-                  .position = std::get<1>(layout[actIndex + 1]),
-                  .data = effectDataFromByte(Effect::Vibro, (byte & 0xf), 15),
-                });
+                const std::uint8_t byte = value[i];
+                const size_t actIndex = i * 2;
+
+                output->effect(
+                  std::get<0>(layout[actIndex]),
+                  std::get<1>(layout[actIndex]),
+                  static_cast<FloatBody::Plane::Value>(effectDataFromByte(((byte >> 4) & 0xf), 15))
+                );
+                output->effect(
+                  std::get<0>(layout[actIndex + 1]),
+                  std::get<1>(layout[actIndex + 1]),
+                  static_cast<FloatBody::Plane::Value>(effectDataFromByte((byte & 0xf), 15).getIntensity())
+                );
             }
         }
 
-        static void applyVest(HapticBody* output, std::string& value, const OutputLayout (&layout)[VEST_LAYOUT_SIZE])
+        static void
+          applyVest(FloatBody* output, std::string& value, const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout)
         {
-            std::uint8_t buf[VEST_PAYLOAD_SIZE];
-            std::size_t copyLength = std::min(value.size(), sizeof(buf));
-            std::memcpy(buf, value.c_str(), copyLength);
+            std::array<std::uint8_t, VEST_PAYLOAD_SIZE> buf{};
+            const size_t copyLength = std::min(value.size(), sizeof(buf));
+            std::memcpy(buf.data(), value.c_str(), copyLength);
 
             applyVest(output, buf, layout);
         }
@@ -125,18 +129,18 @@ namespace SenseShift::BH {
          */
         template<size_t N>
         static void applyVestGrouped(
-          HapticBody* output,
-          const uint8_t (&value)[VEST_PAYLOAD_SIZE],
-          const OutputLayout (&layout)[VEST_LAYOUT_SIZE],
-          const uint8_t (&layoutGroups)[N]
+          FloatBody* output,
+          const std::array<std::uint8_t, VEST_PAYLOAD_SIZE>& value,
+          const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout,
+          const std::array<std::uint8_t, N>& layoutGroups
         )
         {
-            uint8_t result[VEST_LAYOUT_SIZE];
+            std::array<std::uint8_t, VEST_LAYOUT_SIZE> result{};
 
             // Unpack values
             for (auto i = 0; i < VEST_PAYLOAD_SIZE; i++) {
-                uint8_t byte = value[i];
-                uint actIndex = i * 2;
+                const std::uint8_t byte = value[i];
+                const size_t actIndex = i * 2;
 
                 result[actIndex] = (byte >> 4) & 0xf;
                 result[actIndex + 1] = (byte & 0xf);
@@ -164,51 +168,38 @@ namespace SenseShift::BH {
 
             for (uint8_t i = 0; i < VEST_LAYOUT_SIZE; i++) {
                 // take only meaningful values
-                if (!::SenseShift::contains(layoutGroups, VEST_LAYOUT_SIZE, i)) {
+                if (std::find(layoutGroups.begin(), layoutGroups.end(), i) == layoutGroups.end()) {
                     continue;
                 }
 
                 const auto target = std::get<0>(layout[i]);
                 const auto position = std::get<1>(layout[i]);
 
-                output->effect({
-                  .effect = Effect::Vibro,
-                  .target = target,
-                  .position = position,
-                  .data = effectDataFromByte(Effect::Vibro, result[i], 15),
-                });
+                output
+                  ->effect(target, position, static_cast<FloatBody::Plane::Value>(effectDataFromByte(result[i], 15)));
             }
         }
 
         template<size_t N>
         static void applyVestGrouped(
-          HapticBody* output,
+          FloatBody* output,
           std::string& value,
-          const OutputLayout (&layout)[VEST_LAYOUT_SIZE],
-          const uint8_t (&layoutGroups)[N]
+          const std::array<OutputLayout, VEST_LAYOUT_SIZE>& layout,
+          const std::array<std::uint8_t, N>& layoutGroups
         )
         {
-            std::uint8_t buf[VEST_PAYLOAD_SIZE];
-            std::size_t copyLength = std::min(value.size(), sizeof(buf));
-            std::memcpy(buf, value.c_str(), copyLength);
+            std::array<std::uint8_t, VEST_PAYLOAD_SIZE> buf{};
+            const size_t copyLength = std::min(value.size(), sizeof(buf));
+            std::memcpy(buf.data(), value.c_str(), copyLength);
 
             applyVestGrouped(output, buf, layout, layoutGroups);
         }
 
       private:
-        static const EffectData
-          effectDataFromByte(const Effect effect, const uint8_t byte, const uint8_t maxValue = 100)
+        static auto effectDataFromByte(const uint8_t byte, const uint8_t maxValue = 100) -> VibroEffectData
         {
-            switch (effect) {
-                case Effect::Vibro:
-                    return VibroEffectData(::SenseShift::simpleMap<VibroEffectData::Intensity>(
-                      byte,
-                      maxValue,
-                      VibroEffectData::INTENSITY_MAX
-                    ));
-                default:
-                    throw std::runtime_error("Unknown effect");
-            }
+            const auto value = static_cast<float>(byte) / static_cast<float>(maxValue);
+            return VibroEffectData(value);
         }
     };
 } // namespace SenseShift::BH
