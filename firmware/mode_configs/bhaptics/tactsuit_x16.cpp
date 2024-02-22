@@ -66,7 +66,7 @@ void setupMode()
     );
     bhBleConnection->begin();
 
-#if defined(SENSESHIFT_BATTERY_ENABLED) && SENSESHIFT_BATTERY_ENABLED == true
+#if defined(SS_BATTERY_ENABLED) && SS_BATTERY_ENABLED == true
     auto* batteryVoltageSensor = new SimpleSensorDecorator(new AnalogSimpleSensor(36));
     batteryVoltageSensor->addFilters({
       new MultiplyFilter(3.3F),                      // Convert to raw pin voltage
@@ -74,8 +74,8 @@ void setupMode()
     });
     auto* batteryTask = new ::SenseShift::FreeRTOS::ComponentUpdateTask<SimpleSensorDecorator<float>>(
       batteryVoltageSensor,
-      SENSESHIFT_BATTERY_SAMPLE_RATE,
-      { "ADC Battery", 4096, SENSESHIFT_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
+      SS_BATTERY_SAMPLE_RATE,
+      { "ADC Battery", 4096, SS_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
     batteryTask->begin();
 

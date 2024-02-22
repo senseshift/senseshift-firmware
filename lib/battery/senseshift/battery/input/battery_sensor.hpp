@@ -46,7 +46,10 @@ namespace SenseShift::Battery::Input {
       protected:
         [[nodiscard]] auto lookupInterpolateLevel(VoltageType voltage) -> float
         {
-            return ::SenseShift::lookup_table_interpolate<VoltageType, float, Container>(*this->lookup_table_, voltage);
+            return ::SenseShift::lookup_table_interpolate_linear<Container, VoltageType, float>(
+              *this->lookup_table_,
+              voltage
+            );
         }
 
       private:

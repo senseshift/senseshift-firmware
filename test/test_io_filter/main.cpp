@@ -2,6 +2,8 @@
 #include <senseshift/input/sensor.hpp>
 #include <unity.h>
 
+#include <map>
+
 #define ASSERT_EQUAL_FLOAT_ROUNDED(expected, actual, precision)                \
     TEST_ASSERT_EQUAL_FLOAT(                                                   \
       std::round(expected* std::pow(10, precision)) / std::pow(10, precision), \
@@ -134,6 +136,33 @@ void test_center_deadzone_filter(void)
     TEST_ASSERT_EQUAL_FLOAT(1.0f, filter->filter(nullptr, 1.0f));
 }
 
+void test_lookup_table_interpolate_linear_filter(void)
+{
+    const std::map<float, float> lookup_table = {
+        { 0.0f, 0.0f }, { 1.0f, 3.5f }, { 2.0f, 7.0f }, { 3.0f, 10.5f }, { 4.0f, 14.0f }, { 5.0f, 17.5f },
+    };
+    IFilter<float>* filter = new LookupTableInterpolationFilter(lookup_table);
+
+    // test existing values
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, filter->filter(nullptr, 0.0f));
+    TEST_ASSERT_EQUAL_FLOAT(3.5f, filter->filter(nullptr, 1.0f));
+    TEST_ASSERT_EQUAL_FLOAT(7.0f, filter->filter(nullptr, 2.0f));
+    TEST_ASSERT_EQUAL_FLOAT(10.5f, filter->filter(nullptr, 3.0f));
+    TEST_ASSERT_EQUAL_FLOAT(14.0f, filter->filter(nullptr, 4.0f));
+    TEST_ASSERT_EQUAL_FLOAT(17.5f, filter->filter(nullptr, 5.0f));
+
+    // test values in between
+    TEST_ASSERT_EQUAL_FLOAT(1.75f, filter->filter(nullptr, 0.5f));
+    TEST_ASSERT_EQUAL_FLOAT(5.25f, filter->filter(nullptr, 1.5f));
+    TEST_ASSERT_EQUAL_FLOAT(8.75f, filter->filter(nullptr, 2.5f));
+    TEST_ASSERT_EQUAL_FLOAT(12.25f, filter->filter(nullptr, 3.5f));
+    TEST_ASSERT_EQUAL_FLOAT(15.75f, filter->filter(nullptr, 4.5f));
+
+    // test out of range
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, filter->filter(nullptr, -1.0f));
+    TEST_ASSERT_EQUAL_FLOAT(17.5f, filter->filter(nullptr, 6.0f));
+}
+
 int process(void)
 {
     UNITY_BEGIN();
@@ -147,6 +176,7 @@ int process(void)
     RUN_TEST(test_sliding_window_moving_average_filter);
     RUN_TEST(test_exponential_moving_average_filter);
     RUN_TEST(test_center_deadzone_filter);
+    RUN_TEST(test_lookup_table_interpolate_linear_filter);
 
     return UNITY_END();
 }

@@ -66,9 +66,6 @@ void test_remap_simple_float(void)
     TEST_ASSERT_EQUAL_FLOAT(255.0f, remap_simple(1.0f, 1.0f, 255.0f));
 }
 
-// Wtf? https://stackoverflow.com/questions/4295890
-#define COMMAE ,
-
 void test_lookup_table_interpolate_float(void)
 {
     const std::map<float, float> table = {
@@ -78,19 +75,19 @@ void test_lookup_table_interpolate_float(void)
         { 1.0f, 18.0f },
     };
 
-    TEST_ASSERT_EQUAL_FLOAT(13.0f, lookup_table_interpolate<float COMMAE float>(table, 0.0f));
-    TEST_ASSERT_EQUAL_FLOAT(13.6f, lookup_table_interpolate<float COMMAE float>(table, 0.1f));
-    TEST_ASSERT_EQUAL_FLOAT(14.2f, lookup_table_interpolate<float COMMAE float>(table, 0.2f));
-    TEST_ASSERT_EQUAL_FLOAT(14.5f, lookup_table_interpolate<float COMMAE float>(table, 0.25f));
-    TEST_ASSERT_EQUAL_FLOAT(14.8f, lookup_table_interpolate<float COMMAE float>(table, 0.3f));
-    TEST_ASSERT_EQUAL_FLOAT(15.4f, lookup_table_interpolate<float COMMAE float>(table, 0.4f));
-    TEST_ASSERT_EQUAL_FLOAT(16.0f, lookup_table_interpolate<float COMMAE float>(table, 0.5f));
-    TEST_ASSERT_EQUAL_FLOAT(16.5f, lookup_table_interpolate<float COMMAE float>(table, 0.55f));
-    TEST_ASSERT_EQUAL_FLOAT(17.0f, lookup_table_interpolate<float COMMAE float>(table, 0.6f));
-    TEST_ASSERT_EQUAL_FLOAT(17.25f, lookup_table_interpolate<float COMMAE float>(table, 0.7f));
-    TEST_ASSERT_EQUAL_FLOAT(17.5f, lookup_table_interpolate<float COMMAE float>(table, 0.8f));
-    TEST_ASSERT_EQUAL_FLOAT(17.75f, lookup_table_interpolate<float COMMAE float>(table, 0.9f));
-    TEST_ASSERT_EQUAL_FLOAT(18.0f, lookup_table_interpolate<float COMMAE float>(table, 1.0f));
+    TEST_ASSERT_EQUAL_FLOAT(13.0f, lookup_table_interpolate_linear(table, 0.0f));
+    TEST_ASSERT_EQUAL_FLOAT(13.6f, lookup_table_interpolate_linear(table, 0.1f));
+    TEST_ASSERT_EQUAL_FLOAT(14.2f, lookup_table_interpolate_linear(table, 0.2f));
+    TEST_ASSERT_EQUAL_FLOAT(14.5f, lookup_table_interpolate_linear(table, 0.25f));
+    TEST_ASSERT_EQUAL_FLOAT(14.8f, lookup_table_interpolate_linear(table, 0.3f));
+    TEST_ASSERT_EQUAL_FLOAT(15.4f, lookup_table_interpolate_linear(table, 0.4f));
+    TEST_ASSERT_EQUAL_FLOAT(16.0f, lookup_table_interpolate_linear(table, 0.5f));
+    TEST_ASSERT_EQUAL_FLOAT(16.5f, lookup_table_interpolate_linear(table, 0.55f));
+    TEST_ASSERT_EQUAL_FLOAT(17.0f, lookup_table_interpolate_linear(table, 0.6f));
+    TEST_ASSERT_EQUAL_FLOAT(17.25f, lookup_table_interpolate_linear(table, 0.7f));
+    TEST_ASSERT_EQUAL_FLOAT(17.5f, lookup_table_interpolate_linear(table, 0.8f));
+    TEST_ASSERT_EQUAL_FLOAT(17.75f, lookup_table_interpolate_linear(table, 0.9f));
+    TEST_ASSERT_EQUAL_FLOAT(18.0f, lookup_table_interpolate_linear(table, 1.0f));
 }
 
 int process(void)

@@ -265,7 +265,7 @@ namespace SenseShift::Input::Filter {
     /// Usually used to filter out noise in the joystick.
     class CenterDeadzoneFilter : public IFilter<float> {
       public:
-        explicit CenterDeadzoneFilter(float deadzone, float center = 0.5f) : deadzone_(deadzone), center_(center){};
+        explicit CenterDeadzoneFilter(float deadzone, float center = 0.5F) : deadzone_(deadzone), center_(center){};
 
         auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
         {
@@ -284,9 +284,9 @@ namespace SenseShift::Input::Filter {
     ///
     /// \tparam Tp Type of the lookup table values.
     /// \tparam Container Type of the lookup table container.
-    template<typename Tp, typename Container>
+    template<typename Container, typename Tp = typename Container::mapped_type>
     class LookupTableInterpolationFilter : public IFilter<Tp> {
-        static_assert(std::is_same_v<typename Container::value_type, Tp>);
+        static_assert(std::is_same_v<typename Container::key_type, Tp>);
         static_assert(std::is_arithmetic_v<Tp>, "LookupTableInterpolationFilter only supports arithmetic types");
 
       public:
@@ -294,7 +294,7 @@ namespace SenseShift::Input::Filter {
 
         auto filter(ISimpleSensor<float>* /*sensor*/, Tp value) -> Tp override
         {
-            return SenseShift::lookup_table_interpolate<Tp, Container>(this->lookup_table_, value);
+            return SenseShift::lookup_table_interpolate_linear<Container, Tp, Tp>(this->lookup_table_, value);
         }
 
       private:
