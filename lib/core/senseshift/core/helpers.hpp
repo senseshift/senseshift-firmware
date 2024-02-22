@@ -65,21 +65,25 @@ namespace SenseShift {
 
     /// Lookup a value in a table and interpolate between the two closest values.
     ///
-    /// \tparam Tp
-    /// \tparam To
-    /// \tparam Container
+    /// \tparam Container The type of the lookup table.
+    /// \tparam Tp The type of the lookup table keys.
+    /// \tparam To The type of the lookup table values.
     ///
     /// \param lookup_table Lookup table to use in the format of std::map<Tp, Tp> in descending order.
     /// \param value
     ///
     /// \return
-    template<typename Tp, typename To, typename Container>
-    auto lookup_table_interpolate(Container const& lookup_table, Tp value) -> To
+    template<
+      typename Container,
+      typename Tp = typename Container::key_type,
+      typename To = typename Container::mapped_type>
+    [[nodiscard]] constexpr auto lookup_table_interpolate_linear(Container const& lookup_table, Tp value) -> To
     {
-        static_assert(std::is_same_v<typename Container::key_type, Tp>);
-        static_assert(std::is_same_v<typename Container::mapped_type, To>);
-        static_assert(std::is_arithmetic_v<Tp>, "lookup_table_interpolate only supports arithmetic types");
-        static_assert(std::is_arithmetic_v<To>, "lookup_table_interpolate only supports arithmetic types");
+        static_assert(std::is_same_v<typename Container::key_type, Tp> && std::is_same_v<typename Container::mapped_type, To>);
+        static_assert(
+          std::is_arithmetic_v<Tp> && std::is_arithmetic_v<To>,
+          "lookup_table_interpolate_linear only supports arithmetic types"
+        );
 
         // If the value is outside the range of the lookup table, return the closest value
         if (value <= lookup_table.begin()->first) {
@@ -111,7 +115,7 @@ namespace SenseShift {
         using CallbackType = std::function<void(Ts...)>;
 
         /// Add a callback to the list.
-        void add(std::function<void(Ts...)>&& callback) { this->callbacks_.push_back(std::move(callback)); }
+        void add(CallbackType&& callback) { this->callbacks_.push_back(std::move(callback)); }
 
         /// Call all callbacks in this manager.
         void call(Ts... args)
@@ -126,6 +130,6 @@ namespace SenseShift {
         void operator()(Ts... args) { call(args...); }
 
       private:
-        std::vector<std::function<void(Ts...)>> callbacks_;
+        std::vector<CallbackType> callbacks_;
     };
 } // namespace SenseShift
