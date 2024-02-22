@@ -8,12 +8,12 @@ getBhapticsName() {
     echo "::debug::Getting bHaptics name for $target"
     echo "::debug::Flags are $flags"
 
-    if [[ $flags =~ SENSESHIFT_BLE_USE_NIMBLE=true ]]; then
+    if [[ $flags =~ SS_BLE_USE_NIMBLE=true ]]; then
         echo "::debug::Nimble is enabled, appending +nimble to the target"
         target="$target+nimble"
     fi
 
-    if [[ $flags =~ SENSESHIFT_BATTERY_ENABLED=true ]]; then
+    if [[ $flags =~ SS_BATTERY_ENABLED=true ]]; then
         echo "::debug::Battery is enabled, appending +battery to the target"
         target="$target+battery"
     fi

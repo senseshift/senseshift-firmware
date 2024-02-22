@@ -31,7 +31,7 @@ jobs:
 
         # Enabling all flags to test build for every feature
         battery_flag:
-          - SENSESHIFT_BATTERY_ENABLED=true
+          - SS_BATTERY_ENABLED=true
 
     steps:
       - name: Checkout repository

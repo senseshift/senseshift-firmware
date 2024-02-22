@@ -33,9 +33,9 @@ jobs:
           - bhaptics_tactglove_left
           - bhaptics_tactglove_right
         battery_flag:
-          - SENSESHIFT_BATTERY_ENABLED=true
+          - SS_BATTERY_ENABLED=true
         nimble_flag:
-          - SENSESHIFT_BLE_USE_NIMBLE=true
+          - SS_BLE_USE_NIMBLE=true
 
     steps:
       - uses: actions/checkout@v3
