@@ -9,40 +9,10 @@
 
 namespace og {
 
-#ifdef OG_ENCODE_FASTER
-    inline auto ifloor(float d) -> int
-    {
-        union Cast {
-            double d;
-            long l;
-        };
-        volatile Cast c;
-        c.d = d + 6755399441055743.5;
-        return c.l;
-    }
-#elifdef OG_ENCODE_FAST
-    /// Source: https://stackoverflow.com/questions/429632/429812#429812
-    inline int float2int(double d)
-    {
-        union Cast {
-            double d;
-            long l;
-        };
-        volatile Cast c;
-        c.d = d + 6755399441055744;
-        return c.l;
-    }
-
     inline auto ifloor(float x) -> int
     {
-        return float2int(x) - (x < float2int(x));
+        return static_cast<int>(x);
     }
-#else
-    inline auto ifloor(float x) -> int
-    {
-        return static_cast<int>(std::floor(x));
-    }
-#endif
 
     auto AlphaEncoder::encode_input(const InputData& input, char* buffer, size_t length) const -> size_t
     {
