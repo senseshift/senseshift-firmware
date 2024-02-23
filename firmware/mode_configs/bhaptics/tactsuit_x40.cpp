@@ -102,7 +102,7 @@ void setupMode()
       new MultiplyFilter(3.3F),                      // Convert to raw pin voltage
       new VoltageDividerFilter(27000.0F, 100000.0F), // Convert to voltage divider voltage
     });
-    auto* batteryTask = new ::SenseShift::FreeRTOS::ComponentUpdateTask<SimpleSensorDecorator<float>>(
+    auto* batteryTask = new ::SenseShift::FreeRTOS::ComponentUpdateTask(
       batteryVoltageSensor,
       SS_BATTERY_SAMPLE_RATE,
       { "ADC Battery", 4096, SS_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
