@@ -70,10 +70,7 @@ void setupMode()
     );
     batteryTask->begin();
 
-    auto* batterySensor = new LookupTableInterpolateBatterySensor<const frozen::map<float, float, 21>>(
-      batteryVoltageSensor,
-      &VoltageMap::LiPO_1S_42
-    );
+    auto* batterySensor = new LookupTableInterpolateBatterySensor(batteryVoltageSensor, &VoltageMap::LiPO_1S_42);
     batterySensor->addValueCallback([](BatteryState value) -> void {
         app->postEvent(new BatteryLevelEvent(value));
     });
