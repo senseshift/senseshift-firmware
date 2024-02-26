@@ -13,7 +13,6 @@
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 
-using namespace OH;
 using namespace BH;
 
 extern SenseShift App;
@@ -22,15 +21,12 @@ SenseShift* app = &App;
 BluetoothSerial SerialBT;
 BluetoothSerial* btSerial = &SerialBT;
 
-static const size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
-static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
+static constexpr size_t bhLayoutSize = BH_LAYOUT_TACTAL_SIZE;
+static const ::SenseShift::Body::Haptics::Position* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTAL;
 
 class BLECallbacks : public BHBLEConnectionCallbacks {
   public:
-    void postInit()
-    {
-        btSerial->begin("SenseShift Serial");
-    }
+    void postInit() { btSerial->begin("SenseShift Serial"); }
 };
 
 void setupMode()
@@ -38,7 +34,7 @@ void setupMode()
     // Configure PWM pins to their positions on the face
     auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25), new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      {new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25), new ActuatorPWM(26), new ActuatorPWM(27), new ActuatorPWM(14)},
       // clang-format on
     });
 

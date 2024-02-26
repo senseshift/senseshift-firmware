@@ -59,7 +59,17 @@
         "xtree": "cpp",
         "xhash": "cpp",
         "xlocnum": "cpp",
-        "ledc.h": "c"
+        "ledc.h": "c",
+        "variant": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "ratio": "cpp",
+        "regex": "cpp",
+        "future": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
     },
     "files.eol": "\n",
     "files.insertFinalNewline": true,

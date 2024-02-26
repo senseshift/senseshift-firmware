@@ -2,33 +2,25 @@
 
 #include "config/all.h"
 
-#include <abstract_connection.hpp>
-#include <events.hpp>
-#include <haptic_body.hpp>
-
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <abstract_battery.hpp>
-#endif
+#include "senseshift/battery/input/battery_sensor.hpp"
+#include <senseshift/body/haptics/body.hpp>
+#include <senseshift/events.hpp>
 
 #include <vector>
 
-class SenseShift final : public OH::IEventDispatcher {
-  private:
-    std::vector<const OH::IEventListener*> eventListeners{};
-    OH::HapticBody* pHapticBody;
+namespace SenseShift {
+    class Application final : public IEventDispatcher {
+      public:
+        Application();
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    OH::BatterySensor* battery;
-#endif
+        [[nodiscard]] auto getVibroBody() const -> Body::Haptics::FloatBody* { return this->vibro_body_; };
 
-  public:
-    SenseShift();
+        void postEvent(const IEvent* event) override;
+        void addEventListener(const IEventListener* listener) override;
 
-    OH::HapticBody* getHapticBody()
-    {
-        return this->pHapticBody;
+      private:
+        std::vector<const IEventListener*> event_listeners_{};
+        Body::Haptics::FloatBody* vibro_body_;
+        Battery::Input::IBatterySensor* battery_ = nullptr;
     };
-
-    void postEvent(const OH::IEvent* event) override;
-    void addEventListener(const OH::IEventListener* listener) override;
-};
+} // namespace SenseShift

@@ -33,12 +33,14 @@ jobs:
           - bhaptics_tactglove_left
           - bhaptics_tactglove_right
         battery_flag:
-          - BATTERY_ENABLED=true
+          - SS_BATTERY_ENABLED=true
         nimble_flag:
-          - BLUETOOTH_USE_NIMBLE=true
+          - SS_BLE_USE_NIMBLE=true
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name
@@ -130,10 +132,12 @@ jobs:
           - indexer-cs
           - indexer-csf
         comm_flag:
-          - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_SERIAL
-          - OPENGLOVES_COMMUNCATION=OPENGLOVES_COMM_BTSERIAL
+          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
+          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       - name: Get firmware name
         id: firmware_name

@@ -4,63 +4,79 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "senseshift.h"
+#include <senseshift.h>
 
-#include <bh_utils.hpp>
-#include <connection_bhble.hpp>
-#include <output_writers/pwm.hpp>
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/output/ledc.hpp>
+#include <senseshift/battery/input/battery_sensor.hpp>
+#include <senseshift/bh/ble/connection.hpp>
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
+#include <senseshift/freertos/task.hpp>
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <battery/adc_naive.hpp>
-#endif
+using namespace SenseShift;
+using namespace SenseShift::Input;
+using namespace SenseShift::Input::Filter;
+using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::Arduino::Input;
+using namespace SenseShift::Battery;
+using namespace SenseShift::Battery::Input;
+using namespace SenseShift::BH;
+using namespace SenseShift::Body::Haptics;
 
-using namespace OH;
-using namespace BH;
+extern Application App;
+Application* app = &App;
 
-extern SenseShift App;
-SenseShift* app = &App;
-
-static const size_t bhLayoutSize = BH_LAYOUT_TACTOSY2_SIZE;
-static const oh_output_point_t* bhLayout[bhLayoutSize] = BH_LAYOUT_TACTOSY2;
+static const std::array<Position, BH_LAYOUT_TACTOSY2_SIZE> bhLayout = { BH_LAYOUT_TACTOSY2 };
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the forearm
-    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      {new PWMOutputWriter(32), new PWMOutputWriter(33), new PWMOutputWriter(25)},
-      {new PWMOutputWriter(26), new PWMOutputWriter(27), new PWMOutputWriter(14)},
+      { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25) },
+      { new LedcOutput(26), new LedcOutput(27), new LedcOutput(14) },
       // clang-format on
     });
 
-    auto* forearm = new HapticPlane_Closest(forearmOutputs);
-    app->getHapticBody()->addComponent(OUTPUT_PATH_ACCESSORY, forearm);
+    app->getVibroBody()->addTarget(Target::Accessory, new FloatPlane_Closest(forearmOutputs));
 
-    app->getHapticBody()->setup();
+    app->getVibroBody()->setup();
 
-    uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
-    ConnectionBHBLE_Config config = {
+    auto* bhBleConnection = new BLE::Connection(
+      {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
-        .serialNumber = serialNumber,
-    };
-    auto* bhBleConnection = new ConnectionBHBLE(
-      config,
+        .serialNumber = BH_SERIAL_NUMBER,
+      },
       [](std::string& value) -> void {
-          plainOutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, OUTPUT_PATH_ACCESSORY);
+          Decoder::applyPlain(app->getVibroBody(), value, bhLayout, Effect::Vibro, Target::Accessory);
       },
       app
     );
     bhBleConnection->begin();
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    auto* battery = new BatterySensor(
-      new ADCNaiveBattery(36),
-      &App,
-      { .sampleRate = BATTERY_SAMPLE_RATE },
-      { "ADC Battery", 4096, BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
+#if defined(SS_BATTERY_ENABLED) && SS_BATTERY_ENABLED == true
+    auto* batteryVoltageSensor = new SimpleSensorDecorator(new AnalogSimpleSensor(36));
+    batteryVoltageSensor->addFilters({
+      new MultiplyFilter(3.3F),                      // Convert to raw pin voltage
+      new VoltageDividerFilter(27000.0F, 100000.0F), // Convert to voltage divider voltage
+    });
+    auto* batteryTask = new ::SenseShift::FreeRTOS::ComponentUpdateTask<SimpleSensorDecorator<float>>(
+      batteryVoltageSensor,
+      SS_BATTERY_SAMPLE_RATE,
+      { "ADC Battery", 4096, SS_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
-    battery->begin();
+    batteryTask->begin();
+
+    auto* batterySensor = new LookupTableInterpolateBatterySensor<const frozen::map<float, float, 21>>(
+      batteryVoltageSensor,
+      &VoltageMap::LiPO_1S_42
+    );
+    batterySensor->addValueCallback([](BatteryState value) -> void {
+        app->postEvent(new BatteryLevelEvent(value));
+    });
+    batterySensor->init();
 #endif
 }
 

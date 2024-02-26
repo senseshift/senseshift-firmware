@@ -4,81 +4,94 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "senseshift.h"
+#include <senseshift.h>
 
-#include <bh_utils.hpp>
-#include <connection_bhble.hpp>
-#include <output_writers/pca9685.hpp>
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/output/pca9685.hpp>
+#include <senseshift/battery/input/battery_sensor.hpp>
+#include <senseshift/bh/ble/connection.hpp>
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
+#include <senseshift/freertos/task.hpp>
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-#include <battery/adc_naive.hpp>
-#endif
+using namespace SenseShift;
+using namespace SenseShift::Input;
+using namespace SenseShift::Input::Filter;
+using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::Arduino::Input;
+using namespace SenseShift::Battery;
+using namespace SenseShift::Battery::Input;
+using namespace SenseShift::BH;
+using namespace SenseShift::Body::Haptics;
 
-using namespace OH;
-using namespace BH;
+extern Application App;
+Application* app = &App;
 
-extern SenseShift App;
-SenseShift* app = &App;
-
-static const oh_output_point_t* bhLayout[] = BH_LAYOUT_TACTSUITX16;
-static const size_t bhLayoutSize = BH_LAYOUT_TACTSUITX16_SIZE;
+static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX16_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX16 };
 
 // Ouput indices, responsible for x40 => x16 grouping
-static const size_t layoutGroupsSize = BH_LAYOUT_TACTSUITX16_GROUPS_SIZE;
-static const uint8_t layoutGroups[layoutGroupsSize] = BH_LAYOUT_TACTSUITX16_GROUPS;
+static const std::array<std::uint8_t, BH_LAYOUT_TACTSUITX16_GROUPS_SIZE> layoutGroups = BH_LAYOUT_TACTSUITX16_GROUPS;
 
 void setupMode()
 {
     // Configure the PCA9685
-    auto pwm = new Adafruit_PWMServoDriver(0x40);
+    auto* pwm = new Adafruit_PWMServoDriver(0x40);
     pwm->begin();
     pwm->setPWMFreq(PWM_FREQUENCY);
 
     // Assign the pins on the configured PCA9685 to positions on the vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      {new PCA9685OutputWriter(pwm, 0), new PCA9685OutputWriter(pwm, 1), new PCA9685OutputWriter(pwm, 2), new PCA9685OutputWriter(pwm, 3)},
-      {new PCA9685OutputWriter(pwm, 4), new PCA9685OutputWriter(pwm, 5), new PCA9685OutputWriter(pwm, 6), new PCA9685OutputWriter(pwm, 7)},
+      { new PCA9685Output(pwm, 0), new PCA9685Output(pwm, 1), new PCA9685Output(pwm, 2), new PCA9685Output(pwm, 3) },
+      { new PCA9685Output(pwm, 4), new PCA9685Output(pwm, 5), new PCA9685Output(pwm, 6), new PCA9685Output(pwm, 7) },
       // clang-format on
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
       // clang-format off
-      {new PCA9685OutputWriter(pwm, 8),  new PCA9685OutputWriter(pwm, 9),  new PCA9685OutputWriter(pwm, 10), new PCA9685OutputWriter(pwm, 11)},
-      {new PCA9685OutputWriter(pwm, 12), new PCA9685OutputWriter(pwm, 13), new PCA9685OutputWriter(pwm, 14), new PCA9685OutputWriter(pwm, 15)},
+      { new PCA9685Output(pwm, 8),  new PCA9685Output(pwm, 9),  new PCA9685Output(pwm, 10), new PCA9685Output(pwm, 11) },
+      { new PCA9685Output(pwm, 12), new PCA9685Output(pwm, 13), new PCA9685Output(pwm, 14), new PCA9685Output(pwm, 15) },
       // clang-format on
     });
 
-    auto* chestFront = new HapticPlane_Closest(frontOutputs);
-    auto* chestBack = new HapticPlane_Closest(backOutputs);
+    app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane_Closest(frontOutputs));
+    app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane_Closest(backOutputs));
 
-    app->getHapticBody()->addComponent(OUTPUT_PATH_CHEST_FRONT, chestFront);
-    app->getHapticBody()->addComponent(OUTPUT_PATH_CHEST_BACK, chestBack);
+    app->getVibroBody()->setup();
 
-    app->getHapticBody()->setup();
-
-    uint8_t serialNumber[BH_SERIAL_NUMBER_LENGTH] = BH_SERIAL_NUMBER;
-    ConnectionBHBLE_Config config = {
+    auto* bhBleConnection = new BLE::Connection(
+      {
         .deviceName = BLUETOOTH_NAME,
         .appearance = BH_BLE_APPEARANCE,
-        .serialNumber = serialNumber,
-    };
-    auto* bhBleConnection = new ConnectionBHBLE(
-      config,
+        .serialNumber = BH_SERIAL_NUMBER,
+      },
       [](std::string& value) -> void {
-          vestX16OutputTransformer(app->getHapticBody(), value, bhLayout, bhLayoutSize, layoutGroups, layoutGroupsSize);
+          Decoder::applyVestGrouped(app->getVibroBody(), value, bhLayout, layoutGroups);
       },
       app
     );
     bhBleConnection->begin();
 
-#if defined(BATTERY_ENABLED) && BATTERY_ENABLED == true
-    auto* battery = new BatterySensor(
-      new ADCNaiveBattery(36),
-      &App,
-      { .sampleRate = BATTERY_SAMPLE_RATE },
-      { "ADC Battery", 4096, BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
+#if defined(SS_BATTERY_ENABLED) && SS_BATTERY_ENABLED == true
+    auto* batteryVoltageSensor = new SimpleSensorDecorator(new AnalogSimpleSensor(36));
+    batteryVoltageSensor->addFilters({
+      new MultiplyFilter(3.3F),                      // Convert to raw pin voltage
+      new VoltageDividerFilter(27000.0F, 100000.0F), // Convert to voltage divider voltage
+    });
+    auto* batteryTask = new ::SenseShift::FreeRTOS::ComponentUpdateTask<SimpleSensorDecorator<float>>(
+      batteryVoltageSensor,
+      SS_BATTERY_SAMPLE_RATE,
+      { "ADC Battery", 4096, SS_BATTERY_TASK_PRIORITY, tskNO_AFFINITY }
     );
-    battery->begin();
+    batteryTask->begin();
+
+    auto* batterySensor = new LookupTableInterpolateBatterySensor<const frozen::map<float, float, 21>>(
+      batteryVoltageSensor,
+      &VoltageMap::LiPO_1S_42
+    );
+    batterySensor->addValueCallback([](BatteryState value) -> void {
+        app->postEvent(new BatteryLevelEvent(value));
+    });
+    batterySensor->init();
 #endif
 }
 

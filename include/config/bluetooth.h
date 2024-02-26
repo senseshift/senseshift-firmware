@@ -11,6 +11,6 @@
     }
 #endif
 
-#ifndef BLUETOOTH_USE_NIMBLE
-#define BLUETOOTH_USE_NIMBLE false
+#ifndef SS_BLE_USE_NIMBLE
+#define SS_BLE_USE_NIMBLE false
 #endif
