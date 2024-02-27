@@ -11,7 +11,7 @@ rules:
   - "There should be no unused imports in the code."
 
 # This is the branch that Sweep will develop from and make pull requests to. Most people use 'main' or 'master' but some users also use 'dev' or 'staging'.
-branch: 'master'
+branch: 'develop'
 
 # By default Sweep will read the logs and outputs from your existing Github Actions. To disable this, set this to false.
 gha_enabled: True
@@ -31,6 +31,8 @@ blocked_dirs: []
 
 docs:
   - PlatformIO: ["https://docs.platformio.org/en/latest/", "We use PlatformIO to build and upload firmware to the device"]
+  - Arduino Framework: ["https://www.arduino.cc/reference/en/", "We use Arduino for HAL"]
+  - ESP-IDF: ["https://docs.espressif.com/projects/esp-idf/en/stable/esp32/", "We use ESP-IDF for concrete ESP components"]
 
 # Sandbox executes commands in a sandboxed environment to validate code changes after every edit to guarantee pristine code. For more details, see the [Sandbox](./sandbox) page.
 sandbox:
