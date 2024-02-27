@@ -11,6 +11,56 @@
 #include <senseshift/input/sensor.hpp>
 #include <senseshift/output/output.hpp>
 
+#define SS_OG_COLLECT_DATA(FN)                                     \
+    og::InputPeripheralData data{};                                \
+                                                                   \
+    const auto& curls = this->curl.fingers;                        \
+    const auto& splays = this->splay.fingers;                      \
+    for (auto i = 0; i < curls.size(); i++) {                      \
+        const auto& finger_curl = curls[i].curl;                   \
+        for (auto j = 0; j < finger_curl.size(); j++) {            \
+            auto* joint_sensor = finger_curl[j];                   \
+            if (joint_sensor != nullptr) {                         \
+                data.curl.fingers[i].curl[j] = joint_sensor->FN(); \
+            }                                                      \
+        }                                                          \
+                                                                   \
+        auto* finger_splay = splays[i];                            \
+        if (finger_splay != nullptr) {                             \
+            data.splay.fingers[i] = finger_splay->FN();            \
+        }                                                          \
+    }                                                              \
+                                                                   \
+    if (this->joystick.x != nullptr) {                             \
+        data.joystick.x = this->joystick.x->FN();                  \
+    }                                                              \
+    if (this->joystick.y != nullptr) {                             \
+        data.joystick.y = this->joystick.y->FN();                  \
+    }                                                              \
+    if (this->joystick.press != nullptr) {                         \
+        data.joystick.press = this->joystick.press->FN();          \
+    }                                                              \
+                                                                   \
+    for (auto i = 0; i < this->buttons.size(); i++) {              \
+        auto* button = this->buttons[i].press;                     \
+        if (button != nullptr) {                                   \
+            data.buttons[i].press = button->FN();                  \
+        }                                                          \
+    }                                                              \
+                                                                   \
+    for (auto i = 0; i < this->analog_buttons.size(); i++) {       \
+        auto* button = this->analog_buttons[i].press;              \
+        if (button != nullptr) {                                   \
+            data.analog_buttons[i].press = button->FN();           \
+        }                                                          \
+        auto* value = this->analog_buttons[i].value;               \
+        if (value != nullptr) {                                    \
+            data.analog_buttons[i].value = value->FN();            \
+        }                                                          \
+    }                                                              \
+                                                                   \
+    return data;
+
 namespace SenseShift::OpenGloves {
     class ITransport : public IInitializable {
       public:
@@ -85,57 +135,9 @@ namespace SenseShift::OpenGloves {
             }
         }
 
-        auto collectData() -> og::InputPeripheralData
-        {
-            og::InputPeripheralData data{};
+        [[nodiscard]] auto collectData() -> og::InputPeripheralData { SS_OG_COLLECT_DATA(getValue); }
 
-            const auto& curls = this->curl.fingers;
-            const auto& splays = this->splay.fingers;
-            for (auto i = 0; i < curls.size(); i++) {
-                const auto& finger_curl = curls[i].curl;
-                for (auto j = 0; j < finger_curl.size(); j++) {
-                    auto* joint_sensor = finger_curl[j];
-                    if (joint_sensor != nullptr) {
-                        data.curl.fingers[i].curl[j] = joint_sensor->getValue();
-                    }
-                }
-
-                auto* finger_splay = splays[i];
-                if (finger_splay != nullptr) {
-                    data.splay.fingers[i] = finger_splay->getValue();
-                }
-            }
-
-            if (this->joystick.x != nullptr) {
-                data.joystick.x = this->joystick.x->getValue();
-            }
-            if (this->joystick.y != nullptr) {
-                data.joystick.y = this->joystick.y->getValue();
-            }
-            if (this->joystick.press != nullptr) {
-                data.joystick.press = this->joystick.press->getValue();
-            }
-
-            for (auto i = 0; i < this->buttons.size(); i++) {
-                auto* button = this->buttons[i].press;
-                if (button != nullptr) {
-                    data.buttons[i].press = button->getValue();
-                }
-            }
-
-            for (auto i = 0; i < this->analog_buttons.size(); i++) {
-                auto* button = this->analog_buttons[i].press;
-                if (button != nullptr) {
-                    data.analog_buttons[i].press = button->getValue();
-                }
-                auto* value = this->analog_buttons[i].value;
-                if (value != nullptr) {
-                    data.analog_buttons[i].value = value->getValue();
-                }
-            }
-
-            return data;
-        }
+        [[nodiscard]] auto collectRawData() -> og::InputPeripheralData { SS_OG_COLLECT_DATA(getRawValue); }
 
         void reselCalibration() override
         {

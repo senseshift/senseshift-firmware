@@ -5,17 +5,11 @@
 #include <array>
 #include <cstddef>
 #include <optional>
-
-#include "senseshift/arduino/input/sensor/analog.hpp"
-#include "senseshift/arduino/input/sensor/digital.hpp"
-#include "senseshift/core/component.hpp"
-#include "senseshift/freertos/task.hpp"
-#include "senseshift/input/sensor.hpp"
-#include "senseshift/opengloves/opengloves.hpp"
-#include "senseshift/utility.hpp"
-#include <opengloves/opengloves.hpp>
 #include <utility>
-#include <vector>
+
+#include "opengloves/opengloves.hpp"
+#include "senseshift/opengloves/opengloves.hpp"
+#include <senseshift/core/component.hpp>
 
 namespace SenseShift::OpenGloves {
     class OpenGlovesTrackingComponent : public SenseShift::Component {
