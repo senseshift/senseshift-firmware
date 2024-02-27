@@ -137,7 +137,7 @@
     auto NAME##_sensor =                                                                                               \
       new ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::AnalogSimpleSensor<INVERT>(PIN) \
       );                                                                                                               \
-    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.8F),          \
+    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.7F),          \
                                 new ::SenseShift::Input::Filter::CenterDeadzoneFilter(DEADZONE) });
 
 #pragma endregion
@@ -367,14 +367,14 @@ namespace SenseShift::OpenGloves::AutoConfig {
         input_sensors.button_calibrate.press = button_calibrate;
 #endif
 
-#if GESTURE_TRIGGER_ENABLED
+#if GESTURE_TRIGGER_ENABLED && FINGER_INDEX_ENABLED
         auto* trigger = new Body::Hands::Input::TriggerGesture(index_curl_sensor, GESTURE_TRIGGER_THRESHOLD);
         input_sensors.trigger.press = trigger;
 #elif BUTTON_TRIGGER_ENABLED
         auto trigger = new BUTTON_CLASS(PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT);
 #endif
 
-#if GESTURE_GRAB_ENABLED
+#if GESTURE_GRAB_ENABLED && FINGER_INDEX_ENABLED && FINGER_MIDDLE_ENABLED && FINGER_RING_ENABLED && FINGER_PINKY_ENABLED
         auto* grab = new Body::Hands::Input::GrabGesture(
           Body::Hands::Input::GrabGesture::Fingers{ .index = index_curl_sensor,
                                                     .middle = middle_curl_sensor,
@@ -387,7 +387,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         auto* grab = new BUTTON_CLASS(PIN_BUTTON_GRAB, BUTTON_GRAB_INVERT);
 #endif
 
-#if GESTURE_PINCH_ENABLED
+#if GESTURE_PINCH_ENABLED && FINGER_THUMB_ENABLED && FINGER_INDEX_ENABLED
         auto* pinch = new Body::Hands::Input::PinchGesture(
           Body::Hands::Input::PinchGesture::Fingers{ .thumb = thumb_curl_sensor, .index = index_curl_sensor },
           GESTURE_PINCH_THRESHOLD

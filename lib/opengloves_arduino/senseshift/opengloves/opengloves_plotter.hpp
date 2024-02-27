@@ -31,7 +31,7 @@ namespace SenseShift::OpenGloves {
         }
 
       private:
-        Print* output_;
-        char* prefix_;
+        Print* const output_;
+        char* const prefix_;
     };
 } // namespace SenseShift::OpenGloves
