@@ -267,9 +267,9 @@ namespace SenseShift::Input::Filter {
       public:
         explicit CenterDeadzoneFilter(float deadzone, float center = 0.5F) : deadzone_(deadzone), center_(center){};
 
-        auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
+        inline auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
         {
-            float const deviation = std::abs(value - this->center_);
+            const auto deviation = std::abs(value - this->center_);
             return deviation < deadzone_ ? this->center_ : value;
         }
 

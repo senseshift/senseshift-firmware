@@ -137,21 +137,60 @@
     auto NAME##_sensor =                                                                                               \
       new ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::AnalogSimpleSensor<INVERT>(PIN) \
       );                                                                                                               \
-    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.8F),          \
+    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.7F),          \
                                 new ::SenseShift::Input::Filter::CenterDeadzoneFilter(DEADZONE) });
 
 #pragma endregion
 
 #pragma region Buttons
 
-#define BUTTON_A_ENABLED (defined(PIN_BUTTON_A) && (PIN_BUTTON_A != -1))
-#define BUTTON_B_ENABLED (defined(PIN_BUTTON_B) && (PIN_BUTTON_B != -1))
-#define BUTTON_MENU_ENABLED (defined(PIN_BUTTON_MENU) && (PIN_BUTTON_MENU != -1))
-#define BUTTON_JOYSTICK_ENABLED (JOYSTICK_ENABLED && defined(PIN_BUTTON_JOYSTICK) && (PIN_BUTTON_JOYSTICK != -1))
-#define BUTTON_CALIBRATE_ENABLED (defined(PIN_BUTTON_CALIBRATE) && (PIN_BUTTON_CALIBRATE != -1))
-#define BUTTON_TRIGGER_ENABLED (!GESTURE_TRIGGER_ENABLED && defined(PIN_BUTTON_TRIGGER) && (PIN_BUTTON_TRIGGER != -1))
-#define BUTTON_GRAB_ENABLED (!GESTURE_GRAB_ENABLED && defined(PIN_BUTTON_GRAB) && (PIN_BUTTON_GRAB != -1))
-#define BUTTON_PINCH_ENABLED (!GESTURE_PINCH_ENABLED && defined(PIN_BUTTON_PINCH) && (PIN_BUTTON_PINCH != -1))
+#ifdef PIN_BUTTON_A
+#define BUTTON_A_ENABLED (PIN_BUTTON_A != -1)
+#else
+#define BUTTON_A_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_B
+#define BUTTON_B_ENABLED (PIN_BUTTON_B != -1)
+#else
+#define BUTTON_B_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_MENU
+#define BUTTON_MENU_ENABLED (PIN_BUTTON_MENU != -1)
+#else
+#define BUTTON_MENU_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_JOYSTICK
+#define BUTTON_JOYSTICK_ENABLED (PIN_BUTTON_JOYSTICK != -1)
+#else
+#define BUTTON_JOYSTICK_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_CALIBRATE
+#define BUTTON_CALIBRATE_ENABLED (PIN_BUTTON_CALIBRATE != -1)
+#else
+#define BUTTON_CALIBRATE_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_TRIGGER
+#define BUTTON_TRIGGER_ENABLED (PIN_BUTTON_TRIGGER != -1)
+#else
+#define BUTTON_TRIGGER_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_GRAB
+#define BUTTON_GRAB_ENABLED (PIN_BUTTON_GRAB != -1)
+#else
+#define BUTTON_GRAB_ENABLED false
+#endif
+
+#ifdef PIN_BUTTON_PINCH
+#define BUTTON_PINCH_ENABLED (PIN_BUTTON_PINCH != -1)
+#else
+#define BUTTON_PINCH_ENABLED false
+#endif
 
 #define BUTTON_CLASS(PIN, INVERT) \
     ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::DigitalSimpleSensor<INVERT>(PIN));
@@ -174,11 +213,35 @@
 
 #pragma endregion
 
-#define FFB_THUMB_ENABLED (defined(PIN_FFB_THUMB) && (PIN_FFB_THUMB != -1))
-#define FFB_INDEX_ENABLED (defined(PIN_FFB_INDEX) && (PIN_FFB_INDEX != -1))
-#define FFB_MIDDLE_ENABLED (defined(PIN_FFB_MIDDLE) && (PIN_FFB_MIDDLE != -1))
-#define FFB_RING_ENABLED (defined(PIN_FFB_RING) && (PIN_FFB_RING != -1))
-#define FFB_PINKY_ENABLED (defined(PIN_FFB_PINKY) && (PIN_FFB_PINKY != -1))
+#ifdef PIN_FFB_THUMB
+#define FFB_THUMB_ENABLED (PIN_FFB_THUMB != -1)
+#else
+#define FFB_THUMB_ENABLED false
+#endif
+
+#ifdef PIN_FFB_INDEX
+#define FFB_INDEX_ENABLED (PIN_FFB_INDEX != -1)
+#else
+#define FFB_INDEX_ENABLED false
+#endif
+
+#ifdef PIN_FFB_MIDDLE
+#define FFB_MIDDLE_ENABLED (PIN_FFB_MIDDLE != -1)
+#else
+#define FFB_MIDDLE_ENABLED false
+#endif
+
+#ifdef PIN_FFB_RING
+#define FFB_RING_ENABLED (PIN_FFB_RING != -1)
+#else
+#define FFB_RING_ENABLED false
+#endif
+
+#ifdef PIN_FFB_PINKY
+#define FFB_PINKY_ENABLED (PIN_FFB_PINKY != -1)
+#else
+#define FFB_PINKY_ENABLED false
+#endif
 
 #define FFB_ENABLED \
     (FFB_THUMB_ENABLED || FFB_INDEX_ENABLED || FFB_MIDDLE_ENABLED || FFB_RING_ENABLED || FFB_PINKY_ENABLED)
@@ -284,30 +347,34 @@ namespace SenseShift::OpenGloves::AutoConfig {
         auto* button_a = new BUTTON_CLASS(PIN_BUTTON_A, BUTTON_A_INVERT);
         input_sensors.button_a.press = button_a;
 #endif
+
 #if BUTTON_B_ENABLED
         auto* button_b = new BUTTON_CLASS(PIN_BUTTON_B, BUTTON_B_INVERT);
         input_sensors.button_b.press = button_b;
 #endif
+
 #if BUTTON_JOYSTICK_ENABLED
         auto* button_joystick = new BUTTON_CLASS(PIN_BUTTON_JOYSTICK, BUTTON_JOYSTICK_INVERT);
         input_sensors.joystick.press = button_joystick;
 #endif
+
 #if BUTTON_MENU_ENABLED
         auto* button_menu = new BUTTON_CLASS(PIN_BUTTON_MENU, BUTTON_MENU_INVERT);
 #endif
+
 #if BUTTON_CALIBRATE_ENABLED
         auto* button_calibrate = new BUTTON_CLASS(PIN_BUTTON_CALIBRATE, BUTTON_CALIBRATE_INVERT);
         input_sensors.button_calibrate.press = button_calibrate;
 #endif
 
-#if GESTURE_TRIGGER_ENABLED
+#if GESTURE_TRIGGER_ENABLED && FINGER_INDEX_ENABLED
         auto* trigger = new Body::Hands::Input::TriggerGesture(index_curl_sensor, GESTURE_TRIGGER_THRESHOLD);
         input_sensors.trigger.press = trigger;
 #elif BUTTON_TRIGGER_ENABLED
         auto trigger = new BUTTON_CLASS(PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT);
 #endif
 
-#if GESTURE_GRAB_ENABLED
+#if GESTURE_GRAB_ENABLED && FINGER_INDEX_ENABLED && FINGER_MIDDLE_ENABLED && FINGER_RING_ENABLED && FINGER_PINKY_ENABLED
         auto* grab = new Body::Hands::Input::GrabGesture(
           Body::Hands::Input::GrabGesture::Fingers{ .index = index_curl_sensor,
                                                     .middle = middle_curl_sensor,
@@ -320,7 +387,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         auto* grab = new BUTTON_CLASS(PIN_BUTTON_GRAB, BUTTON_GRAB_INVERT);
 #endif
 
-#if GESTURE_PINCH_ENABLED
+#if GESTURE_PINCH_ENABLED && FINGER_THUMB_ENABLED && FINGER_INDEX_ENABLED
         auto* pinch = new Body::Hands::Input::PinchGesture(
           Body::Hands::Input::PinchGesture::Fingers{ .thumb = thumb_curl_sensor, .index = index_curl_sensor },
           GESTURE_PINCH_THRESHOLD
@@ -375,7 +442,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         pSerial->begin(SERIAL_BAUDRATE);
         return new StreamTransport(pSerial);
 #elif (OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BTSERIAL) \
-  || (OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth Serial
+  || (OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BLESERIAL) // Bluetooth
         std::string name;
 #ifdef BTSERIAL_NAME
         name = BTSERIAL_NAME;
