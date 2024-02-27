@@ -9,10 +9,15 @@
 
 #include "opengloves/opengloves.hpp"
 #include "senseshift/opengloves/opengloves.hpp"
+#include <senseshift/opengloves/opengloves_plotter.hpp>
+
 #include <senseshift/core/component.hpp>
 
 namespace SenseShift::OpenGloves {
     class OpenGlovesTrackingComponent : public SenseShift::Component {
+        // Plotter raw_plotter_ = Plotter(&Serial, "Raw");
+        // Plotter calibrated_plotter_ = Plotter(&Serial, "Cal");
+
       public:
         class Config {
             friend class OpenGlovesTrackingComponent;
@@ -60,6 +65,10 @@ namespace SenseShift::OpenGloves {
             // now = micros();
             const auto data = this->input_sensors_.collectData();
             // const auto collectTime = micros() - now;
+
+            // const auto raw_data = this->input_sensors_.collectRawData();
+            // this->raw_plotter_.plot(raw_data);
+            // this->calibrated_plotter_.plot(data);
 
             bool const calibrate_pressed = data.button_calibrate.press;
             if (calibrate_pressed && this->calibration_start_time_ == 0) {
