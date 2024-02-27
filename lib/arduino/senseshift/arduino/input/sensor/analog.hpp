@@ -20,9 +20,11 @@
 namespace SenseShift::Arduino::Input {
     template<bool Invert = false>
     class AnalogSimpleSensor : public ::SenseShift::Input::IFloatSimpleSensor {
-        std::uint8_t pin_;
+        const std::uint8_t pin_;
 
       public:
+        static constexpr float MAX_VALUE = ANALOG_MAX;
+
         explicit AnalogSimpleSensor(const std::uint8_t pin) : pin_(pin) {}
 
         void init() override { pinMode(this->pin_, INPUT); };

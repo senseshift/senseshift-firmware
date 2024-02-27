@@ -1,8 +1,5 @@
 #pragma once
 
-#include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/input/sensor/digital.hpp>
-#include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/body/hands/input/gesture.hpp>
 #include <senseshift/body/hands/input/total_curl.hpp>
 #include <senseshift/input/calibration.hpp>
@@ -12,6 +9,10 @@
 #include <senseshift/opengloves/opengloves.hpp>
 
 #ifdef ARDUINO
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/input/sensor/cd74hc4067.hpp>
+#include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/opengloves/transport/stream.hpp>
 #endif
 
