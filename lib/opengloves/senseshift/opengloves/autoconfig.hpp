@@ -196,8 +196,10 @@
 #define BUTTON_PINCH_ENABLED false
 #endif
 
-#define BUTTON_CLASS(PIN, INVERT) \
-    ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::DigitalSimpleSensor<INVERT>(PIN));
+#define BUTTON_CLASS(PIN, MODE, INVERT)                                                       \
+    ::SenseShift::Input::SimpleSensorDecorator(                                               \
+      new ::SenseShift::Arduino::Input::DigitalSimpleSensor(PIN, MODE, (INVERT ? HIGH : LOW)) \
+    );
 
 #pragma endregion
 
@@ -348,26 +350,26 @@ namespace SenseShift::OpenGloves::AutoConfig {
 #endif
 
 #if BUTTON_A_ENABLED
-        auto* button_a = new BUTTON_CLASS(PIN_BUTTON_A, BUTTON_A_INVERT);
+        auto* button_a = new BUTTON_CLASS(PIN_BUTTON_A, INPUT_PULLUP, BUTTON_A_INVERT);
         input_sensors.button_a.press = button_a;
 #endif
 
 #if BUTTON_B_ENABLED
-        auto* button_b = new BUTTON_CLASS(PIN_BUTTON_B, BUTTON_B_INVERT);
+        auto* button_b = new BUTTON_CLASS(PIN_BUTTON_B, INPUT_PULLUP, BUTTON_B_INVERT);
         input_sensors.button_b.press = button_b;
 #endif
 
 #if BUTTON_JOYSTICK_ENABLED
-        auto* button_joystick = new BUTTON_CLASS(PIN_BUTTON_JOYSTICK, BUTTON_JOYSTICK_INVERT);
+        auto* button_joystick = new BUTTON_CLASS(PIN_BUTTON_JOYSTICK, INPUT_PULLUP, BUTTON_JOYSTICK_INVERT);
         input_sensors.joystick.press = button_joystick;
 #endif
 
 #if BUTTON_MENU_ENABLED
-        auto* button_menu = new BUTTON_CLASS(PIN_BUTTON_MENU, BUTTON_MENU_INVERT);
+        auto* button_menu = new BUTTON_CLASS(PIN_BUTTON_MENU, INPUT_PULLUP, BUTTON_MENU_INVERT);
 #endif
 
 #if BUTTON_CALIBRATE_ENABLED
-        auto* button_calibrate = new BUTTON_CLASS(PIN_BUTTON_CALIBRATE, BUTTON_CALIBRATE_INVERT);
+        auto* button_calibrate = new BUTTON_CLASS(PIN_BUTTON_CALIBRATE, INPUT_PULLUP, BUTTON_CALIBRATE_INVERT);
         input_sensors.button_calibrate.press = button_calibrate;
 #endif
 
@@ -375,7 +377,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         auto* trigger = new Body::Hands::Input::TriggerGesture(index_curl_sensor, GESTURE_TRIGGER_THRESHOLD);
         input_sensors.trigger.press = trigger;
 #elif BUTTON_TRIGGER_ENABLED
-        auto trigger = new BUTTON_CLASS(PIN_BUTTON_TRIGGER, BUTTON_TRIGGER_INVERT);
+        auto trigger = new BUTTON_CLASS(PIN_BUTTON_TRIGGER, INPUT_PULLUP, BUTTON_TRIGGER_INVERT);
 #endif
 
 #if GESTURE_GRAB_ENABLED && FINGER_INDEX_ENABLED && FINGER_MIDDLE_ENABLED && FINGER_RING_ENABLED && FINGER_PINKY_ENABLED
@@ -388,7 +390,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         );
         input_sensors.grab.press = grab;
 #elif BUTTON_GRAB_ENABLED
-        auto* grab = new BUTTON_CLASS(PIN_BUTTON_GRAB, BUTTON_GRAB_INVERT);
+        auto* grab = new BUTTON_CLASS(PIN_BUTTON_GRAB, INPUT_PULLUP, BUTTON_GRAB_INVERT);
 #endif
 
 #if GESTURE_PINCH_ENABLED && FINGER_THUMB_ENABLED && FINGER_INDEX_ENABLED
@@ -398,7 +400,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         );
         input_sensors.pinch.press = pinch;
 #elif BUTTON_PINCH_ENABLED
-        auto* pinch = new BUTTON_CLASS(PIN_BUTTON_PINCH, BUTTON_PINCH_INVERT);
+        auto* pinch = new BUTTON_CLASS(PIN_BUTTON_PINCH, INPUT_PULLUP, BUTTON_PINCH_INVERT);
 #endif
 
         return input_sensors;
