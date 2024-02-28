@@ -300,4 +300,10 @@ namespace SenseShift::Input::Filter {
       private:
         Container const& lookup_table_;
     };
+
+    /// Specialized filter for analog sensors (between 0.0 and 1.0).
+    class AnalogInvertFilter : public IFilter<float> {
+      public:
+        auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override { return 1.0F - value; }
+    };
 } // namespace SenseShift::Input::Filter

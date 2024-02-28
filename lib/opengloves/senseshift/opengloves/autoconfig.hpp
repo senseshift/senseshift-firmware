@@ -1,8 +1,5 @@
 #pragma once
 
-#include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/input/sensor/digital.hpp>
-#include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/body/hands/input/gesture.hpp>
 #include <senseshift/body/hands/input/total_curl.hpp>
 #include <senseshift/input/calibration.hpp>
@@ -12,6 +9,10 @@
 #include <senseshift/opengloves/opengloves.hpp>
 
 #ifdef ARDUINO
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/arduino/input/sensor/multiplexer.hpp>
+#include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/opengloves/transport/stream.hpp>
 #endif
 
@@ -82,11 +83,13 @@
 #define FINGER_PINKY_ENABLED false
 #endif
 
-#define DEFINE_FINGER(NAME, CURL_PIN, CURL_INVERT, CURL_CALIB)                                                   \
-    auto* NAME##_sensor = new ::SenseShift::Input::SimpleSensorDecorator(                                        \
-      new ::SenseShift::Arduino::Input::AnalogSimpleSensor<CURL_INVERT>(CURL_PIN)                                \
-    );                                                                                                           \
-    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.8F) }); \
+#define DEFINE_FINGER(NAME, CURL_PIN, CURL_INVERT, CURL_CALIB)                                                        \
+    auto* NAME##_sensor =                                                                                             \
+      new ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::AnalogSimpleSensor(CURL_PIN)); \
+    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.8F) });      \
+    if (CURL_INVERT) {                                                                                                \
+        NAME##_sensor->addFilter({ new ::SenseShift::Input::Filter::AnalogInvertFilter() });                          \
+    }                                                                                                                 \
     NAME##_sensor->setCalibrator((CURL_CALIB));
 
 #ifdef PIN_FINGER_THUMB_SPLAY
@@ -133,13 +136,14 @@
 #define JOYSTICK_ENABLED false
 #endif
 
-#define DEFINE_JOYSTICK_AXIS(NAME, PIN, INVERT, DEADZONE)                                                              \
-    auto NAME##_sensor =                                                                                               \
-      new ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::AnalogSimpleSensor<INVERT>(PIN) \
-      );                                                                                                               \
-    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.7F),          \
-                                new ::SenseShift::Input::Filter::CenterDeadzoneFilter(DEADZONE) });
-
+#define DEFINE_JOYSTICK_AXIS(NAME, PIN, INVERT, DEADZONE)                                                        \
+    auto NAME##_sensor =                                                                                         \
+      new ::SenseShift::Input::SimpleSensorDecorator(new ::SenseShift::Arduino::Input::AnalogSimpleSensor(PIN)); \
+    NAME##_sensor->addFilters({ new ::SenseShift::Input::Filter::ExponentialMovingAverageFilter<float>(0.7F),    \
+                                new ::SenseShift::Input::Filter::CenterDeadzoneFilter(DEADZONE) });              \
+    if (INVERT) {                                                                                                \
+        NAME##_sensor->addFilter({ new ::SenseShift::Input::Filter::AnalogInvertFilter() });                     \
+    }
 #pragma endregion
 
 #pragma region Buttons
