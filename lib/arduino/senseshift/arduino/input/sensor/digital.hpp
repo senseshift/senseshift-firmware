@@ -1,6 +1,6 @@
 #pragma once
 
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 
 #include <Arduino.h>
 

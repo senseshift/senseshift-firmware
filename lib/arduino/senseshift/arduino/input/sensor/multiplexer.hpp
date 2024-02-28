@@ -10,7 +10,7 @@
 #include "senseshift/arduino/input/sensor/analog.hpp"
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 
 namespace SenseShift::Arduino::Input {
     template<size_t N>

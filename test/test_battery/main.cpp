@@ -1,5 +1,5 @@
 #include <senseshift/battery/input/battery_sensor.hpp>
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;

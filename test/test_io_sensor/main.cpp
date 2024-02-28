@@ -1,5 +1,5 @@
-#include <senseshift/input/analog_threshold.hpp>
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/analog_threshold.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;

@@ -1,5 +1,5 @@
 #include <senseshift/input/filter.hpp>
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 #include <unity.h>
 
 #include <map>
