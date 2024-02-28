@@ -4,7 +4,7 @@
 #include <senseshift/body/hands/input/total_curl.hpp>
 #include <senseshift/input/calibration.hpp>
 #include <senseshift/input/filter.hpp>
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 #include <senseshift/opengloves/constants.hpp>
 #include <senseshift/opengloves/opengloves.hpp>
 
