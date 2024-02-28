@@ -8,6 +8,7 @@
 #include <Arduino.h>
 
 #include "senseshift/arduino/input/sensor/analog.hpp"
+#include "senseshift/arduino/input/sensor/digital.hpp"
 
 #include <senseshift/core/component.hpp>
 #include <senseshift/input/sensor/sensor.hpp>
@@ -56,12 +57,12 @@ namespace SenseShift::Arduino::Input {
     using MUX_74HC4051Component = Multiplexer<3>;
 
     template<size_t N>
-    class MultiplexedSensor : public AnalogSimpleSensor {
+    class MultiplexedAnalogSensor : public AnalogSimpleSensor {
       public:
         /// \param component The CD74HC4057 Component to use.
         /// \param pin The SIG pin of the sensor.
         /// \param channel The channel to read from.
-        MultiplexedSensor(Multiplexer<N>* component, const std::uint8_t pin_sig, const std::uint8_t channel) :
+        MultiplexedAnalogSensor(Multiplexer<N>* component, const std::uint8_t pin_sig, const std::uint8_t channel) :
           component_(component), AnalogSimpleSensor(pin_sig), channel_(channel)
         {
             assert(channel < (1 << N) && "Channel out of range");
@@ -84,4 +85,36 @@ namespace SenseShift::Arduino::Input {
         Multiplexer<N>* component_;
         const std::uint8_t channel_;
     };
+
+    class MultiplexedDigitalSensor : public DigitalSimpleSensor {
+      public:
+        /// \param component The CD74HC4057 Component to use.
+        /// \param pin The SIG pin of the sensor.
+        /// \param channel The channel to read from.
+        MultiplexedDigitalSensor(
+          MUX_CD74HC4057Component* component, const std::uint8_t pin_sig, const std::uint8_t channel
+        ) :
+          component_(component), DigitalSimpleSensor(pin_sig), channel_(channel)
+        {
+            assert(channel < 16 && "Channel out of range");
+        }
+
+        void init() override
+        {
+            this->component_->init();
+            DigitalSimpleSensor::init();
+        }
+
+        [[nodiscard]] auto getValue() -> bool override
+        {
+            this->component_->selectChannel(this->channel_);
+
+            return DigitalSimpleSensor::getValue();
+        }
+
+      private:
+        MUX_CD74HC4057Component* component_;
+        const std::uint8_t channel_;
+    };
+
 } // namespace SenseShift::Arduino::Input
