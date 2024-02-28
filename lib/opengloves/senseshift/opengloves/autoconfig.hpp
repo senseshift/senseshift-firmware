@@ -10,8 +10,8 @@
 
 #ifdef ARDUINO
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/input/sensor/cd74hc4067.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
+#include <senseshift/arduino/input/sensor/multiplexer.hpp>
 #include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/opengloves/transport/stream.hpp>
 #endif
