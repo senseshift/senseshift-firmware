@@ -12,6 +12,7 @@
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/input/sensor/digital.hpp>
 #include <senseshift/arduino/input/sensor/multiplexer.hpp>
+#include <senseshift/arduino/output/pca9685.hpp>
 #include <senseshift/arduino/output/servo.hpp>
 #include <senseshift/opengloves/transport/stream.hpp>
 #endif
@@ -50,6 +51,11 @@
 #endif
 
 #pragma endregion
+
+auto* const pca9685_driver = new Adafruit_PWMServoDriver();
+#define PCA9685_0(CHANNEL) (CHANNEL + 200)
+#define IS_PCA9685_0(CHANNEL) (CHANNEL >= 200 && CHANNEL < 300)
+#define UNPCA9685_0(CHANNEL) (CHANNEL - 200)
 
 #pragma region Fingers
 
@@ -411,27 +417,57 @@ namespace SenseShift::OpenGloves::AutoConfig {
         OutputWriters output_writers;
 
 #if FFB_THUMB_ENABLED
+#if IS_PCA9685_0(PIN_FFB_THUMB)
+        auto* thumb_ffb_output =
+          new ::SenseShift::Arduino::Output::PCA9685ServoOutput(pca9685_driver, UNPCA9685_0(PIN_FFB_THUMB));
+#else
         auto* thumb_ffb_output = new ::SenseShift::Arduino::Output::ServoOutput(PIN_FFB_THUMB);
+#endif
+
         output_writers.ffb.thumb = thumb_ffb_output;
 #endif
 
 #if FFB_INDEX_ENABLED
+#if IS_PCA9685_0(PIN_FFB_INDEX)
+        auto* index_ffb_output =
+          new ::SenseShift::Arduino::Output::PCA9685ServoOutput(pca9685_driver, UNPCA9685_0(PIN_FFB_INDEX));
+#else
         auto* index_ffb_output = new ::SenseShift::Arduino::Output::ServoOutput(PIN_FFB_INDEX);
+#endif
+
         output_writers.ffb.index = index_ffb_output;
 #endif
 
 #if FFB_MIDDLE_ENABLED
+#if IS_PCA9685_0(PIN_FFB_MIDDLE)
+        auto* middle_ffb_output =
+          new ::SenseShift::Arduino::Output::PCA9685ServoOutput(pca9685_driver, UNPCA9685_0(PIN_FFB_MIDDLE));
+#else
         auto* middle_ffb_output = new ::SenseShift::Arduino::Output::ServoOutput(PIN_FFB_MIDDLE);
+#endif
+
         output_writers.ffb.middle = middle_ffb_output;
 #endif
 
 #if FFB_RING_ENABLED
+#if IS_PCA9685_0(PIN_FFB_RING)
+        auto* ring_ffb_output =
+          new ::SenseShift::Arduino::Output::PCA9685ServoOutput(pca9685_driver, UNPCA9685_0(PIN_FFB_RING));
+#else
         auto* ring_ffb_output = new ::SenseShift::Arduino::Output::ServoOutput(PIN_FFB_RING);
+#endif
+
         output_writers.ffb.ring = ring_ffb_output;
 #endif
 
 #if FFB_PINKY_ENABLED
+#if IS_PCA9685_0(PIN_FFB_PINKY)
+        auto* pinky_ffb_output =
+          new ::SenseShift::Arduino::Output::PCA9685ServoOutput(pca9685_driver, UNPCA9685_0(PIN_FFB_PINKY));
+#else
         auto* pinky_ffb_output = new ::SenseShift::Arduino::Output::ServoOutput(PIN_FFB_PINKY);
+#endif
+
         output_writers.ffb.pinky = pinky_ffb_output;
 #endif
 
