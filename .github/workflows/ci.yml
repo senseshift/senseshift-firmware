@@ -86,7 +86,7 @@ jobs:
 
       - name: Speedup package installation
         if: matrix.coverage
-        uses: abbbi/github-actions-tune@v1
+        uses: abbbi/github-actions-tune@v2
 
       - name: Setup LCOV
         if: matrix.coverage
@@ -195,7 +195,7 @@ jobs:
             coverage: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: "recursive"
 
@@ -206,11 +206,11 @@ jobs:
 
       - name: Speedup package installation
         if: matrix.coverage
-        uses: abbbi/github-actions-tune@v1
+        uses: actions/github-script@v6
 
       - name: Setup LCOV
         if: matrix.coverage
-        uses: hrishikesh-kadam/setup-lcov@v1
+        uses: hrishikesh-kadam/setup-lcov@v2
 
       - name: Cache pip
         uses: actions/cache@v3
@@ -259,7 +259,7 @@ jobs:
       - name: Install PlatformIO
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade platformio
+          pip install platformio
           pio upgrade --dev
           pio pkg update --global
 
@@ -289,7 +289,14 @@ jobs:
 
       - name: Upload firmware Artifact
         if: matrix.coverage == false
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.firmware_name.outputs.firmware }}
+          path: |
+            ./.pio/build/${{matrix.target}}/firmware.bin
+            ./.pio/build/${{matrix.target}}/firmware.elf
+          retention-days: 5
+          if-no-files-found: error
         with:
           name: ${{ steps.firmware_name.outputs.firmware }}
           path: |
@@ -305,7 +312,12 @@ jobs:
           lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
 
       - name: Upload coverage Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
+          path: ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }}
+          retention-days: 5
+          if-no-files-found: error
         if: matrix.coverage
         with:
           name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
@@ -322,15 +334,22 @@ jobs:
           - native
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
         with:
           submodules: "recursive"
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
-
       - name: Setup LCOV
-        uses: hrishikesh-kadam/setup-lcov@v1
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Cache pip
         uses: actions/cache@v3
@@ -352,7 +371,9 @@ jobs:
             ${{ runner.os }}-pio-
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
         with:
           python-version: "3.9"
 
@@ -375,7 +396,11 @@ jobs:
           lcov -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{matrix.target}}.test
 
       - name: Upload coverage Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcov.info.${{matrix.target}}.test
+          path: ./build/lcov/lcov.info.${{matrix.target}}.test
+          retention-days: 10
         with:
           name: lcov.info.${{matrix.target}}.test
           path: ./build/lcov/lcov.info.${{matrix.target}}.test
@@ -389,6 +414,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
@@ -423,7 +450,12 @@ jobs:
           retention-days: 5
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          files: ./build/lcov/lcov.info.cleaned
+          flags: unittests, integration
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -444,7 +476,10 @@ jobs:
           - lucidgloves-prototype4+serial
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
 
       - name: Extract target
         id: target_name
@@ -453,7 +488,7 @@ jobs:
           echo "target=$target" >> $GITHUB_OUTPUT
 
       - name: Download firmware artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.variant }}
           path: ./.pio/build/${{ steps.target_name.outputs.target }}
