@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+  "name": "I2CDev Library",
+  "frameworks": "arduino"
+}
