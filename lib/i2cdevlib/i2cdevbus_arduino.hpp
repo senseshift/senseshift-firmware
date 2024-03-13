@@ -9,7 +9,7 @@
 
 #include <Wire.h>
 
-class ArduinoI2CDev : public I2CDev {
+class ArduinoI2CDev : public I2CDevBus {
   public:
     explicit ArduinoI2CDev(TwoWire* wire = &Wire) : wire_(wire) {}
 
@@ -21,7 +21,7 @@ class ArduinoI2CDev : public I2CDev {
       std::uint8_t regAddr,
       std::size_t length,
       std::uint8_t* data,
-      std::uint16_t timeout = DEFAULT_READ_TIMEOUT
+      std::uint16_t timeout = DEFAULT_READ_TIMEOUT_MS
     ) -> i2cdev_result_t override
     {
         this->wire_->beginTransmission(devAddr);
@@ -54,7 +54,7 @@ class ArduinoI2CDev : public I2CDev {
       std::uint8_t regAddr,
       std::size_t length,
       std::uint16_t* data,
-      std::uint16_t timeout = DEFAULT_READ_TIMEOUT
+      std::uint16_t timeout = DEFAULT_READ_TIMEOUT_MS
     ) -> i2cdev_result_t override
     {
         this->wire_->beginTransmission(devAddr);
@@ -141,8 +141,8 @@ ArduinoI2CDev I2CDev0 = ArduinoI2CDev(&Wire);
 ArduinoI2CDev I2CDev1 = ArduinoI2CDev(&Wire1);
 #endif // ESP32
 
-#ifndef I2CDEV_DEFAULT_DEV
-#define I2CDEV_DEFAULT_DEV I2CDev0
+#ifndef I2CDEV_DEFAULT_BUS
+#define I2CDEV_DEFAULT_BUS I2CDev0
 #endif // I2CDEV_DEFAULT_DEV
 
 #endif // ARDUINO

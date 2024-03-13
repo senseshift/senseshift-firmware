@@ -3,6 +3,9 @@
 
 #include "stdint.h"
 
+/// 1000ms default read timeout (modify with `I2CDev::DEFAULT_READ_TIMEOUT = [ms];`)
+#define I2CDEV_DEFAULT_READ_TIMEOUT_MS 1000
+
 #ifdef __cplusplus
 extern "C" {
 #endif
