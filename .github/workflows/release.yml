@@ -48,7 +48,7 @@ jobs:
           ./.github/scripts/get_firmware_name.sh ${{ matrix.target }}
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -56,7 +56,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Cache PlatformIO
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.platformio/.cache
@@ -67,7 +67,7 @@ jobs:
             ${{ runner.os }}-pio-
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
@@ -103,7 +103,7 @@ jobs:
           unzip -l ./build/firmware.zip
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-${{matrix.target}}
           path: ./build/firmware.zip
@@ -154,7 +154,7 @@ jobs:
           sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -162,7 +162,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Cache PlatformIO
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.platformio/.cache
@@ -173,7 +173,7 @@ jobs:
             ${{ runner.os }}-pio-
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
@@ -199,7 +199,7 @@ jobs:
           unzip -l ./build/firmware.zip
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-${{ steps.firmware_name.outputs.firmware }}
           path: ./build/firmware.zip
