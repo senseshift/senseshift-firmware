@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "i2cdev.hpp"
+#include "i2cdevbus.hpp"
 
 #ifdef ARDUINO
 
@@ -16,13 +16,13 @@ class ArduinoI2CDev : public I2CDev {
   private:
     TwoWire* wire_;
 
-    auto readBytes(
+    auto readReg8(
       std::uint8_t devAddr,
       std::uint8_t regAddr,
       std::size_t length,
       std::uint8_t* data,
       std::uint16_t timeout = DEFAULT_READ_TIMEOUT
-    ) -> std::int8_t override
+    ) -> i2cdev_result_t override
     {
         this->wire_->beginTransmission(devAddr);
         this->wire_->write(regAddr);
@@ -38,24 +38,24 @@ class ArduinoI2CDev : public I2CDev {
 
             // Return if we have received all the bytes we need
             if (received == length) {
-                return received;
+                return I2CDEV_RESULT_OK;
             }
         }
 
         if (timeout > 0 && millis() - start >= timeout && received < length) {
-            return -1;
+            return I2CDEV_RESULT_ERROR;
         }
 
-        return received;
+        return I2CDEV_RESULT_OK;
     }
 
-    auto readWords(
+    auto readReg16(
       std::uint8_t devAddr,
       std::uint8_t regAddr,
       std::size_t length,
       std::uint16_t* data,
       std::uint16_t timeout = DEFAULT_READ_TIMEOUT
-    ) -> std::int8_t override
+    ) -> i2cdev_result_t override
     {
         this->wire_->beginTransmission(devAddr);
         this->wire_->write(regAddr);
@@ -70,60 +70,68 @@ class ArduinoI2CDev : public I2CDev {
             data[received++] = this->wire_->read() << 8 | this->wire_->read();
 
             // Return if we have received all the bytes we need
-            if (received == length) {
-                return received;
+            if (received == length * 2) {
+                return I2CDEV_RESULT_OK;
             }
         }
 
         if (timeout > 0 && millis() - start >= timeout && received < length * 2) {
-            return -1;
+            return I2CDEV_RESULT_ERROR;
         }
 
-        return received / 2;
+        return I2CDEV_RESULT_OK;
     }
 
-    auto writeBytes(std::uint8_t devAddr, std::uint8_t regAddr, std::size_t length, const std::uint8_t* data)
-      -> bool override
+    auto writeReg8(std::uint8_t devAddr, std::uint8_t regAddr, std::size_t length, const std::uint8_t* data)
+      -> i2cdev_result_t override
     {
         this->wire_->beginTransmission(devAddr);
 
         // Send address
         if (this->wire_->write(regAddr) != 1) {
-            return false;
+            return I2CDEV_RESULT_ERROR;
         }
 
         // Send data
         if (this->wire_->write(data, length) != length) {
-            return false;
+            return I2CDEV_RESULT_ERROR;
         }
 
-        return this->wire_->endTransmission() == 0;
+        if (this->wire_->endTransmission() != 0) {
+            return I2CDEV_RESULT_ERROR;
+        }
+
+        return I2CDEV_RESULT_OK;
     }
 
-    auto writeWords(std::uint8_t devAddr, std::uint8_t regAddr, std::size_t length, const std::uint16_t* data)
-      -> bool override
+    auto writeReg16(std::uint8_t devAddr, std::uint8_t regAddr, std::size_t length, const std::uint16_t* data)
+      -> i2cdev_result_t override
     {
         this->wire_->beginTransmission(devAddr);
 
         // Send address
         if (this->wire_->write(regAddr) != 1) {
-            return false;
+            return I2CDEV_RESULT_ERROR;
         }
 
         // Send data
         for (std::size_t i = 0; i < length; i++) {
             // Send MSB
             if (this->wire_->write(static_cast<std::uint8_t>(data[i] >> 8)) != 1) {
-                return false;
+                return I2CDEV_RESULT_ERROR;
             }
 
             // Send LSB
             if (this->wire_->write(static_cast<std::uint8_t>(data[i] & 0xFF)) != 1) {
-                return false;
+                return I2CDEV_RESULT_ERROR;
             }
         }
 
-        return this->wire_->endTransmission() == 0;
+        if (this->wire_->endTransmission() != 0) {
+            return I2CDEV_RESULT_ERROR;
+        }
+
+        return I2CDEV_RESULT_OK;
     }
 };
 
