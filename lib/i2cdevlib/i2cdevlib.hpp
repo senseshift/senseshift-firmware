@@ -1,7 +1,7 @@
 #pragma once
 
-#include "i2cdev.hpp"
+#include "i2cdevlib.h"
 
 #ifdef ARDUINO
-#include "i2cdev_arduino.hpp"
+#include "i2cdevbus_arduino.hpp"
 #endif // ARDUINO
