@@ -1,0 +1,4 @@
+[github_app]
+ignore_pr_title = ["^Sweep", "^Auto"]
+
+handle_push_trigger = true
