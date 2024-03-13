@@ -398,7 +398,7 @@ jobs:
 
       - name: Download all workflow run artifacts
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: build/artifacts
 
@@ -453,7 +453,7 @@ jobs:
           echo "target=$target" >> $GITHUB_OUTPUT
 
       - name: Download firmware artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.variant }}
           path: ./.pio/build/${{ steps.target_name.outputs.target }}
