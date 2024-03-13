@@ -1,5 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
   "name": "I2CDev Library",
-  "frameworks": "arduino"
+  "frameworks": "*",
+  "platforms": "*",
+  "authors": [
+    {
+      "name": "Leonid Meleshin",
+      "email": "leon@senseshift.io",
+      "url": "https://leon0399.ru/",
+      "maintainer": true
+    }
+  ]
 }
