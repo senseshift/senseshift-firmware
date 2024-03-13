@@ -146,7 +146,7 @@ jobs:
           lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
 
       - name: Upload coverage Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.coverage
         with:
           name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
@@ -289,7 +289,7 @@ jobs:
 
       - name: Upload firmware Artifact
         if: matrix.coverage == false
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.firmware_name.outputs.firmware }}
           path: |
@@ -305,7 +305,7 @@ jobs:
           lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
 
       - name: Upload coverage Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.coverage
         with:
           name: lcov.info.${{ steps.firmware_name.outputs.firmware }}
@@ -375,7 +375,7 @@ jobs:
           lcov -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{matrix.target}}.test
 
       - name: Upload coverage Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lcov.info.${{matrix.target}}.test
           path: ./build/lcov/lcov.info.${{matrix.target}}.test
@@ -398,7 +398,7 @@ jobs:
 
       - name: Download all workflow run artifacts
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: build/artifacts
 
@@ -415,7 +415,7 @@ jobs:
         run: genhtml -p $PWD -o ./build/coverage/ --demangle-cpp ./build/lcov/lcov.info.cleaned
 
       - name: Upload coverage Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: |
@@ -454,7 +454,7 @@ jobs:
           echo "target=$target" >> $GITHUB_OUTPUT
 
       - name: Download firmware artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.variant }}
           path: ./.pio/build/${{ steps.target_name.outputs.target }}
