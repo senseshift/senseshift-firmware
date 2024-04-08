@@ -100,7 +100,10 @@ Please note that documentation is still work-in-progress.
 ## Credits
 
 * [LucasVRTech](https://github.com/lucas-vrtech) of the LucidGlove project
-* [JohnRThomas](https://github.com/JohnRThomas) for the his implementation of LucidGlove firmware
+* [JohnRThomas](https://github.com/JohnRThomas) for his implementation of LucidGlove firmware
+* [JetBrains](https://www.jetbrains.com/community/opensource) for providing free All-Products-Pack license(s) to the main active contributors of SenseShift through the [Free OpenSource Licenses](https://www.jetbrains.com/community/opensource) program.
+
+<a href="https://jb.gg/OpenSourceSupport"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.png" alt="JetBrains Black Box Logo logo." height="75"></a>
 
 ## Licensing
 
@@ -108,6 +111,6 @@ Please note that documentation is still work-in-progress.
 
 This firmware is licensed under [GPL-3.0](./LICENSE). Please see the [LICENSE](./LICENSE) file for details.
 
-SenseShift are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. SenseShift is not a bHaptics-approved software, nor is it associated with bHaptics.
+SenseShift is not affiliated with bHaptics. All brands and trademarks belong to their respective owners. SenseShift is not bHaptics-approved software, nor is it associated with bHaptics.
 
-SenseShift are not affiliated with ProTubeVR. All brands and trademarks belong to their respective owners. SenseShift is not a ProTubeVR-approved software, nor is it associated with ProTubeVR.
+SenseShift is not affiliated with ProTubeVR. All brands and trademarks belong to their respective owners. SenseShift is not ProTubeVR-approved software, nor is it associated with ProTubeVR.
