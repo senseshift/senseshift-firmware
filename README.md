@@ -1,3 +1,5 @@
+[![Announcement (click to join Discord)](./docs/media/cover.png)](./)
+
 # SenseShift Firmware - Open-Source VR accessories
 
 This project is intended to let people build their own DIY haptic-feedback devices. Integrates into all existing games that work with bHaptics and OpenGloves.
