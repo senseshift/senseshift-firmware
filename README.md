@@ -4,7 +4,7 @@ This project is intended to let people build their own DIY haptic-feedback devic
 
 Build your own DIY haptic vest, haptic gloves, and more!
 
-<b>Get involved: [Discord](https://discord.gg/YUtRKAqty2) • [Website](https://senseshift.io) • [Issues](https://github.com/senseshift/senseshift-firmware/issues) • [Twitter](https://twitter.com/senseshiftio) • [Patreon](https://www.patreon.com/senseshift)</b>
+<b>Get involved: 💬 [Discord](https://discord.gg/YUtRKAqty2) • 🌐 [Website](https://senseshift.io) • 📖 [Documentaion](https://docs.senseshift.io/docs/getting-started) • 🐛 [Issues](https://github.com/senseshift/senseshift-firmware/issues) • 📢 [Twitter](https://twitter.com/senseshiftio) • 💎 [Patreon](https://www.patreon.com/senseshift)</b>
 
 [![Discord Widget](https://discord.com/api/guilds/966090258104062023/widget.png?style=banner2)](https://discord.gg/YUtRKAqty2)
 
