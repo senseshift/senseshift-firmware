@@ -1,4 +1,4 @@
-# SenseShift Firmware - Open-Source VR accessories
+# SenseShift Firmware — Open-Source VR accessories
 
 This project is intended to let people build their own DIY haptic-feedback devices. Integrates into all existing games that work with bHaptics and OpenGloves.
 
@@ -26,7 +26,7 @@ The main documentation on this project is located on [senseshift.github.io](http
 * [Hardware Schematics](https://github.com/senseshift/senseshift-hardware)
 * [Flashing Firmware](https://senseshift.github.io/docs/category/firmware)
 
-Please note that documentation is still work-in-progress.
+Please note that documentation is still a work in progress.
 
 ## Supported Hardware
 
