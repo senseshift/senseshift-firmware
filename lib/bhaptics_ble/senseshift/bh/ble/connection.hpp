@@ -20,7 +20,11 @@ namespace SenseShift::BH::BLE {
     struct ConnectionConfig {
         static constexpr size_t SN_LENGTH = 10;
 
+#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
         std::string deviceName;
+#else
+        String deviceName;
+#endif
         uint16_t appearance;
         uint8_t serialNumber[SN_LENGTH];
     };
