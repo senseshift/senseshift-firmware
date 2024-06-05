@@ -55,7 +55,7 @@ jobs:
             nimble_flag: SS_BLE_USE_NIMBLE=true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: "recursive"
 
@@ -195,7 +195,7 @@ jobs:
             coverage: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: "recursive"
 
@@ -322,7 +322,7 @@ jobs:
           - native
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: "recursive"
 
@@ -388,7 +388,7 @@ jobs:
       - test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
@@ -445,7 +445,7 @@ jobs:
           - lucidgloves-prototype4+serial
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Extract target
         id: target_name

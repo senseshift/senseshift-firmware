@@ -1,10 +1,10 @@
-# SenseShift Firmware - Open-Source VR accessories
+# SenseShift Firmware — Open-Source VR accessories
 
 This project is intended to let people build their own DIY haptic-feedback devices. Integrates into all existing games that work with bHaptics and OpenGloves.
 
 Build your own DIY haptic vest, haptic gloves, and more!
 
-<b>Get involved: [Discord](https://discord.gg/YUtRKAqty2) • [Website](https://senseshift.io) • [Issues](https://github.com/senseshift/senseshift-firmware/issues) • [Twitter](https://twitter.com/senseshiftio)</b>
+<b>Get involved: 💬 [Discord](https://discord.gg/YUtRKAqty2) • 🌐 [Website](https://senseshift.io) • 📖 [Documentaion](https://docs.senseshift.io/docs/getting-started) • 🐛 [Issues](https://github.com/senseshift/senseshift-firmware/issues) • 📢 [Twitter](https://twitter.com/senseshiftio) • 💎 [Patreon](https://www.patreon.com/senseshift)</b>
 
 [![Discord Widget](https://discord.com/api/guilds/966090258104062023/widget.png?style=banner2)](https://discord.gg/YUtRKAqty2)
 
@@ -26,7 +26,7 @@ The main documentation on this project is located on [senseshift.github.io](http
 * [Hardware Schematics](https://github.com/senseshift/senseshift-hardware)
 * [Flashing Firmware](https://senseshift.github.io/docs/category/firmware)
 
-Please note that documentation is still work-in-progress.
+Please note that documentation is still a work in progress.
 
 ## Supported Hardware
 
@@ -100,7 +100,10 @@ Please note that documentation is still work-in-progress.
 ## Credits
 
 * [LucasVRTech](https://github.com/lucas-vrtech) of the LucidGlove project
-* [JohnRThomas](https://github.com/JohnRThomas) for the his implementation of LucidGlove firmware
+* [JohnRThomas](https://github.com/JohnRThomas) for his implementation of LucidGlove firmware
+* [JetBrains](https://www.jetbrains.com/community/opensource) for providing free All-Products-Pack license(s) to the main active contributors of SenseShift through the [Free OpenSource Licenses](https://www.jetbrains.com/community/opensource) program.
+
+<a href="https://jb.gg/OpenSourceSupport"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.png" alt="JetBrains Black Box Logo logo." height="75"></a>
 
 ## Licensing
 
@@ -108,6 +111,6 @@ Please note that documentation is still work-in-progress.
 
 This firmware is licensed under [GPL-3.0](./LICENSE). Please see the [LICENSE](./LICENSE) file for details.
 
-SenseShift are not affiliated with bHaptics. All brands and trademarks belong to their respective owners. SenseShift is not a bHaptics-approved software, nor is it associated with bHaptics.
+SenseShift is not affiliated with bHaptics. All brands and trademarks belong to their respective owners. SenseShift is not bHaptics-approved software, nor is it associated with bHaptics.
 
-SenseShift are not affiliated with ProTubeVR. All brands and trademarks belong to their respective owners. SenseShift is not a ProTubeVR-approved software, nor is it associated with ProTubeVR.
+SenseShift is not affiliated with ProTubeVR. All brands and trademarks belong to their respective owners. SenseShift is not ProTubeVR-approved software, nor is it associated with ProTubeVR.

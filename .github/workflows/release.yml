@@ -38,7 +38,7 @@ jobs:
           - SS_BLE_USE_NIMBLE=true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
@@ -135,7 +135,7 @@ jobs:
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
