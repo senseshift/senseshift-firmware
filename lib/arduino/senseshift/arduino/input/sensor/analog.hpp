@@ -33,14 +33,14 @@ namespace SenseShift::Arduino::Input {
     template<>
     [[nodiscard]] inline auto AnalogSimpleSensor<false>::getValue() -> float
     {
-        const std::uint16_t raw = analogRead(this->pin_);
+        const auto raw = analogRead(this->pin_);
         return static_cast<float>(raw) / ANALOG_MAX;
     }
 
     template<>
     [[nodiscard]] inline auto AnalogSimpleSensor<true>::getValue() -> float
     {
-        const std::uint16_t raw = ANALOG_MAX - analogRead(this->pin_);
+        const auto raw = ANALOG_MAX - analogRead(this->pin_);
         return static_cast<float>(raw) / ANALOG_MAX;
     }
 } // namespace SenseShift::Arduino::Input
