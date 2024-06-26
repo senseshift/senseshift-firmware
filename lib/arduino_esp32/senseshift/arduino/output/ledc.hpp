@@ -20,6 +20,8 @@ namespace SenseShift::Arduino::Output {
         {
         }
 
+        ~LedcOutput() override { ledcDetach(this->pin_); }
+
         void init() override
         {
             pinMode(this->pin_, OUTPUT);
@@ -36,7 +38,7 @@ namespace SenseShift::Arduino::Output {
             }
         }
 
-        [[nodiscard]] auto getMaxValue() const -> std::uint32_t { return (1 << analog_resolution_) - 1; }
+        [[nodiscard]] inline auto getMaxValue() const -> std::uint32_t { return (1 << this->analog_resolution_) - 1; }
 
         void writeState(const float value) override
         {
