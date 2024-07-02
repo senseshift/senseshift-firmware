@@ -5,12 +5,14 @@ on:
     branches:
       - master
       - develop
+      - support/*
     paths-ignore:
       - "**/*.md"
   push:
     branches:
       - master
       - develop
+      - support/*
     paths-ignore:
       - "**/*.md"
 
