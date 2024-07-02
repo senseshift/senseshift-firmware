@@ -141,12 +141,12 @@ namespace SenseShift::BH::BLE {
         this->bleServer->getAdvertising()->setAppearance(this->config.appearance);
         this->bleServer->getAdvertising()->setScanResponseData(*scanResponseData);
 
-        // Each characteristic needs 2 handles and descriptor 1 handle.
-        #if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
-            this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID);
-        #else
-            this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID, 30, 0);
-        #endif
+// Each characteristic needs 2 handles and descriptor 1 handle.
+#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
+        this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID);
+#else
+        this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID, 30, 0);
+#endif
 
         {
             MotorCharCallbacks* motorCallbacks = new MotorCharCallbacks(this->motorHandler);
@@ -234,8 +234,8 @@ namespace SenseShift::BH::BLE {
 
         {
             auto* athGlobalChar = this->motorService->createCharacteristic(
-                BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID,
-                PROPERTY_READ | PROPERTY_WRITE
+              BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID,
+              PROPERTY_READ | PROPERTY_WRITE
             );
             athGlobalChar->setCallbacks(new LogOutputCharCallbacks());
 
@@ -280,10 +280,8 @@ namespace SenseShift::BH::BLE {
         {
             auto dfuService = this->bleServer->createService(BH_BLE_SERVICE_DFU_UUID);
 
-            auto* dfuControlChar = dfuService->createCharacteristic(
-              BH_BLE_SERVICE_DFU_CHAR_CONTROL_UUID,
-              PROPERTY_READ | PROPERTY_WRITE
-            );
+            auto* dfuControlChar =
+              dfuService->createCharacteristic(BH_BLE_SERVICE_DFU_CHAR_CONTROL_UUID, PROPERTY_READ | PROPERTY_WRITE);
             dfuService->start();
         }
 
