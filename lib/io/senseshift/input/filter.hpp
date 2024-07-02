@@ -267,9 +267,9 @@ namespace SenseShift::Input::Filter {
       public:
         explicit CenterDeadzoneFilter(float deadzone, float center = 0.5F) : deadzone_(deadzone), center_(center){};
 
-        auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
+        inline auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
         {
-            float const deviation = std::abs(value - this->center_);
+            const auto deviation = std::abs(value - this->center_);
             return deviation < deadzone_ ? this->center_ : value;
         }
 
@@ -299,5 +299,11 @@ namespace SenseShift::Input::Filter {
 
       private:
         Container const& lookup_table_;
+    };
+
+    /// Specialized filter for analog sensors (between 0.0 and 1.0).
+    class AnalogInvertFilter : public IFilter<float> {
+      public:
+        auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override { return 1.0F - value; }
     };
 } // namespace SenseShift::Input::Filter

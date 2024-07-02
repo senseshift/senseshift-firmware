@@ -1,8 +1,8 @@
 #pragma once
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/analog_threshold.hpp>
-#include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/analog_threshold.hpp>
+#include <senseshift/input/sensor/sensor.hpp>
 
 namespace SenseShift::Body::Hands::Input {
     using Gesture = ::SenseShift::Input::BinarySensor;

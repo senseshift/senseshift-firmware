@@ -412,6 +412,9 @@ jobs:
 
           find ./build/lcov -name 'lcov.info.*' -exec echo -a {} \; | xargs lcov -o ./build/lcov/lcov.info
           lcov --remove ./build/lcov/lcov.info '/usr/include/*' '*.platformio/*' '*/.pio/*' '*/tool-unity/*' '*/test/*' '*/MockArduino/*' '*/lib/frozen/*' -o ./build/lcov/lcov.info.cleaned
+          
+          # delete all except the cleaned file
+          find ./build/lcov -type f -not -name 'lcov.info.cleaned' -delete
 
       - name: Generate HTML report
         run: genhtml -p $PWD -o ./build/coverage/ --demangle-cpp ./build/lcov/lcov.info.cleaned
