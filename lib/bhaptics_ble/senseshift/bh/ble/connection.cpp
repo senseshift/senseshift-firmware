@@ -142,7 +142,11 @@ namespace SenseShift::BH::BLE {
         this->bleServer->getAdvertising()->setScanResponseData(*scanResponseData);
 
         // Each characteristic needs 2 handles and descriptor 1 handle.
-        this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID);
+        #if defined(BLUETOOTH_USE_NIMBLE) && BLUETOOTH_USE_NIMBLE == true
+            this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID);
+        #else
+            this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID, 30, 0);
+        #endif
 
         {
             MotorCharCallbacks* motorCallbacks = new MotorCharCallbacks(this->motorHandler);
@@ -162,6 +166,14 @@ namespace SenseShift::BH::BLE {
               PROPERTY_READ | PROPERTY_WRITE
             );
             configChar->setCallbacks(new ConfigCharCallbacks());
+
+            uint8_t config[3] = {
+                0, // byte 0 - ?
+                0, // byte 1 - ?
+                0, // byte 2 - color,
+                //          but for tactosy it is switching left/right position
+            };
+            configChar->setValue(config, 3);
         }
 
         {
@@ -213,16 +225,34 @@ namespace SenseShift::BH::BLE {
             monitorChar->addDescriptor(new BLE2902());
 #endif
 
-            uint16_t audioCableState = NO_AUDIO_CABLE;
-            monitorChar->setValue(audioCableState);
+            // bit 7 - audio jack (0: off, 1: on)
+            uint8_t status = 0b00000000;
+
+            uint8_t value[1] = { status };
+            monitorChar->setValue(value, 1);
         }
 
-        // auto* athGlobalChar = this->motorService->createCharacteristic(
-        //     BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID,
-        //     PROPERTY_READ | PROPERTY_WRITE | PROPERTY_NOTIFY | PROPERTY_BROADCAST | PROPERTY_INDICATE |
-        //     PROPERTY_WRITE_NR
-        // );
-        // athGlobalChar->setCallbacks(new LogOutputCharCallbacks());
+        {
+            auto* athGlobalChar = this->motorService->createCharacteristic(
+                BH_BLE_SERVICE_MOTOR_CHAR_ATH_GLOBAL_CONF_UUID,
+                PROPERTY_READ | PROPERTY_WRITE
+            );
+            athGlobalChar->setCallbacks(new LogOutputCharCallbacks());
+
+            uint8_t athGlobalConfig[20] = {
+                0, // byte 0 - ?
+                0, // byte 1 - VSM
+                0, // byte 2 - AthConfigIndex
+                0, // byte 3 - AthConfigIndex
+                0, // byte 4 - SignaturePatternOnOff (0: off, 1: on)
+                0, // byte 5 - WaitMinutes
+                0, // byte 6 - DisableEmbedAth (0: off, 1: on)
+                0, // byte 7 - ButtonLock (0: off, 1: on)
+                0, // byte 8 - LedInfo
+            };
+
+            athGlobalChar->setValue(athGlobalConfig, 20);
+        }
 
         // auto* athThemeChar = this->motorService->createCharacteristic(
         //     BH_BLE_SERVICE_MOTOR_CHAR_ATH_THEME_UUID,
@@ -251,7 +281,7 @@ namespace SenseShift::BH::BLE {
             auto dfuService = this->bleServer->createService(BH_BLE_SERVICE_DFU_UUID);
 
             auto* dfuControlChar = dfuService->createCharacteristic(
-              BH_BLE_SERVICE_MOTOR_CHAR_SIGNATURE_PATTERN_UUID,
+              BH_BLE_SERVICE_DFU_CHAR_CONTROL_UUID,
               PROPERTY_READ | PROPERTY_WRITE
             );
             dfuService->start();
