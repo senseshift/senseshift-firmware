@@ -8,7 +8,7 @@
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 #include <Print.h>
-#include <WiFi.h>
+// #include <WiFi.h>
 
 #include <senseshift/opengloves/opengloves.hpp>
 
@@ -102,34 +102,34 @@ namespace SenseShift::OpenGloves {
         }
     };
 
-    class WiFiSerialTransport : public IStreamTransport {
-      public:
-        WiFiSerialTransport(WiFiServer& server) : IStreamTransport(nullptr), m_server(server){};
-
-        void init() override
-        {
-            auto* client = static_cast<WiFiClient*>(this->channel);
-            if (client != nullptr) {
-                if (client->connected() != 0U) {
-                    return;
-                }
-            }
-
-            this->m_server.begin();
-            this->channel = new WiFiClient(this->m_server.available());
-        }
-
-        auto isReady() -> bool override
-        {
-            if (this->channel == nullptr) {
-                return false;
-            }
-
-            auto* client = static_cast<WiFiClient*>(this->channel);
-            return client->connected() != 0U;
-        }
-
-      private:
-        WiFiServer& m_server;
-    };
+    //    class WiFiSerialTransport : public IStreamTransport {
+    //      public:
+    //        WiFiSerialTransport(WiFiServer& server) : IStreamTransport(nullptr), m_server(server){};
+    //
+    //        void init() override
+    //        {
+    //            auto* client = static_cast<WiFiClient*>(this->channel);
+    //            if (client != nullptr) {
+    //                if (client->connected() != 0U) {
+    //                    return;
+    //                }
+    //            }
+    //
+    //            this->m_server.begin();
+    //            this->channel = new WiFiClient(this->m_server.available());
+    //        }
+    //
+    //        auto isReady() -> bool override
+    //        {
+    //            if (this->channel == nullptr) {
+    //                return false;
+    //            }
+    //
+    //            auto* client = static_cast<WiFiClient*>(this->channel);
+    //            return client->connected() != 0U;
+    //        }
+    //
+    //      private:
+    //        WiFiServer& m_server;
+    //    };
 } // namespace SenseShift::OpenGloves
