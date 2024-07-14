@@ -16,6 +16,10 @@ on:
     paths-ignore:
       - "**/*.md"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-bhaptics:
     name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.nimble_flag }}

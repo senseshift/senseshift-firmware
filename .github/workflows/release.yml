@@ -13,6 +13,10 @@ on:
     paths:
       - '.github/workflows/release.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-bhaptics:
     runs-on: ubuntu-latest
