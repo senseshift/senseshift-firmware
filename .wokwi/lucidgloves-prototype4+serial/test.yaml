@@ -3,7 +3,7 @@ version: 1
 author: Leonid Meleshin
 
 steps:
-    - delay: 2000ms
+    - delay: 3000ms
 
     # Press calibration button
     - set-control:
@@ -11,8 +11,9 @@ steps:
           control: pressed
           value: 1
 
-    - delay: 250ms
+    - delay: 500ms
 
+      # Release calibration button
     - set-control:
           part-id: btn3
           control: pressed

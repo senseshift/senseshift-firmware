@@ -103,9 +103,10 @@ namespace SenseShift::BH::BLE {
 
         void onWrite(BLECharacteristic* pCharacteristic) override
         {
-            std::string value = pCharacteristic->getValue();
+            auto value = pCharacteristic->getValue();
+            std::string valueStr(value.begin(), value.end());
 
-            this->motorTransformer(value);
+            this->motorTransformer(valueStr);
         };
     };
 

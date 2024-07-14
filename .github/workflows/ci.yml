@@ -16,6 +16,10 @@ on:
     paths-ignore:
       - "**/*.md"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-bhaptics:
     name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.nimble_flag }}
@@ -131,7 +135,7 @@ jobs:
       - name: Change memory segments
         if: matrix.coverage
         run: |
-          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32-libs/esp32/ld/memory.ld
           sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
       - name: Build
@@ -271,7 +275,7 @@ jobs:
       - name: Change memory segments
         if: matrix.coverage
         run: |
-          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/ld/memory.ld
+          sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32-libs/esp32/ld/memory.ld
           sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
       - name: Build
