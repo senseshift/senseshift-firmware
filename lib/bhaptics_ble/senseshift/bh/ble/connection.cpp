@@ -198,8 +198,8 @@ namespace SenseShift::BH::BLE {
             batteryChar->addDescriptor(new BLE2902());
 #endif
 
-            // original bHaptics Player require non-null value for battery level, otherwise it crashes
-            uint16_t defaultLevel = 0;
+            // original bHaptics Player requires a non-null value for battery level; otherwise, it crashes
+            uint16_t defaultLevel = 100;
 
             this->batteryChar->setValue(defaultLevel);
             // this->batteryChar->notify();
