@@ -10,7 +10,7 @@
 #include <Arduino.h>
 #include <esp_wifi.h>
 
-#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
+#if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
 #include <NimBLEDevice.h>
 #else
 #include <BLEDevice.h>
@@ -20,7 +20,7 @@ namespace SenseShift::BH::BLE {
     struct ConnectionConfig {
         static constexpr size_t SN_LENGTH = 10;
 
-#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
+#if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
         std::string deviceName;
 #else
         String deviceName;

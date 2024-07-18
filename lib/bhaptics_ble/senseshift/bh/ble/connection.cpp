@@ -6,7 +6,7 @@
 
 #include <Arduino.h>
 
-#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
+#if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
 // BLE2902 not needed: https://github.com/h2zero/NimBLE-Arduino/blob/release/1.4/docs/Migration_guide.md#descriptors
 
 #define PROPERTY_READ NIMBLE_PROPERTY::READ
@@ -77,7 +77,7 @@ namespace SenseShift::BH::BLE {
             );
         };
 
-#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
+#if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
         void onStatus(BLECharacteristic* pCharacteristic, Status s, int code) override
 #else
         void onStatus(BLECharacteristic* pCharacteristic, Status s, uint32_t code) override
@@ -143,7 +143,7 @@ namespace SenseShift::BH::BLE {
         this->bleServer->getAdvertising()->setScanResponseData(*scanResponseData);
 
 // Each characteristic needs 2 handles and descriptor 1 handle.
-#if defined(SS_BLE_USE_NIMBLE) && SS_BLE_USE_NIMBLE == true
+#if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
         this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID);
 #else
         this->motorService = this->bleServer->createService(BH_BLE_SERVICE_MOTOR_UUID, 30, 0);
@@ -195,7 +195,7 @@ namespace SenseShift::BH::BLE {
                 | PROPERTY_NOTIFY // for whatever reason, it have to be writable, otherwise Desktop app crashes
             );
 
-#if !defined(SS_BLE_USE_NIMBLE) || SS_BLE_USE_NIMBLE != true
+#if !defined(SS_USE_NIMBLE) || SS_USE_NIMBLE != true
             batteryChar->addDescriptor(new BLE2902());
 #endif
 
@@ -222,7 +222,7 @@ namespace SenseShift::BH::BLE {
             );
             monitorChar->setCallbacks(new LogOutputCharCallbacks());
 
-#if !defined(SS_BLE_USE_NIMBLE) || SS_BLE_USE_NIMBLE != true
+#if !defined(SS_USE_NIMBLE) || SS_USE_NIMBLE != true
             monitorChar->addDescriptor(new BLE2902());
 #endif
 

@@ -8,7 +8,7 @@ getBhapticsName() {
     echo "::debug::Getting bHaptics name for $target"
     echo "::debug::Flags are $flags"
 
-    if [[ $flags =~ SS_BLE_USE_NIMBLE=true ]]; then
+    if [[ $flags =~ SS_USE_NIMBLE=true ]]; then
         echo "::debug::Nimble is enabled, appending +nimble to the target"
         target="$target+nimble"
     fi
