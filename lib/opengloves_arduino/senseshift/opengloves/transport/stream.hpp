@@ -115,7 +115,7 @@ namespace SenseShift::OpenGloves {
             }
 
             this->m_server.begin();
-            this->channel = new WiFiClient(this->m_server.available());
+            this->channel = new WiFiClient(this->m_server.accept());
         }
 
         auto isReady() -> bool override
