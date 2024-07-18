@@ -2,9 +2,7 @@
 
 #include <array>
 
-#include <senseshift/buffer.hpp>
-
-#include <BLESerial.hpp>
+#include <BLESerial.h>
 #include <BluetoothSerial.h>
 #include <HardwareSerial.h>
 #include <Print.h>
@@ -89,15 +87,16 @@ namespace SenseShift::OpenGloves {
         }
     };
 
+    template<typename T = std::queue<uint8_t>>
     class BLESerialTransport : public IStreamTransport {
       public:
-        explicit BLESerialTransport(BLESerial& channel) : IStreamTransport(&channel){};
+        explicit BLESerialTransport(BLESerial<T>& channel) : IStreamTransport(&channel){};
 
         void init() override {}
 
         auto isReady() -> bool override
         {
-            auto* serial = static_cast<BLESerial*>(this->channel);
+            auto* serial = static_cast<BLESerial<T>*>(this->channel);
             return serial->connected();
         }
     };
