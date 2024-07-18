@@ -135,9 +135,15 @@ namespace SenseShift::OpenGloves {
             }
         }
 
-        [[nodiscard]] auto collectData() -> og::InputPeripheralData { SS_OG_COLLECT_DATA(getValue); }
+        [[nodiscard]] auto collectData() -> og::InputPeripheralData
+        {
+            SS_OG_COLLECT_DATA(getValue);
+        }
 
-        [[nodiscard]] auto collectRawData() -> og::InputPeripheralData { SS_OG_COLLECT_DATA(getRawValue); }
+        [[nodiscard]] auto collectRawData() -> og::InputPeripheralData
+        {
+            SS_OG_COLLECT_DATA(getRawValue);
+        }
 
         void reselCalibration() override
         {

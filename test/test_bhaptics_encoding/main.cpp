@@ -11,9 +11,17 @@ class TestActuator : public IOutput<float> {
     bool isSetup = false;
     float intensity = 0;
 
-    TestActuator() : IFloatOutput() {}
-    void init() override { this->isSetup = true; }
-    void writeState(float newIntensity) override { this->intensity = newIntensity; }
+    TestActuator() : IFloatOutput()
+    {
+    }
+    void init() override
+    {
+        this->isSetup = true;
+    }
+    void writeState(float newIntensity) override
+    {
+        this->intensity = newIntensity;
+    }
 };
 
 #define ASSERT_EQUAL_FLOAT_ROUNDED(expected, actual, precision)                \
@@ -268,7 +276,9 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 

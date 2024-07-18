@@ -55,7 +55,10 @@ namespace SenseShift::FreeRTOS {
             }
         };
 
-        TaskHandle_t getHandle() const { return taskHandle; };
+        TaskHandle_t getHandle() const
+        {
+            return taskHandle;
+        };
 
         virtual void begin()
         {

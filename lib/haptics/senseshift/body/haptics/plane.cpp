@@ -58,8 +58,8 @@ namespace SenseShift::Body::Haptics {
     }
 
     template<typename Tc, typename To>
-    [[nodiscard]] auto OutputPlane_Closest<Tc, To>::findClosestPoint(const PositionSet& pts, const Position& target)
-      -> const Position&
+    [[nodiscard]] auto
+      OutputPlane_Closest<Tc, To>::findClosestPoint(const PositionSet& pts, const Position& target) -> const Position&
     {
         // check if exact point exists
         const auto find = pts.find(target);

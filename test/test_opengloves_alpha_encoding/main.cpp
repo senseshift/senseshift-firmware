@@ -212,7 +212,9 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 

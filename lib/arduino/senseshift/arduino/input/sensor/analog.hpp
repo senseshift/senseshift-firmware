@@ -24,9 +24,14 @@ namespace SenseShift::Arduino::Input {
       public:
         static constexpr float MAX_VALUE = ANALOG_MAX;
 
-        explicit AnalogSimpleSensor(const std::uint8_t pin) : pin_(pin) {}
+        explicit AnalogSimpleSensor(const std::uint8_t pin) : pin_(pin)
+        {
+        }
 
-        void init() override { pinMode(this->pin_, INPUT); };
+        void init() override
+        {
+            pinMode(this->pin_, INPUT);
+        };
 
         [[nodiscard]] inline auto getValue() -> float override
         {

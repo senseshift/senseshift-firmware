@@ -204,14 +204,17 @@ namespace og {
     using OutputHapticsData = OutputHaptics<float, bool>;
 
     class OutputInvalid {
-        auto operator==(const OutputInvalid& /*unused*/) const -> bool { return true; }
+        auto operator==(const OutputInvalid& /*unused*/) const -> bool
+        {
+            return true;
+        }
     };
     using OutputData = std::variant<OutputInvalid, OutputForceFeedbackData, OutputHapticsData>;
 
     class IEncoder {
       public:
-        [[nodiscard]] virtual auto encode_input(const InputData& input, char* buffer, size_t length) const
-          -> size_t = 0;
+        [[nodiscard]] virtual auto
+          encode_input(const InputData& input, char* buffer, size_t length) const -> size_t = 0;
 
         [[nodiscard]] auto encode_input(const InputData& input) const -> std::string
         {

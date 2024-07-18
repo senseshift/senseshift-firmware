@@ -35,13 +35,22 @@ namespace SenseShift::Body::Haptics {
 
         OutputPlane() = default;
 
-        explicit OutputPlane(const ActuatorMap& actuators) { this->setActuators(actuators); }
+        explicit OutputPlane(const ActuatorMap& actuators)
+        {
+            this->setActuators(actuators);
+        }
 
         void setup();
         virtual void effect(const Position&, const Value&);
 
-        [[nodiscard]] auto getAvailablePoints() const -> const PositionSet* { return &points_; }
-        [[nodiscard]] auto getActuatorStates() const -> const PositionStateMap* { return &states_; }
+        [[nodiscard]] auto getAvailablePoints() const -> const PositionSet*
+        {
+            return &points_;
+        }
+        [[nodiscard]] auto getActuatorStates() const -> const PositionStateMap*
+        {
+            return &states_;
+        }
 
       protected:
         void setActuators(const ActuatorMap& actuators);
@@ -82,8 +91,8 @@ namespace SenseShift::Body::Haptics {
       public:
         /// Maps a 2D matrix into a 1D (coord, object) map.
         template<typename Tp>
-        [[nodiscard]] static constexpr auto mapMatrixCoordinates(std::vector<std::vector<Tp*>> map2d)
-          -> std::map<Position, Tp*>
+        [[nodiscard]] static constexpr auto mapMatrixCoordinates(std::vector<std::vector<Tp*>> map2d
+        ) -> std::map<Position, Tp*>
         {
             std::map<Position, Tp*> points{};
 

@@ -205,8 +205,12 @@ namespace SenseShift::Input::Calibration {
         {
         }
 
-        void reset() override {}
-        void update(ValueType input) override {}
+        void reset() override
+        {
+        }
+        void update(ValueType input) override
+        {
+        }
 
         auto calibrate(ValueType input) const -> ValueType override
         {

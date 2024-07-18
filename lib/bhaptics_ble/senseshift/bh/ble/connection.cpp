@@ -32,7 +32,9 @@ namespace SenseShift::BH::BLE {
         ::SenseShift::IEventDispatcher* dispatcher;
 
       public:
-        BHServerCallbacks(::SenseShift::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher) {}
+        BHServerCallbacks(::SenseShift::IEventDispatcher* eventDispatcher) : dispatcher(eventDispatcher)
+        {
+        }
 
         void onConnect(BLEServer* pServer)
         {
@@ -99,7 +101,9 @@ namespace SenseShift::BH::BLE {
         Connection::MotorHandler motorTransformer;
 
       public:
-        MotorCharCallbacks(Connection::MotorHandler motorTransformer) : motorTransformer(motorTransformer) {}
+        MotorCharCallbacks(Connection::MotorHandler motorTransformer) : motorTransformer(motorTransformer)
+        {
+        }
 
         void onWrite(BLECharacteristic* pCharacteristic) override
         {

@@ -58,12 +58,20 @@ namespace SenseShift::Body::Haptics {
         static constexpr Intensity INTENSITY_MAX = 1.0F;
 
         constexpr VibroEffectData() = default;
-        constexpr explicit VibroEffectData(const Intensity intensity) : intensity_(intensity) {}
+        constexpr explicit VibroEffectData(const Intensity intensity) : intensity_(intensity)
+        {
+        }
         constexpr VibroEffectData(const VibroEffectData& other) = default;
 
-        constexpr inline explicit operator float() const { return this->intensity_; }
+        constexpr inline explicit operator float() const
+        {
+            return this->intensity_;
+        }
 
-        [[nodiscard]] constexpr inline auto getIntensity() const -> Intensity { return intensity_; };
+        [[nodiscard]] constexpr inline auto getIntensity() const -> Intensity
+        {
+            return intensity_;
+        };
 
       private:
         Intensity intensity_ = 0;

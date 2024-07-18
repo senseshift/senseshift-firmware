@@ -56,7 +56,10 @@ namespace SenseShift::Input {
         /// \param filter The filter to add.
         ///
         /// \see addFilters for adding multiple filters.
-        void addFilter(Filter::IFilter<ValueType>* filter) { this->filters_.push_back(filter); }
+        void addFilter(Filter::IFilter<ValueType>* filter)
+        {
+            this->filters_.push_back(filter);
+        }
 
         /// Adds multiple filters to the sensor's filter chain. Appends to the end of the chain.
         ///
@@ -85,18 +88,36 @@ namespace SenseShift::Input {
         ///     new CenterDeadzoneFilter(0.1f),
         /// });
         /// \endcode
-        void setFilters(std::vector<Filter::IFilter<ValueType>*> filters) { this->filters_ = filters; }
+        void setFilters(std::vector<Filter::IFilter<ValueType>*> filters)
+        {
+            this->filters_ = filters;
+        }
 
         /// Removes everything from the sensor's filter chain.
-        void clearFilters() { this->filters_.clear(); }
+        void clearFilters()
+        {
+            this->filters_.clear();
+        }
 
-        void setCalibrator(Calibration::ICalibrator<ValueType>* calibrator) { this->calibrator_ = calibrator; }
+        void setCalibrator(Calibration::ICalibrator<ValueType>* calibrator)
+        {
+            this->calibrator_ = calibrator;
+        }
 
-        void clearCalibrator() { this->calibrator_ = std::nullopt; }
+        void clearCalibrator()
+        {
+            this->calibrator_ = std::nullopt;
+        }
 
-        void startCalibration() override { this->is_calibrating_ = true; }
+        void startCalibration() override
+        {
+            this->is_calibrating_ = true;
+        }
 
-        void stopCalibration() override { this->is_calibrating_ = false; }
+        void stopCalibration() override
+        {
+            this->is_calibrating_ = false;
+        }
 
         void reselCalibration() override
         {
@@ -105,11 +126,19 @@ namespace SenseShift::Input {
             }
         }
 
-        void addValueCallback(CallbackType&& callback) { this->callbacks_.add(std::move(callback)); }
+        void addValueCallback(CallbackType&& callback)
+        {
+            this->callbacks_.add(std::move(callback));
+        }
 
-        void addRawValueCallback(CallbackType&& callback) { this->raw_callbacks_.add(std::move(callback)); }
+        void addRawValueCallback(CallbackType&& callback)
+        {
+            this->raw_callbacks_.add(std::move(callback));
+        }
 
-        void init() override {}
+        void init() override
+        {
+        }
 
         /// Publish the given state to the sensor.
         ///
@@ -128,10 +157,16 @@ namespace SenseShift::Input {
         }
 
         /// Get the current sensor .value_.
-        [[nodiscard]] auto getValue() -> ValueType override { return this->value_; }
+        [[nodiscard]] auto getValue() -> ValueType override
+        {
+            return this->value_;
+        }
 
         /// Get the current raw sensor .raw_value_.
-        [[nodiscard]] auto getRawValue() -> ValueType { return this->raw_value_; }
+        [[nodiscard]] auto getRawValue() -> ValueType
+        {
+            return this->raw_value_;
+        }
 
       protected:
         /// Apply current filters to value.
@@ -184,11 +219,19 @@ namespace SenseShift::Input {
         using ValueType = Tp;
         using SourceType = ISimpleSensor<ValueType>;
 
-        explicit SimpleSensorDecorator(SourceType* source) : source_(source) {}
+        explicit SimpleSensorDecorator(SourceType* source) : source_(source)
+        {
+        }
 
-        void init() override { this->source_->init(); }
+        void init() override
+        {
+            this->source_->init();
+        }
 
-        void tick() override { this->updateValue(); }
+        void tick() override
+        {
+            this->updateValue();
+        }
 
         auto updateValue() -> ValueType
         {
@@ -200,7 +243,10 @@ namespace SenseShift::Input {
             return this->getValue();
         }
 
-        [[nodiscard]] auto readRawValue() -> ValueType { return this->source_->getValue(); }
+        [[nodiscard]] auto readRawValue() -> ValueType
+        {
+            return this->source_->getValue();
+        }
 
       protected:
       private:

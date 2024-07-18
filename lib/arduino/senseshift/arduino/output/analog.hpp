@@ -12,9 +12,14 @@ namespace SenseShift::Arduino::Output {
       public:
         static inline constexpr std::uint16_t MAX_INTENSITY = 255;
 
-        explicit AnalogOutput(const std::uint8_t pin) : pin_(pin) {}
+        explicit AnalogOutput(const std::uint8_t pin) : pin_(pin)
+        {
+        }
 
-        void init() override { pinMode(this->pin_, OUTPUT); }
+        void init() override
+        {
+            pinMode(this->pin_, OUTPUT);
+        }
 
         void writeState(const float value) override
         {

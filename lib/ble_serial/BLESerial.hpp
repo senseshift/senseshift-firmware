@@ -27,13 +27,24 @@ class BLESerial : public Stream {
     inline static const char* RX_UUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
     inline static const char* TX_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
 
-    BLESerial() : m_receiveBuffer() {}
+    BLESerial() : m_receiveBuffer()
+    {
+    }
 
-    virtual int available() override { return m_receiveBuffer.getLength(); }
+    virtual int available() override
+    {
+        return m_receiveBuffer.getLength();
+    }
 
-    virtual int peek() override { return m_receiveBuffer.get(0); }
+    virtual int peek() override
+    {
+        return m_receiveBuffer.get(0);
+    }
 
-    virtual int read() override { return m_receiveBuffer.pop(); }
+    virtual int read() override
+    {
+        return m_receiveBuffer.pop();
+    }
 
     virtual size_t write(const uint8_t* buffer, size_t bufferSize) override
     {
@@ -59,7 +70,10 @@ class BLESerial : public Stream {
         return 1;
     }
 
-    virtual void flush(void) override { this->m_pTxCharacteristic->notify(true); }
+    virtual void flush(void) override
+    {
+        this->m_pTxCharacteristic->notify(true);
+    }
 
     /**
      * Begin BLE serial. This will create and start BLE server, service and characteristics.
@@ -169,11 +183,20 @@ class BLESerial : public Stream {
         this->m_pServer = nullptr;
     }
 
-    bool connected() { return m_pServer != nullptr && m_pServer->getConnectedCount() > 0; }
+    bool connected()
+    {
+        return m_pServer != nullptr && m_pServer->getConnectedCount() > 0;
+    }
 
-    BLECharacteristic* getRxCharacteristic() { return m_pRxCharacteristic; }
+    BLECharacteristic* getRxCharacteristic()
+    {
+        return m_pRxCharacteristic;
+    }
 
-    BLECharacteristic* getTxCharacteristic() { return m_pTxCharacteristic; }
+    BLECharacteristic* getTxCharacteristic()
+    {
+        return m_pTxCharacteristic;
+    }
 
   private:
     BLESerial(BLESerial const& other) = delete;      // disable copy constructor
@@ -206,7 +229,9 @@ class BLESerial : public Stream {
 
 class BLESerialServerCallbacks : public BLEServerCallbacks {
   public:
-    BLESerialServerCallbacks(BLESerial* bleSerial) : bleSerial(bleSerial) {}
+    BLESerialServerCallbacks(BLESerial* bleSerial) : bleSerial(bleSerial)
+    {
+    }
 
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override
     {
@@ -229,7 +254,9 @@ class BLESerialServerCallbacks : public BLEServerCallbacks {
 
 class BLESerialCharacteristicCallbacks : public BLECharacteristicCallbacks {
   public:
-    BLESerialCharacteristicCallbacks(BLESerial* bleSerial) : bleSerial(bleSerial) {}
+    BLESerialCharacteristicCallbacks(BLESerial* bleSerial) : bleSerial(bleSerial)
+    {
+    }
 
     void onWrite(BLECharacteristic* pCharacteristic)
     {

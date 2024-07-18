@@ -30,7 +30,10 @@ namespace SenseShift::Body::Haptics {
             }
         }
 
-        void addTarget(Target target, Plane* plane) { this->targets_[target] = plane; }
+        void addTarget(Target target, Plane* plane)
+        {
+            this->targets_[target] = plane;
+        }
 
         auto getTarget(Target target) -> std::optional<Plane*>
         {
@@ -44,7 +47,10 @@ namespace SenseShift::Body::Haptics {
 
         void effect(const Target& target, const Position& pos, const typename Plane::Value& val);
 
-        [[nodiscard]] auto getTargets() const -> const TargetPlaneMap* { return &targets_; }
+        [[nodiscard]] auto getTargets() const -> const TargetPlaneMap*
+        {
+            return &targets_;
+        }
 
       private:
         TargetPlaneMap targets_{};

@@ -53,7 +53,10 @@ namespace SenseShift::Input::Filter {
       public:
         explicit AddFilter(Tp offset) : offset_(offset){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value + this->offset_; }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
+        {
+            return value + this->offset_;
+        }
 
       private:
         Tp offset_;
@@ -64,7 +67,10 @@ namespace SenseShift::Input::Filter {
       public:
         explicit SubtractFilter(Tp offset) : offset_(offset){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value - this->offset_; }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
+        {
+            return value - this->offset_;
+        }
 
       private:
         Tp offset_;
@@ -75,7 +81,10 @@ namespace SenseShift::Input::Filter {
       public:
         explicit MultiplyFilter(Tp factor) : factor_(factor){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return value * this->factor_; }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
+        {
+            return value * this->factor_;
+        }
 
       private:
         Tp factor_;
@@ -127,7 +136,10 @@ namespace SenseShift::Input::Filter {
 
         explicit LambdaFilter(Lambda filter) : filter_(std::move(filter)){};
 
-        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override { return this->filter_(value); }
+        auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
+        {
+            return this->filter_(value);
+        }
 
       private:
         Lambda filter_;
@@ -304,6 +316,9 @@ namespace SenseShift::Input::Filter {
     /// Specialized filter for analog sensors (between 0.0 and 1.0).
     class AnalogInvertFilter : public IFilter<float> {
       public:
-        auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override { return 1.0F - value; }
+        auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
+        {
+            return 1.0F - value;
+        }
     };
 } // namespace SenseShift::Input::Filter

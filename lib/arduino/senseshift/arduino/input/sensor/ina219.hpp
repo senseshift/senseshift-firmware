@@ -20,6 +20,9 @@ namespace SenseShift::Arduino::Input {
             }
         }
 
-        [[nodiscard]] inline auto getValue() -> float override { return ina219_.getCurrent_mA(); }
+        [[nodiscard]] inline auto getValue() -> float override
+        {
+            return ina219_.getCurrent_mA();
+        }
     };
 } // namespace SenseShift::Arduino::Input

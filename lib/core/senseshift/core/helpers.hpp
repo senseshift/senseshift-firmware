@@ -115,7 +115,10 @@ namespace SenseShift {
         using CallbackType = std::function<void(Ts...)>;
 
         /// Add a callback to the list.
-        void add(CallbackType&& callback) { this->callbacks_.push_back(std::move(callback)); }
+        void add(CallbackType&& callback)
+        {
+            this->callbacks_.push_back(std::move(callback));
+        }
 
         /// Call all callbacks in this manager.
         void call(Ts... args)
@@ -124,10 +127,16 @@ namespace SenseShift {
                 callback(args...);
             }
         }
-        [[nodiscard]] auto size() const -> size_t { return this->callbacks_.size(); }
+        [[nodiscard]] auto size() const -> size_t
+        {
+            return this->callbacks_.size();
+        }
 
         /// Call all callbacks in this manager.
-        void operator()(Ts... args) { call(args...); }
+        void operator()(Ts... args)
+        {
+            call(args...);
+        }
 
       private:
         std::vector<CallbackType> callbacks_;

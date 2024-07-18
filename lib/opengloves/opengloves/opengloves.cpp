@@ -151,9 +151,8 @@ namespace og {
         const auto& ring_curl = commands.find("D");
         const auto& pinky_curl = commands.find("E");
 
-        if (thumb_curl != commands.end() || index_curl != commands.end() || middle_curl != commands.end() ||
-            ring_curl != commands.end() || pinky_curl != commands.end()
-        ) {
+        if (thumb_curl != commands.end() || index_curl != commands.end() || middle_curl != commands.end()
+            || ring_curl != commands.end() || pinky_curl != commands.end()) {
             OutputForceFeedbackData ffb{};
 
             if (thumb_curl != commands.end()) {

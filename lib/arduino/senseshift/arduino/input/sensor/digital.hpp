@@ -14,9 +14,15 @@ namespace SenseShift::Arduino::Input {
         ) :
           pin_(pin), mode_(mode), inverted_(inverted){};
 
-        void init() override { pinMode(this->pin_, this->mode_); };
+        void init() override
+        {
+            pinMode(this->pin_, this->mode_);
+        };
 
-        [[nodiscard]] auto getValue() -> bool override { return digitalRead(this->pin_) == this->inverted_; }
+        [[nodiscard]] auto getValue() -> bool override
+        {
+            return digitalRead(this->pin_) == this->inverted_;
+        }
 
       private:
         std::uint8_t pin_;

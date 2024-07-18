@@ -16,7 +16,10 @@ namespace SenseShift::Arduino::Output {
       public:
         ServoOutput(size_t pin) : pin_(pin){};
 
-        void init() override { this->servo_.attach(this->pin_); }
+        void init() override
+        {
+            this->servo_.attach(this->pin_);
+        }
 
         void writeState(const ValueType value) override
         {

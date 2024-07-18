@@ -13,7 +13,10 @@ namespace SenseShift {
       public:
         Application();
 
-        [[nodiscard]] auto getVibroBody() const -> Body::Haptics::FloatBody* { return this->vibro_body_; };
+        [[nodiscard]] auto getVibroBody() const -> Body::Haptics::FloatBody*
+        {
+            return this->vibro_body_;
+        };
 
         void postEvent(const IEvent* event) override;
         void addEventListener(const IEventListener* listener) override;

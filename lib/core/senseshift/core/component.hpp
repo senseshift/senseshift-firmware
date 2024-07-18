@@ -32,7 +32,9 @@ namespace SenseShift {
         /// Analogous to Arduino's setup(). This method is guaranteed to only be called once.
         ///
         /// Defaults to doing nothing.
-        void init() override {}
+        void init() override
+        {
+        }
 
         /// @brief Tick the component.
         ///
@@ -40,6 +42,8 @@ namespace SenseShift {
         /// Analogous to Arduino's loop(). init() is guaranteed to be called before this.
         ///
         /// Defaults to doing nothing.
-        void tick() override {}
+        void tick() override
+        {
+        }
     };
 } // namespace SenseShift

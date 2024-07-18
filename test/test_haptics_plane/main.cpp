@@ -9,9 +9,17 @@ class TestActuator : public IOutput<float> {
     bool isSetup = false;
     float intensity = 0;
 
-    TestActuator() : IFloatOutput() {}
-    void init() override { this->isSetup = true; }
-    void writeState(float newIntensity) override { this->intensity = newIntensity; }
+    TestActuator() : IFloatOutput()
+    {
+    }
+    void init() override
+    {
+        this->isSetup = true;
+    }
+    void writeState(float newIntensity) override
+    {
+        this->intensity = newIntensity;
+    }
 };
 
 void test_it_sets_up_actuators(void)
@@ -213,7 +221,9 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 

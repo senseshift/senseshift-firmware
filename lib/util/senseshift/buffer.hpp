@@ -19,7 +19,10 @@ namespace SenseShift {
         virtual ValueType get(size_t index) const = 0;
         virtual size_t getLength() const = 0;
 
-        virtual ValueType operator[](size_t index) const { return this->get(index); }
+        virtual ValueType operator[](size_t index) const
+        {
+            return this->get(index);
+        }
     };
 
     template<typename _Tp, size_t N>
@@ -82,7 +85,10 @@ namespace SenseShift {
             return this->mRingBuffer[(N + this->mNewestIndex - this->mLength + index) % N];
         }
 
-        size_t getLength() const override { return this->mLength; }
+        size_t getLength() const override
+        {
+            return this->mLength;
+        }
 
       private:
         ValueType mRingBuffer[N];
@@ -121,7 +127,10 @@ namespace SenseShift {
             return true;
         }
 
-        void clear() override { this->mLength = 0; }
+        void clear() override
+        {
+            this->mLength = 0;
+        }
 
         /**
          * @brief Remove the oldest value from the buffer and return it.
@@ -153,9 +162,15 @@ namespace SenseShift {
             return this->mBuffer[index];
         }
 
-        ValueType* getData() { return this->mBuffer.data(); }
+        ValueType* getData()
+        {
+            return this->mBuffer.data();
+        }
 
-        size_t getLength() const override { return this->mLength; }
+        size_t getLength() const override
+        {
+            return this->mLength;
+        }
 
       private:
         std::array<ValueType, N> mBuffer;

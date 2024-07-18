@@ -58,9 +58,15 @@ namespace SenseShift::OpenGloves {
         explicit StreamTransport(Stream& channel) : IStreamTransport(&channel){};
         explicit StreamTransport(Stream* channel) : IStreamTransport(channel){};
 
-        void init() override { this->mReady = true; }
+        void init() override
+        {
+            this->mReady = true;
+        }
 
-        auto isReady() -> bool override { return this->channel != nullptr && this->mReady; }
+        auto isReady() -> bool override
+        {
+            return this->channel != nullptr && this->mReady;
+        }
 
       private:
         bool mReady = false;
@@ -76,7 +82,9 @@ namespace SenseShift::OpenGloves {
             return serial->isReady() && serial->hasClient();
         }
 
-        void init() override {}
+        void init() override
+        {
+        }
 
         auto send(const char* buffer, size_t length) -> size_t override
         {
@@ -93,7 +101,9 @@ namespace SenseShift::OpenGloves {
       public:
         explicit BLESerialTransport(BLESerial& channel) : IStreamTransport(&channel){};
 
-        void init() override {}
+        void init() override
+        {
+        }
 
         auto isReady() -> bool override
         {
