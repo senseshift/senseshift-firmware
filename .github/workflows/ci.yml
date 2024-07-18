@@ -174,8 +174,8 @@ jobs:
           - indexer-cs
           - indexer-csf
         comm_flag:
-          - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_SERIAL
-          - COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BTSERIAL
+          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
+          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
         coverage: [ false ]
 
         include:
@@ -193,11 +193,11 @@ jobs:
             coverage: true
           - os: ubuntu-latest
             target: indexer-csf
-            comm_flag: COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BTSERIAL
+            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
             coverage: true
           - os: ubuntu-latest
             target: indexer-csf
-            comm_flag: COMMUNICATION_PROTOCOL=OPENGLOVES_COMM_BLESERIAL
+            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BLESERIAL
             coverage: true
 
     steps:
