@@ -465,7 +465,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
         pBtSerial->begin(name.c_str());
         return new BluetoothSerialTransport(*pBtSerial);
 #elif OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BLESERIAL // Bluetooth Low Energy
-        BLESerial* pBleSerial = new BLESerial();
+        BLESerial<>* pBleSerial = new BLESerial<>();
         pBleSerial->begin(name.c_str());
         return new BLESerialTransport(*pBleSerial);
 #endif

@@ -1,9 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
-  "name": "BLE Serial",
-  "description": "Arduino BLE Serial Stream library",
   "frameworks": "arduino",
-  "platforms": [
-    "espressif32"
-  ]
+  "dependencies": {
+    "Serial_BLE": "^0.1.0",
+    "BLE": "*"
+  }
 }
