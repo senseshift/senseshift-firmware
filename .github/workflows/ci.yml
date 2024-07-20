@@ -465,7 +465,7 @@ jobs:
           path: ./.pio/build/${{ steps.target_name.outputs.target }}
 
       - name: Run Wokwi scenario
-        uses: wokwi/wokwi-ci-action@v1
+        uses: leon0399/wokwi-ci-action@main
         with:
           token: ${{ secrets.WOKWI_CLI_TOKEN }}
           path: ./.wokwi/${{ matrix.variant }}
