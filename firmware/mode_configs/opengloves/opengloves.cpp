@@ -3,11 +3,12 @@
 #include <senseshift/opengloves/opengloves_component.hpp>
 
 using namespace SenseShift::OpenGloves;
+namespace og = ::opengloves;
 
 void setupMode()
 {
     auto* communication = AutoConfig::createTransport();
-    auto* encoding = new og::AlphaEncoder();
+    auto* encoding = new og::AlphaEncoding();
 
     auto input_sensors = AutoConfig::createInput();
 
