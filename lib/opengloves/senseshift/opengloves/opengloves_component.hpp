@@ -8,7 +8,6 @@
 #include <utility>
 
 #include <opengloves.hpp>
-#include <opengloves/alpha.hpp>
 
 #include "senseshift/opengloves/opengloves.hpp"
 #include <senseshift/opengloves/opengloves_plotter.hpp>
@@ -16,8 +15,7 @@
 #include <senseshift/core/component.hpp>
 
 namespace SenseShift::OpenGloves {
-    namespace og = ::opengloves;
-
+    template<typename T>
     class OpenGlovesTrackingComponent : public SenseShift::Component {
         // Plotter raw_plotter_ = Plotter(&Serial, "Raw");
         // Plotter calibrated_plotter_ = Plotter(&Serial, "Cal");
@@ -37,13 +35,8 @@ namespace SenseShift::OpenGloves {
             }
         };
 
-        OpenGlovesTrackingComponent(
-          Config& config,
-          InputSensors& input_sensors,
-          ITransport* communication,
-          og::AlphaEncoding* encoder = new og::AlphaEncoding()
-        ) :
-          config_(config), input_sensors_(std::move(input_sensors)), communication_(communication), encoder_(encoder)
+        OpenGlovesTrackingComponent(Config& config, InputSensors& input_sensors, ITransport* communication) :
+          config_(config), input_sensors_(std::move(input_sensors)), communication_(communication)
         {
         }
 
@@ -80,8 +73,7 @@ namespace SenseShift::OpenGloves {
             }
 
             // now = micros();
-            const auto length =
-              og::AlphaEncoding::encodeInput(data, reinterpret_cast<uint8_t*>(buffer.data()), buffer.size());
+            const auto length = T::encodeInput(data, reinterpret_cast<uint8_t*>(buffer.data()), buffer.size());
             // const auto encodeTime = micros() - now;
 
             // now = micros();
@@ -133,17 +125,15 @@ namespace SenseShift::OpenGloves {
         Config& config_;
         InputSensors input_sensors_;
         ITransport* communication_;
-        og::AlphaEncoding* encoder_;
     };
 
+    template<typename T>
     class OpenGlovesForceFeedbackComponent : public SenseShift::Component {
       public:
         OpenGlovesForceFeedbackComponent(
-          OutputWriters& output_writers,
-          ::SenseShift::OpenGloves::ITransport* communication,
-          og::AlphaEncoding* encoder = new og::AlphaEncoding()
+          OutputWriters& output_writers, ::SenseShift::OpenGloves::ITransport* communication
         ) :
-          output_writers_(output_writers), communication_(communication), encoder_(encoder){};
+          output_writers_(output_writers), communication_(communication){};
 
         void init() override
         {
@@ -156,8 +146,7 @@ namespace SenseShift::OpenGloves {
         {
             if (this->communication_->hasData()) {
                 const auto length = this->communication_->read(this->buffer.data(), this->buffer.size());
-                const auto output =
-                  og::AlphaEncoding::decodeOutput(reinterpret_cast<const uint8_t*>(this->buffer.data()), length);
+                const auto output = T::decodeOutput(reinterpret_cast<const uint8_t*>(this->buffer.data()), length);
                 this->output_writers_.apply(output);
             }
         }
@@ -167,6 +156,5 @@ namespace SenseShift::OpenGloves {
 
         OutputWriters output_writers_;
         ::SenseShift::OpenGloves::ITransport* communication_;
-        og::AlphaEncoding* encoder_;
     };
 } // namespace SenseShift::OpenGloves
