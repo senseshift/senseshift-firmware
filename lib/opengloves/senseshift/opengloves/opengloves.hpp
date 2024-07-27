@@ -62,136 +62,142 @@
     return data;
 
 namespace SenseShift::OpenGloves {
-    namespace og = ::opengloves;
+namespace og = ::opengloves;
 
-    class ITransport : public IInitializable {
-      public:
-        virtual auto send(const char* buffer, size_t length) -> size_t = 0;
-        virtual auto hasData() -> bool = 0;
-        virtual auto read(char* buffer, size_t length) -> size_t = 0;
-    };
+class ITransport : public IInitializable {
+  public:
+    virtual auto send(const char* buffer, size_t length) -> size_t = 0;
+    virtual auto hasData() -> bool = 0;
+    virtual auto read(char* buffer, size_t length) -> size_t = 0;
+};
 
-    using FloatSensor = ::SenseShift::Input::FloatSensor;
-    using BinarySensor = ::SenseShift::Input::BinarySensor;
+using FloatSensor = ::SenseShift::Input::FloatSensor;
+using BinarySensor = ::SenseShift::Input::BinarySensor;
 
-    class InputSensors :
-      public og::InputPeripheral<FloatSensor*, BinarySensor*>,
-      public Component,
-      public ::SenseShift::Input::Calibration::ICalibrated {
-      public:
-        void init() override
-        {
-            for (auto& finger_curl : this->curl.fingers) {
-                for (auto& joint_sensor : finger_curl.curl) {
-                    if (joint_sensor != nullptr) {
-                        joint_sensor->init();
-                        this->calibrated_inputs_.insert(joint_sensor);
-                    }
+class InputSensors :
+  public og::InputPeripheral<FloatSensor*, BinarySensor*>,
+  public Component,
+  public ::SenseShift::Input::Calibration::ICalibrated {
+  public:
+    void init() override
+    {
+        for (auto& finger_curl : this->curl.fingers) {
+            for (auto& joint_sensor : finger_curl.curl) {
+                if (joint_sensor != nullptr) {
+                    joint_sensor->init();
+                    this->calibrated_inputs_.insert(joint_sensor);
                 }
             }
+        }
 
-            for (auto& finger_splay : this->splay.fingers) {
-                if (finger_splay != nullptr) {
-                    finger_splay->init();
-                    this->calibrated_inputs_.insert(finger_splay);
-                }
-            }
-
-            SS_INIT_NOT_NULL(this->joystick.x);
-            SS_INIT_NOT_NULL(this->joystick.y);
-            SS_INIT_NOT_NULL(this->joystick.press);
-
-            for (auto& button : this->buttons) {
-                SS_INIT_NOT_NULL(button.press);
-            }
-
-            for (auto& analog_button : this->analog_buttons) {
-                SS_INIT_NOT_NULL(analog_button.press);
-                SS_INIT_NOT_NULL(analog_button.value);
+        for (auto& finger_splay : this->splay.fingers) {
+            if (finger_splay != nullptr) {
+                finger_splay->init();
+                this->calibrated_inputs_.insert(finger_splay);
             }
         }
 
-        void tick() override
-        {
-            for (auto& finger_curl : this->curl.fingers) {
-                for (auto& joint_sensor : finger_curl.curl) {
-                    SS_TICK_NOT_NULL(joint_sensor);
-                }
-            }
+        SS_INIT_NOT_NULL(this->joystick.x);
+        SS_INIT_NOT_NULL(this->joystick.y);
+        SS_INIT_NOT_NULL(this->joystick.press);
 
-            for (auto& finger_splay : this->splay.fingers) {
-                SS_TICK_NOT_NULL(finger_splay);
-            }
+        for (auto& button : this->buttons) {
+            SS_INIT_NOT_NULL(button.press);
+        }
 
-            SS_TICK_NOT_NULL(this->joystick.x);
-            SS_TICK_NOT_NULL(this->joystick.y);
-            SS_TICK_NOT_NULL(this->joystick.press);
+        for (auto& analog_button : this->analog_buttons) {
+            SS_INIT_NOT_NULL(analog_button.press);
+            SS_INIT_NOT_NULL(analog_button.value);
+        }
+    }
 
-            for (auto& button : this->buttons) {
-                SS_TICK_NOT_NULL(button.press);
-            }
-
-            for (auto& analog_button : this->analog_buttons) {
-                SS_TICK_NOT_NULL(analog_button.press);
-                SS_TICK_NOT_NULL(analog_button.value);
+    void tick() override
+    {
+        for (auto& finger_curl : this->curl.fingers) {
+            for (auto& joint_sensor : finger_curl.curl) {
+                SS_TICK_NOT_NULL(joint_sensor);
             }
         }
 
-        [[nodiscard]] auto collectData() -> og::InputPeripheralData { SS_OG_COLLECT_DATA(getValue); }
-
-        [[nodiscard]] auto collectRawData() -> og::InputPeripheralData { SS_OG_COLLECT_DATA(getRawValue); }
-
-        void reselCalibration() override
-        {
-            for (const auto& calibrated_input : this->calibrated_inputs_) {
-                calibrated_input->reselCalibration();
-            }
+        for (auto& finger_splay : this->splay.fingers) {
+            SS_TICK_NOT_NULL(finger_splay);
         }
 
-        void startCalibration() override
-        {
-            for (const auto& calibrated_input : this->calibrated_inputs_) {
-                calibrated_input->startCalibration();
-            }
+        SS_TICK_NOT_NULL(this->joystick.x);
+        SS_TICK_NOT_NULL(this->joystick.y);
+        SS_TICK_NOT_NULL(this->joystick.press);
+
+        for (auto& button : this->buttons) {
+            SS_TICK_NOT_NULL(button.press);
         }
 
-        void stopCalibration() override
-        {
-            for (const auto& calibrated_input : this->calibrated_inputs_) {
-                calibrated_input->stopCalibration();
+        for (auto& analog_button : this->analog_buttons) {
+            SS_TICK_NOT_NULL(analog_button.press);
+            SS_TICK_NOT_NULL(analog_button.value);
+        }
+    }
+
+    [[nodiscard]] auto collectData() -> og::InputPeripheralData
+    {
+        SS_OG_COLLECT_DATA(getValue);
+    }
+
+    [[nodiscard]] auto collectRawData() -> og::InputPeripheralData
+    {
+        SS_OG_COLLECT_DATA(getRawValue);
+    }
+
+    void reselCalibration() override
+    {
+        for (const auto& calibrated_input : this->calibrated_inputs_) {
+            calibrated_input->reselCalibration();
+        }
+    }
+
+    void startCalibration() override
+    {
+        for (const auto& calibrated_input : this->calibrated_inputs_) {
+            calibrated_input->startCalibration();
+        }
+    }
+
+    void stopCalibration() override
+    {
+        for (const auto& calibrated_input : this->calibrated_inputs_) {
+            calibrated_input->stopCalibration();
+        }
+    }
+
+  private:
+    std::set<FloatSensor*> calibrated_inputs_{};
+};
+
+using FloatOutput = ::SenseShift::Output::IFloatOutput;
+
+class OutputWriters : public IInitializable {
+  public:
+    og::OutputForceFeedback<FloatOutput*, void*> ffb;
+
+    void init() override
+    {
+        for (auto& finger : this->ffb.fingers) {
+            if (finger != nullptr) {
+                finger->init();
             }
         }
+    }
 
-      private:
-        std::set<FloatSensor*> calibrated_inputs_{};
-    };
-
-    using FloatOutput = ::SenseShift::Output::IFloatOutput;
-
-    class OutputWriters : public IInitializable {
-      public:
-        og::OutputForceFeedback<FloatOutput*, void*> ffb;
-
-        void init() override
-        {
-            for (auto& finger : this->ffb.fingers) {
+    void apply(const og::OutputData& data)
+    {
+        if (std::holds_alternative<og::OutputForceFeedbackData>(data)) {
+            const auto& ffb_data = std::get<og::OutputForceFeedbackData>(data);
+            for (auto i = 0; i < this->ffb.fingers.size(); i++) {
+                auto* finger = this->ffb.fingers[i];
                 if (finger != nullptr) {
-                    finger->init();
+                    finger->writeState(ffb_data.fingers[i]);
                 }
             }
         }
-
-        void apply(const og::OutputData& data)
-        {
-            if (std::holds_alternative<og::OutputForceFeedbackData>(data)) {
-                const auto& ffb_data = std::get<og::OutputForceFeedbackData>(data);
-                for (auto i = 0; i < this->ffb.fingers.size(); i++) {
-                    auto* finger = this->ffb.fingers[i];
-                    if (finger != nullptr) {
-                        finger->writeState(ffb_data.fingers[i]);
-                    }
-                }
-            }
-        }
-    };
+    }
+};
 } // namespace SenseShift::OpenGloves

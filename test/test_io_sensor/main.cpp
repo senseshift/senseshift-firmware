@@ -9,9 +9,15 @@ class TestAnalogCountingSensor : public ISimpleSensor<int> {
     int count = 0;
     int setupCounter = 0;
 
-    void init() override { this->setupCounter++; };
+    void init() override
+    {
+        this->setupCounter++;
+    };
 
-    auto getValue() -> int override { return ++this->count; };
+    auto getValue() -> int override
+    {
+        return ++this->count;
+    };
 };
 
 class TestAnalogSensor : public ISimpleSensor<int> {
@@ -19,9 +25,15 @@ class TestAnalogSensor : public ISimpleSensor<int> {
     int value = 0;
     int setupCounter = 0;
 
-    void init() override { this->setupCounter++; };
+    void init() override
+    {
+        this->setupCounter++;
+    };
 
-    auto getValue() -> int override { return this->value; };
+    auto getValue() -> int override
+    {
+        return this->value;
+    };
 };
 
 class TestFloatSensor : public ISimpleSensor<float> {
@@ -29,9 +41,15 @@ class TestFloatSensor : public ISimpleSensor<float> {
     float value = 0.0f;
     int setupCounter = 0;
 
-    void init() override { this->setupCounter++; };
+    void init() override
+    {
+        this->setupCounter++;
+    };
 
-    auto getValue() -> float override { return this->value; };
+    auto getValue() -> float override
+    {
+        return this->value;
+    };
 };
 
 void test_memoized_sensor(void)
@@ -62,8 +80,14 @@ class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<flo
         this->resetCounter++;
         this->calibrated = 0.0f;
     };
-    void update(float input) override { this->calibrated = input; };
-    float calibrate(float input) const override { return calibrated; };
+    void update(float input) override
+    {
+        this->calibrated = input;
+    };
+    float calibrate(float input) const override
+    {
+        return calibrated;
+    };
 };
 
 void test_calibrated_sensor(void)
@@ -224,7 +248,9 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 

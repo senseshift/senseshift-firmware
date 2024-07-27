@@ -26,7 +26,10 @@ static const ::SenseShift::Body::Haptics::Position* bhLayout[bhLayoutSize] = BH_
 
 class BLECallbacks : public BHBLEConnectionCallbacks {
   public:
-    void postInit() { btSerial->begin("SenseShift Serial"); }
+    void postInit()
+    {
+        btSerial->begin("SenseShift Serial");
+    }
 };
 
 void setupMode()
