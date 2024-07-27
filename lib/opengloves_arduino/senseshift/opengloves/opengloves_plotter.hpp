@@ -2,7 +2,7 @@
 
 #include "Arduino.h"
 
-#include "opengloves/opengloves.hpp"
+#include "opengloves.hpp"
 
 namespace SenseShift::OpenGloves {
     class Plotter {

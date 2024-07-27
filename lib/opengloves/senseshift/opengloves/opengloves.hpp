@@ -5,7 +5,7 @@
 #include <variant>
 #include <vector>
 
-#include <opengloves/opengloves.hpp>
+#include <opengloves.hpp>
 
 #include <senseshift/core/component.hpp>
 #include <senseshift/input/sensor/sensor.hpp>
@@ -62,6 +62,8 @@
     return data;
 
 namespace SenseShift::OpenGloves {
+    namespace og = ::opengloves;
+
     class ITransport : public IInitializable {
       public:
         virtual auto send(const char* buffer, size_t length) -> size_t = 0;
