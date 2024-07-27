@@ -4,21 +4,25 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include <I2CDevLib.h>
+#include <i2cdev/pca9685.hpp>
+
 #include <senseshift.h>
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/output/ledc.hpp>
-#include <senseshift/arduino/output/pca9685.hpp>
 #include <senseshift/battery/input/battery_sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
 #include <senseshift/freertos/task.hpp>
+#include <senseshift/output/i2cdevlib_pwm.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
 using namespace SenseShift::Input::Filter;
 using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::Output;
 using namespace SenseShift::Arduino::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::Battery::Input;
@@ -32,14 +36,16 @@ static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX40_SIZE> bhLayout = { B
 
 void setupMode()
 {
-    // Configure the PCA9685s
-    auto* pwm0 = new Adafruit_PWMServoDriver(0x40);
-    pwm0->begin();
-    pwm0->setPWMFreq(PWM_FREQUENCY);
+    Wire.begin();
 
-    auto* pwm1 = new Adafruit_PWMServoDriver(0x41);
-    pwm1->begin();
-    pwm1->setPWMFreq(PWM_FREQUENCY);
+    // Configure the PCA9685s
+    auto pwm0 = i2cdev::PCA9685(0x40, I2CDev);
+    pwm0.setFrequency(PWM_FREQUENCY);
+    pwm0.wakeup();
+
+    auto pwm1 = i2cdev::PCA9685(0x41, I2CDev);
+    pwm1.setFrequency(PWM_FREQUENCY);
+    pwm1.wakeup();
 
     // Assign the pins on the configured PCA9685s and PWM pins to locations on the
     // vest
