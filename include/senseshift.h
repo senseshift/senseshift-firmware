@@ -9,18 +9,21 @@
 #include <vector>
 
 namespace SenseShift {
-    class Application final : public IEventDispatcher {
-      public:
-        Application();
+class Application final : public IEventDispatcher {
+  public:
+    Application();
 
-        [[nodiscard]] auto getVibroBody() const -> Body::Haptics::FloatBody* { return this->vibro_body_; };
-
-        void postEvent(const IEvent* event) override;
-        void addEventListener(const IEventListener* listener) override;
-
-      private:
-        std::vector<const IEventListener*> event_listeners_{};
-        Body::Haptics::FloatBody* vibro_body_;
-        Battery::Input::IBatterySensor* battery_ = nullptr;
+    [[nodiscard]] auto getVibroBody() const -> Body::Haptics::FloatBody*
+    {
+        return this->vibro_body_;
     };
+
+    void postEvent(const IEvent* event) override;
+    void addEventListener(const IEventListener* listener) override;
+
+  private:
+    std::vector<const IEventListener*> event_listeners_{};
+    Body::Haptics::FloatBody* vibro_body_;
+    Battery::Input::IBatterySensor* battery_ = nullptr;
+};
 } // namespace SenseShift

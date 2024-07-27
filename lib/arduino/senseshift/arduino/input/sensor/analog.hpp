@@ -18,20 +18,25 @@
 #endif
 
 namespace SenseShift::Arduino::Input {
-    class AnalogSimpleSensor : public ::SenseShift::Input::IFloatSimpleSensor {
-        const std::uint8_t pin_;
+class AnalogSimpleSensor : public ::SenseShift::Input::IFloatSimpleSensor {
+    const std::uint8_t pin_;
 
-      public:
-        static constexpr float MAX_VALUE = ANALOG_MAX;
+  public:
+    static constexpr float MAX_VALUE = ANALOG_MAX;
 
-        explicit AnalogSimpleSensor(const std::uint8_t pin) : pin_(pin) {}
+    explicit AnalogSimpleSensor(const std::uint8_t pin) : pin_(pin)
+    {
+    }
 
-        void init() override { pinMode(this->pin_, INPUT); };
-
-        [[nodiscard]] inline auto getValue() -> float override
-        {
-            const std::uint16_t raw = analogRead(this->pin_);
-            return static_cast<float>(raw) / ANALOG_MAX;
-        }
+    void init() override
+    {
+        pinMode(this->pin_, INPUT);
     };
+
+    [[nodiscard]] inline auto getValue() -> float override
+    {
+        const std::uint16_t raw = analogRead(this->pin_);
+        return static_cast<float>(raw) / ANALOG_MAX;
+    }
+};
 } // namespace SenseShift::Arduino::Input
