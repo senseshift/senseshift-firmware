@@ -32,7 +32,7 @@ static const std::array<Position, BH_LAYOUT_TACTOSYH_SIZE> bhLayout = { BH_LAYOU
 void setupMode()
 {
     // Configure PWM pins to their positions on the hands
-    auto handOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto handOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       // clang-format off
       { new LedcOutput(32) },
       { new LedcOutput(33) },

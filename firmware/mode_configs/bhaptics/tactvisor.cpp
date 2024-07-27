@@ -32,7 +32,7 @@ static const std::array<Position, BH_LAYOUT_TACTVISOR_SIZE> bhLayout = { BH_LAYO
 void setupMode()
 {
     // Configure PWM pins to their positions on the face
-    auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       // clang-format off
       { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25), new LedcOutput(26) },
       // clang-format on
