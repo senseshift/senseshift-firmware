@@ -89,11 +89,19 @@ using FloatPlane_Closest = OutputPlane_Closest<Position::Value, Output::IFloatOu
 // TODO: configurable margin
 class PlaneMapper_Margin {
   public:
-    /// Maps a 2D matrix into a 1D (coord, object) map.
-    template<typename Tp>
-    [[nodiscard]] static auto mapMatrixCoordinates(std::vector<std::vector<Tp*>> map2d) -> std::map<Position, Tp*>
+    /// Maps a 2D matrix into a (coord, object) map.
+    ///
+    /// \tparam Tp
+    /// \tparam I Input 2D matrix type.
+    /// \tparam O Output map type.
+    ///
+    /// \param map2d Input 2D matrix.
+    ///
+    /// \return Output map.
+    template<typename Tp, typename I = std::vector<std::vector<Tp>>, typename O = std::map<Position, Tp>>
+    static auto mapMatrixCoordinates(I map2d) -> O
     {
-        std::map<Position, Tp*> points{};
+        O points{};
 
         const size_t y_size = map2d.size();
         const size_t y_max = y_size - 1;
@@ -104,7 +112,7 @@ class PlaneMapper_Margin {
             const size_t x_max = x_size - 1;
 
             for (size_t x = 0; x < x_size; ++x) {
-                auto* wr = row.at(x);
+                Tp wr = row.at(x);
                 Position coord = mapPoint<Position::Value>(x, y, x_max, y_max);
 
                 points[coord] = wr;

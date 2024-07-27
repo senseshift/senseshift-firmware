@@ -35,13 +35,13 @@ static const std::array<std::uint8_t, BH_LAYOUT_TACTSUITX16_GROUPS_SIZE> layoutG
 void setupMode()
 {
     // Configure PWM pins to their positions on the vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       // clang-format off
       { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25), new LedcOutput(26) },
       { new LedcOutput(27), new LedcOutput(14), new LedcOutput(12), new LedcOutput(13) },
       // clang-format on
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       // clang-format off
       { new LedcOutput(19), new LedcOutput(18), new LedcOutput(5), new LedcOutput(17) },
       { new LedcOutput(16), new LedcOutput(4), new LedcOutput(2), new LedcOutput(15)  },
