@@ -56,6 +56,11 @@ Please note that documentation is still a work in progress.
 | TLC59108F            | 🚧            |                     8 |
 | LP50xx               | 🚧            |             9 _or_ 12 |
 
+> **Note**
+> Most of supported PWM drivers are provided by
+> the [I2CDevLibContrib](https://github.com/senseshift/i2cdevlib-contrib)
+> library
+
 ### Battery controllers
 
 | Board                | Status       |
@@ -65,6 +70,11 @@ Please note that documentation is still a work in progress.
 | INA219               | ✅            |
 | MCP3021              | 🚧            |
 | STUSB4500            | 🚧            |
+
+> **Note**
+> Most of supported battery controllers are provided by
+> the [I2CDevLibContrib](https://github.com/senseshift/i2cdevlib-contrib)
+> library
 
 ## Supported Protocols
 

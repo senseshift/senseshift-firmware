@@ -3,6 +3,6 @@
   "frameworks": "arduino",
   "platforms": "*",
   "dependencies": {
-    "madhephaestus/ESP32Servo": "^3.0.0"
+    "I2CDevLibContrib": "*"
   }
 }

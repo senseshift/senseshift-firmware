@@ -4,21 +4,25 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include <I2CDevLib.h>
+#include <i2cdev/pca9685.hpp>
+
 #include <senseshift.h>
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
 #include <senseshift/arduino/output/ledc.hpp>
-#include <senseshift/arduino/output/pca9685.hpp>
 #include <senseshift/battery/input/battery_sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
 #include <senseshift/freertos/task.hpp>
+#include <senseshift/output/i2cdevlib_pwm.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
 using namespace SenseShift::Input::Filter;
 using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::Output;
 using namespace SenseShift::Arduino::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::Battery::Input;
@@ -32,14 +36,24 @@ static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX40_SIZE> bhLayout = { B
 
 void setupMode()
 {
-    // Configure the PCA9685s
-    auto* pwm0 = new Adafruit_PWMServoDriver(0x40);
-    pwm0->begin();
-    pwm0->setPWMFreq(PWM_FREQUENCY);
+    Wire.begin();
 
-    auto* pwm1 = new Adafruit_PWMServoDriver(0x41);
-    pwm1->begin();
-    pwm1->setPWMFreq(PWM_FREQUENCY);
+    // Configure the PCA9685s
+    auto pwm0 = i2cdev::PCA9685(0x40, I2CDev);
+    if (pwm0.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to set frequency");
+    }
+    if (pwm0.wakeup() != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to wake up");
+    }
+
+    auto pwm1 = i2cdev::PCA9685(0x41, I2CDev);
+    if (pwm1.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to set frequency");
+    }
+    if (pwm1.wakeup() != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to wake up");
+    }
 
     // Assign the pins on the configured PCA9685s and PWM pins to locations on the
     // vest
@@ -103,6 +117,20 @@ void setupMode()
         app->postEvent(new BatteryLevelEvent(value));
     });
     batterySensor->init();
+
+//    i2cdev::MAX17048 gauge = i2cdev::MAX17048(MAX1704X_I2CADDR_BASE, I2CDev);
+//    if (gauge.check() != I2CDEV_RESULT_OK) {
+//        LOG_E("MAX17048", "Failed to initialize");
+//    }
+//    if (gauge.quickStart() != I2CDEV_RESULT_OK) {
+//        LOG_E("MAX17048", "Failed to quick start");
+//    }
+//
+//    IBatterySensor* batterySensor = new SimpleSensorDecorator(new MAX170XXBatterySensor(gauge));
+//    batterySensor->addValueCallback([](BatteryState value) -> void {
+//        app->postEvent(new BatteryLevelEvent(value));
+//    });
+//    batterySensor->init();
 #endif
 }
 

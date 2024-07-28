@@ -4,20 +4,23 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include <I2CDevLib.h>
+#include <i2cdev/pca9685.hpp>
+
 #include <senseshift.h>
 
 #include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/pca9685.hpp>
 #include <senseshift/battery/input/battery_sensor.hpp>
 #include <senseshift/bh/ble/connection.hpp>
 #include <senseshift/bh/devices.hpp>
 #include <senseshift/bh/encoding.hpp>
 #include <senseshift/freertos/task.hpp>
+#include <senseshift/output/i2cdevlib_pwm.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
 using namespace SenseShift::Input::Filter;
-using namespace SenseShift::Arduino::Output;
+using namespace SenseShift::Output;
 using namespace SenseShift::Arduino::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::Battery::Input;
@@ -34,10 +37,16 @@ static const std::array<std::uint8_t, BH_LAYOUT_TACTSUITX16_GROUPS_SIZE> layoutG
 
 void setupMode()
 {
-    // Configure the PCA9685
-    auto* pwm = new Adafruit_PWMServoDriver(0x40);
-    pwm->begin();
-    pwm->setPWMFreq(PWM_FREQUENCY);
+    Wire.begin();
+
+    // Configure the PCA9685s
+    auto pwm = i2cdev::PCA9685(0x40, I2CDev);
+    if (pwm.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to set frequency");
+    }
+    if (pwm.wakeup() != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to wake up");
+    }
 
     // Assign the pins on the configured PCA9685 to positions on the vest
     auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
