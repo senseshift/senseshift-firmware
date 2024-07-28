@@ -117,6 +117,20 @@ void setupMode()
         app->postEvent(new BatteryLevelEvent(value));
     });
     batterySensor->init();
+
+//    i2cdev::MAX17048 gauge = i2cdev::MAX17048(MAX1704X_I2CADDR_BASE, I2CDev);
+//    if (gauge.check() != I2CDEV_RESULT_OK) {
+//        LOG_E("MAX17048", "Failed to initialize");
+//    }
+//    if (gauge.quickStart() != I2CDEV_RESULT_OK) {
+//        LOG_E("MAX17048", "Failed to quick start");
+//    }
+//
+//    IBatterySensor* batterySensor = new SimpleSensorDecorator(new MAX170XXBatterySensor(gauge));
+//    batterySensor->addValueCallback([](BatteryState value) -> void {
+//        app->postEvent(new BatteryLevelEvent(value));
+//    });
+//    batterySensor->init();
 #endif
 }
 
