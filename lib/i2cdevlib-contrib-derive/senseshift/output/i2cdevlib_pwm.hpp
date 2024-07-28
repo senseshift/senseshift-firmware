@@ -23,7 +23,9 @@ class I2CDevLibContribPWMOutput : public ::SenseShift::Output::IFloatOutput {
     void writeState(const ValueType value) override
     {
         const auto duty = static_cast<std::uint16_t>(value * MAX_INTENSITY);
-        this->driver_.setChannel(this->channel_, duty);
+        if (this->driver_.setChannel(this->channel_, duty) != I2CDEV_RESULT_OK) {
+            LOG_E("i2cdev::pwm", "Failed to set channel %d to %d", this->channel_, duty);
+        }
     }
 
   private:

@@ -41,8 +41,12 @@ void setupMode()
 
     // Configure the PCA9685s
     auto pwm = i2cdev::PCA9685(0x40, I2CDev);
-    pwm.setFrequency(PWM_FREQUENCY);
-    pwm.wakeup();
+    if (pwm.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to set frequency");
+    }
+    if (pwm.wakeup() != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to wake up");
+    }
 
     // Assign the pins on the configured PCA9685 to positions on the vest
     auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({

@@ -40,12 +40,20 @@ void setupMode()
 
     // Configure the PCA9685s
     auto pwm0 = i2cdev::PCA9685(0x40, I2CDev);
-    pwm0.setFrequency(PWM_FREQUENCY);
-    pwm0.wakeup();
+    if (pwm0.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to set frequency");
+    }
+    if (pwm0.wakeup() != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to wake up");
+    }
 
     auto pwm1 = i2cdev::PCA9685(0x41, I2CDev);
-    pwm1.setFrequency(PWM_FREQUENCY);
-    pwm1.wakeup();
+    if (pwm1.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to set frequency");
+    }
+    if (pwm1.wakeup() != I2CDEV_RESULT_OK) {
+        LOG_E("pca9685", "Failed to wake up");
+    }
 
     // Assign the pins on the configured PCA9685s and PWM pins to locations on the
     // vest
