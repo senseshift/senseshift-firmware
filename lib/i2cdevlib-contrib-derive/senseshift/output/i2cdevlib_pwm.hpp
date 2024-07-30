@@ -13,7 +13,9 @@ namespace SenseShift::Output {
 template<typename T, std::uint16_t MAX_INTENSITY>
 class I2CDevLibContribPWMOutput : public ::SenseShift::Output::IFloatOutput {
   public:
-    I2CDevLibContribPWMOutput(T& driver, const std::uint8_t num) : driver_(driver), channel_(num){};
+    I2CDevLibContribPWMOutput(T& driver, const std::uint8_t num) : driver_(driver), channel_(num)
+    {
+    }
 
     void init() override
     {

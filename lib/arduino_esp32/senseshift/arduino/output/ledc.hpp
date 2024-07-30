@@ -51,7 +51,7 @@ class LedcOutput : public ::SenseShift::Output::IFloatOutput {
         const auto duty = static_cast<std::uint32_t>(value * this->getMaxValue());
         LOG_V(TAG, "GPIO %d - Writing %d to Channel %d", this->pin_, duty, this->channel_);
         ledcWrite(this->pin_, duty);
-    };
+    }
 
   private:
     std::uint8_t pin_;

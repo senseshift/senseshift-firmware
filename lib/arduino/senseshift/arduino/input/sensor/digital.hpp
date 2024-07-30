@@ -12,12 +12,14 @@ class DigitalSimpleSensor : public ::SenseShift::Input::IBinarySimpleSensor {
     explicit DigitalSimpleSensor(
       const std::uint8_t pin, const std::uint8_t mode = INPUT_PULLUP, const std::uint8_t inverted = LOW
     ) :
-      pin_(pin), mode_(mode), inverted_(inverted){};
+      pin_(pin), mode_(mode), inverted_(inverted)
+    {
+    }
 
     void init() override
     {
         pinMode(this->pin_, this->mode_);
-    };
+    }
 
     [[nodiscard]] auto getValue() -> bool override
     {

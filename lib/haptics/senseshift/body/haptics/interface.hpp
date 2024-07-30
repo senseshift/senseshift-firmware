@@ -71,7 +71,7 @@ class VibroEffectData {
     [[nodiscard]] constexpr inline auto getIntensity() const -> Intensity
     {
         return intensity_;
-    };
+    }
 
   private:
     Intensity intensity_ = 0;

@@ -47,18 +47,18 @@ class Task {
     explicit Task(TaskConfig& config) : taskConfig(config)
     {
         log_i("creating ComponentUpdateTask: %s", taskConfig.name);
-    };
+    }
     virtual ~Task()
     {
         if (taskHandle) {
             vTaskDelete(taskHandle);
         }
-    };
+    }
 
     TaskHandle_t getHandle() const
     {
         return taskHandle;
-    };
+    }
 
     virtual void begin()
     {
@@ -77,7 +77,7 @@ class Task {
         if (!taskHandle) {
             log_e("Failed to create task %s", this->taskConfig.name);
         }
-    };
+    }
 
   protected:
     inline void monitorTask()
@@ -130,7 +130,7 @@ class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
       Task<ComponentUpdateTask>(taskConfig), component_(component), updateDelay_(updateDelay)
     {
         log_i("creating ComponentUpdateTask: %s", taskConfig.name);
-    };
+    }
 
     void begin() override
     {

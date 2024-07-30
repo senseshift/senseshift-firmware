@@ -17,7 +17,9 @@ class IStreamTransport : public ITransport {
     std::array<char, 256> buffer_{};
 
   public:
-    IStreamTransport(Stream* channel) : channel(channel){};
+    IStreamTransport(Stream* channel) : channel(channel)
+    {
+    }
 
     auto send(const char* buffer, size_t length) -> size_t override
     {
@@ -53,8 +55,12 @@ class IStreamTransport : public ITransport {
 
 class StreamTransport : public IStreamTransport {
   public:
-    explicit StreamTransport(Stream& channel) : IStreamTransport(&channel){};
-    explicit StreamTransport(Stream* channel) : IStreamTransport(channel){};
+    explicit StreamTransport(Stream& channel) : IStreamTransport(&channel)
+    {
+    }
+    explicit StreamTransport(Stream* channel) : IStreamTransport(channel)
+    {
+    }
 
     void init() override
     {

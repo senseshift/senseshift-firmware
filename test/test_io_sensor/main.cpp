@@ -12,12 +12,12 @@ class TestAnalogCountingSensor : public ISimpleSensor<int> {
     void init() override
     {
         this->setupCounter++;
-    };
+    }
 
     auto getValue() -> int override
     {
         return ++this->count;
-    };
+    }
 };
 
 class TestAnalogSensor : public ISimpleSensor<int> {
@@ -79,15 +79,15 @@ class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<flo
     {
         this->resetCounter++;
         this->calibrated = 0.0f;
-    };
+    }
     void update(float input) override
     {
         this->calibrated = input;
-    };
+    }
     float calibrate(float input) const override
     {
         return calibrated;
-    };
+    }
 };
 
 void test_calibrated_sensor(void)
