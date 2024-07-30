@@ -17,9 +17,15 @@ struct Point2 {
 
     Tp x, y;
 
-    constexpr Point2() : x(static_cast<Tp>(0)), y(static_cast<Tp>(0)){};
-    constexpr Point2(Tp x, Tp y) : x(x), y(y){};
-    constexpr Point2(const Point2<Tp>& v) : x((Tp) v.x), y((Tp) v.y){};
+    constexpr Point2() : x(static_cast<Tp>(0)), y(static_cast<Tp>(0))
+    {
+    }
+    constexpr Point2(Tp x, Tp y) : x(x), y(y)
+    {
+    }
+    constexpr Point2(const Point2<Tp>& v) : x((Tp) v.x), y((Tp) v.y)
+    {
+    }
 
     constexpr inline auto operator==(const Point2<Tp>& rhs) const -> bool
     {

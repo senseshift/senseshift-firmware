@@ -51,7 +51,9 @@ class IFiltered {
 template<typename Tp>
 class AddFilter : public IFilter<Tp> {
   public:
-    explicit AddFilter(Tp offset) : offset_(offset){};
+    explicit AddFilter(Tp offset) : offset_(offset)
+    {
+    }
 
     auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
     {
@@ -65,7 +67,9 @@ class AddFilter : public IFilter<Tp> {
 template<typename Tp>
 class SubtractFilter : public IFilter<Tp> {
   public:
-    explicit SubtractFilter(Tp offset) : offset_(offset){};
+    explicit SubtractFilter(Tp offset) : offset_(offset)
+    {
+    }
 
     auto filter(ISimpleSensor<Tp>* /*sensor*/, Tp value) -> Tp override
     {

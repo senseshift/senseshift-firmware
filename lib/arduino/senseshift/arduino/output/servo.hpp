@@ -14,7 +14,9 @@
 namespace SenseShift::Arduino::Output {
 class ServoOutput : public ::SenseShift::Output::IFloatOutput {
   public:
-    ServoOutput(size_t pin) : pin_(pin){};
+    ServoOutput(size_t pin) : pin_(pin)
+    {
+    }
 
     void init() override
     {

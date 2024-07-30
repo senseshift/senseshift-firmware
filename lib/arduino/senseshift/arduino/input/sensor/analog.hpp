@@ -31,7 +31,7 @@ class AnalogSimpleSensor : public ::SenseShift::Input::IFloatSimpleSensor {
     void init() override
     {
         pinMode(this->pin_, INPUT);
-    };
+    }
 
     [[nodiscard]] inline auto getValue() -> float override
     {

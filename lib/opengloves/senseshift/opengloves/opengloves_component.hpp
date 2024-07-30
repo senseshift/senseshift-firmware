@@ -133,7 +133,9 @@ class OpenGlovesForceFeedbackComponent : public SenseShift::Component {
     OpenGlovesForceFeedbackComponent(
       OutputWriters& output_writers, ::SenseShift::OpenGloves::ITransport* communication
     ) :
-      output_writers_(output_writers), communication_(communication){};
+      output_writers_(output_writers), communication_(communication)
+    {
+    }
 
     void init() override
     {

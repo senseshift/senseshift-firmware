@@ -57,7 +57,7 @@ class LogOutputCharCallbacks : public BLECharacteristicCallbacks {
           pCharacteristic->getValue().c_str(),
           pCharacteristic->getValue().length()
         );
-    };
+    }
 
     void onRead(BLECharacteristic* pCharacteristic) override
     {
@@ -67,7 +67,7 @@ class LogOutputCharCallbacks : public BLECharacteristicCallbacks {
           pCharacteristic->getValue().c_str(),
           pCharacteristic->getValue().length()
         );
-    };
+    }
 
     void onNotify(BLECharacteristic* pCharacteristic) override
     {
@@ -77,7 +77,7 @@ class LogOutputCharCallbacks : public BLECharacteristicCallbacks {
           pCharacteristic->getValue().c_str(),
           pCharacteristic->getValue().length()
         );
-    };
+    }
 
 #if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
     void onStatus(BLECharacteristic* pCharacteristic, Status s, int code) override
@@ -93,7 +93,7 @@ class LogOutputCharCallbacks : public BLECharacteristicCallbacks {
           pCharacteristic->getValue().c_str(),
           pCharacteristic->getValue().length()
         );
-    };
+    }
 };
 
 class MotorCharCallbacks : public BLECharacteristicCallbacks {
@@ -111,7 +111,7 @@ class MotorCharCallbacks : public BLECharacteristicCallbacks {
         std::string valueStr(value.begin(), value.end());
 
         this->motorTransformer(valueStr);
-    };
+    }
 };
 
 class ConfigCharCallbacks : public BLECharacteristicCallbacks {
@@ -126,7 +126,7 @@ class ConfigCharCallbacks : public BLECharacteristicCallbacks {
         auto byte_0 = value[0], byte_1 = value[1], byte_2 = value[2];
 
         log_d(">>\tonWrite (Config Char): %3hhu %2hhu %2hhu", byte_0, byte_1, byte_2);
-    };
+    }
 };
 
 void Connection::begin()

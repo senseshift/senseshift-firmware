@@ -34,7 +34,7 @@ class ConnectionCallbacks {
     virtual void postInit()
     {
         log_v("Default postInit");
-    };
+    }
 };
 static ConnectionCallbacks defaultCallback;
 
@@ -46,7 +46,7 @@ class Connection final : public IEventListener {
       config(config), motorHandler(motorHandler), eventDispatcher(eventDispatcher)
     {
         this->eventDispatcher->addEventListener(this);
-    };
+    }
 
     void begin(void);
     void handleEvent(const IEvent* event) const override
@@ -63,7 +63,7 @@ class Connection final : public IEventListener {
 
             return;
         }
-    };
+    }
 
     void setCallbacks(ConnectionCallbacks* pCallbacks)
     {
@@ -72,7 +72,7 @@ class Connection final : public IEventListener {
         } else {
             this->callbacks = &defaultCallback;
         }
-    };
+    }
 
   private:
     const ConnectionConfig& config;

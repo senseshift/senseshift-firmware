@@ -7,7 +7,9 @@
 namespace SenseShift::OpenGloves {
 class Plotter {
   public:
-    Plotter(Print* output, char* prefix) : output_(output), prefix_(prefix){};
+    Plotter(Print* output, char* prefix) : output_(output), prefix_(prefix)
+    {
+    }
 
     void plot(const og::InputPeripheralData data)
     {

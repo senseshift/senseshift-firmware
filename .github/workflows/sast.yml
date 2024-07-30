@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: "SAST"
 
 on:
   push:
@@ -18,8 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  analyze:
-    name: Analyze
+  codeql-analyze:
+    name: CodeQL Analyze
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -119,3 +119,51 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{matrix.language}}"
+
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+
+    container:
+      image: semgrep/semgrep
+
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: semgrep ci --sarif > semgrep.sarif
+        env:
+          # Connect to Semgrep AppSec Platform through your SEMGREP_APP_TOKEN.
+          # Generate a token from Semgrep AppSec Platform > Settings
+          # and add it to your GitHub secrets.
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      - name: Upload SARIF file for GitHub Advanced Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
+
+  flawfinder:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory:
+          - 'firmware'
+          - 'include'
+          - 'lib'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: david-a-wheeler/flawfinder@2.0.19
+        with:
+          arguments: '--sarif ${{ matrix.directory }}'
+          output: 'flawfinder_results.sarif'
+
+      - name: Upload SARIF file for GitHub Advanced Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: flawfinder_results.sarif
+        if: always()
