@@ -3,6 +3,16 @@
 
 using namespace SenseShift::Input::Calibration;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 void test_minmax_calibrator(void)
 {
     const auto calibrator = new MinMaxCalibrator<float>();

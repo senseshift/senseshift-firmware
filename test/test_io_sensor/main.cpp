@@ -4,6 +4,16 @@
 
 using namespace SenseShift::Input;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 class TestAnalogCountingSensor : public ISimpleSensor<int> {
   public:
     int count = 0;

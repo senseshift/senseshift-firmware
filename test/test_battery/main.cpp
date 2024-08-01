@@ -6,6 +6,16 @@ using namespace SenseShift::Input;
 using namespace SenseShift::Battery;
 using namespace SenseShift::Battery::Input;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 void test_battery_sensor(void)
 {
     auto* source = new FloatSensor();

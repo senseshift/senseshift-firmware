@@ -6,6 +6,16 @@ using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::Output;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 class TestActuator : public IOutput<float> {
   public:
     bool isSetup = false;

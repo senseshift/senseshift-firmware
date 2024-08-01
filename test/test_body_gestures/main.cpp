@@ -5,6 +5,16 @@
 using namespace SenseShift::Input;
 using namespace SenseShift::Body::Hands::Input;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 void test_gesture_trigger(void)
 {
     float threshold = 0.5f;

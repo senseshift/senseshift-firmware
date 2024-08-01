@@ -13,6 +13,16 @@
 using namespace SenseShift::Input;
 using namespace SenseShift::Input::Filter;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 void test_add_filter(void)
 {
     IFilter<float>* filter = new AddFilter<float>(5.0f);
