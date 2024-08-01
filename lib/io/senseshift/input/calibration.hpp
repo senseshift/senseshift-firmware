@@ -8,11 +8,6 @@
 #include <type_traits>
 
 namespace SenseShift::Input::Calibration {
-struct ICalibrated {
-    virtual void startCalibration() = 0;
-    virtual void stopCalibration() = 0;
-    virtual void reselCalibration() = 0;
-};
 
 template<typename Tp>
 struct ICalibrator {
@@ -24,6 +19,54 @@ struct ICalibrator {
 
     /// Calibrate the input value.
     [[nodiscard]] virtual auto calibrate(Tp input) const -> Tp = 0;
+};
+
+template<typename Tp>
+class Calibrated {
+  public:
+    using ValueType = Tp;
+    using CalibratorType = ICalibrator<ValueType>;
+
+    inline void setCalibrator(CalibratorType* calibrator)
+    {
+        this->calibrator_ = calibrator;
+    }
+
+    inline auto getCalibrator() -> CalibratorType*
+    {
+        return this->calibrator_;
+    }
+
+    inline void clearCalibrator()
+    {
+        this->calibrator_ = nullptr;
+    }
+
+    inline void startCalibration()
+    {
+        this->is_calibrating_ = true;
+    }
+
+    inline void stopCalibration()
+    {
+        this->is_calibrating_ = false;
+    }
+
+    inline void resetCalibration()
+    {
+        if (this->calibrator_ != nullptr) {
+            this->calibrator_->reset();
+        }
+    }
+
+    inline bool isCalibrating() const
+    {
+        return this->is_calibrating_;
+    }
+
+  private:
+    CalibratorType* calibrator_;
+    bool is_calibrating_ = false;
 };
 
 template<typename Tp>

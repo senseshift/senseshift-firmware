@@ -74,10 +74,7 @@ class ITransport : public IInitializable {
 using FloatSensor = ::SenseShift::Input::FloatSensor;
 using BinarySensor = ::SenseShift::Input::BinarySensor;
 
-class InputSensors :
-  public og::InputPeripheral<FloatSensor*, BinarySensor*>,
-  public Component,
-  public ::SenseShift::Input::Calibration::ICalibrated {
+class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*>, public Component {
   public:
     void init() override
     {
@@ -147,21 +144,21 @@ class InputSensors :
         SS_OG_COLLECT_DATA(getRawValue);
     }
 
-    void reselCalibration() override
+    void resetCalibration()
     {
         for (const auto& calibrated_input : this->calibrated_inputs_) {
-            calibrated_input->reselCalibration();
+            calibrated_input->resetCalibration();
         }
     }
 
-    void startCalibration() override
+    void startCalibration()
     {
         for (const auto& calibrated_input : this->calibrated_inputs_) {
             calibrated_input->startCalibration();
         }
     }
 
-    void stopCalibration() override
+    void stopCalibration()
     {
         for (const auto& calibrated_input : this->calibrated_inputs_) {
             calibrated_input->stopCalibration();

@@ -105,7 +105,7 @@ class OpenGlovesTrackingComponent : public SenseShift::Component {
     void startCalibration()
     {
         log_i("Starting calibration");
-        this->input_sensors_.reselCalibration();
+        this->input_sensors_.resetCalibration();
         this->input_sensors_.startCalibration();
         this->calibration_start_time_ = millis();
     }

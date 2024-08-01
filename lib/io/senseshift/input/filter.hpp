@@ -35,17 +35,68 @@ class IFilter {
 };
 
 template<typename Tp>
-class IFiltered {
+class Filtered {
   public:
     using ValueType = Tp;
+    using FilterType = IFilter<ValueType>*;
 
-    virtual void addFilter(IFilter<ValueType>* filter) = 0;
+    auto getFilters() -> std::vector<FilterType>&
+    {
+        return this->filters_;
+    }
 
-    virtual void addFilters(std::vector<IFilter<ValueType>*> filters) = 0;
+    /// Appends a filter to the sensor's filter chain.
+    ///
+    /// \param filter The filter to add.
+    ///
+    /// \see addFilters for adding multiple filters.
+    void addFilter(FilterType filter)
+    {
+        this->filters_.push_back(filter);
+    }
 
-    virtual void setFilters(std::vector<IFilter<ValueType>*> filters) = 0;
+    /// Adds multiple filters to the sensor's filter chain. Appends to the end of the chain.
+    ///
+    /// \param filters The chain of filters to add.
+    ///
+    /// \example
+    /// \code
+    /// sensor->addFilters({
+    ///     new MinMaxFilter(0.1f, 0.9f),
+    ///     new CenterDeadzoneFilter(0.1f),
+    /// });
+    /// \endcode
+    ///
+    /// todo(leon0399): use SFINAE
+    void addFilters(std::vector<FilterType> filters)
+    {
+        this->filters_.insert(this->filters_.end(), filters.begin(), filters.end());
+    }
 
-    void clearFilters() = 0;
+    /// Replaces the sensor's filter chain with the given filters.
+    ///
+    /// \param filters New filter chain.
+    ///
+    /// \example
+    /// \code
+    /// sensor->setFilters({
+    ///     new MinMaxFilter(0.1f, 0.9f),
+    ///     new CenterDeadzoneFilter(0.1f),
+    /// });
+    /// \endcode
+    void setFilters(std::vector<FilterType> filters)
+    {
+        this->filters_ = filters;
+    }
+
+    /// Removes everything from the sensor's filter chain.
+    void clearFilters()
+    {
+        this->filters_.clear();
+    }
+
+  protected:
+    std::vector<FilterType> filters_ = {};
 };
 
 template<typename Tp>
