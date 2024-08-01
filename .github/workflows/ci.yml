@@ -139,11 +139,53 @@ jobs:
           sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
       - name: Build
+        shell: bash
         run: |
           echo "::group::platformio.ini"
           cat platformio.ini
           echo "::endgroup::"
-          pio run --environment ${{matrix.target}}
+          pio ${{ matrix.coverage && 'debug' || 'run' }} --environment ${{matrix.target}} | tee build.log
+
+      - name: Collect memory usage
+        id: memory_usage
+        if: matrix.coverage == false
+        run: |
+          echo "USAGE_FILENAME=${{ env.USAGE_FILENAME }}" >> $GITHUB_ENV
+
+          # RAM:   [=         ]  11.8% (used 38636 bytes from 327680 bytes)
+          # Flash: [========= ]  90.1% (used 1181501 bytes from 1310720 bytes)
+
+          # Extract the line containing RAM usage
+          ram_line=$(grep 'RAM:' build.log)
+          # Extract the line containing Flash usage
+          flash_line=$(grep 'Flash:' build.log)
+
+          # Parse the RAM usage details
+          ram_percentage=$(echo $ram_line | grep -oP '\d+\.\d+(?=%)')
+          ram_used=$(echo $ram_line | grep -oP '(?<=used )\d+')
+          ram_total=$(echo $ram_line | grep -oP '(?<=from )\d+')
+
+          # Parse the Flash usage details
+          flash_percentage=$(echo $flash_line | grep -oP '\d+\.\d+(?=%)')
+          flash_used=$(echo $flash_line | grep -oP '(?<=used )\d+')
+          flash_total=$(echo $flash_line | grep -oP '(?<=from )\d+')
+
+          # Store as JSON to file usage.json
+          echo "{\"ram\": {\"percentage\": $ram_percentage, \"used\": $ram_used, \"total\": $ram_total}, \"flash\": {\"percentage\": $flash_percentage, \"used\": $flash_used, \"total\": $flash_total}}" > ${{ env.USAGE_FILENAME }}
+
+          # Print the content of usage.json
+          cat ${{ env.USAGE_FILENAME }}
+        env:
+          USAGE_FILENAME: ${{ steps.firmware_name.outputs.firmware }}-usage.json
+
+      - name: Upload usage.json artifact
+        if: matrix.coverage == false
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.firmware_name.outputs.firmware }}-usage
+          path: ${{ env.USAGE_FILENAME }}
+          retention-days: 1
+          if-no-files-found: error
 
       - name: Collect initial coverage
         if: matrix.coverage
@@ -279,19 +321,53 @@ jobs:
           sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
       - name: Build
+        shell: bash
+        run: |
+          echo "::group::platformio.ini"
+          cat platformio.ini
+          echo "::endgroup::"
+          pio ${{ matrix.coverage && 'debug' || 'run' }} --environment ${{matrix.target}} | tee build.log
+
+      - name: Collect memory usage
+        id: memory_usage
         if: matrix.coverage == false
         run: |
-          echo "::group::platformio.ini"
-          cat platformio.ini
-          echo "::endgroup::"
-          pio run --environment ${{matrix.target}}
-      - name: Build (debug)
-        if: matrix.coverage
-        run: |
-          echo "::group::platformio.ini"
-          cat platformio.ini
-          echo "::endgroup::"
-          pio debug --environment ${{matrix.target}}
+          echo "USAGE_FILENAME=${{ env.USAGE_FILENAME }}" >> $GITHUB_ENV
+
+          # RAM:   [=         ]  11.8% (used 38636 bytes from 327680 bytes)
+          # Flash: [========= ]  90.1% (used 1181501 bytes from 1310720 bytes)
+
+          # Extract the line containing RAM usage
+          ram_line=$(grep 'RAM:' build.log)
+          # Extract the line containing Flash usage
+          flash_line=$(grep 'Flash:' build.log)
+
+          # Parse the RAM usage details
+          ram_percentage=$(echo $ram_line | grep -oP '\d+\.\d+(?=%)')
+          ram_used=$(echo $ram_line | grep -oP '(?<=used )\d+')
+          ram_total=$(echo $ram_line | grep -oP '(?<=from )\d+')
+
+          # Parse the Flash usage details
+          flash_percentage=$(echo $flash_line | grep -oP '\d+\.\d+(?=%)')
+          flash_used=$(echo $flash_line | grep -oP '(?<=used )\d+')
+          flash_total=$(echo $flash_line | grep -oP '(?<=from )\d+')
+
+          # Store as JSON to file usage.json
+          echo "{\"ram\": {\"percentage\": $ram_percentage, \"used\": $ram_used, \"total\": $ram_total}, \"flash\": {\"percentage\": $flash_percentage, \"used\": $flash_used, \"total\": $flash_total}}" > ${{ env.USAGE_FILENAME }}
+
+          # Print the content of usage.json
+          cat ${{ env.USAGE_FILENAME }}
+        env:
+          USAGE_FILENAME: ${{ steps.firmware_name.outputs.firmware }}-usage.json
+
+      - name: Upload usage.json artifact
+        if: matrix.coverage == false
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.firmware_name.outputs.firmware }}-usage
+          path: ${{ env.USAGE_FILENAME }}
+          retention-days: 1
+          if-no-files-found: error
 
       - name: Upload firmware Artifact
         if: matrix.coverage == false
@@ -387,7 +463,7 @@ jobs:
           path: ./build/lcov/lcov.info.${{matrix.target}}.test
           retention-days: 5
 
-  coverage-report:
+  report-coverage:
     needs:
       - build-bhaptics
       - build-opengloves
@@ -416,7 +492,7 @@ jobs:
 
           find ./build/lcov -name 'lcov.info.*' -exec echo -a {} \; | xargs lcov -o ./build/lcov/lcov.info
           lcov --remove ./build/lcov/lcov.info '/usr/include/*' '*.platformio/*' '*/.pio/*' '*/tool-unity/*' '*/test/*' '*/MockArduino/*' '*/lib/frozen/*' -o ./build/lcov/lcov.info.cleaned
-          
+
           # delete all except the cleaned file
           find ./build/lcov -type f -not -name 'lcov.info.cleaned' -delete
 
@@ -439,6 +515,69 @@ jobs:
           fail_ci_if_error: true
           files: ./build/lcov/lcov.info.cleaned
           flags: unittests
+
+  report-memory-usage:
+    needs:
+      - build-bhaptics
+      - build-opengloves
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all workflow run artifacts
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          path: current-usage
+          pattern: '*-usage'
+          merge-multiple: true
+
+      - run: ls -lahR current-usage
+
+      - name: Merge usage files
+        shell: python
+        run: |
+          import os
+          import json
+
+          # Directory containing the JSON files
+          directory = "current-usage"
+
+          # Initialize an empty dictionary to store the merged content
+          merged_data = {}
+
+          # Iterate over all files in the directory
+          for filename in os.listdir(directory):
+            if filename.endswith(".json"):
+              # Extract the filename without the extension
+              key = os.path.splitext(filename)[0]
+
+              # Construct the full path to the file
+              filepath = os.path.join(directory, filename)
+
+              # Read the content of the file
+              with open(filepath, 'r') as file:
+                content = json.load(file)
+
+              # Add the content to the merged dictionary
+              merged_data[key] = content
+
+          # Specify the output file
+          output_file = os.path.join(directory, "merged.json")
+
+          # Write the merged content to the output file
+          with open(output_file, 'w') as file:
+            json.dump(merged_data, file, indent=4)
+
+          print(f"Merged JSON file has been created at: {output_file}")
+
+
+
+      - name: Upload merged usage.json artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-usage
+          path: current-usage/merged.json
 
   wokwi:
     needs:
