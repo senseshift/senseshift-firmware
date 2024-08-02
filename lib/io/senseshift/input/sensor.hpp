@@ -37,7 +37,7 @@ template<typename Tp>
 class ISensor : public virtual ISimpleSensor<Tp>, public Calibration::Calibrated<Tp>, public Filter::Filtered<Tp> {};
 
 template<typename Tp>
-class Sensor : public ISensor<Tp>, public Component {
+class Sensor : public ISensor<Tp> {
   public:
     using ValueType = Tp;
     using CallbackManagerType = CallbackManager<void(ValueType)>;
@@ -62,6 +62,10 @@ class Sensor : public ISensor<Tp>, public Component {
     }
 
     void init() override
+    {
+    }
+
+    virtual void tick()
     {
     }
 
@@ -147,7 +151,7 @@ class SimpleSensorDecorator : public Sensor<Tp> {
         this->source_->init();
     }
 
-    void tick() override
+    virtual void tick()
     {
         this->updateValue();
     }

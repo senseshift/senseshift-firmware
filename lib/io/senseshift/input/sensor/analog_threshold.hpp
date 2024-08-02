@@ -39,7 +39,7 @@ class AnalogThresholdSensor : public BinarySensor {
         });
     }
 
-    void tick() override
+    void tick()
     {
         if (this->attach_callbacks_) {
             LOG_E(

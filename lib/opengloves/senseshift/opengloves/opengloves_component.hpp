@@ -16,7 +16,7 @@
 
 namespace SenseShift::OpenGloves {
 template<typename T>
-class OpenGlovesTrackingComponent : public SenseShift::Component {
+class OpenGlovesTrackingComponent {
     // Plotter raw_plotter_ = Plotter(&Serial, "Raw");
     // Plotter calibrated_plotter_ = Plotter(&Serial, "Cal");
 
@@ -40,7 +40,7 @@ class OpenGlovesTrackingComponent : public SenseShift::Component {
     {
     }
 
-    void init() override
+    void init()
     {
         this->communication_->init();
         this->input_sensors_.init();
@@ -51,7 +51,7 @@ class OpenGlovesTrackingComponent : public SenseShift::Component {
         }
     }
 
-    void tick() override
+    void tick()
     {
         // const auto start = micros();
 
@@ -128,7 +128,7 @@ class OpenGlovesTrackingComponent : public SenseShift::Component {
 };
 
 template<typename T>
-class OpenGlovesForceFeedbackComponent : public SenseShift::Component {
+class OpenGlovesForceFeedbackComponent {
   public:
     OpenGlovesForceFeedbackComponent(
       OutputWriters& output_writers, ::SenseShift::OpenGloves::ITransport* communication
@@ -137,14 +137,14 @@ class OpenGlovesForceFeedbackComponent : public SenseShift::Component {
     {
     }
 
-    void init() override
+    void init()
     {
         log_d("Setting up OpenGloves force feedback task: %p", this);
         this->communication_->init();
         this->output_writers_.init();
     }
 
-    void tick() override
+    void tick()
     {
         if (this->communication_->hasData()) {
             const auto length = this->communication_->read(this->buffer.data(), this->buffer.size());

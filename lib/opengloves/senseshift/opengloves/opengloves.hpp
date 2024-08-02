@@ -74,9 +74,9 @@ class ITransport : public IInitializable {
 using FloatSensor = ::SenseShift::Input::FloatSensor;
 using BinarySensor = ::SenseShift::Input::BinarySensor;
 
-class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*>, public Component {
+class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*> {
   public:
-    void init() override
+    void init()
     {
         for (auto& finger_curl : this->curl.fingers) {
             for (auto& joint_sensor : finger_curl.curl) {
@@ -108,7 +108,7 @@ class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*>, pu
         }
     }
 
-    void tick() override
+    void tick()
     {
         for (auto& finger_curl : this->curl.fingers) {
             for (auto& joint_sensor : finger_curl.curl) {

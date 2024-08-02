@@ -40,7 +40,7 @@ class GrabGesture : public Gesture {
         });
     }
 
-    void tick() override
+    void tick()
     {
         if (this->attach_callbacks_) {
             LOG_E("gesture.grab", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");
@@ -84,7 +84,7 @@ class PinchGesture : public Gesture {
         });
     }
 
-    void tick() override
+    void tick()
     {
         if (this->attach_callbacks_) {
             LOG_E("gesture.pinch", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");
