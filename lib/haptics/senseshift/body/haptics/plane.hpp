@@ -92,34 +92,50 @@ class PlaneMapper_Margin {
     /// Maps a 2D matrix into a (coord, object) map.
     ///
     /// \tparam Tp
-    /// \tparam I Input 2D matrix type.
-    /// \tparam O Output map type.
+    /// \tparam TContainer Input 2D matrix type.
     ///
     /// \param map2d Input 2D matrix.
     ///
     /// \return Output map.
-    template<typename Tp, typename I = std::vector<std::vector<Tp>>, typename O = std::map<Position, Tp>>
-    static auto mapMatrixCoordinates(I map2d) -> O
+    template<
+      typename Tp,
+      typename TContainer,
+      typename = std::enable_if_t<std::is_same_v<typename TContainer::value_type::value_type, Tp>>>
+    static auto mapMatrixCoordinates(const TContainer& map2d) -> std::map<Position, Tp>
     {
-        O points{};
+        std::map<Position, Tp> points{};
 
         const size_t y_size = map2d.size();
         const size_t y_max = y_size - 1;
 
-        for (size_t y = 0; y < y_size; ++y) {
-            auto row = map2d.at(y);
+        size_t y = 0;
+        for (const auto& row : map2d) {
             const size_t x_size = row.size();
             const size_t x_max = x_size - 1;
 
-            for (size_t x = 0; x < x_size; ++x) {
-                Tp wr = row.at(x);
+            size_t x = 0;
+            for (const auto& elem : row) {
                 Position coord = mapPoint<Position::Value>(x, y, x_max, y_max);
-
-                points[coord] = wr;
+                points[coord] = elem;
+                ++x;
             }
+
+            ++y;
         }
 
         return points;
+    }
+
+    template<typename Tp, const size_t Y, const size_t X>
+    inline static auto mapMatrixCoordinates(const std::array<std::array<Tp, X>, Y>& map2d)
+    {
+        return mapMatrixCoordinates<Tp, std::array<std::array<Tp, X>, Y>>(map2d);
+    }
+
+    template<typename Tp>
+    inline static auto mapMatrixCoordinates(const std::initializer_list<std::initializer_list<Tp>>& map2d)
+    {
+        return mapMatrixCoordinates<Tp, std::initializer_list<std::initializer_list<Tp>>>(map2d);
     }
 
     /// Re-maps a point index to output coordinate.
