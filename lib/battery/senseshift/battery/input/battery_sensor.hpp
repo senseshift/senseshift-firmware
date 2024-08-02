@@ -5,7 +5,7 @@
 #include "senseshift/battery/battery.hpp"
 
 #include <senseshift/core/helpers.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Battery::Input {
 /// Abstract battery sensor

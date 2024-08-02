@@ -1,5 +1,5 @@
 #include <senseshift/body/hands/input/gesture.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;

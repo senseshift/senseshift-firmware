@@ -1,6 +1,6 @@
 #pragma once
 
-#include "senseshift/input/sensor/sensor.hpp"
+#include "senseshift/input/sensor.hpp"
 #include <type_traits>
 
 namespace SenseShift::Input {

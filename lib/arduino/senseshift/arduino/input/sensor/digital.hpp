@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Arduino::Input {
 class DigitalSimpleSensor : public ::SenseShift::Input::IBinarySimpleSensor {

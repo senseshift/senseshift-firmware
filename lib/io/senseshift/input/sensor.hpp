@@ -7,8 +7,8 @@
 #include "senseshift/input/calibration.hpp"
 #include "senseshift/input/filter.hpp"
 
-#include <senseshift/core/component.hpp>
-#include <senseshift/core/helpers.hpp>
+#include "senseshift/core/component.hpp"
+#include "senseshift/core/helpers.hpp"
 
 #define SS_SUBSENSOR_INIT(SENSOR, ATTACH_CALLBACK, CALLBACK) \
     (SENSOR)->init();                                        \

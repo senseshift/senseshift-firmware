@@ -8,7 +8,7 @@
 #include <opengloves.hpp>
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <senseshift/output/output.hpp>
 
 #define SS_OG_COLLECT_DATA(FN)                                     \

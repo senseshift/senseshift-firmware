@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Body::Hands::Input {
 class TotalCurl : public ::SenseShift::Input::FloatSensor {

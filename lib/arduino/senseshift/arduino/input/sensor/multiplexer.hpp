@@ -11,7 +11,7 @@
 #include "senseshift/arduino/input/sensor/digital.hpp"
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Arduino::Input {
 template<size_t N>
