@@ -101,7 +101,7 @@ class PlaneMapper_Margin {
       typename Tp,
       typename TContainer,
       typename = std::enable_if_t<std::is_same_v<typename TContainer::value_type::value_type, Tp>>>
-    static auto mapMatrixCoordinates(const TContainer& map2d) -> std::map<Position, Tp>
+    static constexpr auto mapMatrixCoordinates(const TContainer& map2d) -> std::map<Position, Tp>
     {
         std::map<Position, Tp> points{};
 
@@ -127,13 +127,13 @@ class PlaneMapper_Margin {
     }
 
     template<typename Tp, const size_t Y, const size_t X>
-    inline static auto mapMatrixCoordinates(const std::array<std::array<Tp, X>, Y>& map2d)
+    inline static constexpr auto mapMatrixCoordinates(const std::array<std::array<Tp, X>, Y>& map2d)
     {
         return mapMatrixCoordinates<Tp, std::array<std::array<Tp, X>, Y>>(map2d);
     }
 
     template<typename Tp>
-    inline static auto mapMatrixCoordinates(const std::initializer_list<std::initializer_list<Tp>>& map2d)
+    inline static constexpr auto mapMatrixCoordinates(const std::initializer_list<std::initializer_list<Tp>>& map2d)
     {
         return mapMatrixCoordinates<Tp, std::initializer_list<std::initializer_list<Tp>>>(map2d);
     }
@@ -141,7 +141,7 @@ class PlaneMapper_Margin {
     /// Re-maps a point index to output coordinate.
     /// \tparam Tp The type of the point index.
     template<typename Tp>
-    [[nodiscard]] static constexpr auto mapPoint(Tp x, Tp y, Tp x_max, Tp y_max) -> Math::Point2<Tp>
+    inline static constexpr auto mapPoint(Tp x, Tp y, Tp x_max, Tp y_max) -> Math::Point2<Tp>
     {
         using LocalPointType = Math::Point2<Tp>;
 
