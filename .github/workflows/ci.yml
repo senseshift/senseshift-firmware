@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   build-bhaptics:
-    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }} -D ${{ matrix.nimble_flag }}
+    name: Build ${{ matrix.target }} ${{ matrix.coverage && 'with coverage' || 'without coverage' }}, -D ${{ matrix.battery_flag }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -39,7 +39,6 @@ jobs:
           - bhaptics_tactvisor
           - bhaptics_tactglove_right
         battery_flag: [ SS_BATTERY_ENABLED=true ]
-        nimble_flag: [ SS_USE_NIMBLE=false ]
         coverage: [ false ]
 
         include:
@@ -48,22 +47,11 @@ jobs:
             os: ubuntu-latest
             coverage: true
             battery_flag: SS_BATTERY_ENABLED=true
-            nimble_flag: SS_USE_NIMBLE=true
-          - target: bhaptics_tactsuit_x40
-            os: ubuntu-latest
-            coverage: true
-            battery_flag: SS_BATTERY_ENABLED=true
-            nimble_flag: SS_USE_NIMBLE=false
-          - target: bhaptics_tactsuit_x40
-            os: ubuntu-latest
-            coverage: false
-            battery_flag: SS_BATTERY_ENABLED=true
-            nimble_flag: SS_USE_NIMBLE=true
+
     env:
       PLATFORMIO_BUILD_FLAGS: >-
         ${{ matrix.coverage && '-lgcov --coverage' || '' }}
         ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
-        ${{ matrix.nimble_flag && format('-D {0}', matrix.nimble_flag) || '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -73,7 +61,7 @@ jobs:
       - name: Get firmware name
         id: firmware_name
         run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.battery_flag }}
 
       - name: Speedup package installation
         if: matrix.coverage
