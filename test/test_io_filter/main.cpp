@@ -1,5 +1,5 @@
 #include <senseshift/input/filter.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <unity.h>
 
 #include <map>
@@ -12,6 +12,16 @@
 
 using namespace SenseShift::Input;
 using namespace SenseShift::Input::Filter;
+
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
 
 void test_add_filter(void)
 {

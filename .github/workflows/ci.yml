@@ -49,11 +49,11 @@ jobs:
             coverage: true
             battery_flag: SS_BATTERY_ENABLED=true
             nimble_flag: SS_USE_NIMBLE=true
-          # - target: bhaptics_tactsuit_x40
-          #   os: ubuntu-latest
-          #   coverage: true
-          #   battery_flag: SS_BATTERY_ENABLED=true
-          #   nimble_flag: SS_USE_NIMBLE=false
+          - target: bhaptics_tactsuit_x40
+            os: ubuntu-latest
+            coverage: true
+            battery_flag: SS_BATTERY_ENABLED=true
+            nimble_flag: SS_USE_NIMBLE=false
           - target: bhaptics_tactsuit_x40
             os: ubuntu-latest
             coverage: false
@@ -532,8 +532,6 @@ jobs:
           pattern: '*-usage'
           merge-multiple: true
 
-      - run: ls -lahR current-usage
-
       - name: Merge usage files
         shell: python
         run: |
@@ -579,6 +577,68 @@ jobs:
           name: merged-usage
           path: current-usage/merged.json
 
+      - name: Get base branch job ID
+        if: github.event_name == 'pull_request'
+        id: base_branch_workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: workflows } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: context.payload.pull_request.base.ref,
+              event: 'push',
+              workflow_id: 'ci.yml',
+              status: 'completed',
+              per_page: 1
+            });
+
+            const baseBranchJobId = workflows.workflow_runs[0].id;
+            console.log(baseBranchJobId);
+
+            return baseBranchJobId;
+
+
+      - name: Download base branch usage.json artifact
+        if: github.event_name == 'pull_request'
+        id: download-base-usage
+        uses: actions/download-artifact@v4
+        with:
+          name: merged-usage
+          path: base-usage
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.base_branch_workflow.outputs.result }}
+
+      - uses: actions/setup-python@v2
+        if: github.event_name == 'pull_request'
+        with:
+          python-version: '3.x'
+
+      - name: Report memory usage table
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip pandas tabulate
+
+          cat ./base-usage/merged.json
+          cat ./current-usage/merged.json
+
+          echo "## Memory Usage Comparison" > memory-usage-comparison.md
+          echo "" >> memory-usage-comparison.md
+          echo "<details>" >> memory-usage-comparison.md
+          echo "  <summary>Click to expand</summary>" >> memory-usage-comparison.md
+          echo "" >> memory-usage-comparison.md
+          python ./.github/scripts/compare-memory-usage.py ./base-usage/merged.json ./current-usage/merged.json | tee -a memory-usage-comparison.md
+          echo "</details>" >> memory-usage-comparison.md
+
+          cat ./memory-usage-comparison.md > $GITHUB_STEP_SUMMARY
+
+      - uses: thollander/actions-comment-pull-request@v2
+        if: github.event_name == 'pull_request'
+        with:
+          filePath: memory-usage-comparison.md
+          comment_tag: memory-usage-comparison
   wokwi:
     needs:
       - build-bhaptics

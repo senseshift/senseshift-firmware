@@ -5,7 +5,7 @@
 #include "senseshift/battery/battery.hpp"
 
 #include <senseshift/core/helpers.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Battery::Input {
 /// Abstract battery sensor
@@ -44,7 +44,7 @@ class LookupTableInterpolateBatterySensor : public IBatterySensor {
     }
 
   protected:
-    [[nodiscard]] auto lookupInterpolateLevel(VoltageType voltage) -> float
+    auto lookupInterpolateLevel(VoltageType voltage) -> float
     {
         return ::SenseShift::lookup_table_interpolate_linear<Container, VoltageType, float>(
           *this->lookup_table_,

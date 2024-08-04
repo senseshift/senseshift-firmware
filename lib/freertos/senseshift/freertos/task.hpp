@@ -120,7 +120,7 @@ class Task {
     }
 };
 
-template<typename Tp = Component>
+template<typename Tp>
 class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
     static_assert(std::is_same_v<decltype(&Tp::init), void (Tp::*)()>);
     static_assert(std::is_same_v<decltype(&Tp::tick), void (Tp::*)()>);

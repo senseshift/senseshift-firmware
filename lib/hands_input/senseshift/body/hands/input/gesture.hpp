@@ -1,8 +1,8 @@
 #pragma once
 
 #include <senseshift/core/component.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/analog_threshold.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
 
 namespace SenseShift::Body::Hands::Input {
 using Gesture = ::SenseShift::Input::BinarySensor;
@@ -40,7 +40,7 @@ class GrabGesture : public Gesture {
         });
     }
 
-    void tick() override
+    void tick()
     {
         if (this->attach_callbacks_) {
             LOG_E("gesture.grab", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");
@@ -84,7 +84,7 @@ class PinchGesture : public Gesture {
         });
     }
 
-    void tick() override
+    void tick()
     {
         if (this->attach_callbacks_) {
             LOG_E("gesture.pinch", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");

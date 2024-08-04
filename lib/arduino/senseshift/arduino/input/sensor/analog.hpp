@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 #include <Arduino.h>
 
@@ -33,7 +33,7 @@ class AnalogSimpleSensor : public ::SenseShift::Input::IFloatSimpleSensor {
         pinMode(this->pin_, INPUT);
     }
 
-    [[nodiscard]] inline auto getValue() -> float override
+    inline auto getValue() -> float override
     {
         const std::uint16_t raw = analogRead(this->pin_);
         return static_cast<float>(raw) / ANALOG_MAX;

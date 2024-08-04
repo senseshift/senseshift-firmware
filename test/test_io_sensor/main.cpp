@@ -1,8 +1,18 @@
+#include <senseshift/input/sensor.hpp>
 #include <senseshift/input/sensor/analog_threshold.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;
+
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
 
 class TestAnalogCountingSensor : public ISimpleSensor<int> {
   public:

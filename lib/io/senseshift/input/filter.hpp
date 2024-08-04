@@ -35,17 +35,68 @@ class IFilter {
 };
 
 template<typename Tp>
-class IFiltered {
+class Filtered {
   public:
     using ValueType = Tp;
+    using FilterType = IFilter<ValueType>*;
 
-    virtual void addFilter(IFilter<ValueType>* filter) = 0;
+    auto getFilters() -> std::vector<FilterType>&
+    {
+        return this->filters_;
+    }
 
-    virtual void addFilters(std::vector<IFilter<ValueType>*> filters) = 0;
+    /// Appends a filter to the sensor's filter chain.
+    ///
+    /// \param filter The filter to add.
+    ///
+    /// \see addFilters for adding multiple filters.
+    void addFilter(FilterType filter)
+    {
+        this->filters_.push_back(filter);
+    }
 
-    virtual void setFilters(std::vector<IFilter<ValueType>*> filters) = 0;
+    /// Adds multiple filters to the sensor's filter chain. Appends to the end of the chain.
+    ///
+    /// \param filters The chain of filters to add.
+    ///
+    /// \example
+    /// \code
+    /// sensor->addFilters({
+    ///     new MinMaxFilter(0.1f, 0.9f),
+    ///     new CenterDeadzoneFilter(0.1f),
+    /// });
+    /// \endcode
+    ///
+    /// todo(leon0399): use SFINAE
+    void addFilters(std::vector<FilterType> filters)
+    {
+        this->filters_.insert(this->filters_.end(), filters.begin(), filters.end());
+    }
 
-    void clearFilters() = 0;
+    /// Replaces the sensor's filter chain with the given filters.
+    ///
+    /// \param filters New filter chain.
+    ///
+    /// \example
+    /// \code
+    /// sensor->setFilters({
+    ///     new MinMaxFilter(0.1f, 0.9f),
+    ///     new CenterDeadzoneFilter(0.1f),
+    /// });
+    /// \endcode
+    void setFilters(std::vector<FilterType> filters)
+    {
+        this->filters_ = filters;
+    }
+
+    /// Removes everything from the sensor's filter chain.
+    void clearFilters()
+    {
+        this->filters_.clear();
+    }
+
+  protected:
+    std::vector<FilterType> filters_ = {};
 };
 
 template<typename Tp>
@@ -147,76 +198,6 @@ class LambdaFilter : public IFilter<Tp> {
 
   private:
     Lambda filter_;
-};
-
-/// Average filter. Reads the value from the sensor and returns the average of the N values.
-template<typename Tp, typename Sensor>
-class SampleAverageFilter : public IFilter<Tp> {
-    static_assert(std::is_arithmetic_v<Tp>, "SampleAverageFilter only supports arithmetic types");
-    static_assert(std::is_same_v<typename Sensor::ValueType, Tp>, "Sensor type must match filter type");
-    static_assert(
-      std::is_same_v<decltype(&Sensor::readRawValue), void (Sensor::*)()>, "Can only use sensors with readRawValue()"
-    );
-
-  public:
-    explicit SampleAverageFilter(std::size_t size) : size_(size){};
-
-    auto filter(ISimpleSensor<Tp>* sensor, Tp value) -> Tp override
-    {
-        auto sum = value;
-
-        // Read the acc_ from the sensor N-1 times and sum them up.
-        // We read it N-1 times because we already have the first acc_.
-        for (std::size_t i = 0; i < this->size_ - 1; i++) {
-            sum += sensor->readRawValue();
-        }
-
-        // Return the average of the values.
-        return sum / this->size_;
-    }
-
-  private:
-    std::size_t size_;
-};
-
-template<typename Tp, typename Sensor>
-class SampleMedianFilter : public IFilter<Tp> {
-    static_assert(std::is_same_v<typename Sensor::ValueType, Tp>, "Sensor type must match filter type");
-    // static_assert(std::is_same_v<decltype(&Sensor::readRawValue), Tp (Sensor::*)()>, "Can only use sensors with
-    // readRawValue()");
-
-  public:
-    explicit SampleMedianFilter(std::size_t size_) : size_(size_)
-    {
-        // allocate the array
-        this->values = new Tp[size_];
-    };
-
-    auto filter(ISimpleSensor<Tp>* sensor, Tp value) -> Tp override
-    {
-        if (sensor == nullptr) {
-            LOG_E("filter.sampling_median", "Source sensor is null");
-            return value;
-        }
-
-        this->values[0] = value;
-
-        // Read the acc_ from the sensor N-1 times and put them in the array.
-        // We read it N-1 times because we already have the first acc_.
-        for (std::size_t i = 1; i <= this->size_ - 1; i++) {
-            this->values[i] = sensor->getValue();
-        }
-
-        // Sort the array.
-        std::sort(this->values, this->values + this->size_);
-
-        // Return the median of the values.
-        return this->values[this->size_ / 2];
-    }
-
-  private:
-    std::size_t size_;
-    Tp* values;
 };
 
 template<typename Tp>

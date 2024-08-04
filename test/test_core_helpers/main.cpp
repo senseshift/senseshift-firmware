@@ -6,6 +6,16 @@
 
 using namespace SenseShift;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 void test_lerp_uint8(void)
 {
     TEST_ASSERT_EQUAL_UINT16(0, lerp<std::uint8_t>(0.0f, 0, 255));

@@ -8,7 +8,7 @@
 #include <opengloves.hpp>
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <senseshift/output/output.hpp>
 
 #define SS_OG_COLLECT_DATA(FN)                                     \
@@ -74,12 +74,9 @@ class ITransport : public IInitializable {
 using FloatSensor = ::SenseShift::Input::FloatSensor;
 using BinarySensor = ::SenseShift::Input::BinarySensor;
 
-class InputSensors :
-  public og::InputPeripheral<FloatSensor*, BinarySensor*>,
-  public Component,
-  public ::SenseShift::Input::Calibration::ICalibrated {
+class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*> {
   public:
-    void init() override
+    void init()
     {
         for (auto& finger_curl : this->curl.fingers) {
             for (auto& joint_sensor : finger_curl.curl) {
@@ -111,7 +108,7 @@ class InputSensors :
         }
     }
 
-    void tick() override
+    void tick()
     {
         for (auto& finger_curl : this->curl.fingers) {
             for (auto& joint_sensor : finger_curl.curl) {
@@ -137,31 +134,31 @@ class InputSensors :
         }
     }
 
-    [[nodiscard]] auto collectData() -> og::InputPeripheralData
+    auto collectData() -> og::InputPeripheralData
     {
         SS_OG_COLLECT_DATA(getValue);
     }
 
-    [[nodiscard]] auto collectRawData() -> og::InputPeripheralData
+    auto collectRawData() -> og::InputPeripheralData
     {
         SS_OG_COLLECT_DATA(getRawValue);
     }
 
-    void reselCalibration() override
+    void resetCalibration()
     {
         for (const auto& calibrated_input : this->calibrated_inputs_) {
-            calibrated_input->reselCalibration();
+            calibrated_input->resetCalibration();
         }
     }
 
-    void startCalibration() override
+    void startCalibration()
     {
         for (const auto& calibrated_input : this->calibrated_inputs_) {
             calibrated_input->startCalibration();
         }
     }
 
-    void stopCalibration() override
+    void stopCalibration()
     {
         for (const auto& calibrated_input : this->calibrated_inputs_) {
             calibrated_input->stopCalibration();

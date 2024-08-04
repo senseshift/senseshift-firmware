@@ -41,7 +41,7 @@ class LedcOutput : public ::SenseShift::Output::IFloatOutput {
         }
     }
 
-    [[nodiscard]] inline auto getMaxValue() const -> std::uint32_t
+    inline auto getMaxValue() const -> std::uint32_t
     {
         return (1 << this->analog_resolution_) - 1;
     }

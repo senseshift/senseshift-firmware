@@ -1,9 +1,19 @@
 #include <senseshift/body/hands/input/gesture.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;
 using namespace SenseShift::Body::Hands::Input;
+
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
 
 void test_gesture_trigger(void)
 {

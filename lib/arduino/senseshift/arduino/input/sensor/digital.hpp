@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Arduino::Input {
 class DigitalSimpleSensor : public ::SenseShift::Input::IBinarySimpleSensor {
@@ -21,7 +21,7 @@ class DigitalSimpleSensor : public ::SenseShift::Input::IBinarySimpleSensor {
         pinMode(this->pin_, this->mode_);
     }
 
-    [[nodiscard]] auto getValue() -> bool override
+    auto getValue() -> bool override
     {
         return digitalRead(this->pin_) == this->inverted_;
     }

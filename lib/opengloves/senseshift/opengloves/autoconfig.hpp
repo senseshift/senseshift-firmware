@@ -4,7 +4,7 @@
 #include <senseshift/body/hands/input/total_curl.hpp>
 #include <senseshift/input/calibration.hpp>
 #include <senseshift/input/filter.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 #include <senseshift/opengloves/constants.hpp>
 #include <senseshift/opengloves/opengloves.hpp>
 
@@ -262,7 +262,7 @@
 
 namespace SenseShift::OpenGloves::AutoConfig {
 
-[[nodiscard]] auto createInput() -> InputSensors
+auto createInput() -> InputSensors
 {
     InputSensors input_sensors;
 
@@ -406,7 +406,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
     return input_sensors;
 }
 
-[[nodiscard]] auto createFfbOutputs() -> OutputWriters
+auto createFfbOutputs() -> OutputWriters
 {
     OutputWriters output_writers;
 
@@ -441,7 +441,7 @@ namespace SenseShift::OpenGloves::AutoConfig {
 /**
  * Setup the transport for the OpenGloves interface.
  */
-[[nodiscard]] auto createTransport() -> ITransport*
+auto createTransport() -> ITransport*
 {
 #if OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_SERIAL // Serial
     auto* pSerial = &SERIAL_PORT;

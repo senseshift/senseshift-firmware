@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <senseshift/core/component.hpp>
-#include <senseshift/input/sensor/sensor.hpp>
+#include <senseshift/input/sensor.hpp>
 
 namespace SenseShift::Body::Hands::Input {
 class TotalCurl : public ::SenseShift::Input::FloatSensor {
@@ -29,7 +29,7 @@ class TotalCurl : public ::SenseShift::Input::FloatSensor {
         }
     }
 
-    void tick() override
+    void tick()
     {
         if (this->attach_callbacks_) {
             LOG_E("total_curl", "tick() called when attach_callbacks_ is true, infinite loop go wroom-wroom!");

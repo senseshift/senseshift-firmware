@@ -7,8 +7,8 @@
 #include "senseshift/input/calibration.hpp"
 #include "senseshift/input/filter.hpp"
 
-#include <senseshift/core/component.hpp>
-#include <senseshift/core/helpers.hpp>
+#include "senseshift/core/component.hpp"
+#include "senseshift/core/helpers.hpp"
 
 #define SS_SUBSENSOR_INIT(SENSOR, ATTACH_CALLBACK, CALLBACK) \
     (SENSOR)->init();                                        \
@@ -27,17 +27,17 @@ class ISimpleSensor : public virtual IInitializable {
     explicit ISimpleSensor() = default;
 
     /// Get the current sensor value.
-    [[nodiscard]] virtual auto getValue() -> ValueType = 0;
+    virtual auto getValue() -> ValueType = 0;
 };
 
 using IBinarySimpleSensor = ISimpleSensor<bool>;
 using IFloatSimpleSensor = ISimpleSensor<float>;
 
 template<typename Tp>
-class ISensor : public virtual ISimpleSensor<Tp>, public Calibration::ICalibrated {};
+class ISensor : public ISimpleSensor<Tp>, public Calibration::Calibrated<Tp>, public Filter::Filtered<Tp> {};
 
 template<typename Tp>
-class Sensor : public ISensor<Tp>, public Component {
+class Sensor : public ISensor<Tp> {
   public:
     using ValueType = Tp;
     using CallbackManagerType = CallbackManager<void(ValueType)>;
@@ -51,81 +51,6 @@ class Sensor : public ISensor<Tp>, public Component {
         this->value_ = this->applyFilters(value);
     }
 
-    /// Appends a filter to the sensor's filter chain.
-    ///
-    /// \param filter The filter to add.
-    ///
-    /// \see addFilters for adding multiple filters.
-    void addFilter(Filter::IFilter<ValueType>* filter)
-    {
-        this->filters_.push_back(filter);
-    }
-
-    /// Adds multiple filters to the sensor's filter chain. Appends to the end of the chain.
-    ///
-    /// \param filters The chain of filters to add.
-    ///
-    /// \example
-    /// \code
-    /// sensor->addFilters({
-    ///     new MinMaxFilter(0.1f, 0.9f),
-    ///     new CenterDeadzoneFilter(0.1f),
-    /// });
-    /// \endcode
-    void addFilters(std::vector<Filter::IFilter<ValueType>*> filters)
-    {
-        this->filters_.insert(this->filters_.end(), filters.begin(), filters.end());
-    }
-
-    /// Replaces the sensor's filter chain with the given filters.
-    ///
-    /// \param filters New filter chain.
-    ///
-    /// \example
-    /// \code
-    /// sensor->setFilters({
-    ///     new MinMaxFilter(0.1f, 0.9f),
-    ///     new CenterDeadzoneFilter(0.1f),
-    /// });
-    /// \endcode
-    void setFilters(std::vector<Filter::IFilter<ValueType>*> filters)
-    {
-        this->filters_ = filters;
-    }
-
-    /// Removes everything from the sensor's filter chain.
-    void clearFilters()
-    {
-        this->filters_.clear();
-    }
-
-    void setCalibrator(Calibration::ICalibrator<ValueType>* calibrator)
-    {
-        this->calibrator_ = calibrator;
-    }
-
-    void clearCalibrator()
-    {
-        this->calibrator_ = std::nullopt;
-    }
-
-    void startCalibration() override
-    {
-        this->is_calibrating_ = true;
-    }
-
-    void stopCalibration() override
-    {
-        this->is_calibrating_ = false;
-    }
-
-    void reselCalibration() override
-    {
-        if (this->calibrator_.has_value()) {
-            this->calibrator_.value()->reset();
-        }
-    }
-
     void addValueCallback(CallbackType&& callback)
     {
         this->callbacks_.add(std::move(callback));
@@ -137,6 +62,10 @@ class Sensor : public ISensor<Tp>, public Component {
     }
 
     void init() override
+    {
+    }
+
+    virtual void tick()
     {
     }
 
@@ -157,32 +86,32 @@ class Sensor : public ISensor<Tp>, public Component {
     }
 
     /// Get the current sensor .value_.
-    [[nodiscard]] auto getValue() -> ValueType override
+    auto getValue() -> ValueType override
     {
         return this->value_;
     }
 
     /// Get the current raw sensor .raw_value_.
-    [[nodiscard]] auto getRawValue() -> ValueType
+    auto getRawValue() -> ValueType
     {
         return this->raw_value_;
     }
 
   protected:
     /// Apply current filters to value.
-    [[nodiscard]] auto applyFilters(ValueType value) -> ValueType
+    auto applyFilters(ValueType value) -> ValueType
     {
         /// Apply calibration
-        if (this->calibrator_.has_value()) {
-            if (this->is_calibrating_) {
-                this->calibrator_.value()->update(value);
+        if (this->getCalibrator() != nullptr) {
+            if (this->isCalibrating()) {
+                this->getCalibrator()->update(value);
             }
 
-            value = this->calibrator_.value()->calibrate(value);
+            value = this->getCalibrator()->calibrate(value);
         }
 
         /// Apply filters
-        for (auto filter : this->filters_) {
+        for (auto filter : this->getFilters()) {
             value = filter->filter(nullptr, value);
         }
 
@@ -192,12 +121,6 @@ class Sensor : public ISensor<Tp>, public Component {
   private:
     friend class Filter::IFilter<ValueType>;
     friend class Calibration::ICalibrator<ValueType>;
-
-    /// The sensor's filter chain.
-    std::vector<Filter::IFilter<ValueType>*> filters_ = std::vector<Filter::IFilter<ValueType>*>();
-
-    bool is_calibrating_ = false;
-    std::optional<Calibration::ICalibrator<ValueType>*> calibrator_ = std::nullopt;
 
     ValueType raw_value_;
     ValueType value_;
@@ -219,7 +142,7 @@ class SimpleSensorDecorator : public Sensor<Tp> {
     using ValueType = Tp;
     using SourceType = ISimpleSensor<ValueType>;
 
-    explicit SimpleSensorDecorator(SourceType* source) : source_(source)
+    explicit SimpleSensorDecorator(SourceType* source) : source_(source), Sensor<Tp>()
     {
     }
 
@@ -228,7 +151,7 @@ class SimpleSensorDecorator : public Sensor<Tp> {
         this->source_->init();
     }
 
-    void tick() override
+    virtual void tick()
     {
         this->updateValue();
     }

@@ -57,26 +57,24 @@ void setupMode()
 
     // Assign the pins on the configured PCA9685s and PWM pins to locations on the
     // vest
-    auto frontOutputs = PlaneMapper_Margin::
-      mapMatrixCoordinates<FloatPlane::Actuator*, std::array<std::array<FloatPlane::Actuator*, 4>, 5>>({ {
-        // clang-format off
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+      // clang-format off
           { new PCA9685Output(pwm0, 0),  new PCA9685Output(pwm0, 1),  new PCA9685Output(pwm0, 2),  new PCA9685Output(pwm0, 3)  },
           { new PCA9685Output(pwm0, 4),  new PCA9685Output(pwm0, 5),  new PCA9685Output(pwm0, 6),  new PCA9685Output(pwm0, 7)  },
           { new PCA9685Output(pwm0, 8),  new PCA9685Output(pwm0, 9),  new PCA9685Output(pwm0, 10), new PCA9685Output(pwm0, 11) },
           { new PCA9685Output(pwm0, 12), new PCA9685Output(pwm0, 13), new PCA9685Output(pwm0, 14), new PCA9685Output(pwm0, 15) },
           { new LedcOutput(32),          new LedcOutput(33),          new LedcOutput(25),          new LedcOutput(26)          },
-        // clang-format on
-      } });
-    auto backOutputs = PlaneMapper_Margin::
-      mapMatrixCoordinates<FloatPlane::Actuator*, std::array<std::array<FloatPlane::Actuator*, 4>, 5>>({ {
-        // clang-format off
+      // clang-format on
+    });
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+      // clang-format off
           { new PCA9685Output(pwm1, 0),  new PCA9685Output(pwm1, 1),  new PCA9685Output(pwm1, 2),  new PCA9685Output(pwm1, 3)  },
           { new PCA9685Output(pwm1, 4),  new PCA9685Output(pwm1, 5),  new PCA9685Output(pwm1, 6),  new PCA9685Output(pwm1, 7)  },
           { new PCA9685Output(pwm1, 8),  new PCA9685Output(pwm1, 9),  new PCA9685Output(pwm1, 10), new PCA9685Output(pwm1, 11) },
           { new PCA9685Output(pwm1, 12), new PCA9685Output(pwm1, 13), new PCA9685Output(pwm1, 14), new PCA9685Output(pwm1, 15) },
           { new LedcOutput(27),          new LedcOutput(14),          new LedcOutput(12),          new LedcOutput(13)          },
-        // clang-format on
-      } });
+      // clang-format on
+    });
 
     app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane_Closest(frontOutputs));
     app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane_Closest(backOutputs));
