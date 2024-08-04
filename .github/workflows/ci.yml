@@ -59,6 +59,11 @@ jobs:
             coverage: false
             battery_flag: SS_BATTERY_ENABLED=true
             nimble_flag: SS_USE_NIMBLE=true
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.coverage && '-lgcov --coverage' || '' }}
+        ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
+        ${{ matrix.nimble_flag && format('-D {0}', matrix.nimble_flag) || '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -69,26 +74,6 @@ jobs:
         id: firmware_name
         run: |
           ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.battery_flag }} ${{ matrix.nimble_flag }}
-
-      - name: Enable coverage (non-macOS)
-        if: runner.os != 'macOS' && matrix.coverage
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
-      - name: Enable coverage (macOS)
-        if: runner.os == 'macOS' && matrix.coverage
-        run: |
-          sed -i '' '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        if: runner.os != 'macOS'
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
-      - name: Update build flags (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
 
       - name: Speedup package installation
         if: matrix.coverage
@@ -242,6 +227,12 @@ jobs:
             comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BLESERIAL
             coverage: true
 
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.coverage && '-lgcov --coverage' || '' }}
+        ${{ matrix.comm_flag && format('-D {0}', matrix.comm_flag) || '' }}
+        ${{ matrix.curl_calibration_flag && format('-D {0}', matrix.curl_calibration_flag) || '' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -283,26 +274,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.9"
-
-      - name: Enable coverage (non-macOS)
-        if: runner.os != 'macOS' && matrix.coverage
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
-      - name: Enable coverage (macOS)
-        if: runner.os == 'macOS' && matrix.coverage
-        run: |
-          sed -i '' '/__OH_FIRMWARE__/p; s/-D __OH_FIRMWARE__/-lgcov --coverage/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        if: runner.os != 'macOS'
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
-      - name: Update build flags (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.curl_calibration_flag }}/' platformio.ini
-          sed -i '' '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Install PlatformIO
         run: |
@@ -639,6 +610,7 @@ jobs:
         with:
           filePath: memory-usage-comparison.md
           comment_tag: memory-usage-comparison
+
   wokwi:
     needs:
       - build-bhaptics
