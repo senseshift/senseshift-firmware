@@ -13,7 +13,7 @@ class AnalogThresholdSensor : public BinarySensor {
     /// \param threshold_upper Upper threshold, that needs to be crossed to transition from `low` to `high` states.
     /// \param threshold_lower Lower threshold, that needs to be crossed to transition from `high` to `low` states.
     explicit AnalogThresholdSensor(
-      ::SenseShift::Input::Sensor<Tp>* source, Tp threshold_upper, Tp threshold_lower, bool attach_callbacks = false
+      Sensor<Tp>* source, Tp threshold_upper, Tp threshold_lower, bool attach_callbacks = false
     ) :
       source_(source),
       threshold_upper_(threshold_upper),
@@ -25,9 +25,7 @@ class AnalogThresholdSensor : public BinarySensor {
     /// \param source The source sensor.
     /// \param threshold Threshold, that will be used for both upper and lower thresholds.
     template<typename U = Tp, std::enable_if_t<std::is_same_v<U, float>, int> = 0>
-    explicit AnalogThresholdSensor(
-      ::SenseShift::Input::Sensor<Tp>* source, float threshold = 0.5f, bool attach_callbacks = false
-    ) :
+    explicit AnalogThresholdSensor(Sensor<Tp>* source, float threshold = 0.5f, bool attach_callbacks = false) :
       AnalogThresholdSensor(source, threshold, threshold, attach_callbacks)
     {
     }
@@ -57,7 +55,7 @@ class AnalogThresholdSensor : public BinarySensor {
     }
 
   private:
-    ::SenseShift::Input::Sensor<Tp>* source_;
+    Sensor<Tp>* source_;
 
     Tp threshold_lower_, threshold_upper_;
 

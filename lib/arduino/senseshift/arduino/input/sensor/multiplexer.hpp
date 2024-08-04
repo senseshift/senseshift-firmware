@@ -15,7 +15,7 @@
 
 namespace SenseShift::Arduino::Input {
 template<size_t N>
-class Multiplexer : public IInitializable {
+class Multiplexer {
   public:
     /// \param pins The pins to use for the multiplexer.
     explicit Multiplexer(const std::array<std::uint8_t, N>& pins, const size_t switch_delay_us = 2) :
@@ -23,7 +23,7 @@ class Multiplexer : public IInitializable {
     {
     }
 
-    void init() override
+    void init()
     {
         for (const auto pin : this->pins_) {
             pinMode(pin, OUTPUT);
@@ -74,7 +74,7 @@ class MultiplexedAnalogSensor : public AnalogSimpleSensor {
         AnalogSimpleSensor::init();
     }
 
-    [[nodiscard]] auto getValue() -> float override
+    auto getValue() -> float override
     {
         this->component_->selectChannel(this->channel_);
 
@@ -86,17 +86,16 @@ class MultiplexedAnalogSensor : public AnalogSimpleSensor {
     const std::uint8_t channel_;
 };
 
+template<size_t N>
 class MultiplexedDigitalSensor : public DigitalSimpleSensor {
   public:
     /// \param component The CD74HC4057 Component to use.
     /// \param pin The SIG pin of the sensor.
     /// \param channel The channel to read from.
-    MultiplexedDigitalSensor(
-      MUX_CD74HC4057Component* component, const std::uint8_t pin_sig, const std::uint8_t channel
-    ) :
+    MultiplexedDigitalSensor(Multiplexer<N>* component, const std::uint8_t pin_sig, const std::uint8_t channel) :
       component_(component), DigitalSimpleSensor(pin_sig), channel_(channel)
     {
-        assert(channel < 16 && "Channel out of range");
+        assert(channel < (1 << N) && "Channel out of range");
     }
 
     void init() override
@@ -105,7 +104,7 @@ class MultiplexedDigitalSensor : public DigitalSimpleSensor {
         DigitalSimpleSensor::init();
     }
 
-    [[nodiscard]] auto getValue() -> bool override
+    auto getValue() -> bool override
     {
         this->component_->selectChannel(this->channel_);
 
@@ -113,7 +112,7 @@ class MultiplexedDigitalSensor : public DigitalSimpleSensor {
     }
 
   private:
-    MUX_CD74HC4057Component* component_;
+    Multiplexer<N>* component_;
     const std::uint8_t channel_;
 };
 

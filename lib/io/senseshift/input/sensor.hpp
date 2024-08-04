@@ -34,7 +34,7 @@ using IBinarySimpleSensor = ISimpleSensor<bool>;
 using IFloatSimpleSensor = ISimpleSensor<float>;
 
 template<typename Tp>
-class ISensor : public virtual ISimpleSensor<Tp>, public Calibration::Calibrated<Tp>, public Filter::Filtered<Tp> {};
+class ISensor : public ISimpleSensor<Tp>, public Calibration::Calibrated<Tp>, public Filter::Filtered<Tp> {};
 
 template<typename Tp>
 class Sensor : public ISensor<Tp> {
