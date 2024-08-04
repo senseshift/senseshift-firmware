@@ -598,11 +598,11 @@ jobs:
 
             return baseBranchJobId;
 
-
       - name: Download base branch usage.json artifact
         if: github.event_name == 'pull_request'
         id: download-base-usage
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: merged-usage
           path: base-usage
@@ -611,12 +611,12 @@ jobs:
           run-id: ${{ steps.base_branch_workflow.outputs.result }}
 
       - uses: actions/setup-python@v2
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.download-base-usage.outputs.artifacts == 'null'
         with:
           python-version: '3.x'
 
       - name: Report memory usage table
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.download-base-usage.outputs.artifacts == 'null'
         shell: bash
         run: |
           python -m pip install --upgrade pip pandas tabulate
@@ -635,7 +635,7 @@ jobs:
           cat ./memory-usage-comparison.md > $GITHUB_STEP_SUMMARY
 
       - uses: thollander/actions-comment-pull-request@v2
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.download-base-usage.outputs.artifacts == 'null'
         with:
           filePath: memory-usage-comparison.md
           comment_tag: memory-usage-comparison
