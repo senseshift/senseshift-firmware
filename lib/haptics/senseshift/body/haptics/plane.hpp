@@ -43,11 +43,12 @@ class OutputPlane {
     void setup();
     virtual void effect(const Position&, const Value&);
 
-    [[nodiscard]] auto getAvailablePoints() const -> const PositionSet*
+    auto getAvailablePoints() const -> const PositionSet*
     {
         return &points_;
     }
-    [[nodiscard]] auto getActuatorStates() const -> const PositionStateMap*
+
+    auto getActuatorStates() const -> const PositionStateMap*
     {
         return &states_;
     }
@@ -80,7 +81,7 @@ class OutputPlane_Closest : public OutputPlane<Tc, To> {
     void effect(const Position&, const Value&) override;
 
   private:
-    [[nodiscard]] static auto findClosestPoint(const PositionSet&, const Position&) -> const Position&;
+    static auto findClosestPoint(const PositionSet&, const Position&) -> const Position&;
 };
 
 using FloatPlane = OutputPlane<Position::Value, Output::IFloatOutput::ValueType>;

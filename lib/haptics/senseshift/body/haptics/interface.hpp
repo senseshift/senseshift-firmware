@@ -68,7 +68,7 @@ class VibroEffectData {
         return this->intensity_;
     }
 
-    [[nodiscard]] constexpr inline auto getIntensity() const -> Intensity
+    constexpr inline auto getIntensity() const -> Intensity
     {
         return intensity_;
     }

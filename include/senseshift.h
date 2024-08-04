@@ -13,7 +13,7 @@ class Application final : public IEventDispatcher {
   public:
     Application();
 
-    [[nodiscard]] auto getVibroBody() const -> Body::Haptics::FloatBody*
+    auto getVibroBody() const -> Body::Haptics::FloatBody*
     {
         return this->vibro_body_;
     }

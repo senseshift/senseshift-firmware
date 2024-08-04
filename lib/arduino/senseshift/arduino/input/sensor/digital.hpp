@@ -21,7 +21,7 @@ class DigitalSimpleSensor : public ::SenseShift::Input::IBinarySimpleSensor {
         pinMode(this->pin_, this->mode_);
     }
 
-    [[nodiscard]] auto getValue() -> bool override
+    auto getValue() -> bool override
     {
         return digitalRead(this->pin_) == this->inverted_;
     }

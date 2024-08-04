@@ -134,12 +134,12 @@ class InputSensors : public og::InputPeripheral<FloatSensor*, BinarySensor*> {
         }
     }
 
-    [[nodiscard]] auto collectData() -> og::InputPeripheralData
+    auto collectData() -> og::InputPeripheralData
     {
         SS_OG_COLLECT_DATA(getValue);
     }
 
-    [[nodiscard]] auto collectRawData() -> og::InputPeripheralData
+    auto collectRawData() -> og::InputPeripheralData
     {
         SS_OG_COLLECT_DATA(getRawValue);
     }

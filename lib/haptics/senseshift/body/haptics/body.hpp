@@ -47,7 +47,7 @@ class OutputBody {
 
     void effect(const Target& target, const Position& pos, const typename Plane::Value& val);
 
-    [[nodiscard]] auto getTargets() const -> const TargetPlaneMap*
+    auto getTargets() const -> const TargetPlaneMap*
     {
         return &targets_;
     }

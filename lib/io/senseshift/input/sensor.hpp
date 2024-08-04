@@ -27,7 +27,7 @@ class ISimpleSensor : public virtual IInitializable {
     explicit ISimpleSensor() = default;
 
     /// Get the current sensor value.
-    [[nodiscard]] virtual auto getValue() -> ValueType = 0;
+    virtual auto getValue() -> ValueType = 0;
 };
 
 using IBinarySimpleSensor = ISimpleSensor<bool>;
@@ -86,20 +86,20 @@ class Sensor : public ISensor<Tp> {
     }
 
     /// Get the current sensor .value_.
-    [[nodiscard]] auto getValue() -> ValueType override
+    auto getValue() -> ValueType override
     {
         return this->value_;
     }
 
     /// Get the current raw sensor .raw_value_.
-    [[nodiscard]] auto getRawValue() -> ValueType
+    auto getRawValue() -> ValueType
     {
         return this->raw_value_;
     }
 
   protected:
     /// Apply current filters to value.
-    [[nodiscard]] auto applyFilters(ValueType value) -> ValueType
+    auto applyFilters(ValueType value) -> ValueType
     {
         /// Apply calibration
         if (this->getCalibrator() != nullptr) {

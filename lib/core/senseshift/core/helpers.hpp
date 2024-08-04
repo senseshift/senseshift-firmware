@@ -74,7 +74,7 @@ constexpr auto remap_simple(Up value, Up max, Tp max_out) noexcept -> Tp
 ///
 /// \return
 template<typename Container, typename Tp = typename Container::key_type, typename To = typename Container::mapped_type>
-[[nodiscard]] constexpr auto lookup_table_interpolate_linear(Container const& lookup_table, Tp value) -> To
+constexpr auto lookup_table_interpolate_linear(Container const& lookup_table, Tp value) -> To
 {
     static_assert(std::is_same_v<typename Container::key_type, Tp> && std::is_same_v<typename Container::mapped_type, To>);
     static_assert(
@@ -124,7 +124,8 @@ class CallbackManager<void(Ts...)> {
             callback(args...);
         }
     }
-    [[nodiscard]] auto size() const -> size_t
+
+    auto size() const -> size_t
     {
         return this->callbacks_.size();
     }

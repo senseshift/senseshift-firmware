@@ -44,7 +44,7 @@ class LookupTableInterpolateBatterySensor : public IBatterySensor {
     }
 
   protected:
-    [[nodiscard]] auto lookupInterpolateLevel(VoltageType voltage) -> float
+    auto lookupInterpolateLevel(VoltageType voltage) -> float
     {
         return ::SenseShift::lookup_table_interpolate_linear<Container, VoltageType, float>(
           *this->lookup_table_,
