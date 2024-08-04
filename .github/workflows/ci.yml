@@ -61,7 +61,7 @@ jobs:
       - name: Get firmware name
         id: firmware_name
         run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.battery_flag }}
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ env.PLATFORMIO_BUILD_FLAGS }}
 
       - name: Speedup package installation
         if: matrix.coverage
@@ -117,7 +117,10 @@ jobs:
           echo "::group::platformio.ini"
           cat platformio.ini
           echo "::endgroup::"
+
+          echo "::group::pio run"
           pio ${{ matrix.coverage && 'debug' || 'run' }} --environment ${{matrix.target}} | tee build.log
+          echo "::endgroup::"
 
       - name: Collect memory usage
         id: memory_usage
@@ -229,7 +232,7 @@ jobs:
       - name: Get firmware name
         id: firmware_name
         run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }} ${{ matrix.curl_calibration_flag }}
+          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ env.PLATFORMIO_BUILD_FLAGS }}
 
       - name: Speedup package installation
         if: matrix.coverage
@@ -285,20 +288,20 @@ jobs:
           echo "::group::platformio.ini"
           cat platformio.ini
           echo "::endgroup::"
+
+          echo "::group::pio run"
           pio ${{ matrix.coverage && 'debug' || 'run' }} --environment ${{matrix.target}} | tee build.log
+          echo "::endgroup::"
 
       - name: Collect memory usage
         id: memory_usage
         if: matrix.coverage == false
+        env:
+          USAGE_FILENAME: ${{ steps.firmware_name.outputs.firmware }}-usage.json
         run: |
           echo "USAGE_FILENAME=${{ env.USAGE_FILENAME }}" >> $GITHUB_ENV
 
-          # RAM:   [=         ]  11.8% (used 38636 bytes from 327680 bytes)
-          # Flash: [========= ]  90.1% (used 1181501 bytes from 1310720 bytes)
-
-          # Extract the line containing RAM usage
           ram_line=$(grep 'RAM:' build.log)
-          # Extract the line containing Flash usage
           flash_line=$(grep 'Flash:' build.log)
 
           # Parse the RAM usage details
@@ -316,8 +319,6 @@ jobs:
 
           # Print the content of usage.json
           cat ${{ env.USAGE_FILENAME }}
-        env:
-          USAGE_FILENAME: ${{ steps.firmware_name.outputs.firmware }}-usage.json
 
       - name: Upload usage.json artifact
         if: matrix.coverage == false
@@ -570,12 +571,12 @@ jobs:
           run-id: ${{ steps.base_branch_workflow.outputs.result }}
 
       - uses: actions/setup-python@v2
-        if: github.event_name == 'pull_request' && steps.download-base-usage.outputs.artifacts == 'null'
+        if: github.event_name == 'pull_request' && steps.download-base-usage.outcome == 'success'
         with:
           python-version: '3.x'
 
       - name: Report memory usage table
-        if: github.event_name == 'pull_request' && steps.download-base-usage.outputs.artifacts == 'null'
+        if: github.event_name == 'pull_request' && steps.download-base-usage.outcome == 'success'
         shell: bash
         run: |
           python -m pip install --upgrade pip pandas tabulate
@@ -594,7 +595,7 @@ jobs:
           cat ./memory-usage-comparison.md > $GITHUB_STEP_SUMMARY
 
       - uses: thollander/actions-comment-pull-request@v2
-        if: github.event_name == 'pull_request' && steps.download-base-usage.outputs.artifacts == 'null'
+        if: github.event_name == 'pull_request' && steps.download-base-usage.outcome == 'success'
         with:
           filePath: memory-usage-comparison.md
           comment_tag: memory-usage-comparison

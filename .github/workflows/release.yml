@@ -38,8 +38,10 @@ jobs:
           - bhaptics_tactglove_right
         battery_flag:
           - SS_BATTERY_ENABLED=true
-        nimble_flag:
-          - SS_USE_NIMBLE=true
+
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -87,11 +89,6 @@ jobs:
           sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
           sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
 
-      - name: Update build flags (non-macOS)
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
-
       - name: Build
         run: |
           mkdir build
@@ -138,6 +135,11 @@ jobs:
         comm_flag:
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
+
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.comm_flag && format('-D {0}', matrix.comm_flag) || '' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -152,10 +154,6 @@ jobs:
         run: |
           sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
           sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
 
       - name: Cache pip
         uses: actions/cache@v4
