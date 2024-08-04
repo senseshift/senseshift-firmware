@@ -50,8 +50,7 @@ jobs:
 
       - name: Get firmware name
         id: firmware_name
-        run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }}
+        run: python3 ./.github/scripts/get-firmware-name.py ${{ matrix.target }} ""
 
       - name: Cache pip
         uses: actions/cache@v4
@@ -147,8 +146,7 @@ jobs:
 
       - name: Get firmware name
         id: firmware_name
-        run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }}
+        run: python3 ./.github/scripts/get-firmware-name.py ${{ matrix.target }} '${{ matrix.comm_flag }}'
 
       - name: Update build command (non-Windows)
         run: |
