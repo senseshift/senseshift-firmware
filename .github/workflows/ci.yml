@@ -70,39 +70,28 @@ jobs:
         if: matrix.coverage
         uses: hrishikesh-kadam/setup-lcov@v1
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
+        if: matrix.coverage == false
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('**/*.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
         with:
-          python-version: "3.9"
-
-      - name: Install PlatformIO
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
+          build_cache_dir: ./.pio/build_cache
+          cache: 'pip cache build_cache'
 
       - name: Install libs
-        run: pio pkg install -e ${{matrix.target}}
+        shell: bash
+        run: |
+          pio pkg install -e ${{matrix.target}}
 
       - name: Change memory segments
         if: matrix.coverage
@@ -113,13 +102,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          echo "::group::platformio.ini"
-          cat platformio.ini
-          echo "::endgroup::"
-
-          echo "::group::pio run"
           pio ${{ matrix.coverage && 'debug' || 'run' }} --environment ${{matrix.target}} | tee build.log
-          echo "::endgroup::"
 
       - name: Collect memory usage
         id: memory_usage
@@ -243,39 +226,28 @@ jobs:
         if: matrix.coverage
         uses: hrishikesh-kadam/setup-lcov@v1
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
+        if: matrix.coverage == false
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
         with:
-          python-version: "3.9"
-
-      - name: Install PlatformIO
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
+          build_cache_dir: ./.pio/build_cache
+          cache: 'pip cache build_cache'
 
       - name: Install libs
-        run: pio pkg install -e ${{matrix.target}}
+        shell: bash
+        run: |
+          pio pkg install -e ${{matrix.target}}
 
       - name: Change memory segments
         if: matrix.coverage
@@ -286,13 +258,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          echo "::group::platformio.ini"
-          cat platformio.ini
-          echo "::endgroup::"
-
-          echo "::group::pio run"
           pio ${{ matrix.coverage && 'debug' || 'run' }} --environment ${{matrix.target}} | tee build.log
-          echo "::endgroup::"
 
       - name: Collect memory usage
         id: memory_usage
@@ -344,6 +310,9 @@ jobs:
       - name: Collect initial coverage
         if: matrix.coverage
         run: |
+          echo "::group::List files"
+          ls -lahR ./.pio/build/${{matrix.target}}/
+          echo "::endgroup::"
           mkdir -p ./build/lcov
           lcov -i -d ./.pio/build/${{matrix.target}}/ -c -o ./build/lcov/lcov.info.${{ steps.firmware_name.outputs.firmware }} -gcov-tool ~/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcov
 
@@ -375,39 +344,23 @@ jobs:
       - name: Setup LCOV
         uses: hrishikesh-kadam/setup-lcov@v1
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
-            ${{ runner.os }}-pio-${{ matrix.target }}
+            ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.9"
-
-      - name: Install PlatformIO
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
 
       - name: Install libs
-        run: pio pkg install -e ${{matrix.target}}
+        shell: bash
+        run: |
+          pio pkg install -e ${{matrix.target}}
 
       - name: Run Unit Tests
         run: pio test -e ${{matrix.target}}

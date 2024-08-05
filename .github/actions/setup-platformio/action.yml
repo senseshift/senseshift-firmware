@@ -1,0 +1,67 @@
+name: "Setup PlatformIO"
+description: "Setup PlatformIO for building and checking firmware"
+
+inputs:
+  cache:
+    required: false
+    description: "Specify things to cache. Supported values are: 'pip', 'cache', 'packages', 'platforms', 'build_cache', 'build_dir'."
+    default: 'pip cache'
+  cache_dir:
+    description: https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/cache_dir.html
+    required: false
+    default: '~/.platformio/.cache'
+  packages_dir:
+    description: https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/packages_dir.html
+    required: false
+    default: '~/.platformio/packages'
+  platforms_dir:
+    description: https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/platforms_dir.html
+    required: false
+    default: '~/.platformio/platforms'
+  build_cache_dir:
+    description: https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_cache_dir.html
+    required: false
+  build_dir:
+    description: https://docs.platformio.org/en/latest/projectconf/sections/platformio/options/directory/build_dir.html
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare
+      shell: bash
+      run: |
+        touch ./requirements.txt
+
+        ${{ inputs.cache_dir && format('echo "PLATFORMIO_CACHE_DIR={0}" >> $GITHUB_ENV', inputs.cache_dir) || '' }}
+        ${{ inputs.packages_dir && format('echo "PLATFORMIO_PACKAGES_DIR={0}" >> $GITHUB_ENV', inputs.packages_dir) || '' }}
+        ${{ inputs.platforms_dir && format('echo "PLATFORMIO_PLATFORMS_DIR={0}" >> $GITHUB_ENV', inputs.platforms_dir) || '' }}
+        ${{ inputs.build_cache_dir && format('echo "PLATFORMIO_BUILD_CACHE_DIR={0}" >> $GITHUB_ENV', inputs.build_cache_dir) || '' }}
+        ${{ inputs.build_dir && format('echo "PLATFORMIO_BUILD_DIR={0}" >> $GITHUB_ENV', inputs.build_dir) || '' }}
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        cache: ${{ contains(inputs.cache, 'pip') && 'pip' || '' }}
+
+    - name: Cache PlatformIO
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ contains(inputs.cache, 'cache') && inputs.cache_dir || '' }}
+          ${{ contains(inputs.cache, 'packages') && inputs.packages_dir || '' }}
+          ${{ contains(inputs.cache, 'platforms') && inputs.platforms_dir || '' }}
+          ${{ contains(inputs.cache, 'build_cache') && inputs.build_cache_dir || '' }}
+          ${{ contains(inputs.cache, 'build_dir') && inputs.build_dir || '' }}
+        key: setup-platformio-${{ runner.os }}-pio-${{ hashFiles('**/*.ini') }}
+        restore-keys: |
+          setup-platformio-${{ runner.os }}-pio-
+
+    - name: Install PlatformIO
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+        pio upgrade --dev
+        pio pkg update --global

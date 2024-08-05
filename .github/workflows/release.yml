@@ -52,41 +52,32 @@ jobs:
         id: firmware_name
         run: python3 ./.github/scripts/get-firmware-name.py ${{ matrix.target }} ""
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
         with:
-          python-version: '3.9'
+          build_cache_dir: ./.pio/build_cache
+          cache: 'pip cache build_cache'
 
-      - name: Install PlatformIO
+      - name: Install libs
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
+          pio pkg install -e ${{matrix.target}}
 
       - name: Update build command (non-Windows)
         run: |
           sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
-          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
+          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/.github\/scripts\/create-release-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
 
       - name: Build
         run: |
@@ -148,41 +139,32 @@ jobs:
         id: firmware_name
         run: python3 ./.github/scripts/get-firmware-name.py ${{ matrix.target }} '${{ matrix.comm_flag }}'
 
-      - name: Update build command (non-Windows)
-        run: |
-          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
-          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
         with:
-          python-version: '3.9'
+          build_cache_dir: ./.pio/build_cache
+          cache: 'pip cache build_cache'
 
-      - name: Install PlatformIO
+      - name: Install libs
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
+          pio pkg install -e ${{matrix.target}}
+
+      - name: Update build command (non-Windows)
+        run: |
+          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
+          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/.github\/scripts\/create-release-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
 
       - name: Build
         run: |
