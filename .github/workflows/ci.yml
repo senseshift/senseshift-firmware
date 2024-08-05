@@ -186,30 +186,37 @@ jobs:
         target:
           - lucidgloves-prototype3
           - lucidgloves-prototype4
+          - lucidgloves-prototype4-ffb
           - indexer-c
           - indexer-cf
           - indexer-cs
           - indexer-csf
-        comm_flag:
-          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
-          - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
+        comm_flag: [ OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL ]
         coverage: [ false ]
 
         include:
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
             comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
+          - os: ubuntu-latest
+            target: lucidgloves-prototype4-ffb
+            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BLESERIAL
+
+          - os: ubuntu-latest
+            target: lucidgloves-prototype4-ffb
+            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
             curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::MinMaxCalibrator<float>()"
             coverage: true
 
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
-            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BLESERIAL
+            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
             curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::CenterPointDeviationCalibrator<float>(0.66F, 0.005F)"
             coverage: true
 
           - os: ubuntu-latest
             target: lucidgloves-prototype4-ffb
+            comm_flag: OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BLESERIAL
             curl_calibration_flag: CALIBRATION_CURL="new ::SenseShift::Input::Calibration::FixedCenterPointDeviationCalibrator<float>(0.66F, 0.005F)"
             coverage: true
 
