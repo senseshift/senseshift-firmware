@@ -4,16 +4,16 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <senseshift.h>
+#include "senseshift.h"
 
-#include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/ledc.hpp>
-#include <senseshift/battery/input/battery_sensor.hpp>
-#include <senseshift/bh/ble/connection.hpp>
-#include <senseshift/bh/devices.hpp>
-#include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/task.hpp>
-#include <senseshift/utility.hpp>
+#include "senseshift/arduino/input/sensor/analog.hpp"
+#include "senseshift/arduino/output/ledc.hpp"
+#include "senseshift/battery/input/battery_sensor.hpp"
+#include "senseshift/bh/ble/connection.hpp"
+#include "senseshift/bh/devices.hpp"
+#include "senseshift/bh/encoding.hpp"
+#include "senseshift/freertos/task.hpp"
+#include "senseshift/utility.hpp"
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
@@ -25,7 +25,7 @@ using namespace SenseShift::Battery::Input;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
-extern Application App;
+Application App;
 Application* app = &App;
 
 static constexpr Body::Hands::HandSide handSide = Body::Hands::HandSide::SS_HAND_SIDE;
@@ -33,7 +33,7 @@ static constexpr Body::Hands::HandSide handSide = Body::Hands::HandSide::SS_HAND
 static const auto& bhLayout = handSide == Body::Hands::HandSide::Left ? BH::TactGloveLeftLayout : BH::TactGloveRightLayout;
 // clang-format on
 
-void setupMode()
+void setup()
 {
     // Configure PWM pins to their positions on the glove
     // Replace `new PWMOutputWriter(...)` with `nullptr` to disable a specific actuator
@@ -84,7 +84,7 @@ void setupMode()
 #endif
 }
 
-void loopMode()
+void loop()
 {
     // Free up the Arduino loop task
     vTaskDelete(NULL);

@@ -4,19 +4,19 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <I2CDevLib.h>
-#include <i2cdev/pca9685.hpp>
+#include "I2CDevLib.h"
+#include "i2cdev/pca9685.hpp"
 
-#include <senseshift.h>
+#include "senseshift.h"
 
-#include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/ledc.hpp>
-#include <senseshift/battery/input/battery_sensor.hpp>
-#include <senseshift/bh/ble/connection.hpp>
-#include <senseshift/bh/devices.hpp>
-#include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/task.hpp>
-#include <senseshift/output/i2cdevlib_pwm.hpp>
+#include "senseshift/arduino/input/sensor/analog.hpp"
+#include "senseshift/arduino/output/ledc.hpp"
+#include "senseshift/battery/input/battery_sensor.hpp"
+#include "senseshift/bh/ble/connection.hpp"
+#include "senseshift/bh/devices.hpp"
+#include "senseshift/bh/encoding.hpp"
+#include "senseshift/freertos/task.hpp"
+#include "senseshift/output/i2cdevlib_pwm.hpp"
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
@@ -29,12 +29,12 @@ using namespace SenseShift::Battery::Input;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
-extern Application App;
+Application App;
 Application* app = &App;
 
 static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX40_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX40 };
 
-void setupMode()
+void setup()
 {
     Wire.begin();
 
@@ -76,8 +76,8 @@ void setupMode()
       // clang-format on
     });
 
-    app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane_Closest(frontOutputs));
-    app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane_Closest(backOutputs));
+    app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane(frontOutputs));
+    app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane(backOutputs));
 
     app->getVibroBody()->setup();
 
@@ -129,7 +129,7 @@ void setupMode()
 #endif
 }
 
-void loopMode()
+void loop()
 {
     // Free up the Arduino loop task
     vTaskDelete(NULL);

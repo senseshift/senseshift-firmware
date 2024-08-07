@@ -4,15 +4,15 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include <senseshift.h>
+#include "senseshift.h"
 
-#include <senseshift/arduino/input/sensor/analog.hpp>
-#include <senseshift/arduino/output/ledc.hpp>
-#include <senseshift/battery/input/battery_sensor.hpp>
-#include <senseshift/bh/ble/connection.hpp>
-#include <senseshift/bh/devices.hpp>
-#include <senseshift/bh/encoding.hpp>
-#include <senseshift/freertos/task.hpp>
+#include "senseshift/arduino/input/sensor/analog.hpp"
+#include "senseshift/arduino/output/ledc.hpp"
+#include "senseshift/battery/input/battery_sensor.hpp"
+#include "senseshift/bh/ble/connection.hpp"
+#include "senseshift/bh/devices.hpp"
+#include "senseshift/bh/encoding.hpp"
+#include "senseshift/freertos/task.hpp"
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
@@ -24,12 +24,12 @@ using namespace SenseShift::Battery::Input;
 using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 
-extern Application App;
+Application App;
 Application* app = &App;
 
 static const std::array<Position, BH_LAYOUT_TACTVISOR_SIZE> bhLayout = { BH_LAYOUT_TACTVISOR };
 
-void setupMode()
+void setup()
 {
     // Configure PWM pins to their positions on the face
     auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
@@ -38,7 +38,7 @@ void setupMode()
       // clang-format on
     });
 
-    app->getVibroBody()->addTarget(Target::FaceFront, new FloatPlane_Closest(faceOutputs));
+    app->getVibroBody()->addTarget(Target::FaceFront, new FloatPlane(faceOutputs));
 
     app->getVibroBody()->setup();
 
@@ -76,7 +76,7 @@ void setupMode()
 #endif
 }
 
-void loopMode()
+void loop()
 {
     // Free up the Arduino loop task
     vTaskDelete(NULL);
