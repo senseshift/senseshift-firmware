@@ -26,7 +26,7 @@ Run and debug firmware in Wokwi Simulator
 
 1. Run this command:
    ```shell
-   pio debug -e lucidgloves-prototype3
+   pio debug -e opengloves_lucidgloves_proto3
    ```
 2. `Ctrl+Shift+P` => `> Wokwi: Start Simulator and Wait for Debugger`,
 3. Add launch option (this step is required until PlatformIO fixes this issue: [#3824](https://github.com/platformio/platformio-core/issues/3824)):
@@ -34,13 +34,13 @@ Run and debug firmware in Wokwi Simulator
    ...
    
     {
-        "name": "Wokwi GDB - lucidgloves-prototype3",
+        "name": "Wokwi GDB - opengloves_lucidgloves_proto3",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/.pio/build/lucidgloves-prototype3/firmware.elf",
+        "program": "${workspaceFolder}/.pio/build/opengloves_lucidgloves_proto3/firmware.elf",
         "cwd": "${workspaceFolder}",
         "MIMode": "gdb",
-        "miDebuggerPath": "${userHome}/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gdb",
+        "miDebuggerPath": "${userHome}/.platformio/packages/tool-xtensa-esp-elf-gdb/bin/xtensa-esp32-elf-gdb.exe",
         "miDebuggerServerAddress": "localhost:3333",
     },
    ...
