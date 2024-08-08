@@ -44,9 +44,9 @@ class Task {
     friend class Task;
 
   public:
-    explicit Task(TaskConfig& config) : taskConfig(config)
+    explicit Task(const TaskConfig& config) : taskConfig(config)
     {
-        log_i("creating ComponentUpdateTask: %s", taskConfig.name);
+        log_i("creating Task: %s", taskConfig.name);
     }
     virtual ~Task()
     {
@@ -126,8 +126,8 @@ class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
     static_assert(std::is_same_v<decltype(&Tp::tick), void (Tp::*)()>);
 
   public:
-    ComponentUpdateTask(Tp* component, std::uint32_t updateDelay, TaskConfig taskConfig) :
-      Task<ComponentUpdateTask>(taskConfig), component_(component), updateDelay_(updateDelay)
+    ComponentUpdateTask(Tp* component, std::uint32_t updateDelay, const TaskConfig& taskConfig) :
+      Task<ComponentUpdateTask<Tp>>(taskConfig), component_(component), updateDelay_(updateDelay)
     {
         log_i("creating ComponentUpdateTask: %s", taskConfig.name);
     }

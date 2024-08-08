@@ -7,6 +7,6 @@
 
 #include "config/bluetooth.h"
 
-#ifdef BHAPTICS
+#ifdef SS_BHAPTICS
 #include "config/bhaptics.h"
 #endif

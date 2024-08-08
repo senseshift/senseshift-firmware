@@ -1,6 +1,0 @@
-[wokwi]
-version = 1
-firmware = "../../.pio/build/lucidgloves-prototype4/firmware.bin"
-elf = "../../.pio/build/lucidgloves-prototype4/firmware.elf"
-
-gdbServerPort=3333

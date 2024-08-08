@@ -30,6 +30,7 @@ jobs:
           - 'firmware'
           - 'examples'
           - 'test'
+          - 'variants'
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
