@@ -1,6 +1,6 @@
-#include "senseshift/freertos/task.hpp"
-#include "senseshift/opengloves/autoconfig.hpp"
-#include "senseshift/opengloves/opengloves_component.hpp"
+#include <senseshift/freertos/task.hpp>
+#include <senseshift/opengloves/autoconfig.hpp>
+#include <senseshift/opengloves/opengloves_component.hpp>
 
 #include "opengloves/alpha.hpp"
 

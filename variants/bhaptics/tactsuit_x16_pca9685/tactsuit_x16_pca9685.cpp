@@ -9,13 +9,13 @@
 
 #include "senseshift.h"
 
-#include "senseshift/arduino/input/sensor/analog.hpp"
-#include "senseshift/battery/input/battery_sensor.hpp"
-#include "senseshift/bh/ble/connection.hpp"
-#include "senseshift/bh/devices.hpp"
-#include "senseshift/bh/encoding.hpp"
-#include "senseshift/freertos/task.hpp"
-#include "senseshift/output/i2cdevlib_pwm.hpp"
+#include <senseshift/arduino/input/sensor/analog.hpp>
+#include <senseshift/battery/input/battery_sensor.hpp>
+#include <senseshift/bh/ble/connection.hpp>
+#include <senseshift/bh/devices.hpp>
+#include <senseshift/bh/encoding.hpp>
+#include <senseshift/freertos/task.hpp>
+#include <senseshift/output/i2cdevlib_pwm.hpp>
 
 using namespace SenseShift;
 using namespace SenseShift::Input;
