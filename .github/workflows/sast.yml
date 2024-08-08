@@ -31,7 +31,7 @@ jobs:
       matrix:
         target:
           - bhaptics_tactsuit_x40
-          - lucidgloves-prototype4-ffb
+          - opengloves_lucidgloves_proto4_ffb
         battery_flag:
           - SS_BATTERY_ENABLED=true
 
@@ -94,9 +94,11 @@ jobs:
     strategy:
       matrix:
         directory:
+          - 'variants'
           - 'firmware'
           - 'include'
           - 'lib'
+          - 'examples'
     steps:
       - uses: actions/checkout@v4
 

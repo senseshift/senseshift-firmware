@@ -1,0 +1,6 @@
+[wokwi]
+version = 1
+firmware = "../../.pio/build/opengloves_lucidgloves_proto4/firmware.bin"
+elf = "../../.pio/build/opengloves_lucidgloves_proto4/firmware.elf"
+
+gdbServerPort = 3333

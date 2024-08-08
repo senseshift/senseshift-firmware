@@ -1,13 +1,13 @@
-#include <senseshift/freertos/task.hpp>
-#include <senseshift/opengloves/autoconfig.hpp>
-#include <senseshift/opengloves/opengloves_component.hpp>
+#include "senseshift/freertos/task.hpp"
+#include "senseshift/opengloves/autoconfig.hpp"
+#include "senseshift/opengloves/opengloves_component.hpp"
 
-#include <opengloves/alpha.hpp>
+#include "opengloves/alpha.hpp"
 
 using namespace SenseShift::OpenGloves;
 namespace og = ::opengloves;
 
-void setupMode()
+void setup()
 {
     auto* communication = AutoConfig::createTransport();
 
@@ -51,7 +51,7 @@ void setupMode()
 #endif
 }
 
-void loopMode()
+void loop()
 {
     vTaskDelete(NULL);
 }

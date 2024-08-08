@@ -102,13 +102,13 @@ jobs:
     strategy:
       matrix:
         target:
-          - lucidgloves-prototype3
-          - lucidgloves-prototype4
-          - lucidgloves-prototype4-ffb
-          - indexer-c
-          - indexer-cf
-          - indexer-cs
-          - indexer-csf
+          - opengloves_lucidgloves_proto3
+          - opengloves_lucidgloves_proto4
+          - opengloves_lucidgloves_proto4_ffb
+          - opengloves_indexer_c
+          - opengloves_indexer_cf
+          - opengloves_indexer_cs
+          - opengloves_indexer_csf
         comm_flag:
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
