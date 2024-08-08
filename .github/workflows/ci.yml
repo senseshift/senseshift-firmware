@@ -99,6 +99,8 @@ jobs:
           sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32-libs/esp32/ld/memory.ld
           sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
+      - uses: ammaraskar/gcc-problem-matcher@0.3.0
+
       - name: Build
         shell: bash
         run: |
@@ -255,6 +257,8 @@ jobs:
           sed -i "s/len\s=\s0x2c200\s-\s0xdb5c/len = 2898880/" ~/.platformio/packages/framework-arduinoespressif32-libs/esp32/ld/memory.ld
           sed -i "/\[env\]/p; s/\[env\]/board_build.partitions = huge_app.csv/" platformio.ini
 
+      - uses: ammaraskar/gcc-problem-matcher@0.3.0
+
       - name: Build
         shell: bash
         run: |
@@ -361,6 +365,8 @@ jobs:
         shell: bash
         run: |
           pio pkg install -e ${{matrix.target}}
+
+      - uses: ammaraskar/gcc-problem-matcher@0.3.0
 
       - name: Run Unit Tests
         run: pio test -e ${{matrix.target}}
