@@ -35,7 +35,7 @@ class OpenGlovesTrackingComponent {
         }
     };
 
-    OpenGlovesTrackingComponent(Config& config, InputSensors& input_sensors, ITransport* communication) :
+    OpenGlovesTrackingComponent(const Config& config, InputSensors& input_sensors, ITransport* communication) :
       config_(config), input_sensors_(std::move(input_sensors)), communication_(communication)
     {
     }
@@ -67,8 +67,7 @@ class OpenGlovesTrackingComponent {
         // this->raw_plotter_.plot(raw_data);
         // this->calibrated_plotter_.plot(data);
 
-        bool const calibrate_pressed = data.button_calibrate.press;
-        if (calibrate_pressed && this->calibration_start_time_ == 0) {
+        if (data.button_calibrate.press) {
             this->startCalibration();
         }
 
@@ -104,9 +103,12 @@ class OpenGlovesTrackingComponent {
   protected:
     void startCalibration()
     {
-        log_i("Starting calibration");
-        this->input_sensors_.resetCalibration();
-        this->input_sensors_.startCalibration();
+        if (this->calibration_start_time_ == 0) {
+            log_i("Starting calibration");
+            this->input_sensors_.resetCalibration();
+            this->input_sensors_.startCalibration();
+        }
+
         this->calibration_start_time_ = millis();
     }
 
@@ -122,7 +124,7 @@ class OpenGlovesTrackingComponent {
 
     unsigned long long calibration_start_time_ = 0;
 
-    Config& config_;
+    Config config_;
     InputSensors input_sensors_;
     ITransport* communication_;
 };
