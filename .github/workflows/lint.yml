@@ -39,3 +39,17 @@ jobs:
         with:
           clang-format-version: '16'
           check-path: ${{ matrix.path }}
+
+  pio-check-cppcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
+
+      - name: PlatformIO check
+        shell: bash
+        run: |
+          pio check --skip-packages --fail-on-defect=medium --fail-on-defect=high
