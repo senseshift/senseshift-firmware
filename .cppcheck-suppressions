@@ -1,3 +1,7 @@
+// no real downside on these
+unusedFunction
+unusedPrivateFunction
+
 *:.pio/*
 *:*/libdeps/*
 *:*/generated/*

@@ -65,7 +65,7 @@ class Calibrated {
     }
 
   private:
-    CalibratorType* calibrator_;
+    CalibratorType* calibrator_ = nullptr;
     bool is_calibrating_ = false;
 };
 

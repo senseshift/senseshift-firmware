@@ -50,7 +50,7 @@ class Filtered {
     /// \param filter The filter to add.
     ///
     /// \see addFilters for adding multiple filters.
-    void addFilter(FilterType filter)
+    void addFilter(const FilterType& filter)
     {
         this->filters_.push_back(filter);
     }
@@ -68,7 +68,7 @@ class Filtered {
     /// \endcode
     ///
     /// todo(leon0399): use SFINAE
-    void addFilters(std::vector<FilterType> filters)
+    void addFilters(const std::vector<FilterType>& filters)
     {
         this->filters_.insert(this->filters_.end(), filters.begin(), filters.end());
     }
@@ -84,7 +84,7 @@ class Filtered {
     ///     new CenterDeadzoneFilter(0.1f),
     /// });
     /// \endcode
-    void setFilters(std::vector<FilterType> filters)
+    void setFilters(const std::vector<FilterType>& filters)
     {
         this->filters_ = filters;
     }
@@ -223,8 +223,9 @@ class SlidingWindowMovingAverageFilter : public IFilter<Tp> {
 
     [[nodiscard]] auto getAverage() const -> Tp
     {
-        Tp sum = 0;
+        Tp sum = Tp();
         for (auto value : this->queue_) {
+            // cppcheck-suppress useStlAlgorithm; We may run in no-stl environment
             sum += value;
         }
         return sum / this->queue_.size();

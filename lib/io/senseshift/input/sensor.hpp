@@ -1,5 +1,6 @@
 #pragma once
 
+#include <numeric>
 #include <optional>
 #include <type_traits>
 #include <vector>
@@ -43,12 +44,8 @@ class Sensor : public ISensor<Tp> {
     using CallbackManagerType = CallbackManager<void(ValueType)>;
     using CallbackType = typename CallbackManagerType::CallbackType;
 
-    explicit Sensor() = default;
-
-    template<typename U = Tp, std::enable_if_t<std::is_same_v<U, float>, int> = 0>
-    explicit Sensor(float value = 0.0f) : raw_value_(value)
+    explicit Sensor(Tp value = Tp()) : raw_value_(value), value_(this->applyFilters(value))
     {
-        this->value_ = this->applyFilters(value);
     }
 
     void addValueCallback(CallbackType&& callback)
@@ -92,7 +89,7 @@ class Sensor : public ISensor<Tp> {
     }
 
     /// Get the current raw sensor .raw_value_.
-    auto getRawValue() -> ValueType
+    auto getRawValue() const -> ValueType
     {
         return this->raw_value_;
     }
@@ -126,9 +123,9 @@ class Sensor : public ISensor<Tp> {
     ValueType value_;
 
     /// Storage for raw state callbacks.
-    CallbackManagerType raw_callbacks_;
+    CallbackManagerType raw_callbacks_ = CallbackManagerType();
     /// Storage for filtered state callbacks.
-    CallbackManagerType callbacks_;
+    CallbackManagerType callbacks_ = CallbackManagerType();
 };
 
 using FloatSensor = Sensor<float>;
