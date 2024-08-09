@@ -65,7 +65,7 @@ class Calibrated {
     }
 
   private:
-    CalibratorType* calibrator_;
+    CalibratorType* calibrator_ = nullptr;
     bool is_calibrating_ = false;
 };
 
@@ -245,7 +245,7 @@ class FixedCenterPointDeviationCalibrator : public ICalibrator<Tp> {
     void reset() override
     {
     }
-    void update(ValueType input) override
+    void update(ValueType) override
     {
     }
 

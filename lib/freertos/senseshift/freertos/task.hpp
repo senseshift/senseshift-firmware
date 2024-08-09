@@ -142,7 +142,6 @@ class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
     [[noreturn]] void run()
     {
         auto now = millis();
-        auto targetHz = 1000 / this->updateDelay_;
 
         while (true) {
             now = millis();
@@ -151,7 +150,7 @@ class ComponentUpdateTask : public Task<ComponentUpdateTask<Tp>> {
 
             const auto elapsed = millis() - now;
 
-            log_d("T: %d, Fmax: %dHz, Ft: %dHz", elapsed, 1000 / elapsed, targetHz);
+            log_d("T: %d, Fmax: %dHz, Ft: %dHz", elapsed, 1000 / elapsed, 1000 / this->updateDelay_);
             if (elapsed < this->updateDelay_) {
                 delay(this->updateDelay_ - elapsed);
             }

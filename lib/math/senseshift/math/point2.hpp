@@ -27,6 +27,15 @@ struct Point2 {
     {
     }
 
+    constexpr auto operator=(const Point2<Tp>& v) -> Point2&
+    {
+        if (this != &v) {
+            x = v.x;
+            y = v.y;
+        }
+        return *this;
+    }
+
     constexpr inline auto operator==(const Point2<Tp>& rhs) const -> bool
     {
         return x == rhs.x && y == rhs.y;

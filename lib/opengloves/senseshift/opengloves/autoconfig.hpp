@@ -453,11 +453,14 @@ auto createTransport() -> ITransport*
 #ifdef BTSERIAL_NAME
     name = BTSERIAL_NAME;
 #else
-    char suffix[4];
-    snprintf(suffix, 4, "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
-    name = BTSERIAL_PREFIX + std::string(suffix);
-
-    log_i("Generated Bluetooth name: %s", name.c_str());
+    char suffix[5];
+    int n = snprintf(suffix, sizeof(suffix), "%04X", (uint16_t) (ESP.getEfuseMac() >> 32));
+    if (n < 0 || n >= sizeof(suffix)) { // also check for potential overflow
+        log_e("Failed to generate Bluetooth name");
+    } else {
+        suffix[sizeof(suffix) - 1] = '\0'; // ensure null-termination
+        name = BTSERIAL_PREFIX + std::string(suffix, 4);
+    }
 #endif
 
 #if OPENGLOVES_COMMUNICATION == OPENGLOVES_COMM_BTSERIAL    // Bluetooth Classic

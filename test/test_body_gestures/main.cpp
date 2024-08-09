@@ -111,7 +111,7 @@ void loop(void)
 
 #else
 
-int main(int argc, char** argv)
+int main()
 {
     return process();
 }

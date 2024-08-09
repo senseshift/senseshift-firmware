@@ -18,7 +18,7 @@ enum Event {
 struct IEvent {
     const std::string eventName;
 
-    IEvent(const std::string eventName) : eventName(eventName){};
+    explicit IEvent(const std::string& eventName) : eventName(eventName){};
 };
 
 class IEventListener {

@@ -29,7 +29,7 @@ class Decoder {
       FloatBody* output,
       const std::array<std::uint8_t, N>& value,
       const std::array<OutputLayout, N>& layout,
-      const Effect effect
+      const Effect
     )
     {
         for (size_t i = 0; i < N; i++) {
@@ -59,7 +59,7 @@ class Decoder {
       FloatBody* output,
       const std::array<std::uint8_t, N>& value,
       const std::array<Position, N>& layout,
-      const Effect effect,
+      const Effect,
       const Target target
     )
     {
@@ -137,7 +137,7 @@ class Decoder {
         std::array<std::uint8_t, VEST_LAYOUT_SIZE> result{};
 
         // Unpack values
-        for (auto i = 0; i < VEST_PAYLOAD_SIZE; i++) {
+        for (size_t i = 0; i < VEST_PAYLOAD_SIZE; i++) {
             const std::uint8_t byte = value[i];
             const size_t actIndex = i * 2;
 
@@ -146,7 +146,7 @@ class Decoder {
         }
 
         // Assign max value into each group
-        for (auto i = 0; i < N; i++) {
+        for (size_t i = 0; i < N; i++) {
             auto groupIndex = layoutGroups[i];
 
             if (groupIndex % 10 >= 4) {

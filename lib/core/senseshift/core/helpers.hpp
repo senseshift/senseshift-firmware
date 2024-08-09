@@ -118,9 +118,9 @@ class CallbackManager<void(Ts...)> {
     }
 
     /// Call all callbacks in this manager.
-    void call(Ts... args)
+    void call(Ts... args) const
     {
-        for (auto& callback : this->callbacks_) {
+        for (const auto& callback : this->callbacks_) {
             callback(args...);
         }
     }
@@ -131,7 +131,7 @@ class CallbackManager<void(Ts...)> {
     }
 
     /// Call all callbacks in this manager.
-    void operator()(Ts... args)
+    void operator()(Ts... args) const
     {
         call(args...);
     }
