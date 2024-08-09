@@ -15,7 +15,7 @@ Function argument: `snake_case`
 ### Fix `clang-format`
 
 ```shell
-find lib include firmware test examples -type f -regex '.*\.\(cpp\|hpp\|cu\|c\|h\)' ! -regex '^lib/frozen\(/.*\)' -exec clang-format-16 -style=file -i {} \;
+find lib include firmware test examples variants -type f -regex '.*\.\(cpp\|hpp\|cu\|c\|h\)' -exec clang-format-16 -style=file -i {} \;
 ```
 
 # Debugging

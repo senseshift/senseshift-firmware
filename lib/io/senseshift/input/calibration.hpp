@@ -245,7 +245,7 @@ class FixedCenterPointDeviationCalibrator : public ICalibrator<Tp> {
     void reset() override
     {
     }
-    void update(ValueType input) override
+    void update(ValueType) override
     {
     }
 

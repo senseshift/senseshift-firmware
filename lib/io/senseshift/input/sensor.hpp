@@ -142,7 +142,7 @@ class SimpleSensorDecorator : public Sensor<Tp> {
     using ValueType = Tp;
     using SourceType = ISimpleSensor<ValueType>;
 
-    explicit SimpleSensorDecorator(SourceType* source) : source_(source), Sensor<Tp>()
+    explicit SimpleSensorDecorator(SourceType* source) : Sensor<Tp>(), source_(source)
     {
     }
 

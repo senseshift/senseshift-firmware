@@ -259,9 +259,9 @@ class ExponentialMovingAverageFilter : public IFilter<Tp> {
 
 /// Deadzone filter. Clamps acc_ to center if it is within the deadzone.
 /// Usually used to filter out noise in the joystick.
-class CenterDeadzoneFilter : public IFilter<float> {
+class SinglePointDeadzoneFilter : public IFilter<float> {
   public:
-    explicit CenterDeadzoneFilter(float deadzone, float center = 0.5F) : deadzone_(deadzone), center_(center){};
+    explicit SinglePointDeadzoneFilter(float deadzone, float center = 0.5F) : deadzone_(deadzone), center_(center){};
 
     inline auto filter(ISimpleSensor<float>* /*sensor*/, float value) -> float override
     {
@@ -270,10 +270,11 @@ class CenterDeadzoneFilter : public IFilter<float> {
     }
 
   private:
+    const float deadzone_;
     const float center_;
-
-    float deadzone_;
 };
+
+using CenterDeadzoneFilter = SinglePointDeadzoneFilter;
 
 /// Interpolates the value from the lookup table.
 /// Can be used to determine battery level from the voltage.

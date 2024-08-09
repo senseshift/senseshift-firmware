@@ -16,8 +16,8 @@ class AnalogThresholdSensor : public BinarySensor {
       Sensor<Tp>* source, Tp threshold_upper, Tp threshold_lower, bool attach_callbacks = false
     ) :
       source_(source),
-      threshold_upper_(threshold_upper),
       threshold_lower_(threshold_lower),
+      threshold_upper_(threshold_upper),
       attach_callbacks_(attach_callbacks)
     {
     }

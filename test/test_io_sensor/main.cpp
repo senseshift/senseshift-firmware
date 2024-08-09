@@ -94,7 +94,7 @@ class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<flo
     {
         this->calibrated = input;
     }
-    float calibrate(float input) const override
+    float calibrate(float) const override
     {
         return calibrated;
     }
@@ -264,7 +264,7 @@ void loop(void)
 
 #else
 
-int main(int argc, char** argv)
+int main()
 {
     return process();
 }
