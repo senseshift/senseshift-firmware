@@ -3,11 +3,6 @@
   "frameworks": "arduino",
   "platforms": "*",
   "dependencies": {
-    "adafruit/Adafruit BusIO": "^1.14.1",
-    "adafruit/Adafruit Unified Sensor": "^1.1.4",
-    "adafruit/Adafruit PWM Servo Driver Library": "^2.4.0",
-    "adafruit/Adafruit INA219": "^1.2.1",
-    "sparkfun/SparkFun MAX1704x Fuel Gauge Arduino Library": "^1.0.4",
-    "madhephaestus/ESP32Servo": "^1.1.2"
+    "madhephaestus/ESP32Servo": "^3.0.0"
   }
 }

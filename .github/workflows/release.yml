@@ -13,6 +13,10 @@ on:
     paths:
       - '.github/workflows/release.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-bhaptics:
     runs-on: ubuntu-latest
@@ -34,8 +38,10 @@ jobs:
           - bhaptics_tactglove_right
         battery_flag:
           - SS_BATTERY_ENABLED=true
-        nimble_flag:
-          - SS_BLE_USE_NIMBLE=true
+
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -44,69 +50,41 @@ jobs:
 
       - name: Get firmware name
         id: firmware_name
-        run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }}
+        run: python3 ./.github/scripts/get-firmware-name.py ${{ matrix.target }} ""
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
         with:
-          python-version: '3.9'
+          build_cache_dir: ./.pio/build_cache
+          cache: 'pip cache build_cache'
 
-      - name: Install PlatformIO
+      - name: Install libs
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
-
-      - name: Update build command (non-Windows)
-        run: |
-          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
-          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.battery_flag }}/' platformio.ini
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.nimble_flag }}/' platformio.ini
+          pio pkg install -e ${{matrix.target}}
 
       - name: Build
         run: |
-          mkdir build
+          pio run --environment ${{matrix.target}} --target release-archive
 
-          echo "::group::platformio.ini"
-          cat platformio.ini
-          echo "::endgroup::"
-
-          echo "::group::pio run"
-          pio run --environment ${{matrix.target}} --target upload
-          echo "::endgroup::"
-
-          unzip -l ./build/firmware.zip
+          unzip -l ./.pio/build/${{ matrix.target }}/firmware.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware-${{matrix.target}}
-          path: ./build/firmware.zip
+          path: ./.pio/build/${{ matrix.target }}/firmware.zip
           retention-days: 5
 
       - name: Upload binaries to release
@@ -114,7 +92,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'senseshift/senseshift-firmware'
         with:
           asset_name: ${{matrix.target}}.zip
-          file: ./build/firmware.zip
+          file: ./.pio/build/${{ matrix.target }}/firmware.zip
           tag: ${{github.ref}}
 
   build-opengloves:
@@ -124,16 +102,21 @@ jobs:
     strategy:
       matrix:
         target:
-          - lucidgloves-prototype3
-          - lucidgloves-prototype4
-          - lucidgloves-prototype4-ffb
-          - indexer-c
-          - indexer-cf
-          - indexer-cs
-          - indexer-csf
+          - opengloves_lucidgloves_proto3
+          - opengloves_lucidgloves_proto4
+          - opengloves_lucidgloves_proto4_ffb
+          - opengloves_indexer_c
+          - opengloves_indexer_cf
+          - opengloves_indexer_cs
+          - opengloves_indexer_csf
         comm_flag:
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_SERIAL
           - OPENGLOVES_COMMUNICATION=OPENGLOVES_COMM_BTSERIAL
+
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.comm_flag && format('-D {0}', matrix.comm_flag) || '' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -141,68 +124,40 @@ jobs:
 
       - name: Get firmware name
         id: firmware_name
-        run: |
-          ./.github/scripts/get_firmware_name.sh ${{ matrix.target }} ${{ matrix.comm_flag }}
+        run: python3 ./.github/scripts/get-firmware-name.py ${{ matrix.target }} '${{ matrix.comm_flag }}'
 
-      - name: Update build command (non-Windows)
-        run: |
-          sed -i '/\[env\]/p; s/\[env\]/upload_protocol = custom/' platformio.ini
-          sed -i '/\[env\]/p; s/\[env\]/upload_command = \$PYTHONEXE .\/scripts\/ci\/create-archive.py \$FLASH_EXTRA_IMAGES \$ESP32_APP_OFFSET \$SOURCE/' platformio.ini
-
-      - name: Update build flags (non-macOS)
-        run: |
-          sed -i '/__OH_FIRMWARE__/p; s/__OH_FIRMWARE__/${{ matrix.comm_flag }}/' platformio.ini
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache PlatformIO
+      - name: Cache PlatformIO target
         uses: actions/cache@v4
         with:
           path: |
-            ~/.platformio/.cache
-            ./.pio
-          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ hashFiles('platformio.ini') }}
+            ./.pio/build/${{ matrix.target }}
+          key: ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-${{ hashFiles('**/*.ini') }}
           restore-keys: |
+            ${{ runner.os }}-pio-${{ matrix.target }}-${{ steps.firmware_name.outputs.firmware }}-
             ${{ runner.os }}-pio-${{ matrix.target }}-
             ${{ runner.os }}-pio-
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
         with:
-          python-version: '3.9'
+          build_cache_dir: ./.pio/build_cache
+          cache: 'pip cache build_cache'
 
-      - name: Install PlatformIO
+      - name: Install libs
+        shell: bash
         run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade platformio
-          pio upgrade --dev
-          pio pkg update --global
+          pio pkg install -e ${{matrix.target}}
 
       - name: Build
         run: |
-          mkdir build
-
-          echo "::group::platformio.ini"
-          cat platformio.ini
-          echo "::endgroup::"
-
-          echo "::group::pio run"
-          pio run --environment ${{matrix.target}} --target upload
-          echo "::endgroup::"
-
-          unzip -l ./build/firmware.zip
+          pio run --environment ${{matrix.target}} --target release-archive
+          unzip -l ./.pio/build/${{ matrix.target }}/firmware.zip
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware-${{ steps.firmware_name.outputs.firmware }}
-          path: ./build/firmware.zip
+          path: ./.pio/build/${{ matrix.target }}/firmware.zip
           retention-days: 5
 
       - name: Upload binaries to release
@@ -210,5 +165,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'senseshift/senseshift-firmware'
         with:
           asset_name: ${{ steps.firmware_name.outputs.firmware }}.zip
-          file: ./build/firmware.zip
+          file: ./.pio/build/${{ matrix.target }}/firmware.zip
           tag: ${{github.ref}}

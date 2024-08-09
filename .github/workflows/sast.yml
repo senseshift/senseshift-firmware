@@ -1,0 +1,114 @@
+name: "SAST"
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches:
+      - master
+      - develop
+  schedule:
+    - cron: '0 16 * * 6'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  codeql-analyze:
+    name: CodeQL Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - bhaptics_tactsuit_x40
+          - opengloves_lucidgloves_proto4_ffb
+        battery_flag:
+          - SS_BATTERY_ENABLED=true
+
+    env:
+      PLATFORMIO_BUILD_FLAGS: >-
+        ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          submodules: 'recursive'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Setup PlatformIO
+        uses: ./.github/actions/setup-platformio
+
+      - name: Build target
+        run: pio run ${{ matrix.target && format('-e {0}', matrix.target) || '' }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:cpp"
+
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+
+    container:
+      image: semgrep/semgrep
+
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: semgrep ci --sarif > semgrep.sarif
+        env:
+          # Connect to Semgrep AppSec Platform through your SEMGREP_APP_TOKEN.
+          # Generate a token from Semgrep AppSec Platform > Settings
+          # and add it to your GitHub secrets.
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      - name: Upload SARIF file for GitHub Advanced Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
+
+  flawfinder:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory:
+          - 'variants'
+          - 'firmware'
+          - 'include'
+          - 'lib'
+          - 'examples'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: david-a-wheeler/flawfinder@2.0.19
+        with:
+          arguments: '--sarif ${{ matrix.directory }}'
+          output: 'flawfinder_results.sarif'
+
+      - name: Upload SARIF file for GitHub Advanced Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: flawfinder_results.sarif
+        if: always()

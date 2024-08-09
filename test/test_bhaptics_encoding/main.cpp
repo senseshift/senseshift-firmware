@@ -6,14 +6,32 @@ using namespace SenseShift::BH;
 using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::Output;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 class TestActuator : public IOutput<float> {
   public:
     bool isSetup = false;
     float intensity = 0;
 
-    TestActuator() : IFloatOutput() {}
-    void init() override { this->isSetup = true; }
-    void writeState(float newIntensity) override { this->intensity = newIntensity; }
+    TestActuator() : IFloatOutput()
+    {
+    }
+    void init() override
+    {
+        this->isSetup = true;
+    }
+    void writeState(float newIntensity) override
+    {
+        this->intensity = newIntensity;
+    }
 };
 
 #define ASSERT_EQUAL_FLOAT_ROUNDED(expected, actual, precision)                \
@@ -47,11 +65,11 @@ void test_layout_tactsuitx16(void)
     TestActuator* actuator14 = new TestActuator();
     TestActuator* actuator15 = new TestActuator();
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       { actuator0, actuator1, actuator2, actuator3 },
       { actuator4, actuator5, actuator6, actuator7 },
     });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       { actuator8, actuator9, actuator10, actuator11 },
       { actuator12, actuator13, actuator14, actuator15 },
     });
@@ -109,8 +127,8 @@ void test_layout_tactsuitx40(void)
         { new TestActuator(), new TestActuator(), new TestActuator(), new TestActuator() },
     };
 
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>(frontMatrix);
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>(backMatrix);
+    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>(frontMatrix);
+    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>(backMatrix);
 
     auto frontPlane = new FloatPlane(frontOutputs);
     auto backPlane = new FloatPlane(backOutputs);
@@ -183,7 +201,7 @@ void test_layout_tactal(void)
     TestActuator* actuator4 = new TestActuator();
     TestActuator* actuator5 = new TestActuator();
 
-    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator>({
+    auto outputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
       { actuator0, actuator1, actuator2, actuator3, actuator4, actuator5 },
     });
     auto plane = new FloatPlane(outputs);
@@ -268,11 +286,13 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 
-int main(int argc, char** argv)
+int main()
 {
     return process();
 }

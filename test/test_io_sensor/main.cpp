@@ -1,17 +1,33 @@
-#include <senseshift/input/analog_threshold.hpp>
 #include <senseshift/input/sensor.hpp>
+#include <senseshift/input/sensor/analog_threshold.hpp>
 #include <unity.h>
 
 using namespace SenseShift::Input;
+
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
 
 class TestAnalogCountingSensor : public ISimpleSensor<int> {
   public:
     int count = 0;
     int setupCounter = 0;
 
-    void init() override { this->setupCounter++; };
+    void init() override
+    {
+        this->setupCounter++;
+    }
 
-    auto getValue() -> int override { return ++this->count; };
+    auto getValue() -> int override
+    {
+        return ++this->count;
+    }
 };
 
 class TestAnalogSensor : public ISimpleSensor<int> {
@@ -19,9 +35,31 @@ class TestAnalogSensor : public ISimpleSensor<int> {
     int value = 0;
     int setupCounter = 0;
 
-    void init() override { this->setupCounter++; };
+    void init() override
+    {
+        this->setupCounter++;
+    };
 
-    auto getValue() -> int override { return this->value; };
+    auto getValue() -> int override
+    {
+        return this->value;
+    };
+};
+
+class TestFloatSensor : public ISimpleSensor<float> {
+  public:
+    float value = 0.0f;
+    int setupCounter = 0;
+
+    void init() override
+    {
+        this->setupCounter++;
+    };
+
+    auto getValue() -> float override
+    {
+        return this->value;
+    };
 };
 
 void test_memoized_sensor(void)
@@ -51,9 +89,15 @@ class DummyCalibrator : public ::SenseShift::Input::Calibration::ICalibrator<flo
     {
         this->resetCounter++;
         this->calibrated = 0.0f;
-    };
-    void update(float input) override { this->calibrated = input; };
-    float calibrate(float input) const override { return calibrated; };
+    }
+    void update(float input) override
+    {
+        this->calibrated = input;
+    }
+    float calibrate(float) const override
+    {
+        return calibrated;
+    }
 };
 
 void test_calibrated_sensor(void)
@@ -106,6 +150,60 @@ void test_sensor_filter_multiply(void)
     TEST_ASSERT_EQUAL_INT(32, sensor->getValue());
 }
 
+void test_sensor_filter_center_deadzone(void)
+{
+    auto inner = new TestFloatSensor();
+    auto sensor = new SimpleSensorDecorator(inner);
+    sensor->addFilters({ new ::SenseShift::Input::Filter::CenterDeadzoneFilter(0.1, 0.5) });
+
+    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+    sensor->init();
+    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+    inner->value = 0;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, sensor->getValue());
+
+    inner->value = 0.2;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_FLOAT(0.2f, sensor->getValue());
+
+    inner->value = 0.45;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_FLOAT(0.5f, sensor->getValue());
+
+    inner->value = 0.55;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_FLOAT(0.5f, sensor->getValue());
+
+    inner->value = 0.8;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_FLOAT(0.8f, sensor->getValue());
+}
+
+void test_sensor_multiple_filters(void)
+{
+    auto inner = new TestAnalogSensor();
+    auto sensor = new SimpleSensorDecorator(inner);
+
+    // Test MultiplyFilter separately
+    sensor->addFilter(new ::SenseShift::Input::Filter::MultiplyFilter(2));
+    // Test AddFilter separately
+    sensor->addFilter(new ::SenseShift::Input::Filter::AddFilter(1));
+
+    TEST_ASSERT_EQUAL_INT(0, inner->setupCounter);
+    sensor->init();
+    TEST_ASSERT_EQUAL_INT(1, inner->setupCounter);
+
+    inner->value = 1;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_INT(3, sensor->getValue());
+
+    inner->value = 16;
+    sensor->tick();
+    TEST_ASSERT_EQUAL_INT(33, sensor->getValue());
+}
+
 void test_sensor_analog_threshold(void)
 {
     auto inner = new TestAnalogSensor();
@@ -144,6 +242,8 @@ int process(void)
     RUN_TEST(test_memoized_sensor);
     RUN_TEST(test_calibrated_sensor);
     RUN_TEST(test_sensor_filter_multiply);
+    RUN_TEST(test_sensor_filter_center_deadzone);
+    RUN_TEST(test_sensor_multiple_filters);
     RUN_TEST(test_sensor_analog_threshold);
 
     return UNITY_END();
@@ -158,11 +258,13 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 
-int main(int argc, char** argv)
+int main()
 {
     return process();
 }

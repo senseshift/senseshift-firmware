@@ -290,57 +290,57 @@
 #pragma endregion BH_DEVIDE_TACTGLOVE
 
 namespace SenseShift::BH {
-    using namespace ::SenseShift::Body::Hands::Haptics;
-    using namespace ::SenseShift::Body::Haptics;
+using namespace ::SenseShift::Body::Hands::Haptics;
+using namespace ::SenseShift::Body::Haptics;
 
-    using HandSide = ::SenseShift::Body::Hands::HandSide;
+using HandSide = ::SenseShift::Body::Hands::HandSide;
 
-    using OutputLayout = std::tuple<::SenseShift::Body::Haptics::Target, SenseShift::Body::Haptics::Position>;
+using OutputLayout = std::tuple<::SenseShift::Body::Haptics::Target, SenseShift::Body::Haptics::Position>;
 
-    // TactGlove Wrist motor position
-    static constexpr const Position WRIST_MOTOR_POSITION(127, 191);
-    static constexpr const std::array<OutputLayout, BH_LAYOUT_TACTGLOVE_SIZE> TactGloveLeftLayout = {
-        BH_LAYOUT_TACTGLOVE_LEFT
-    };
-    static constexpr const std::array<OutputLayout, BH_LAYOUT_TACTGLOVE_SIZE> TactGloveRightLayout = {
-        BH_LAYOUT_TACTGLOVE_RIGHT
-    };
+// TactGlove Wrist motor position
+static constexpr const Position WRIST_MOTOR_POSITION(127, 191);
+static constexpr const std::array<OutputLayout, BH_LAYOUT_TACTGLOVE_SIZE> TactGloveLeftLayout = {
+    BH_LAYOUT_TACTGLOVE_LEFT
+};
+static constexpr const std::array<OutputLayout, BH_LAYOUT_TACTGLOVE_SIZE> TactGloveRightLayout = {
+    BH_LAYOUT_TACTGLOVE_RIGHT
+};
 
-    inline void addTactGloveActuators(
-      FloatBody* hapticBody,
-      const HandSide side,
-      FloatBody::Plane::Actuator* const thumb,
-      FloatBody::Plane::Actuator* const index,
-      FloatBody::Plane::Actuator* const middle,
-      FloatBody::Plane::Actuator* const ring,
-      FloatBody::Plane::Actuator* const little,
-      FloatBody::Plane::Actuator* const wrist
-    )
-    {
-        const auto& layout = (side == HandSide::Left) ? TactGloveLeftLayout : TactGloveRightLayout;
+inline void addTactGloveActuators(
+  FloatBody* hapticBody,
+  const HandSide side,
+  FloatBody::Plane::Actuator* const thumb,
+  FloatBody::Plane::Actuator* const index,
+  FloatBody::Plane::Actuator* const middle,
+  FloatBody::Plane::Actuator* const ring,
+  FloatBody::Plane::Actuator* const little,
+  FloatBody::Plane::Actuator* const wrist
+)
+{
+    const auto& layout = (side == HandSide::Left) ? TactGloveLeftLayout : TactGloveRightLayout;
 
-        if (thumb != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[0]), new FloatPlane({ { std::get<1>(layout[0]), thumb } }));
-        }
-
-        if (index != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[1]), new FloatPlane({ { std::get<1>(layout[1]), index } }));
-        }
-
-        if (middle != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[2]), new FloatPlane({ { std::get<1>(layout[2]), middle } }));
-        }
-
-        if (ring != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[3]), new FloatPlane({ { std::get<1>(layout[3]), ring } }));
-        }
-
-        if (little != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[4]), new FloatPlane({ { std::get<1>(layout[4]), little } }));
-        }
-
-        if (wrist != nullptr) {
-            hapticBody->addTarget(std::get<0>(layout[5]), new FloatPlane({ { std::get<1>(layout[5]), wrist } }));
-        }
+    if (thumb != nullptr) {
+        hapticBody->addTarget(std::get<0>(layout[0]), new FloatPlane({ { std::get<1>(layout[0]), thumb } }));
     }
+
+    if (index != nullptr) {
+        hapticBody->addTarget(std::get<0>(layout[1]), new FloatPlane({ { std::get<1>(layout[1]), index } }));
+    }
+
+    if (middle != nullptr) {
+        hapticBody->addTarget(std::get<0>(layout[2]), new FloatPlane({ { std::get<1>(layout[2]), middle } }));
+    }
+
+    if (ring != nullptr) {
+        hapticBody->addTarget(std::get<0>(layout[3]), new FloatPlane({ { std::get<1>(layout[3]), ring } }));
+    }
+
+    if (little != nullptr) {
+        hapticBody->addTarget(std::get<0>(layout[4]), new FloatPlane({ { std::get<1>(layout[4]), little } }));
+    }
+
+    if (wrist != nullptr) {
+        hapticBody->addTarget(std::get<0>(layout[5]), new FloatPlane({ { std::get<1>(layout[5]), wrist } }));
+    }
+}
 } // namespace SenseShift::BH

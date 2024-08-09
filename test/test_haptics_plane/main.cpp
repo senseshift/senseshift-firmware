@@ -4,14 +4,32 @@
 using namespace SenseShift::Body::Haptics;
 using namespace SenseShift::Output;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 class TestActuator : public IOutput<float> {
   public:
     bool isSetup = false;
     float intensity = 0;
 
-    TestActuator() : IFloatOutput() {}
-    void init() override { this->isSetup = true; }
-    void writeState(float newIntensity) override { this->intensity = newIntensity; }
+    TestActuator() : IFloatOutput()
+    {
+    }
+    void init() override
+    {
+        this->isSetup = true;
+    }
+    void writeState(float newIntensity) override
+    {
+        this->intensity = newIntensity;
+    }
 };
 
 void test_it_sets_up_actuators(void)
@@ -213,11 +231,13 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 
-int main(int argc, char** argv)
+int main()
 {
     return process();
 }

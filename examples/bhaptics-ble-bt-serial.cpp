@@ -26,13 +26,16 @@ static const ::SenseShift::Body::Haptics::Position* bhLayout[bhLayoutSize] = BH_
 
 class BLECallbacks : public BHBLEConnectionCallbacks {
   public:
-    void postInit() { btSerial->begin("SenseShift Serial"); }
+    void postInit()
+    {
+        btSerial->begin("SenseShift Serial");
+    }
 };
 
 void setupMode()
 {
     // Configure PWM pins to their positions on the face
-    auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator>({
+    auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<AbstractActuator*>({
       // clang-format off
       {new ActuatorPWM(32), new ActuatorPWM(33), new ActuatorPWM(25), new ActuatorPWM(26), new ActuatorPWM(27), new ActuatorPWM(14)},
       // clang-format on

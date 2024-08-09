@@ -3,6 +3,16 @@
 
 using namespace SenseShift::Math;
 
+void setUp(void)
+{
+    // set stuff up here
+}
+
+void tearDown(void)
+{
+    // clean stuff up here
+}
+
 void test_operator_equal(void)
 {
     Point2 p1 = { 1, 2 };
@@ -63,11 +73,13 @@ void setup(void)
     process();
 }
 
-void loop(void) {}
+void loop(void)
+{
+}
 
 #else
 
-int main(int argc, char** argv)
+int main()
 {
     return process();
 }
