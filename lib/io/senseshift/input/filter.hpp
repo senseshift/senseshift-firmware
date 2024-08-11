@@ -145,21 +145,18 @@ class MultiplyFilter : public IFilter<Tp> {
     Tp factor_;
 };
 
-class VoltageDividerFilter : public MultiplyFilter<float> {
-  public:
-    /// Calculates the original voltage from the voltage divider.
-    ///
-    /// \param r1 The resistance in Ohms of the first resistor in the voltage divider.
-    /// Example: 27000.0F.
-    /// \param r2 The resistance in Ohms of the second resistor in the voltage divider.
-    /// Example: 100000.0F.
-    ///
-    /// \example
-    /// \code
-    /// new VoltageDividerFilter(27000.0F, 100000.0F);
-    /// \endcode
-    explicit VoltageDividerFilter(float r1, float r2) : MultiplyFilter<float>((r1 + r2) / r2){};
-};
+/// Calculates the original voltage from the voltage divider.
+///
+/// \param r1 The resistance in Ohms of the first resistor in the voltage divider.
+/// Example: 27000.0F.
+/// \param r2 The resistance in Ohms of the second resistor in the voltage divider.
+/// Example: 100000.0F.
+///
+/// \example
+/// \code
+/// new VoltageDividerFilter(27000.0F, 100000.0F);
+/// \endcode
+#define VoltageDividerFilter(r1, r2) MultiplyFilter((r1 + r2) / r2)
 
 template<typename Tp>
 class ClampFilter : public IFilter<Tp> {
