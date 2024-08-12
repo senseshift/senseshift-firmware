@@ -1,5 +1,6 @@
 paths:
   - firmware
   - include
+  - lib
 paths-ignore:
   - .pio/libdeps
