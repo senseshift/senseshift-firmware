@@ -384,10 +384,13 @@ jobs:
           retention-days: 5
 
   report-coverage:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
     needs:
       - build-bhaptics
       - build-opengloves
       - test
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -437,9 +440,12 @@ jobs:
           flags: unittests
 
   report-memory-usage:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
     needs:
       - build-bhaptics
       - build-opengloves
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -561,12 +567,14 @@ jobs:
           comment_tag: memory-usage-comparison
 
   wokwi:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
     needs:
       - build-bhaptics
       - build-opengloves
       - test
-    runs-on: ubuntu-latest
 
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         variant:
