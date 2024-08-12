@@ -536,7 +536,7 @@ jobs:
           repository: ${{ github.repository }}
           run-id: ${{ steps.base_branch_workflow.outputs.result }}
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
         if: github.event_name == 'pull_request' && steps.download-base-usage.outcome == 'success'
         with:
           python-version: '3.x'
