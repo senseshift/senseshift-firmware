@@ -3,7 +3,6 @@
 #include <cstdint>
 
 #include <senseshift/output/output.hpp>
-#include <senseshift/utility.hpp>
 
 #include <I2CDevLib.h>
 #include <i2cdev/pca9685.hpp>
