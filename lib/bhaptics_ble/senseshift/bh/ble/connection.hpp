@@ -1,14 +1,13 @@
 #pragma once
 
-#include "senseshift/battery/battery.hpp"
-#include "senseshift/core/helpers.hpp"
-#include <senseshift/bh/ble/constants.hpp>
-#include <senseshift/bh/constants.hpp>
-#include <senseshift/events.hpp>
-#include <senseshift/utility.hpp>
-
 #include <Arduino.h>
 #include <esp_wifi.h>
+
+#include <senseshift/battery/battery.hpp>
+#include <senseshift/bh/ble/constants.hpp>
+#include <senseshift/bh/constants.hpp>
+#include <senseshift/core/helpers.hpp>
+#include <senseshift/events.hpp>
 
 #if defined(SS_USE_NIMBLE) && SS_USE_NIMBLE == true
 #include <NimBLEDevice.h>

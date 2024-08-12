@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "senseshift/utility.hpp"
-
 #include <type_traits>
+
+#include <senseshift/core/helpers.hpp>
 
 namespace SenseShift::Input::Calibration {
 

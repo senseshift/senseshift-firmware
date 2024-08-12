@@ -7,9 +7,9 @@
 #include <set>
 #include <vector>
 
+#include <senseshift/core/helpers.hpp>
 #include <senseshift/math/point2.hpp>
 #include <senseshift/output/output.hpp>
-#include <senseshift/utility.hpp>
 
 namespace SenseShift::Body::Haptics {
 /// Output "plane" (e.g. Chest, Palm, Finger, etc.).
