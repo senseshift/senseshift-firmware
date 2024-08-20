@@ -29,15 +29,15 @@ Application* app = &App;
 
 static const std::array<Position, BH_LAYOUT_TACTVISOR_SIZE> bhLayout = { BH_LAYOUT_TACTVISOR };
 
+// Configure PWM pins to their positions on the face
+auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+  // clang-format off
+  { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25), new LedcOutput(26) },
+  // clang-format on
+});
+
 void setup()
 {
-    // Configure PWM pins to their positions on the face
-    auto faceOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
-      // clang-format off
-      { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25), new LedcOutput(26) },
-      // clang-format on
-    });
-
     app->getVibroBody()->addTarget(Target::FaceFront, new FloatPlane(faceOutputs));
 
     app->getVibroBody()->setup();

@@ -29,16 +29,16 @@ Application* app = &App;
 
 static const std::array<Position, BH_LAYOUT_TACTOSY2_SIZE> bhLayout = { BH_LAYOUT_TACTOSY2 };
 
+// Configure PWM pins to their positions on the forearm
+auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+  // clang-format off
+  { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25) },
+  { new LedcOutput(26), new LedcOutput(27), new LedcOutput(14) },
+  // clang-format on
+});
+
 void setup()
 {
-    // Configure PWM pins to their positions on the forearm
-    auto forearmOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
-      // clang-format off
-      { new LedcOutput(32), new LedcOutput(33), new LedcOutput(25) },
-      { new LedcOutput(26), new LedcOutput(27), new LedcOutput(14) },
-      // clang-format on
-    });
-
     app->getVibroBody()->addTarget(Target::Accessory, new FloatPlane(forearmOutputs));
 
     app->getVibroBody()->setup();

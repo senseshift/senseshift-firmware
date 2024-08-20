@@ -29,17 +29,17 @@ Application* app = &App;
 
 static const std::array<Position, BH_LAYOUT_TACTOSYF_SIZE> bhLayout = { BH_LAYOUT_TACTOSYF };
 
+// Configure PWM pins to their positions on the feet
+auto footOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+  // clang-format off
+  { new LedcOutput(32) },
+  { new LedcOutput(33) },
+  { new LedcOutput(25) },
+  // clang-format on
+});
+
 void setup()
 {
-    // Configure PWM pins to their positions on the feet
-    auto footOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
-      // clang-format off
-      { new LedcOutput(32) },
-      { new LedcOutput(33) },
-      { new LedcOutput(25) },
-      // clang-format on
-    });
-
     app->getVibroBody()->addTarget(Target::Accessory, new FloatPlane(footOutputs));
 
     app->getVibroBody()->setup();

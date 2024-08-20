@@ -34,12 +34,34 @@ Application* app = &App;
 
 static const std::array<OutputLayout, BH_LAYOUT_TACTSUITX40_SIZE> bhLayout = { BH_LAYOUT_TACTSUITX40 };
 
+auto pwm0 = i2cdev::PCA9685(0x40, I2CDev);
+auto pwm1 = i2cdev::PCA9685(0x41, I2CDev);
+
+// Assign the pins on the configured PCA9685s and PWM pins to locations on the vest
+auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+  // clang-format off
+  { new PCA9685Output(pwm0, 0),  new PCA9685Output(pwm0, 1),  new PCA9685Output(pwm0, 2),  new PCA9685Output(pwm0, 3)  },
+  { new PCA9685Output(pwm0, 4),  new PCA9685Output(pwm0, 5),  new PCA9685Output(pwm0, 6),  new PCA9685Output(pwm0, 7)  },
+  { new PCA9685Output(pwm0, 8),  new PCA9685Output(pwm0, 9),  new PCA9685Output(pwm0, 10), new PCA9685Output(pwm0, 11) },
+  { new PCA9685Output(pwm0, 12), new PCA9685Output(pwm0, 13), new PCA9685Output(pwm0, 14), new PCA9685Output(pwm0, 15) },
+  { new LedcOutput(32),          new LedcOutput(33),          new LedcOutput(25),          new LedcOutput(26)          },
+  // clang-format on
+});
+auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
+  // clang-format off
+  { new PCA9685Output(pwm1, 0),  new PCA9685Output(pwm1, 1),  new PCA9685Output(pwm1, 2),  new PCA9685Output(pwm1, 3)  },
+  { new PCA9685Output(pwm1, 4),  new PCA9685Output(pwm1, 5),  new PCA9685Output(pwm1, 6),  new PCA9685Output(pwm1, 7)  },
+  { new PCA9685Output(pwm1, 8),  new PCA9685Output(pwm1, 9),  new PCA9685Output(pwm1, 10), new PCA9685Output(pwm1, 11) },
+  { new PCA9685Output(pwm1, 12), new PCA9685Output(pwm1, 13), new PCA9685Output(pwm1, 14), new PCA9685Output(pwm1, 15) },
+  { new LedcOutput(27),          new LedcOutput(14),          new LedcOutput(12),          new LedcOutput(13)          },
+  // clang-format on
+});
+
 void setup()
 {
     Wire.begin();
 
     // Configure the PCA9685s
-    auto pwm0 = i2cdev::PCA9685(0x40, I2CDev);
     if (pwm0.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
         LOG_E("pca9685", "Failed to set frequency");
     }
@@ -47,34 +69,12 @@ void setup()
         LOG_E("pca9685", "Failed to wake up");
     }
 
-    auto pwm1 = i2cdev::PCA9685(0x41, I2CDev);
     if (pwm1.setFrequency(PWM_FREQUENCY) != I2CDEV_RESULT_OK) {
         LOG_E("pca9685", "Failed to set frequency");
     }
     if (pwm1.wakeup() != I2CDEV_RESULT_OK) {
         LOG_E("pca9685", "Failed to wake up");
     }
-
-    // Assign the pins on the configured PCA9685s and PWM pins to locations on the
-    // vest
-    auto frontOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
-      // clang-format off
-          { new PCA9685Output(pwm0, 0),  new PCA9685Output(pwm0, 1),  new PCA9685Output(pwm0, 2),  new PCA9685Output(pwm0, 3)  },
-          { new PCA9685Output(pwm0, 4),  new PCA9685Output(pwm0, 5),  new PCA9685Output(pwm0, 6),  new PCA9685Output(pwm0, 7)  },
-          { new PCA9685Output(pwm0, 8),  new PCA9685Output(pwm0, 9),  new PCA9685Output(pwm0, 10), new PCA9685Output(pwm0, 11) },
-          { new PCA9685Output(pwm0, 12), new PCA9685Output(pwm0, 13), new PCA9685Output(pwm0, 14), new PCA9685Output(pwm0, 15) },
-          { new LedcOutput(32),          new LedcOutput(33),          new LedcOutput(25),          new LedcOutput(26)          },
-      // clang-format on
-    });
-    auto backOutputs = PlaneMapper_Margin::mapMatrixCoordinates<FloatPlane::Actuator*>({
-      // clang-format off
-          { new PCA9685Output(pwm1, 0),  new PCA9685Output(pwm1, 1),  new PCA9685Output(pwm1, 2),  new PCA9685Output(pwm1, 3)  },
-          { new PCA9685Output(pwm1, 4),  new PCA9685Output(pwm1, 5),  new PCA9685Output(pwm1, 6),  new PCA9685Output(pwm1, 7)  },
-          { new PCA9685Output(pwm1, 8),  new PCA9685Output(pwm1, 9),  new PCA9685Output(pwm1, 10), new PCA9685Output(pwm1, 11) },
-          { new PCA9685Output(pwm1, 12), new PCA9685Output(pwm1, 13), new PCA9685Output(pwm1, 14), new PCA9685Output(pwm1, 15) },
-          { new LedcOutput(27),          new LedcOutput(14),          new LedcOutput(12),          new LedcOutput(13)          },
-      // clang-format on
-    });
 
     app->getVibroBody()->addTarget(Target::ChestFront, new FloatPlane(frontOutputs));
     app->getVibroBody()->addTarget(Target::ChestBack, new FloatPlane(backOutputs));
