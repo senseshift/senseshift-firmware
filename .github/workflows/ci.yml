@@ -403,7 +403,7 @@ jobs:
 
       - name: Download all workflow run artifacts
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: build/artifacts
 
@@ -452,7 +452,7 @@ jobs:
 
       - name: Download all workflow run artifacts
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: current-usage
           pattern: '*-usage'
@@ -527,7 +527,7 @@ jobs:
       - name: Download base branch usage.json artifact
         if: github.event_name == 'pull_request'
         id: download-base-usage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         continue-on-error: true
         with:
           name: merged-usage
@@ -591,7 +591,7 @@ jobs:
           echo "target=$target" >> $GITHUB_OUTPUT
 
       - name: Download firmware artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ matrix.variant }}
           path: ./.pio/build/${{ steps.target_name.outputs.target }}
