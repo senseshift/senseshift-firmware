@@ -54,7 +54,7 @@ jobs:
         ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
@@ -212,7 +212,7 @@ jobs:
         ${{ matrix.curl_calibration_flag && format('-D {0}', matrix.curl_calibration_flag) || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
@@ -338,7 +338,7 @@ jobs:
           - native
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
@@ -393,7 +393,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
@@ -448,7 +448,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download all workflow run artifacts
         id: download
@@ -582,7 +582,7 @@ jobs:
           - opengloves_lucidgloves_proto4+serial
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Extract target
         id: target_name

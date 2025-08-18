@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 2
           submodules: 'recursive'
@@ -74,7 +74,7 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: semgrep ci --sarif > semgrep.sarif
         env:
@@ -100,7 +100,7 @@ jobs:
           - 'lib'
           - 'examples'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: david-a-wheeler/flawfinder@2.0.19
         with:
