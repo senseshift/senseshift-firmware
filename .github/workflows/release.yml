@@ -44,7 +44,7 @@ jobs:
         ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: 'recursive'
 
@@ -118,7 +118,7 @@ jobs:
         ${{ matrix.comm_flag && format('-D {0}', matrix.comm_flag) || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: 'recursive'
 

@@ -54,7 +54,7 @@ jobs:
         ${{ matrix.battery_flag && format('-D {0}', matrix.battery_flag) || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
@@ -212,7 +212,7 @@ jobs:
         ${{ matrix.curl_calibration_flag && format('-D {0}', matrix.curl_calibration_flag) || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
@@ -338,7 +338,7 @@ jobs:
           - native
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
@@ -393,7 +393,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Speedup package installation
         uses: abbbi/github-actions-tune@v1
@@ -403,7 +403,7 @@ jobs:
 
       - name: Download all workflow run artifacts
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: build/artifacts
 
@@ -431,7 +431,7 @@ jobs:
           retention-days: 5
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -448,11 +448,11 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download all workflow run artifacts
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: current-usage
           pattern: '*-usage'
@@ -527,7 +527,7 @@ jobs:
       - name: Download base branch usage.json artifact
         if: github.event_name == 'pull_request'
         id: download-base-usage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         continue-on-error: true
         with:
           name: merged-usage
@@ -560,7 +560,7 @@ jobs:
 
           cat ./memory-usage-comparison.md > $GITHUB_STEP_SUMMARY
 
-      - uses: thollander/actions-comment-pull-request@v2
+      - uses: thollander/actions-comment-pull-request@v3
         if: github.event_name == 'pull_request' && steps.download-base-usage.outcome == 'success'
         with:
           filePath: memory-usage-comparison.md
@@ -582,7 +582,7 @@ jobs:
           - opengloves_lucidgloves_proto4+serial
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Extract target
         id: target_name
@@ -591,7 +591,7 @@ jobs:
           echo "target=$target" >> $GITHUB_OUTPUT
 
       - name: Download firmware artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ matrix.variant }}
           path: ./.pio/build/${{ steps.target_name.outputs.target }}

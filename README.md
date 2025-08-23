@@ -19,6 +19,7 @@ Build your own DIY haptic vest, haptic gloves, and more!
 
 [![Discord Widget](https://discord.com/api/guilds/966090258104062023/widget.png?style=banner2)](https://discord.gg/YUtRKAqty2)
 
+[![GitHub release downloads](https://img.shields.io/github/downloads/senseshift/senseshift-firmware/total)](https://github.com/senseshift/senseshift-firmware/releases/latest)
 [![PlatformIO CI](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml/badge.svg)](https://github.com/senseshift/senseshift-firmware/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/senseshift/senseshift-firmware/graph/badge.svg?token=8CEuP8vk0f)](https://codecov.io/gh/senseshift/senseshift-firmware)
 [![GitHub bug issues](https://img.shields.io/github/issues/senseshift/senseshift-firmware/bug?color=%23d73a4a)](https://github.com/senseshift/senseshift-firmware/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
