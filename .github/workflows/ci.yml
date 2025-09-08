@@ -506,7 +506,7 @@ jobs:
       - name: Get base branch job ID
         if: github.event_name == 'pull_request'
         id: base_branch_workflow
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { data: workflows } = await github.rest.actions.listWorkflowRuns({
