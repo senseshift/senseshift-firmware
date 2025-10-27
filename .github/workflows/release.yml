@@ -81,7 +81,7 @@ jobs:
           unzip -l ./.pio/build/${{ matrix.target }}/firmware.zip
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: firmware-${{matrix.target}}
           path: ./.pio/build/${{ matrix.target }}/firmware.zip
@@ -154,7 +154,7 @@ jobs:
           unzip -l ./.pio/build/${{ matrix.target }}/firmware.zip
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: firmware-${{ steps.firmware_name.outputs.firmware }}
           path: ./.pio/build/${{ matrix.target }}/firmware.zip
